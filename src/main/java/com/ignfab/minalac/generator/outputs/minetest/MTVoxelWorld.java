@@ -1,11 +1,10 @@
-package com.ignfab.minalac.generator.minetest;
+package com.ignfab.minalac.generator.outputs.minetest;
 
-import com.ignfab.minalac.generator.MapWriteException;
-import com.ignfab.minalac.generator.OutOfWorldException;
-import com.ignfab.minalac.generator.VoxelTypeFactory;
-import com.ignfab.minalac.generator.VoxelWorld;
-import com.ignfab.minalac.generator.minetest.utils.SqlLiteMapWriter;
-import com.ignfab.minalac.generator.minetest.voxelType.MTVoxelType;
+import com.ignfab.minalac.generator.world.MapWriteException;
+import com.ignfab.minalac.generator.world.OutOfWorldException;
+import com.ignfab.minalac.generator.world.VoxelTypeFactory;
+import com.ignfab.minalac.generator.world.VoxelWorld;
+import com.ignfab.minalac.generator.outputs.minetest.utils.SqlLiteMapWriter;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -31,7 +30,7 @@ public class MTVoxelWorld implements VoxelWorld {
         return this.factory;
     }
 
-    public void set(int x, int y, int z, MTVoxelType voxel) throws OutOfWorldException {
+    protected void set(int x, int y, int z, MTVoxelType voxel) throws OutOfWorldException {
         if (-limitPosition > x || x > limitPosition ||
                 -limitPosition > y || y > limitPosition ||
                 -limitPosition > z || z > limitPosition

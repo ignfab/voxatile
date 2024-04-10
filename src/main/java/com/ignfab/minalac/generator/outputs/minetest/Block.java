@@ -1,6 +1,4 @@
-package com.ignfab.minalac.generator.minetest;
-
-import com.ignfab.minalac.generator.minetest.voxelType.MTVoxelType;
+package com.ignfab.minalac.generator.outputs.minetest;
 
 import java.util.HashMap;
 

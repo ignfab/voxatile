@@ -1,13 +1,16 @@
 package com.ignfab.minalac.generator;
 
-import com.ignfab.minalac.generator.minetest.MTVoxelWorld;
-
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
+
+import com.ignfab.minalac.generator.world.*;
+import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+import com.ignfab.minalac.generator.utils.world2d.*;
+import com.ignfab.minalac.generator.utils.world2d.chunk.*;
+import com.ignfab.minalac.generator.utils.world2d.iterator.*;
 
 /**
  * This is a temporary class to have an idea of how the program works.
@@ -15,85 +18,111 @@ import java.nio.FloatBuffer;
  */
 public class SampleImplementation {
     public static void main(String[] args) throws IOException, OutOfWorldException, MapWriteException {
-        if (args.length != 2) {
-            System.out.println("There must be two arguments : directoryPath and url");
+        if (args.length != 5) {
+            System.out.println("There must be five arguments : directoryPath, baseURL, width, height, verticalScale");
         } else {
-            System.out.println("Creation of the map ...");
-            System.out.println(args[0]);
-            System.out.println(args[1]);
-
-            //Parent directory must exist
             //Example : "/home/john/.minetest/worlds/map/"
-            String directoryFullPath = args[0];
+            String directoryPath = args[0];
 
-            //The function createWorldFromUrl doesn't, for now, handle the parameters.
-            //BBOX has to be a square.
-            //Width and height have to be one-tenth of the side of the side length of the BBOX's square
+            //Example : https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=EPSG:2154&BBOX=595000,6335000,605000,6345000
+            String partialURL = args[1];
 
-            //Example "https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=EPSG:2154&BBOX=595000,6335000,605000,6345000&WIDTH=1000&HEIGHT=1000"
-            String dataUrl = args[1];
+            //Example : 1000
+            int width = Integer.parseInt(args[2]);
 
-            float[] mntArray = getHeightMap(dataUrl);
+            //Example : 1000
+            int height = Integer.parseInt(args[3]);
 
-            VoxelWorld worldMnt = new MTVoxelWorld();
-            createWorldFromMnt(mntArray, worldMnt);
-            worldMnt.save(directoryFullPath);
+            //Example : 10 (in meter per voxel)
+            float verticalScale = Float.parseFloat(args[4]);
 
-            int midPoint = (int) (mntArray.length + Math.sqrt(mntArray.length)) / 2;
-            setStaticSpawnPoint(directoryFullPath, 0, (int) mntArray[midPoint] / 10 + 1, 0);
+            System.out.println("Creation of the map ..." +
+                    "\ndirectoryPath: " + directoryPath +
+                    "\npartialURL: " + partialURL +
+                    "\nwidth: " + width +
+                    "\nheight: " + height +
+                    "\nverticalScale: " + verticalScale);
+
+            HeightMap heightMap = createGroundHeightMap(partialURL, width, height, verticalScale);
+
+            VoxelWorld world = new MTVoxelWorld();
+            placeVoxelFromHeightMap(heightMap, world);
+            save(directoryPath, world);
+
+            setStaticSpawnPoint(directoryPath, 0, heightMap.get(0, 0) + 1, 0);
         }
     }
 
-    private static void createWorldFromMnt(float[] mntArray, VoxelWorld world) throws OutOfWorldException {
-        int worldLength = (int) Math.sqrt(mntArray.length);
-
-        int x, y, z;
-
+    private static void placeVoxelFromHeightMap(HeightMap map, VoxelWorld world) throws OutOfWorldException {
         VoxelType grassVT = world.getFactory().createVoxelType(SemanticType.Grass);
         VoxelType stoneVT = world.getFactory().createVoxelType(SemanticType.Stone);
         VoxelType dirtVT = world.getFactory().createVoxelType(SemanticType.Dirt);
 
-        for (int i = 0; i < mntArray.length; i++) {
-            //Temporary translation so the player spawn at the center of the generated map (player info isn't generated yet on this version)
-            x = i % worldLength - worldLength / 2;
-            //Ratio between the side length of the BBOX and width/heigth length
-            //In this example, we assume that the ratio given by the URL is always 10
-            y = (int) mntArray[i] / 10;
-            z = i / worldLength - worldLength / 2;
-
+        for (Chunk2dElement element : map) {
+            int x = element.getX();
+            int y = element.getY();
+            int z = element.getValue();
             grassVT.place(x, y, z);
-            dirtVT.place(x, (y - 1), z);
-            dirtVT.place(x, (y - 2), z);
+            dirtVT.place(x, y, (z - 1));
+            dirtVT.place(x, y, (z - 2));
 
-            for (int y_stone = y - 3; y_stone > y - (3 + 10); y_stone--) {
-                stoneVT.place(x, y_stone, z);
+            for (int z_stone = z - 3; z_stone > z - (3 + 10); z_stone--) {
+                stoneVT.place(x, y, z_stone);
             }
         }
     }
 
-    private static float[] getHeightMap(String urlString) throws MalformedURLException {
+    private static HeightMap createGroundHeightMap(String partialUrl, int width, int height, float verticalScale) throws MalformedURLException {
         float[] mntArray;
-        URL url = new URL(urlString);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte[] data;
+        URL url = new URL(partialUrl + "&WIDTH=" + width + "&HEIGHT=" + height);
 
         try (InputStream inputStream = url.openStream()) {
-            int n;
-            byte[] buffer = new byte[1];
-            while (-1 != (n = inputStream.read(buffer))) {
-                outputStream.write(buffer, 0, n);
-            }
+            int total, read;
+            total = 0;
+            data = new byte[width * height * 4];
+            while (0 < (read = inputStream.read(data, total, data.length - total)))
+                total = total + read;
+            if (total != data.length)
+                throw new RuntimeException("Incomplete data read from response stream");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        byte[] byteArray = outputStream.toByteArray();
-        ByteBuffer byteBuffer = ByteBuffer.wrap(byteArray).order(ByteOrder.LITTLE_ENDIAN);
+        mntArray = byteArrayToFloatArray(data);
 
-        FloatBuffer floatBuffer = byteBuffer.asFloatBuffer();
-        mntArray = new float[floatBuffer.capacity()];
-        floatBuffer.get(mntArray);
+        int xMinHeightMap = -width / 2, yMinHeightMap = -height / 2;
+        HeightMap heightMap = new HeightMap(xMinHeightMap, yMinHeightMap, width, height, 0);
 
-        return mntArray;
+        int x_arr, y_arr, x_world, y_world;
+        for (int i = 0; i < mntArray.length; i++) {
+            x_arr = i % width;
+            y_arr = i / width;
+            x_world = x_arr + xMinHeightMap;
+            y_world = -(y_arr + yMinHeightMap) - 1; //-1 so min y_world matches yMinHeightMap (There is an offset due to y-axis inversion),
+            heightMap.set(x_world, y_world, (int) (mntArray[i] / verticalScale));
+        }
+        return heightMap;
+    }
+
+    private static float[] byteArrayToFloatArray(byte[] byteData) {
+        float[] floatData = new float[byteData.length / 4];
+        ByteBuffer.wrap(byteData).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer().get(floatData);
+        return floatData;
+    }
+
+    private static void save(String directory, VoxelWorld world) throws MapWriteException {
+        deleteDirectory(new File(directory));
+        world.save(directory);
+    }
+
+    private static boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents)
+                deleteDirectory(file);
+        }
+        return directoryToBeDeleted.delete();
     }
 
     private static void setStaticSpawnPoint(String directoryFullPath, int x, int y, int z) throws IOException {
@@ -108,6 +137,26 @@ public class SampleImplementation {
             PrintWriter printWriter = new PrintWriter(fileWriter);
             printWriter.println("minetest.setting_set(\"static_spawnpoint\", \"" + x + ", " + y + ", " + z + "\")");
             printWriter.close();
+        }
+    }
+
+    //This class will probably be added on an upcoming pull-request (since it doesn't belong to the package utils.world2d.chunk)
+    private static class HeightMap extends ArrayChunk2d implements IterableChunk2d {
+        public HeightMap(int originX, int originY, int sizeX, int sizeY, int defaultValue) {
+            super(originX, originY, sizeX, sizeY, defaultValue);
+        }
+
+        public HeightMap(WorldBBox2d box, int defaultValue) {
+            super(box, defaultValue);
+        }
+
+        public HeightMap(WorldCoords2d coords, WorldSize2d size, int defaultValue) {
+            super(coords, size, defaultValue);
+        }
+
+        @Override
+        public Chunk2dIterator iterator() {
+            return new Chunk2dIteratorAll(this);
         }
     }
 }

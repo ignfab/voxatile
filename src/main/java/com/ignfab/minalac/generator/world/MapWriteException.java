@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator;
+package com.ignfab.minalac.generator.world;
 
 public class MapWriteException extends Exception {
 

@@ -1,0 +1,97 @@
+package com.ignfab.minalac.generator.utils.world2d.chunk;
+
+import java.lang.reflect.Field;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class TestArrayChunk2d {
+    private int[] getData(ArrayChunk2d chunk) throws NoSuchFieldException, IllegalAccessException {
+        Field data = ArrayChunk2d.class.getDeclaredField("values");
+        data.setAccessible(true);
+        return (int[]) data.get(chunk);
+    }
+
+    private void replaceValuesField(ArrayChunk2d chunk, int[] tab) throws NoSuchFieldException, IllegalAccessException {
+        Field data = ArrayChunk2d.class.getDeclaredField("values");
+        data.setAccessible(true);
+        data.set(chunk, tab);
+    }
+
+    @Test
+    public void testGet() throws NoSuchFieldException, IllegalAccessException {
+        ArrayChunk2d chunk_1 = new ArrayChunk2d(0, 0, 3, 2, 0);
+        int[] newValues = {1, 2, 3, 4, 5, 6};
+        /*
+        | - - y ->
+        | 1 2
+        | 3 4
+        | 5 6
+        x
+        |
+        v
+        */
+        replaceValuesField(chunk_1, newValues);
+
+        assertEquals(2, chunk_1.get(0, 1));
+        assertEquals(3, chunk_1.get(1, 0));
+        assertEquals(6, chunk_1.get(2, 1));
+
+        ArrayChunk2d chunk_2 = new ArrayChunk2d(-5, -2, 3, 2, 0);
+        replaceValuesField(chunk_2, newValues);
+
+        /*
+        |  -  -   y ->
+        |  1  2  -5
+        |  3  4  -4
+        |  5  6  -3
+        x -2 -1
+        |
+        v
+        */
+
+        assertEquals(1, chunk_2.get(-5, -2));
+        assertEquals(2, chunk_2.get(-5, -1));
+        assertEquals(5, chunk_2.get(-3, -2));
+        assertEquals(6, chunk_2.get(-3, -1));
+        assertEquals(4, chunk_2.get(-4, -1));
+    }
+
+    @Test
+    public void testSet() throws NoSuchFieldException, IllegalAccessException {
+        ArrayChunk2d chunk = new ArrayChunk2d(0, 0, 3, 2, 0);
+        int[] newValues = {1, 2, 3, 4, 5, 6};
+        /*
+        | - - y ->
+        | 1 2
+        | 3 4
+        | 5 6
+        x
+        |
+        v
+        */
+
+        replaceValuesField(chunk, newValues);
+
+        chunk.set(0, 1, 7);
+        chunk.set(1, 1, 8);
+        chunk.set(2, 0, 9);
+
+        assertEquals(7, getData(chunk)[1]);
+        assertEquals(8, getData(chunk)[3]);
+        assertEquals(9, getData(chunk)[4]);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testSetOut() {
+        ArrayChunk2d chunk = new ArrayChunk2d(0, 0, 3, 2, 0);
+        chunk.set(25, 25, 0);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testGetOut() {
+        ArrayChunk2d chunk = new ArrayChunk2d(0, 0, 3, 2, 0);
+        chunk.get(25, 25);
+    }
+}
