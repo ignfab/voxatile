@@ -1,6 +1,6 @@
-package com.ignfab.minalac.generator.minetest.utils;
+package com.ignfab.minalac.generator.outputs.minetest.utils;
 
-import com.ignfab.minalac.generator.minetest.Block;
+import com.ignfab.minalac.generator.outputs.minetest.Block;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
