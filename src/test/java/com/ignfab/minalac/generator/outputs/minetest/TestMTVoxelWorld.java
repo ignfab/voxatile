@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.minetest;
+package com.ignfab.minalac.generator.outputs.minetest;
 
 import org.junit.Test;
 

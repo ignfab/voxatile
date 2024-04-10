@@ -1,7 +1,7 @@
-package com.ignfab.minalac.generator.minetest.utils;
+package com.ignfab.minalac.generator.outputs.minetest.utils;
 
-import com.ignfab.minalac.generator.MapWriteException;
-import com.ignfab.minalac.generator.minetest.Block;
+import com.ignfab.minalac.generator.outputs.minetest.Block;
+import com.ignfab.minalac.generator.world.MapWriteException;
 
 import java.io.*;
 import java.nio.file.Files;

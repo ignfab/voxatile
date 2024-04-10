@@ -1,9 +1,9 @@
-package com.ignfab.minalac.generator.minetest;
+package com.ignfab.minalac.generator.outputs.minetest;
 
-import com.ignfab.minalac.generator.SemanticType;
-import com.ignfab.minalac.generator.VoxelTypeFactory;
-import com.ignfab.minalac.generator.VoxelType;
-import com.ignfab.minalac.generator.minetest.voxelType.MTSimpleVoxelType;
+import com.ignfab.minalac.generator.world.SemanticType;
+import com.ignfab.minalac.generator.world.VoxelTypeFactory;
+import com.ignfab.minalac.generator.world.VoxelType;
+import com.ignfab.minalac.generator.outputs.minetest.voxelType.MTSimpleVoxelType;
 
 public class MTVoxelTypeFactory implements VoxelTypeFactory {
     private MTVoxelWorld world;
