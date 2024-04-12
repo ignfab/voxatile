@@ -16,8 +16,11 @@ cd minalac-generator # All commands are always based on the project root
 ```
 
 Compile and run using Maven:
-<!-- TODO Include a run command with basic options (perhaps referencing an example params file from the repo?) -->
 
+```shell
+mvn -DskipTests=true clean package && java -jar target/Generator.jar -p examples/default.yaml $HOME/.minetest/worlds/minalac
+```
+<!--
 ### From pre-built JAR
 
-<!-- TODO Download JAR from latest release and run it with default params -->
+TODO Download JAR from latest release and run it with default params -->
