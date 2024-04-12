@@ -30,7 +30,11 @@ mvn verify
 
 ## Execute
 ```shell
-mvn package && java -jar ./target/Generator.jar $HOME/.minetest/worlds/minalac EPSG:2154 600000 6340000 1000 1000 1.0 10.0 minetest
+export MINALAC_PARAMS='{"verticalScale":10.0,"horizontalScale":1.0,"area":{"center":{"latitude":44.1519,"longitude":1.7499},"extendX":1000,"extendY":1000},"crs":"EPSG:2154","format":"minetest"}'
+```
+
+```shell
+mvn package && java -jar ./target/Generator.jar $HOME/.minetest/worlds/minalac
 ```
 
 For parameters explanation, refer to comments in `SampleImplementation` class.

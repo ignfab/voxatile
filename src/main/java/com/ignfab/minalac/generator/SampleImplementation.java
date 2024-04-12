@@ -1,18 +1,17 @@
 package com.ignfab.minalac.generator;
 
-
 import com.ignfab.minalac.generator.models.GeometryModel;
 import com.ignfab.minalac.generator.models.Model;
-import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
-import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.generation.CoordsConverter;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.HeightMap;
 import com.ignfab.minalac.generator.inputs.WFS2DataProvider;
 import com.ignfab.minalac.generator.renderers.VectorRenderer;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
+import com.ignfab.minalac.generator.utils.paramsparser.ParamsParser;
+import com.ignfab.minalac.generator.utils.paramsparser.ParseException;
+import com.ignfab.minalac.generator.utils.world2d.WorldSize2d;
 import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dElement;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.OutOfWorldException;
@@ -42,8 +41,6 @@ import java.nio.ByteOrder;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * This is a temporary class to have an idea of how the program works.
@@ -54,93 +51,70 @@ public final class SampleImplementation {
         throw new UnsupportedOperationException();
     }
 
-    private static final Map<String, Supplier<VoxelWorld>> FORMATS = Map.of(
-        "minecraft", MCVoxelWorld::new,
-        "minetest", MTVoxelWorld::new
-    );
-
     public static void main(String[] args)
-            throws IOException, OutOfWorldException, MapWriteException, SAXException, FactoryException,
-            ParserConfigurationException, TransformException {
+        throws IOException, OutOfWorldException, MapWriteException, SAXException, FactoryException,
+        ParserConfigurationException, TransformException, ParseException {
         long start = System.currentTimeMillis();
         HttpTrustAllSSL.applyGlobally();
-        if (args.length != 9) {
-            System.out.println("There must be nine arguments : directoryPath, crs, centerX, centerY, extendX, extendY, horizontalScale, verticalScale, format");
-        } else {
-            //Example : "/home/john/.minetest/worlds/map/"
-            String directoryPath = args[0];
 
-            //Example : "EPSG:2154"
-            String crsName = args[1];
-            CoordinateReferenceSystem crs = CRS.decode(crsName);
+        String serialized = System.getenv("MINALAC_PARAMS");
 
-            // Center coordinates (in CRS), example : 600000 6340000
-            // TODO: Center should be in Lon/lat in WGS84
-            float centerX = Float.parseFloat(args[2]);
-            float centerY = Float.parseFloat(args[3]);
-
-            // Extends in voxel, example: 1000 1000, must be >0
-            int extendX = Integer.parseInt(args[4]);
-            int extendY = Integer.parseInt(args[5]);
-
-            // Horizontal scale (horizontal size of voxel in meters), example: 1.0, must be >0
-            float horizontalScale = Float.parseFloat(args[6]);
-
-            // Vertical scale (vertical size of voxel in meters), example: 10.0, must be >0
-            float verticalScale = Float.parseFloat(args[7]);
-
-            // Output format
-            String format = args[8].toLowerCase();
-            if (!FORMATS.containsKey(format))
-                throw new IllegalArgumentException("Unknown format: " + format);
-
-            System.out.println("Creation of the map.");
-
-            Generation generation = new Generation(
-                crs,
-                centerX, centerY,
-                extendX, extendY,
-                horizontalScale, verticalScale
-            );
-
-            Envelope envelope = generation.getEnvelopeForCRS(crs);
-            String bboxURL = "BBOX=" + envelope.getMinX() + "," + envelope.getMinY() + "," + envelope.getMaxX() + "," + envelope.getMaxY();
-
-            // Downloads
-            System.out.println("Downloading height map");
-            HeightMap heightMap = createGroundHeightMap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, extendX, extendY, verticalScale);
-
-            System.out.println("Downloading buildings");
-            WFS2DataProvider provider = new WFS2DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154");
-            Collection<Model> buildingModels = fetchVectorModels(
-                provider.getFeatures(),
-                generation.makeCoordsConverter(crs) // This is supposed to be the layer CRS (actually the same for this demo)
-            );
-
-            System.out.println("World creation");
-            VoxelWorld world = FORMATS.get(format).get();
-            System.out.println("Placing ground");
-            placeVoxelFromHeightMap(heightMap, world);
-
-            System.out.println("Placing buildings");
-            new VectorRenderer(
-                heightMap, buildingModels,
-                world.getFactory().createVoxelType(SemanticType.COBBLE),
-                world.getFactory().createVoxelType(SemanticType.BRICK)
-            ).render();
-
-            System.out.println("Saving");
-            VoxelWorldMetadata metadata = world.getMetadata();
-            metadata.setSpawn(new WorldCoords3d(0, 0, heightMap.get(0, 0) + 1));
-            metadata.setWorldName("Minalac");
-            metadata.setBbox(new WorldBBox3d(-extendX / 2, -extendY / 2, 0, extendX, extendY, 1)); // Z is ignored for now
-            save(new File(directoryPath), world);
-
-            System.out.println("Done");
-
-            // TODO: That's not working. It's an attempt to avoid InterruptExecption thrown by threads started by CRS.decode
-            CRS.cleanupThreadLocals();
+        if (serialized == null) {
+            System.out.println("MINALAC_PARAMS environment variable was not set");
+            System.exit(1);
         }
+        if (args.length != 1) {
+            System.out.println("There must be one CLI argument: directoryPath");
+            System.exit(2);
+        }
+
+        //Example : "/home/john/.minetest/worlds/map/"
+        String directoryPath = args[0];
+
+        ParamsParser parser = new ParamsParser(serialized);
+
+        System.out.println("Creation of the map.");
+
+        Generation generation = parser.createGeneration();
+
+        String layerCrsCode = "EPSG:2154"; //In the future, CRS will probably be provided on the parameters
+        CoordinateReferenceSystem layerCRS = CRS.decode(layerCrsCode);
+        Envelope envelope = generation.getEnvelopeForCRS(layerCRS);
+        String bboxURL = "BBOX=" + envelope.getMinX() + "," + envelope.getMinY() + "," + envelope.getMaxX() + "," + envelope.getMaxY();
+
+        // Downloads
+        System.out.println("Downloading height map");
+        WorldSize2d size = generation.getWorldBBox2d().getSize();
+        HeightMap heightMap = createGroundHeightMap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + layerCrsCode + "&" + bboxURL, size.x(), size.y(), generation.getVerticalScale());
+
+        System.out.println("Downloading buildings");
+        WFS2DataProvider provider = new WFS2DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154");
+        Collection<Model> buildingModels = fetchVectorModels(
+            provider.getFeatures(),
+            generation.makeCoordsConverter(layerCRS)
+        );
+
+        System.out.println("World creation");
+        VoxelWorld world = parser.createVoxelWorld();
+        System.out.println("Placing ground");
+        placeVoxelFromHeightMap(heightMap, world);
+
+        System.out.println("Placing buildings");
+        new VectorRenderer(
+            heightMap, buildingModels,
+            world.getFactory().createVoxelType(SemanticType.COBBLE),
+            world.getFactory().createVoxelType(SemanticType.BRICK)
+        ).render();
+
+        System.out.println("Saving");
+        VoxelWorldMetadata metadata = world.getMetadata();
+        WorldCoords3d c = new WorldCoords3d(0, 0, heightMap.get(0, 0) + 1);
+        metadata.setSpawn(c);
+        metadata.setWorldName("Minalac");
+        save(new File(directoryPath), world);
+
+        System.out.println("Done");
+
         long end = System.currentTimeMillis();
         System.out.println("Execution time: " + (end - start) / 1000 + "s");
     }
@@ -180,7 +154,7 @@ public final class SampleImplementation {
         }
     }
 
-    private static HeightMap createGroundHeightMap(String partialUrl, int width, int height, float verticalScale) throws MalformedURLException {
+    private static HeightMap createGroundHeightMap(String partialUrl, int width, int height, double verticalScale) throws MalformedURLException {
         float[] mntArray;
         byte[] data;
         URL url = new URL(partialUrl + "&WIDTH=" + width + "&HEIGHT=" + height);
