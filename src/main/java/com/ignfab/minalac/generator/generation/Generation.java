@@ -81,7 +81,6 @@ public class Generation {
      * in a given CRS.
      *
      * @param crs Coordinate reference system to get envelope for.
-     *
      * @return Envelope covering generated world in CRS.
      */
     public Envelope getEnvelopeForCRS(CoordinateReferenceSystem crs) throws FactoryException, TransformException {
@@ -118,5 +117,15 @@ public class Generation {
      */
     public CoordsConverter makeCoordsConverter(CoordinateReferenceSystem sourceCrs) throws FactoryException {
         return new CoordsConverter(CRS.findMathTransform(sourceCrs, crs), crsToVoxel);
+    }
+
+    /**
+     * Returns the vertical scale.
+     *
+     * @return the vertical scale
+     */
+    //To be removed when vertical is used by this class. (Renderers will probably contain that value)
+    public double getVerticalScale() {
+        return verticalScale;
     }
 }

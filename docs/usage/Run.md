@@ -3,26 +3,41 @@
 > [!IMPORTANT]
 > Don't forget to configure your [proxy](../Proxy.md) if needed!
 
-<!-- TODO Update options with configuration instead of command line arguments -->
-The generator takes input options to configure the work to do. All the snippet below will use the following options:
+## TL;DR;
+
+Run and compile from repository root:
+
 ```shell
-options="$HOME/.minetest/worlds/minalac EPSG:2154 600000 6340000 1000 1000 1.0 10.0 minetest"
+mvn -DskipTests=true clean package && java -jar target/Generator.jar -p examples/default.yaml $HOME/.minetest/worlds/minalac
 ```
 
-For parameters explanation, refer to comments in [`SampleImplementation`](../../src/main/java/com/ignfab/minalac/generator/SampleImplementation.java) class.
+Run jar only:
 
-The simplest way to run the generator is to run the executable JAR file:
 ```shell
-java -jar Generator.jar $options
+java -jar Generator.jar -p examples/default.yaml $HOME/.minetest/worlds/minalac
 ```
 
 This command assume you already have the `Generator.jar` file in your current working directory. If this is not the case, see instructions below and pick the one that best fits your case.
+
+## Generation parameters
+
+Generation involves too many parameters to be passed on command line. They are passed either by file using `-p`/`--param-file` command line option or using `MINALAC_PARAMS` environment variable.
+
+Refer to [generation parameters documentation](GenerationParameters.md) for further information.
+
+## Command line arguments
+
+`-h` `--help` display command usage.
+`-p path` `--param-file path` read generation parameters from given path. If omitted, parameters are read from `MINALAC_PARAMS` environment variable.
+`outputPath` generation output path (required).
+
+Output path and generation parameters has to be provided.
 
 ## Compile and run
 
 If you have cloned the project repository, you can [build the JAR using Maven](../tools/Maven.md#create-an-executable-jar) and run it:
 ```shell
-mvn -DskipTests=true clean package && java -jar target/Generator.jar $options
+mvn -DskipTests=true clean package && java -jar target/Generator.jar -p examples/default.yaml $HOME/.minetest/worlds/minalac
 ```
 
 ## Download workflow artifact
@@ -34,7 +49,7 @@ If you just want to test the JAR from a different branch (e.g. to validate a PR)
 
 Once you downloaded (and extracted) the artifact, you should have the `Generator.jar` file and will be able to run it:
 ```shell
-java -jar Generator.jar $options
+java -jar Generator.jar -p examples/default.yaml $HOME/.minetest/worlds/minalac
 ```
 
 ## Run using Maven
@@ -44,5 +59,5 @@ If, for some reason, you don't want to build the JAR, you can run the [`exec:jav
 mvn clean compile exec:java \
   -Dexec.cleanupDaemonThreads=false \
   -Dexec.mainClass="com.ignfab.minalac.generator.SampleImplementation" \
-  -Dexec.args="$options"
+  -Dexec.args="-p examples/default.yaml $HOME/.minetest/worlds/minalac"
 ```
