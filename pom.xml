@@ -52,6 +52,12 @@
             <artifactId>slf4j-simple</artifactId>
             <version>2.0.9</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.2.5</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.locationtech.jts/jts-core -->
         <dependency>
             <groupId>org.locationtech.jts</groupId>
@@ -65,13 +71,23 @@
             <version>${geotools.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-epsg-hsql</artifactId>
+            <groupId>org.geotools.xsd</groupId>
+            <artifactId>gt-xsd-wfs</artifactId>
             <version>${geotools.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-referencing</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
+        <!--
+            Important because without it won't be able to identify coordinates system
+            Example : No code "EPSG:4326" from authority "EPSG"
+            https://blog.csdn.net/jfqqqqq/article/details/124681727
+        -->
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-epsg-hsql</artifactId>
             <version>${geotools.version}</version>
         </dependency>
     </dependencies>
