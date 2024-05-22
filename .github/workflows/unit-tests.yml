@@ -1,0 +1,16 @@
+name: Unit-Tests
+run-name: ${{ github.actor }} is testing ${{ github.repository }}
+on:
+  push:
+    paths:
+      - src/**
+      - pom.xml
+jobs:
+  Unit-Tests:
+    name: unit-tests
+    runs-on: ubuntu-latest
+    container:
+      image: maven
+    steps:
+      - uses: actions/checkout@v4
+      - run: mvn test
