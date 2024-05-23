@@ -2,9 +2,9 @@ package com.ignfab.minalac.generator.utils.world2d.chunk;
 
 import java.lang.reflect.Field;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TestArrayChunk2d {
     private int[] getData(ArrayChunk2d chunk) throws NoSuchFieldException, IllegalAccessException {
@@ -83,15 +83,10 @@ public class TestArrayChunk2d {
         assertEquals(9, getData(chunk)[4]);
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testSetOut() {
+    @Test
+    public void testOut() {
         ArrayChunk2d chunk = new ArrayChunk2d(0, 0, 3, 2, 0);
-        chunk.set(25, 25, 0);
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testGetOut() {
-        ArrayChunk2d chunk = new ArrayChunk2d(0, 0, 3, 2, 0);
-        chunk.get(25, 25);
+        assertThrows(IndexOutOfBoundsException.class, () -> chunk.set(25, 25, 0));
+        assertThrows(IndexOutOfBoundsException.class, () -> chunk.get(25, 25));
     }
 }

@@ -1,9 +1,8 @@
 package com.ignfab.minalac.generator.utils.world2d.iterator;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.ignfab.minalac.generator.utils.world2d.chunk.ArrayChunk2d;
 
@@ -23,15 +22,17 @@ public class TestChunk2DIteratorAll {
         // Check if iterator gives the right value
         while (iterator.hasNext()) {
             Chunk2dElement element = iterator.next();
-            assertEquals(String.format("Wrong chunk value at (x = %d, y = %d)", element.getX(), element.getY()), element.getX() + element.getY() * 3, element.getValue());
+            assertEquals(element.getX() + element.getY() * 3, element.getValue(),
+                String.format("Wrong chunk value at (x = %d, y = %d)", element.getX(), element.getY()));
             done[element.getX() - 1][element.getY() - 2] = true;
             count++;
         }
 
         // Check if the iterator has visited every place exactly once.
-        assertEquals("Unexpected number of iterated element", 12, count);
+        assertEquals(12, count, "Unexpected number of iterated element");
         for (int x = 0; x < 3; x++)
             for (int y = 0; y < 4; y++)
-                assertTrue(String.format("Chunk element at (x = %d, y = %d) skipped !", x + 1, y + 2), done[x][y]);
+                assertTrue(done[x][y],
+                    String.format("Chunk element at (x = %d, y = %d) skipped !", x + 1, y + 2));
     }
 }

@@ -1,9 +1,8 @@
 package com.ignfab.minalac.generator.utils.world2d.iterator;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
@@ -20,16 +19,16 @@ public class TestWorldBBox2dIterator {
         // Check if iterator gives the right values.
         while (iterator.hasNext()) {
             WorldCoords2d coord = iterator.next();
-            assertTrue(String.format("x = %d is out of box", coord.getX()), 1 <= coord.getX() && coord.getX() <= 3);
-            assertTrue(String.format("y = %d is out of box", coord.getY()), 2 <= coord.getY() && coord.getY() <= 5);
+            assertTrue(1 <= coord.getX() && coord.getX() <= 3, String.format("x = %d is out of box", coord.getX()));
+            assertTrue(2 <= coord.getY() && coord.getY() <= 5, String.format("y = %d is out of box", coord.getY()));
             done[coord.getX() - 1][coord.getY() - 2] = true;
             count++;
         }
 
         // Check if the iterator has visited every place exactly once.
-        assertEquals("Unexpected number of iterated element", 12, count);
+        assertEquals(12, count, "Unexpected number of iterated element");
         for (int x = 0; x < 3; x++)
             for (int y = 0; y < 4; y++)
-                assertTrue(String.format("Coordinates (x = %d, y = %d) skipped !", x + 1, y + 2), done[x][y]);
+                assertTrue(done[x][y], String.format("Coordinates (x = %d, y = %d) skipped !", x + 1, y + 2));
     }
 }
