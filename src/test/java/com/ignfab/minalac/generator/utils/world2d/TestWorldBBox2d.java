@@ -1,8 +1,7 @@
 package com.ignfab.minalac.generator.utils.world2d;
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestWorldBBox2d {
     @Test

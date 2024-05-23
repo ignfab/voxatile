@@ -1,11 +1,10 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
-import org.junit.Test;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestMTVoxelWorld {
 
