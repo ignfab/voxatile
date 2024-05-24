@@ -15,7 +15,7 @@ mvn test
 # Execute
 ```
 cd minalac-generator
-mvn package && java -jar ./target/Generator.jar $HOME/.minetest/worlds/minalac EPSG:2154 600000 6340000 1000 1000 1.0 10.0
+mvn package && java -jar ./target/Generator.jar $HOME/.minetest/worlds/minalac EPSG:2154 600000 6340000 1000 1000 1.0 10.0 minetest
 ```
 
 If behind a proxy, don't forget to:

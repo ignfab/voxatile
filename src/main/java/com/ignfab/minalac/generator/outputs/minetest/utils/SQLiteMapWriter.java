@@ -3,31 +3,34 @@ package com.ignfab.minalac.generator.outputs.minetest.utils;
 import com.ignfab.minalac.generator.outputs.minetest.Block;
 import com.ignfab.minalac.generator.world.MapWriteException;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.*;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-public class SqlLiteMapWriter {
+public class SQLiteMapWriter {
     private Connection connection;
     private Serializer serializer;
 
-    public SqlLiteMapWriter(String directoryFullPath) throws MapWriteException {
-        if (!Files.exists(Paths.get(directoryFullPath)))
+    public SQLiteMapWriter(File directory) throws MapWriteException {
+        if (!directory.exists() || !directory.isDirectory())
             throw new MapWriteException("The directory can not be accessed");
-        createAndConnectToFileDB(directoryFullPath);
+        createAndConnectToFileDB(new File(directory, "map.sqlite"));
         this.serializer = new Serializer();
     }
 
-    private void createAndConnectToFileDB(String directoryFullPath) throws MapWriteException {
+    private void createAndConnectToFileDB(File database) throws MapWriteException {
         try {
-            String pathDBFile = "jdbc:sqlite:" + directoryFullPath + "map.sqlite";
+            String pathDBFile = "jdbc:sqlite:" + database.getAbsolutePath();
             connection = DriverManager.getConnection(pathDBFile);
             Statement statement = connection.createStatement();
             statement.execute("PRAGMA synchronous=OFF");
             statement.execute("CREATE TABLE `blocks` (`pos` INT NOT NULL PRIMARY KEY,`data` BLOB)");
         } catch (SQLException e) {
-            throw new MapWriteException(e.getMessage());
+            throw new MapWriteException(e);
         }
     }
 
@@ -38,7 +41,7 @@ public class SqlLiteMapWriter {
             statement.setBytes(2, this.serializer.serialize(block));
             statement.execute();
         } catch (SQLException | IOException e) {
-            throw new MapWriteException("Failed to insert blocks into map : " + e.getMessage());
+            throw new MapWriteException("Failed to insert blocks into map", e);
         }
     }
 }
