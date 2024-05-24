@@ -29,7 +29,8 @@ public class ArrayChunk2d implements ReadableChunk2d, WritableChunk2d {
     public ArrayChunk2d(WorldBBox2d bbox, int defaultValue) {
         this.bbox = bbox;
         values = new int[bbox.getSize().getX() * bbox.getSize().getY()];
-        Arrays.fill(values, defaultValue);
+        if (defaultValue != 0)
+            Arrays.fill(values, defaultValue);
     }
 
     /**

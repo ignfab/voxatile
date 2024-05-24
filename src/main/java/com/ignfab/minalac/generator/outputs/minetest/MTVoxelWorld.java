@@ -4,7 +4,8 @@ import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.VoxelTypeFactory;
 import com.ignfab.minalac.generator.world.VoxelWorld;
-import com.ignfab.minalac.generator.outputs.minetest.utils.SqlLiteMapWriter;
+import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
+import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -14,20 +15,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MTVoxelWorld implements VoxelWorld {
-    private VoxelTypeFactory factory;
-    private HashMap<Integer, Block> blocks;
+    private final VoxelTypeFactory factory;
+    private final VoxelWorldMetadata metadata;
+    private final HashMap<Integer, Block> blocks;
     //See MAX_MAP_GENERATION_LIMIT constant on Minetest
     //https://github.com/minetest/minetest/blob/e10d8080ba6e53e0f3c4b20b32304f8bb36e5958/src/constants.h#L70
-    private static final int limitPosition = 31007;
+    private static final int limitPosition = 31_007;
 
     public MTVoxelWorld() {
         this.factory = new MTVoxelTypeFactory(this);
+        metadata = new VoxelWorldMetadata();
         this.blocks = new HashMap<>();
     }
 
     @Override
     public VoxelTypeFactory getFactory() {
         return this.factory;
+    }
+
+    @Override
+    public VoxelWorldMetadata getMetadata() {
+        return metadata;
     }
 
     protected void set(int x, int y, int z, MTVoxelType voxel) throws OutOfWorldException {
@@ -47,39 +55,42 @@ public class MTVoxelWorld implements VoxelWorld {
         this.blocks.put(pos, block);
     }
 
-    public void save(String directoryFullPath) throws MapWriteException {
-        File mapDirectory = new File(directoryFullPath);
-        if (mapDirectory.mkdir()) {
-            //Files containing the necessary information to identify the folder as a map
-            createFile(mapDirectory.getAbsolutePath() + "/world.mt", "enable_damage = true\n" +
-                    "creative_mode = true\n" +
-                    "auth_backend = sqlite3\n" +
-                    "player_backend = sqlite3\n" +
-                    "gameid = minetest");
-            createFile(mapDirectory.getAbsolutePath() + "/map_meta.txt", "mapgen_limit = 31000\n" +
-                    "mg_name = singlenode\n" +
-                    "[end_of_params]");
+    public void save(File destination) throws MapWriteException {
+        createFile(new File(destination, "world.mt"), """
+                world_name = %s
+                enable_damage = true
+                creative_mode = true
+                auth_backend = sqlite3
+                player_backend = sqlite3
+                gameid = minetest""".formatted(metadata.getWorldName()));
+        createFile(new File(destination, "map_meta.txt"), """
+                mapgen_limit = 31000
+                mg_name = singlenode
+                [end_of_params]""");
+        createFile(new File(destination, "worldmods/ign_spawn/init.lua"), """
+                minetest.setting_set("static_spawnpoint", "%d, %d, %d")""".formatted(metadata.getSpawnX(), metadata.getSpawnZ(), metadata.getSpawnY())); // XYZ => XZY
 
-            SqlLiteMapWriter database = new SqlLiteMapWriter(mapDirectory.getAbsolutePath() + "/");
-            for (Map.Entry<Integer, Block> entry : blocks.entrySet()) {
-                database.insertBlock(entry.getKey(), entry.getValue());
-            }
-        } else
-            throw new MapWriteException("Can not generate the map since the folder" + mapDirectory.getAbsolutePath() + " can not be created");
+        SQLiteMapWriter database = new SQLiteMapWriter(destination);
+        for (Map.Entry<Integer, Block> entry : blocks.entrySet()) {
+            database.insertBlock(entry.getKey(), entry.getValue());
+        }
     }
 
-    private void createFile(String path, String content) throws MapWriteException {
-        File file = new File(path);
-        FileWriter fileWriter;
+    private void createFile(File file, String content) throws MapWriteException {
+        file.getParentFile().mkdirs();
         try {
             file.createNewFile();
-            fileWriter = new FileWriter(file);
         } catch (IOException e) {
-            throw new MapWriteException(e.getMessage());
+            throw new MapWriteException(e);
         }
-        PrintWriter printWriter = new PrintWriter(fileWriter);
-        printWriter.println(content);
-        printWriter.close();
+        try (
+            FileWriter fileWriter = new FileWriter(file);
+            PrintWriter printWriter = new PrintWriter(fileWriter)
+        ) {
+            printWriter.println(content);
+        } catch (IOException e) {
+            throw new MapWriteException(e);
+        }
     }
 
     //See position hashing algorithm on world format documentation

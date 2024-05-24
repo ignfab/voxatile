@@ -1,5 +1,5 @@
 package com.ignfab.minalac.generator.world;
 
 public enum SemanticType {
-    Grass, Stone, Air, Water, Dirt, Cobble, Brick
+    GRASS, STONE, AIR, WATER, DIRT, COBBLE, BRICK
 }

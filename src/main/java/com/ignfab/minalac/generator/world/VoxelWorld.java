@@ -1,7 +1,11 @@
 package com.ignfab.minalac.generator.world;
 
+import java.io.File;
+
 public interface VoxelWorld {
     VoxelTypeFactory getFactory();
 
-    void save(String directoryFullPath) throws MapWriteException;
+    VoxelWorldMetadata getMetadata();
+
+    void save(File destination) throws MapWriteException;
 }
