@@ -16,17 +16,17 @@ public class MTVoxelTypeFactory implements VoxelTypeFactory {
     public VoxelType createVoxelType(SemanticType semanticType) {
         //Node string can be found on https://wiki.minetest.net/Games/Minetest_Game/Nodes
         switch (semanticType) {
-            case Grass:
+            case GRASS:
                 return new MTSimpleVoxelType(this.world, "default:dirt_with_grass");
-            case Stone:
+            case STONE:
                 return new MTSimpleVoxelType(this.world, "default:stone");
-            case Dirt:
+            case DIRT:
                 return new MTSimpleVoxelType(this.world, "default:dirt");
-            case Cobble:
+            case COBBLE:
                 return new MTSimpleVoxelType(this.world, "default:cobble");
-            case Brick:
+            case BRICK:
                 return new MTSimpleVoxelType(this.world, "default:stonebrick");
-            case Water:
+            case WATER:
                 return new MTSimpleVoxelType(this.world, "default:water_source");
             default:
                 return new MTSimpleVoxelType(this.world, "air");
