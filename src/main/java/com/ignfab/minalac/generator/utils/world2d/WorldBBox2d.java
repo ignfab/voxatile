@@ -86,6 +86,24 @@ public class WorldBBox2d {
     }
 
     /**
+     * Returns the bounding box size along the x-axis.
+     *
+     * @return the bounding box size along the x-axis.
+     */
+    public int getSizeX() {
+        return size.getX();
+    }
+
+    /**
+     * Returns the bounding box size along the y-axis.
+     *
+     * @return the bounding box size along the y-axis.
+     */
+    public int getSizeY() {
+        return size.getY();
+    }
+
+    /**
      * Returns the minimum point.
      *
      * @return the {@code WorldCoords2d} of the minimum point.
@@ -95,12 +113,48 @@ public class WorldBBox2d {
     }
 
     /**
+     * Returns the minimum point x-coordinate.
+     *
+     * @return the x-coordinate of the minimum point.
+     */
+    public int getMinX() {
+        return min.getX();
+    }
+
+    /**
+     * Returns the minimum point y-coordinate.
+     *
+     * @return the y-coordinate of the minimum point.
+     */
+    public int getMinY() {
+        return min.getY();
+    }
+
+    /**
      * Returns the maximum point.
      *
      * @return the {@code WorldCoords2d} of the maximum point.
      */
     public WorldCoords2d getMax() {
         return max;
+    }
+
+    /**
+     * Returns the maximum point x-coordinate.
+     *
+     * @return the x-coordinate of the maximum point.
+     */
+    public int getMaxX() {
+        return max.getX();
+    }
+
+    /**
+     * Returns the maximum point y-coordinate.
+     *
+     * @return the y-coordinate of the maximum point.
+     */
+    public int getMaxY() {
+        return max.getY();
     }
 
     /**
