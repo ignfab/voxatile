@@ -12,17 +12,15 @@ import org.xml.sax.SAXException;
 
 import org.geotools.referencing.CRS;
 import org.geotools.api.feature.simple.SimpleFeature;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.api.referencing.NoSuchAuthorityCodeException;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureCollection;
 
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.util.AffineTransformation;
 
 import com.ignfab.minalac.generator.world.*;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
@@ -52,7 +50,8 @@ public class SampleImplementation {
             String directoryPath = args[0];
 
             //Example : "EPSG:2154"
-            String crs = args[1];
+            String crsName = args[1];
+            CoordinateReferenceSystem crs = CRS.decode(crsName);
 
             // Center coordinates (in CRS), example : 600000 6340000
             // TODO: Center should be in Lon/lat in WGS84
@@ -71,46 +70,20 @@ public class SampleImplementation {
 
             System.out.println("Creation of the map.");
 
-            // For now:
-            // - We use same CRS for all layers
-            // - Center is already in this CRS
+            Generation generation = new Generation(
+                crs,
+                centerX, centerY,
+                extendX, extendY,
+                horizontalScale, verticalScale
+            );
 
-            // Affine tranformation:
-            // - Translation : center to 0,0
-            // - Rotation : not yet implemented
-            // - Scale : horizontal scale
-
-            AffineTransformation crsToVoxel = new AffineTransformation();
-            crsToVoxel.translate(-centerX, -centerY);
-            // crsToVoxel.rotate(rotate * pi / 180.0, 0.0, 0.0);
-            crsToVoxel.scale(1.0 / horizontalScale, 1.0 / horizontalScale);
-
-            AffineTransformation voxelToCrs = new AffineTransformation();
-            voxelToCrs.scale(horizontalScale, horizontalScale);
-            // VoxelToCrs.rotate(- rotate * pi / 180.0, 0.0, 0.0);
-            voxelToCrs.translate(centerX, centerY);
-
-            // Map BBox
-            Coordinate corners[] = {
-                new Coordinate((float) extendX / 2, (float) extendY / 2),
-                new Coordinate((float) extendX / 2, - (float) extendY / 2),
-                new Coordinate(- (float) extendX / 2, (float) extendY / 2),
-                new Coordinate(- (float) extendX / 2, - (float) extendY / 2),
-                new Coordinate((float) extendX / 2, (float) extendY / 2)
-            };
-
-            Geometry box = new GeometryFactory().createLinearRing(corners);
-            Envelope envelope = voxelToCrs.transform(box).getEnvelopeInternal();
-
+            Envelope envelope = generation.getEnvelopeForCRS(crs);
             String bboxURL = "BBOX=" + envelope.getMinX() + "," + envelope.getMinY() + "," + envelope.getMaxX() + "," + envelope.getMaxY();
 
             // Creation of heightmap
 
             System.out.println("Downloading height map");
-            HeightMap heightMap = createGroundHeightMap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crs + "&" + bboxURL, extendX, extendY, verticalScale);
-
-            // TODO: A lot of above code should end up in Generation class
-            Generation generation = new Generation(CRS.decode(crs), crsToVoxel); // This is supposed to be the target CRS
+            HeightMap heightMap = createGroundHeightMap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, extendX, extendY, verticalScale);
 
             System.out.println("World creation");
             VoxelWorld world = new MTVoxelWorld();
@@ -121,7 +94,7 @@ public class SampleImplementation {
             System.out.println("Add vector layer");
             WFS2DataProvider provider = new WFS2DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL +",urn:ogc:def:crs:EPSG::2154");
             placeVectorFeatures(provider.getFeatures(),
-                generation.makeCoordsConverter(CRS.decode(crs)), // This is supposed to be the layer CRS (actually the same for this demo)
+                generation.makeCoordsConverter(crs), // This is supposed to be the layer CRS (actually the same for this demo)
                 world, heightMap);
 
             System.out.println("Saving");
