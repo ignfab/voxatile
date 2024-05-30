@@ -8,6 +8,8 @@ import java.nio.ByteOrder;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.ignfab.minalac.generator.generation.temp.GroundRenderer;
+import com.ignfab.minalac.generator.generation.temp.HeightMap;
 import org.xml.sax.SAXException;
 
 import org.geotools.referencing.CRS;
@@ -27,7 +29,6 @@ import org.locationtech.jts.geom.util.AffineTransformation;
 import com.ignfab.minalac.generator.world.*;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.utils.world2d.*;
-import com.ignfab.minalac.generator.utils.world2d.chunk.*;
 import com.ignfab.minalac.generator.utils.world2d.iterator.*;
 
 import com.ignfab.minalac.generator.generation.CoordsConverter;
@@ -115,7 +116,9 @@ public class SampleImplementation {
             System.out.println("World creation");
             VoxelWorld world = new MTVoxelWorld();
             System.out.println("Placing ground");
-            placeVoxelFromHeightMap(heightMap, world);
+            //placeVoxelFromHeightMap(heightMap, world);
+            GroundRenderer groundRenderer = new GroundRenderer(world, heightMap);
+            groundRenderer.render();
 
             // Add a vector layer
             System.out.println("Add vector layer");
@@ -166,25 +169,6 @@ public class SampleImplementation {
                                 break;
                         }
                 }
-            }
-        }
-    }
-
-    private static void placeVoxelFromHeightMap(HeightMap map, VoxelWorld world) throws OutOfWorldException {
-        VoxelType grassVT = world.getFactory().createVoxelType(SemanticType.Grass);
-        VoxelType stoneVT = world.getFactory().createVoxelType(SemanticType.Stone);
-        VoxelType dirtVT = world.getFactory().createVoxelType(SemanticType.Dirt);
-
-        for (Chunk2dElement element : map) {
-            int x = element.getX();
-            int y = element.getY();
-            int z = element.getValue();
-            grassVT.place(x, y, z);
-            dirtVT.place(x, y, (z - 1));
-            dirtVT.place(x, y, (z - 2));
-
-            for (int z_stone = z - 3; z_stone > z - (3 + 10); z_stone--) {
-                stoneVT.place(x, y, z_stone);
             }
         }
     }
@@ -256,26 +240,6 @@ public class SampleImplementation {
             PrintWriter printWriter = new PrintWriter(fileWriter);
             printWriter.println("minetest.setting_set(\"static_spawnpoint\", \"" + x + ", " + y + ", " + z + "\")");
             printWriter.close();
-        }
-    }
-
-    //This class will probably be added on an upcoming pull-request (since it doesn't belong to the package utils.world2d.chunk)
-    private static class HeightMap extends ArrayChunk2d implements IterableChunk2d {
-        public HeightMap(int originX, int originY, int sizeX, int sizeY, int defaultValue) {
-            super(originX, originY, sizeX, sizeY, defaultValue);
-        }
-
-        public HeightMap(WorldBBox2d box, int defaultValue) {
-            super(box, defaultValue);
-        }
-
-        public HeightMap(WorldCoords2d coords, WorldSize2d size, int defaultValue) {
-            super(coords, size, defaultValue);
-        }
-
-        @Override
-        public Chunk2dIterator iterator() {
-            return new Chunk2dIteratorAll(this);
         }
     }
 }
