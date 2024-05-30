@@ -1,14 +1,11 @@
 package com.ignfab.minalac.generator.models;
 
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.awt.Graphics2D;
 
-import com.ignfab.minalac.generator.models.BufferedImageChunk;
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestBufferedImageChunk {
 
@@ -34,13 +31,13 @@ public class TestBufferedImageChunk {
 
         // Set a different value on each chunk cell
         v = 0;
-        for (int y = bbox.getMin().getY(); y <= bbox.getMax().getY(); y++)
-            for (int x = bbox.getMin().getX(); x <= bbox.getMax().getX(); x++)
+        for (int y = bbox.getMin().y(); y <= bbox.getMax().y(); y++)
+            for (int x = bbox.getMin().x(); x <= bbox.getMax().x(); x++)
                 chunk.set(x, y, v++);
 
         v = 0;
-        for (int y = bbox.getMin().getY(); y <= bbox.getMax().getY(); y++)
-            for (int x = bbox.getMin().getX(); x <= bbox.getMax().getX(); x++)
+        for (int y = bbox.getMin().y(); y <= bbox.getMax().y(); y++)
+            for (int x = bbox.getMin().x(); x <= bbox.getMax().x(); x++)
                 assertEquals(chunk.get(x, y), v++, "("+x+", "+y+")");
     }
 

@@ -1,30 +1,22 @@
 package com.ignfab.minalac.generator.utils.world2d;
 
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestWorldBBox2d {
     @Test
     public void testConstructor() {
-        // Instanciating a new voxel box
-        new WorldBBox2d(0, 0, 10, 10);
+        // Instantiating a new voxel box
+        WorldBBox2d box = assertDoesNotThrow(() -> new WorldBBox2d(0, 0, 10, 10));
+        assertEquals(new WorldCoords2d(0, 0), box.getMin());
+        assertEquals(new WorldCoords2d(9, 9), box.getMax());
+        assertEquals(new WorldSize2d(10, 10), box.getSize());
 
-        // Instanciating a 0 sized voxel box
-        try {
-            new WorldBBox2d(0, 0, 0, 0);
-            fail("IllegalArgumentException expected!");
-        } catch (IllegalArgumentException e) {
-        } catch (Exception e) {
-            fail("Wrong exception thrown");
-        }
-
-        try {
-            new WorldBBox2d(0, 0, -1, -1);
-            fail("IllegalArgumentException expected!");
-        } catch (IllegalArgumentException e) {
-        } catch (Exception e) {
-            fail("Wrong exception thrown");
-        }
+        // Instantiating a 0 sized voxel box
+        assertThrows(IllegalArgumentException.class, () -> new WorldBBox2d(0, 0, 0, 0));
+        assertThrows(IllegalArgumentException.class, () -> new WorldBBox2d(0, 0, -1, -1));
     }
 
     @Test
@@ -67,5 +59,12 @@ public class TestWorldBBox2d {
 
         //Point outside
         assertFalse(box.contains(new WorldCoords2d(20, 10)));
+    }
+
+    @Test
+    public void testTo3d() {
+        WorldBBox2d box = new WorldBBox2d(-1, -2, 4, 5);
+
+        assertEquals(new WorldBBox3d(-1, -2, -3, 4, 5, 6), box.to3d(-3, 6), "BBOX to 3d");
     }
 }

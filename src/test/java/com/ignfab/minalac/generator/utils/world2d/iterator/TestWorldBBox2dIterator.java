@@ -1,11 +1,10 @@
 package com.ignfab.minalac.generator.utils.world2d.iterator;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestWorldBBox2dIterator {
     @Test
@@ -13,15 +12,15 @@ public class TestWorldBBox2dIterator {
         WorldBBox2d bbox = new WorldBBox2d(1, 2, 3, 4);
 
         WorldBBox2dIterator iterator = new WorldBBox2dIterator(bbox);
-        boolean[][] done = {{false, false, false, false}, {false, false, false, false}, {false, false, false, false}};
+        boolean[][] done = new boolean[3][4];
         int count = 0;
 
         // Check if iterator gives the right values.
         while (iterator.hasNext()) {
             WorldCoords2d coord = iterator.next();
-            assertTrue(1 <= coord.getX() && coord.getX() <= 3, String.format("x = %d is out of box", coord.getX()));
-            assertTrue(2 <= coord.getY() && coord.getY() <= 5, String.format("y = %d is out of box", coord.getY()));
-            done[coord.getX() - 1][coord.getY() - 2] = true;
+            assertTrue(1 <= coord.x() && coord.x() <= 3, String.format("x = %d is out of box", coord.x()));
+            assertTrue(2 <= coord.y() && coord.y() <= 5, String.format("y = %d is out of box", coord.y()));
+            done[coord.x() - 1][coord.y() - 2] = true;
             count++;
         }
 
