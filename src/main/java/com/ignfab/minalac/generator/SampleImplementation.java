@@ -16,6 +16,8 @@ import com.ignfab.minalac.generator.utils.world2d.chunk.IterableChunk2d;
 import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dElement;
 import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dIterator;
 import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dIteratorAll;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.SemanticType;
@@ -122,9 +124,9 @@ public class SampleImplementation {
 
             System.out.println("Saving");
             VoxelWorldMetadata metadata = world.getMetadata();
-            metadata.setSpawn(0, 0, remap(heightMap.get(0, 0) + 1, heightMap.getMin(), heightMap.getMax(), 64, 255)); // Tmp for Minecraft
+            metadata.setSpawn(new WorldCoords3d(0, 0, heightMap.get(0, 0) + 1));
             metadata.setWorldName("Minalac");
-            metadata.setBbox(-extendX / 2, -extendY / 2, 0, extendX / 2, extendY / 2, 0); // Z is ignored for now
+            metadata.setBbox(new WorldBBox3d(-extendX / 2, -extendY / 2, 0, extendX, extendY, 1)); // Z is ignored for now
             save(new File(directoryPath), world);
 
             System.out.println("Done");
@@ -160,10 +162,10 @@ public class SampleImplementation {
                     if (heightMap.bbox().contains(c))
                         switch(element.getValue()) {
                             case GeometryModel.INSIDE:
-                                insideVT.place(c.getX(), c.getY(), heightMap.get(c) + 1);
+                                insideVT.place(c.x(), c.y(), heightMap.get(c) + 1);
                                 break;
                             case GeometryModel.BORDER:
-                                wallVT.place(c.getX(), c.getY(), heightMap.get(c) + 1);
+                                wallVT.place(c.x(), c.y(), heightMap.get(c) + 1);
                                 break;
                         }
                 }
@@ -179,7 +181,7 @@ public class SampleImplementation {
         for (Chunk2dElement element : map) {
             int x = element.getX();
             int y = element.getY();
-            int z = remap(element.getValue(), map.getMin(), map.getMax(), 64, 255); // Temporary workaround to generate Minecraft worlds
+            int z = element.getValue();
             grassVT.place(x, y, z);
             dirtVT.place(x, y, (z - 1));
             dirtVT.place(x, y, (z - 2));
@@ -248,41 +250,30 @@ public class SampleImplementation {
         return directoryToBeDeleted.delete();
     }
 
-    private static int remap(int value, int fromMin, int fromMax, int toMin, int toMax) {
-        return (int) ((value - fromMin) / (double) (fromMax - fromMin) * (toMax - toMin) + toMin);
-    }
-
     //This class will probably be added on an upcoming pull-request (since it doesn't belong to the package utils.world2d.chunk)
     private static class HeightMap extends ArrayChunk2d implements IterableChunk2d {
-        private int min, max;
+        protected int minZ, maxZ;
 
         public HeightMap(int originX, int originY, int sizeX, int sizeY, int defaultValue) {
             super(originX, originY, sizeX, sizeY, defaultValue);
-            min = max = defaultValue;
+            minZ = maxZ = defaultValue;
         }
 
         public HeightMap(WorldBBox2d box, int defaultValue) {
             super(box, defaultValue);
-            min = max = defaultValue;
+            minZ = maxZ = defaultValue;
         }
 
         public HeightMap(WorldCoords2d coords, WorldSize2d size, int defaultValue) {
             super(coords, size, defaultValue);
-            min = max = defaultValue;
+            minZ = maxZ = defaultValue;
         }
 
         @Override
         public void set(int x, int y, int value) {
             super.set(x, y, value);
-            min = Math.min(min, value);
-            max = Math.max(max, value);
-        }
-
-        @Override
-        public void set(WorldCoords2d coords, int value) {
-            super.set(coords, value);
-            min = Math.min(min, value);
-            max = Math.max(max, value);
+            minZ = Math.min(minZ, value);
+            maxZ = Math.max(maxZ, value);
         }
 
         @Override
@@ -290,12 +281,16 @@ public class SampleImplementation {
             return new Chunk2dIteratorAll(this);
         }
 
-        public int getMin() {
-            return min;
+        public WorldBBox3d bbox3d() {
+            return bbox.to3d(minZ, maxZ - minZ + 1);
         }
 
-        public int getMax() {
-            return max;
+        public int getMinZ() {
+            return minZ;
+        }
+
+        public int getMaxZ() {
+            return maxZ;
         }
     }
 }

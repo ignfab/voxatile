@@ -1,17 +1,18 @@
 package com.ignfab.minalac.generator.utils.world2d;
 
 import com.ignfab.minalac.generator.utils.world2d.iterator.WorldBBox2dIterator;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
- * The {@code WorldBBox2d} class represents a two-dimensional bounding box that surrounds an area on the surface of (xy-plane) of the voxel world.
+ * The {@code WorldBBox2d} class represents a two-dimensional bounding box that surrounds an area on the surface (xy-plane) of the voxel world.
  * This BBOX is defined by a minimum point and a maximum point. These points are included in the bounding box.
  * An explanation of the voxel world coordinates system can be found on {@link com.ignfab.minalac.generator.utils.world2d.WorldCoords2d}.
  *
  * @see WorldCoords2d
  */
-public class WorldBBox2d {
-    private WorldCoords2d min, max;
-    private WorldSize2d size;
+public class WorldBBox2d implements Iterable<WorldCoords2d> {
+    private final WorldCoords2d min, max;
+    private final WorldSize2d size;
 
     /**
      * Constructs a new {@code WorldBBox2d} by providing a starting position and the desired size of the bounding box.
@@ -23,8 +24,8 @@ public class WorldBBox2d {
         this.size = size;
         min = origin;
         max = new WorldCoords2d(
-                min.getX() + size.getX() - 1,
-                min.getY() + size.getY() - 1
+                min.x() + size.x() - 1,
+                min.y() + size.y() - 1
         );
     }
 
@@ -48,11 +49,21 @@ public class WorldBBox2d {
      * @throws IllegalArgumentException if any coordinates of the maximum point is less than its counterpart in the minimum point.
      */
     public WorldBBox2d(WorldCoords2d min, WorldCoords2d max) {
-        if (min.getX() > max.getX() || min.getY() > max.getY())
+        if (min.x() > max.x() || min.y() > max.y())
             throw new IllegalArgumentException("Minimum point must be less than or equal to maximum point");
         this.min = min;
         this.max = max;
-        size = new WorldSize2d(max.getX() - min.getX() + 1, max.getY() - min.getY() + 1);
+        size = new WorldSize2d(max.x() - min.x() + 1, max.y() - min.y() + 1);
+    }
+
+    /**
+     * Create a new {@link WorldBBox2d} from an existing {@link WorldBBox3d}, dropping its components along the z-axis.
+     * The region represented by this bbox will be flattened.
+     *
+     * @param bbox an existing {@link WorldBBox3d} object
+     */
+    public WorldBBox2d(WorldBBox3d bbox) {
+        this(bbox.getMin().to2d(), bbox.getSize().to2d());
     }
 
     /**
@@ -63,7 +74,7 @@ public class WorldBBox2d {
      * @return {@code true} if coordinates are in the bounding box.
      */
     public boolean contains(int x, int y) {
-        return min.getX() <= x && x <= max.getX() && min.getY() <= y && y <= max.getY();
+        return min.x() <= x && x <= max.x() && min.y() <= y && y <= max.y();
     }
 
     /**
@@ -73,7 +84,7 @@ public class WorldBBox2d {
      * @return {@code true} if coordinates are in the bounding box.
      */
     public boolean contains(WorldCoords2d coords) {
-        return contains(coords.getX(), coords.getY());
+        return contains(coords.x(), coords.y());
     }
 
     /**
@@ -91,7 +102,7 @@ public class WorldBBox2d {
      * @return the bounding box size along the x-axis.
      */
     public int getSizeX() {
-        return size.getX();
+        return size.x();
     }
 
     /**
@@ -100,7 +111,7 @@ public class WorldBBox2d {
      * @return the bounding box size along the y-axis.
      */
     public int getSizeY() {
-        return size.getY();
+        return size.y();
     }
 
     /**
@@ -118,7 +129,7 @@ public class WorldBBox2d {
      * @return the x-coordinate of the minimum point.
      */
     public int getMinX() {
-        return min.getX();
+        return min.x();
     }
 
     /**
@@ -127,7 +138,7 @@ public class WorldBBox2d {
      * @return the y-coordinate of the minimum point.
      */
     public int getMinY() {
-        return min.getY();
+        return min.y();
     }
 
     /**
@@ -145,7 +156,7 @@ public class WorldBBox2d {
      * @return the x-coordinate of the maximum point.
      */
     public int getMaxX() {
-        return max.getX();
+        return max.x();
     }
 
     /**
@@ -154,7 +165,7 @@ public class WorldBBox2d {
      * @return the y-coordinate of the maximum point.
      */
     public int getMaxY() {
-        return max.getY();
+        return max.y();
     }
 
     /**
@@ -162,7 +173,44 @@ public class WorldBBox2d {
      *
      * @return a {@code WorldBBox2dIterator} to iterate over all the points contained in the bounding box.
      */
+    @Override
     public WorldBBox2dIterator iterator() {
         return new WorldBBox2dIterator(this);
+    }
+
+    /**
+     * Convert this {@link WorldBBox2d} to {@link WorldBBox3d}, with additional components along the z-axis.
+     *
+     * @param originZ the z-coordinate of the starting position
+     * @param sizeZ the size along the z-axis
+     * @return a new {@link WorldBBox3d} with the current components along the x- and y-axes
+     */
+    public WorldBBox3d to3d(int originZ, int sizeZ) {
+        return new WorldBBox3d(this, originZ, sizeZ);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        WorldBBox2d that = (WorldBBox2d) o;
+        return min.equals(that.min) && max.equals(that.max);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = min.hashCode();
+        result = 31 * result + max.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "WorldBBox2d{" +
+            "min=" + min +
+            ", max=" + max +
+            ", size=" + size +
+            '}';
     }
 }

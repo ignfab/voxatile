@@ -28,7 +28,7 @@ public class ArrayChunk2d implements ReadableChunk2d, WritableChunk2d {
      */
     public ArrayChunk2d(WorldBBox2d bbox, int defaultValue) {
         this.bbox = bbox;
-        values = new int[bbox.getSize().getX() * bbox.getSize().getY()];
+        values = new int[bbox.getSize().x() * bbox.getSize().y()];
         if (defaultValue != 0)
             Arrays.fill(values, defaultValue);
     }
@@ -61,7 +61,7 @@ public class ArrayChunk2d implements ReadableChunk2d, WritableChunk2d {
     private int index(int x, int y) {
         if (!bbox.contains(x, y))
             throw new IndexOutOfBoundsException(String.format("%s: Index out of range at (x=%d, y=%d)", getClass().getSimpleName(), x, y));
-        return (x - bbox.getMin().getX()) * bbox.getSize().getY() + (y - bbox.getMin().getY());
+        return (x - bbox.getMin().x()) * bbox.getSize().y() + (y - bbox.getMin().y());
     }
 
     @Override
@@ -86,7 +86,7 @@ public class ArrayChunk2d implements ReadableChunk2d, WritableChunk2d {
      */
     @Override
     public void set(WorldCoords2d coords, int value) {
-        values[index(coords.getX(), coords.getY())] = value;
+        set(coords.x(), coords.y(), value);
     }
 
     /**
@@ -106,6 +106,6 @@ public class ArrayChunk2d implements ReadableChunk2d, WritableChunk2d {
      */
     @Override
     public int get(WorldCoords2d coords) {
-        return values[index(coords.getX(), coords.getY())];
+        return get(coords.x(), coords.y());
     }
 }

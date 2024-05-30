@@ -1,10 +1,10 @@
 package com.ignfab.minalac.generator.utils.world2d.iterator;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * An iterator over all coordinates in a {@code WorldBBox2d}.
@@ -21,8 +21,8 @@ public class WorldBBox2dIterator implements Iterator<WorldCoords2d> {
      */
     public WorldBBox2dIterator(WorldBBox2d bbox) {
         this.bbox = bbox;
-        x = bbox.getMin().getX();
-        y = bbox.getMin().getY();
+        x = bbox.getMin().x();
+        y = bbox.getMin().y();
 
         if (bbox.getSize().area() > 0)
             hasNext = true;
@@ -30,10 +30,10 @@ public class WorldBBox2dIterator implements Iterator<WorldCoords2d> {
 
     private void moveOn() {
         x++;
-        if (x > bbox.getMax().getX()) {
-            x = bbox.getMin().getX();
+        if (x > bbox.getMax().x()) {
+            x = bbox.getMin().x();
             y++;
-            if (y > bbox.getMax().getY())
+            if (y > bbox.getMax().y())
                 hasNext = false;
         }
     }
