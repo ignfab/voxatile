@@ -68,7 +68,7 @@ public class MTVoxelWorld implements VoxelWorld {
                 mg_name = singlenode
                 [end_of_params]""");
         createFile(new File(destination, "worldmods/ign_spawn/init.lua"), """
-                minetest.setting_set("static_spawnpoint", "%d, %d, %d")""".formatted(metadata.getSpawnX(), metadata.getSpawnZ(), metadata.getSpawnY())); // XYZ => XZY
+                minetest.setting_set("static_spawnpoint", "%d, %d, %d")""".formatted(metadata.getSpawn().x(), metadata.getSpawn().z(), metadata.getSpawn().y())); // XYZ => XZY
 
         SQLiteMapWriter database = new SQLiteMapWriter(destination);
         for (Map.Entry<Integer, Block> entry : blocks.entrySet()) {

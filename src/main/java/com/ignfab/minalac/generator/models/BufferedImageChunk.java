@@ -1,16 +1,16 @@
 package com.ignfab.minalac.generator.models;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.Graphics2D;
-import java.awt.Color;
-import java.util.Arrays;
-
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world2d.chunk.IterableChunk2d;
 import com.ignfab.minalac.generator.utils.world2d.chunk.WritableChunk2d;
 import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dIteratorSkip;
-import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.util.Arrays;
 
 /**
  * A readable and writable 2d chunk of world map based on {@code BufferedImage}.
@@ -35,7 +35,7 @@ public class BufferedImageChunk implements IterableChunk2d, WritableChunk2d {
         // TYPE_BYTE_GRAY color model is the closest to what we need for now (store a few different values).
         // To get rid of this hack, we should have a look on how to develop a specific
         // color model to store integers (I guess this could be lot of useless work).
-        image = new BufferedImage(bbox.getSize().getX(), bbox.getSize().getY(), BufferedImage.TYPE_BYTE_GRAY);
+        image = new BufferedImage(bbox.getSize().x(), bbox.getSize().y(), BufferedImage.TYPE_BYTE_GRAY);
         Arrays.fill(((DataBufferByte) image.getRaster().getDataBuffer()).getData(), (byte)0);
     }
 
@@ -53,7 +53,7 @@ public class BufferedImageChunk implements IterableChunk2d, WritableChunk2d {
     @Override
     public int get(int x, int y) {
         if (!bbox.contains(x, y)) throw new IndexOutOfBoundsException();
-        return image.getRaster().getSample(x - bbox.getMin().getX(), y - bbox.getMin().getY(), 0);
+        return image.getRaster().getSample(x - bbox.getMin().x(), y - bbox.getMin().y(), 0);
     }
 
     /**
@@ -61,7 +61,7 @@ public class BufferedImageChunk implements IterableChunk2d, WritableChunk2d {
      */
     @Override
     public int get(WorldCoords2d coords) {
-        return get(coords.getX(), coords.getY());
+        return get(coords.x(), coords.y());
     }
 
     /**
@@ -70,7 +70,7 @@ public class BufferedImageChunk implements IterableChunk2d, WritableChunk2d {
     @Override
     public void set(int x, int y, int value) {
         if (!bbox.contains(x, y)) throw new IndexOutOfBoundsException();
-        image.getRaster().setSample(x - bbox.getMin().getX(), y - bbox.getMin().getY(), 0, value);
+        image.getRaster().setSample(x - bbox.getMin().x(), y - bbox.getMin().y(), 0, value);
     }
 
     /**
@@ -78,7 +78,7 @@ public class BufferedImageChunk implements IterableChunk2d, WritableChunk2d {
      */
     @Override
     public void set(WorldCoords2d coords, int value) {
-        set(coords.getX(), coords.getY(), value);
+        set(coords.x(), coords.y(), value);
     }
 
     /**

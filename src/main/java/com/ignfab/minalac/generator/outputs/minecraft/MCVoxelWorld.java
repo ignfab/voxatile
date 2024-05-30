@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.outputs.minecraft;
 
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldSize3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.VoxelWorld;
@@ -12,7 +14,6 @@ import net.querz.nbt.tag.DoubleTag;
 import net.querz.nbt.tag.FloatTag;
 import net.querz.nbt.tag.IntTag;
 import net.querz.nbt.tag.ListTag;
-import org.geotools.api.geometry.BoundingBox3D;
 import net.querz.nbt.tag.StringTag;
 
 import java.io.File;
@@ -78,10 +79,11 @@ public class MCVoxelWorld implements VoxelWorld {
             {
                 data.putBoolean("allowCommands", true);
 
-                BoundingBox3D bbox = metadata.getBbox();
-                double minSize = Math.max(bbox.getSpan(0), bbox.getSpan(1));
-                data.putDouble("BorderCenterX", bbox.getMedian(0));
-                data.putDouble("BorderCenterZ", bbox.getMedian(1)); // Y => Z
+                WorldBBox3d bbox = metadata.getBbox();
+                WorldSize3d size = bbox.getSize();
+                double minSize = Math.max(size.x(), size.y());
+                data.putDouble("BorderCenterX", (bbox.getMinX() + bbox.getMaxX()) / 2d);
+                data.putDouble("BorderCenterZ", (bbox.getMinY() + bbox.getMaxY()) / 2d); // Y => Z
                 data.putDouble("BorderDamagePerBlock", 0.2);
                 data.putDouble("BorderSafeZone", 5);
                 data.putDouble("BorderSize", minSize);
@@ -275,9 +277,11 @@ public class MCVoxelWorld implements VoxelWorld {
                     ListTag<DoubleTag> pos = new ListTag<>(DoubleTag.class);
                     {
                         // XYZ => XZY
-                        pos.addDouble(metadata.getSpawnX() + 0.5);
-                        pos.addDouble(metadata.getSpawnZ());
-                        pos.addDouble(metadata.getSpawnY() + 0.5);
+                        pos.addDouble(metadata.getSpawn().x() + 0.5);
+                        // TODO Replace by a better constraint management mechanism
+                        // pos.addDouble(metadata.getSpawn().z());
+                        pos.addDouble(Math.min(Math.max(MIN_WORLD_HEIGHT, metadata.getSpawn().z()), MAX_WORLD_HEIGHT));
+                        pos.addDouble(metadata.getSpawn().y() + 0.5);
                     }
                     player.put("Pos", pos);
 
@@ -339,9 +343,11 @@ public class MCVoxelWorld implements VoxelWorld {
                 data.putLong("SizeOnDisk", 0); // Unused
 
                 // XYZ => XZY
-                data.putInt("SpawnX", metadata.getSpawnX());
-                data.putInt("SpawnY", metadata.getSpawnZ());
-                data.putInt("SpawnZ", metadata.getSpawnY());
+                data.putInt("SpawnX", metadata.getSpawn().x());
+                // TODO Replace by a better constraint management mechanism
+                // data.putInt("SpawnY", metadata.getSpawn().z());
+                data.putInt("SpawnY", Math.min(Math.max(MIN_WORLD_HEIGHT, metadata.getSpawn().z()), MAX_WORLD_HEIGHT));
+                data.putInt("SpawnZ", metadata.getSpawn().y());
 
                 data.putBoolean("thundering", false);
                 data.putInt("thunderTime", 0x7FFFFFFF);
@@ -449,11 +455,13 @@ public class MCVoxelWorld implements VoxelWorld {
 
     // In-Game coords
     /* package-private */ void setBlockState(int blockX, int blockY, int blockZ, CompoundTag block) throws OutOfWorldException {
+        if (shouldClipHeight_RemoveThisMethodWhenABetterSolutionIsImplemented(blockY)) return;
         getOrCreateRegion(blockX, blockY, blockZ).file().setBlockStateAt(blockX, blockY, blockZ, block, false);
     }
 
     // In-Game coords
     /* package-private */ void addBlockEntity(int blockX, int blockY, int blockZ, CompoundTag block) throws OutOfWorldException {
+        if (shouldClipHeight_RemoveThisMethodWhenABetterSolutionIsImplemented(blockY)) return;
         Chunk chunk = getOrCreateRegion(blockX, blockY, blockZ).getOrCreateChunk(MCAUtil.blockToChunk(blockX), MCAUtil.blockToChunk(blockZ));
         ListTag<CompoundTag> blockEntities = chunk.getTileEntities();
         if (blockEntities == null) {
@@ -486,5 +494,18 @@ public class MCVoxelWorld implements VoxelWorld {
                 || blockZ < -WORLD_SIZE || blockZ > WORLD_SIZE
                 || blockY < MIN_WORLD_HEIGHT || blockY > MAX_WORLD_HEIGHT)
             throw new OutOfWorldException();
+    }
+
+    // TODO Replace by a better constraint management mechanism
+    private boolean warnAboutClipping = true;
+    private boolean shouldClipHeight_RemoveThisMethodWhenABetterSolutionIsImplemented(int y) {
+        if (y < MIN_WORLD_HEIGHT || y > MAX_WORLD_HEIGHT) {
+            if (warnAboutClipping) {
+                System.err.println("WARNING! Some blocks have been clipped out of the map because they were beyond height limits!");
+                warnAboutClipping = false;
+            }
+            return true;
+        }
+        return false;
     }
 }

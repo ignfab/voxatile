@@ -47,7 +47,7 @@ public class Chunk2dElement {
      * @return the x-coordinate value.
      */
     public int getX() {
-        return coords.getX();
+        return coords.x();
     }
 
     /**
@@ -56,6 +56,6 @@ public class Chunk2dElement {
      * @return the y-coordinate value.
      */
     public int getY() {
-        return coords.getY();
+        return coords.y();
     }
 }

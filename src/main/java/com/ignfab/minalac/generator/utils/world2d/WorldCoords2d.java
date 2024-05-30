@@ -1,46 +1,32 @@
 package com.ignfab.minalac.generator.utils.world2d;
 
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+
 /**
  * The {@code WorldCoords2d} class represents a component on the surface (xy-plane) in the voxel world.
  * In the voxel world, coordinates are defined by three axes (x, y, z) where the z-axis represents the altitude, and increments correspond to the size of a voxel.
  * This class is read-only.
+ *
+ * @param x The x-component value
+ * @param y The y-component value
  */
-public class WorldCoords2d {
+public record WorldCoords2d(int x, int y) {
     /**
-     * The x-component value.
-     */
-    protected int x;
-    /**
-     * The y-component value.
-     */
-    protected int y;
-
-    /**
-     * Constructs a new {@code WorldCoords2d}.
+     * Create a new {@link WorldCoords2d} from an existing {@link WorldCoords3d}, dropping its {@code z} value.
      *
-     * @param x the x-component value.
-     * @param y the y-component value.
+     * @param coords an existing {@link WorldCoords3d} object
      */
-    public WorldCoords2d(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public WorldCoords2d(WorldCoords3d coords) {
+        this(coords.x(), coords.y());
     }
 
     /**
-     * Returns the x-component value.
+     * Convert this {@link WorldCoords2d} to {@link WorldCoords3d}, with an additional {@code z} value.
      *
-     * @return the x-component value.
+     * @param z the z-component value
+     * @return a new {@link WorldCoords3d} with current (x, y) and given z
      */
-    public int getX() {
-        return x;
-    }
-
-    /**
-     * Returns the y-component value.
-     *
-     * @return the y-component value.
-     */
-    public int getY() {
-        return y;
+    public WorldCoords3d to3d(int z) {
+        return new WorldCoords3d(this, z);
     }
 }

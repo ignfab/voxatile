@@ -1,20 +1,16 @@
 package com.ignfab.minalac.generator.models;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import com.ignfab.minalac.generator.generation.CoordsConverter;
+import com.ignfab.minalac.generator.utils.world2d.chunk.ReadableChunk2d;
 import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.referencing.operation.transform.IdentityTransform;
-
-import org.locationtech.jts.geom.util.AffineTransformation;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
+import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
+import org.locationtech.jts.geom.util.AffineTransformation;
 
-import com.ignfab.minalac.generator.generation.CoordsConverter;
-import com.ignfab.minalac.generator.models.GeometryModel;
-import com.ignfab.minalac.generator.utils.world2d.chunk.ReadableChunk2d;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestGeometryModel {
     private static CoordsConverter converter = new CoordsConverter(IdentityTransform.create(2), new AffineTransformation());
@@ -26,10 +22,10 @@ public class TestGeometryModel {
         GeometryModel model = new GeometryModel(factory.createPoint(new Coordinate(10.0, -20.0)), converter);
         ReadableChunk2d chunk = model.getChunk();
 
-        assertEquals(chunk.bbox().getSize().getX(),  1, "x-size");
-        assertEquals(chunk.bbox().getSize().getY(),  1, "y-size");
-        assertEquals(chunk.bbox().getMin().getX(),  10, "x-min");
-        assertEquals(chunk.bbox().getMin().getY(), -20, "y-min");
+        assertEquals(chunk.bbox().getSize().x(),  1, "x-size");
+        assertEquals(chunk.bbox().getSize().y(),  1, "y-size");
+        assertEquals(chunk.bbox().getMin().x(),  10, "x-min");
+        assertEquals(chunk.bbox().getMin().y(), -20, "y-min");
     }
 
     @Test
@@ -47,10 +43,10 @@ public class TestGeometryModel {
         // B B B B
 
         // Bbox check
-        assertEquals(chunk.bbox().getSize().getX(), 4, "x-size");
-        assertEquals(chunk.bbox().getSize().getY(), 3, "y-size");
-        assertEquals(chunk.bbox().getMin().getX(), -1, "x-min");
-        assertEquals(chunk.bbox().getMin().getY(), -1, "y-min");
+        assertEquals(chunk.bbox().getSize().x(), 4, "x-size");
+        assertEquals(chunk.bbox().getSize().y(), 3, "y-size");
+        assertEquals(chunk.bbox().getMin().x(), -1, "x-min");
+        assertEquals(chunk.bbox().getMin().y(), -1, "y-min");
 
         // Pixel check
         assertEquals(chunk.get(-1, -1), GeometryModel.BORDER,  "(-1, -1)");
@@ -85,10 +81,10 @@ public class TestGeometryModel {
         // 0 0 0 0 1
 
         // Bbox check
-        assertEquals(chunk.bbox().getSize().getX(), 5, "x-size");
-        assertEquals(chunk.bbox().getSize().getY(), 5, "y-size");
-        assertEquals(chunk.bbox().getMin().getX(), -2, "x-min");
-        assertEquals(chunk.bbox().getMin().getY(), -2, "y-min");
+        assertEquals(chunk.bbox().getSize().x(), 5, "x-size");
+        assertEquals(chunk.bbox().getSize().y(), 5, "y-size");
+        assertEquals(chunk.bbox().getMin().x(), -2, "x-min");
+        assertEquals(chunk.bbox().getMin().y(), -2, "y-min");
 
         // Pixel check
         assertEquals(chunk.get(-2, -2), GeometryModel.BORDER,  "(-2,-2)");
@@ -150,10 +146,10 @@ public class TestGeometryModel {
         // 1 1 1 1 1
 
         // Bbox check
-        assertEquals(chunk.bbox().getSize().getX(), 5, "x-size");
-        assertEquals(chunk.bbox().getSize().getY(), 5, "y-size");
-        assertEquals(chunk.bbox().getMin().getX(), -2, "x-min");
-        assertEquals(chunk.bbox().getMin().getY(), -2, "y-min");
+        assertEquals(chunk.bbox().getSize().x(), 5, "x-size");
+        assertEquals(chunk.bbox().getSize().y(), 5, "y-size");
+        assertEquals(chunk.bbox().getMin().x(), -2, "x-min");
+        assertEquals(chunk.bbox().getMin().y(), -2, "y-min");
 
         // Pixel check
         assertEquals(chunk.get(-2, -2), GeometryModel.BORDER,  "(-2,-2)");
