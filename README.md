@@ -1,15 +1,19 @@
 # Compile
-
 ```
 cd minalac-generator
 mvn clean package
 ```
 
 # Test
-
 ```
 cd minalac-generator
 mvn test
+```
+
+# Validate code-style
+```
+cd minalac-generator
+mvn verify
 ```
 
 # Execute
