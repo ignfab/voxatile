@@ -1,10 +1,12 @@
 name: Unit-Tests
-run-name: ${{ github.actor }} is testing ${{ github.repository }}
+run-name: ${{ github.actor }} is testing ${{ github.repository }}#${{ github.ref_name }}
 on:
   push:
     paths:
       - src/**
       - pom.xml
+      - .github/workflows/unit-tests.yml
+
 jobs:
   Unit-Tests:
     name: unit-tests
