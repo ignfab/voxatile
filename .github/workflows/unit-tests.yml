@@ -11,8 +11,14 @@ jobs:
   Unit-Tests:
     name: unit-tests
     runs-on: ubuntu-latest
-    container:
-      image: maven
     steps:
-      - uses: actions/checkout@v4
-      - run: mvn test
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Java & Maven
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: maven
+      - name: Test with Maven
+        run: mvn --batch-mode --no-transfer-progress --update-snapshots test
