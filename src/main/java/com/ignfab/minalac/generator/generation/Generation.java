@@ -17,21 +17,21 @@ import org.locationtech.jts.geom.util.AffineTransformation;
 
 /**
  * Generation context class.
- *
  * Contains stuff about ongoing generation and its context.
  */
 public class Generation {
     // Target coordinate reference system (CRS used for voxel world rendering)
-    private CoordinateReferenceSystem crs;
+    private final CoordinateReferenceSystem crs;
 
     // Vertical size of voxel in target CRS units
-    private double verticalScale;
+    private final double verticalScale;
 
     // Transformations from and to target CRS
-    private AffineTransformation crsToVoxel, voxelToCrs;
+    private final AffineTransformation crsToVoxel;
+    private final AffineTransformation voxelToCrs;
 
     // TODO: use a 3d bbox when its implemented:
-    private WorldBBox2d worldBBox;
+    private final WorldBBox2d worldBBox;
 
     /**
      * Constructs a new generation context.
@@ -101,7 +101,7 @@ public class Generation {
     }
 
     /**
-     * Returns World 2d box in voxels
+     * Returns World 2d box in voxels.
      *
      * @return a WorldBBox2d representing horizontal world size
      */

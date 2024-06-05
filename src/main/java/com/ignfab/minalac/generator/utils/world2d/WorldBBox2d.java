@@ -11,7 +11,8 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
  * @see WorldCoords2d
  */
 public class WorldBBox2d implements Iterable<WorldCoords2d> {
-    private final WorldCoords2d min, max;
+    private final WorldCoords2d min;
+    private final WorldCoords2d max;
     private final WorldSize2d size;
 
     /**
@@ -207,10 +208,6 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
 
     @Override
     public String toString() {
-        return "WorldBBox2d{" +
-            "min=" + min +
-            ", max=" + max +
-            ", size=" + size +
-            '}';
+        return "WorldBBox2d{min=%s, max=%s, size=%s}".formatted(min, max, size);
     }
 }

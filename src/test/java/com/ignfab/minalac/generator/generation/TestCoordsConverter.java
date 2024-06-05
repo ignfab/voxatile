@@ -1,25 +1,21 @@
 package com.ignfab.minalac.generator.generation;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.geotools.api.referencing.NoSuchAuthorityCodeException;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.operation.MathTransform;
 import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.operation.transform.IdentityTransform;
-
-import org.locationtech.jts.geom.util.AffineTransformation;
+import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.util.AffineTransformation;
 
-import com.ignfab.minalac.generator.generation.CoordsConverter;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestCoordsConverter {
 
-    private static GeometryFactory factory = new GeometryFactory();
+    private static final GeometryFactory FACTORY = new GeometryFactory();
 
     // Tests right usage of affine transformation
     @Test
@@ -28,28 +24,28 @@ public class TestCoordsConverter {
 
         // Verify identity transformation
         result = new CoordsConverter(IdentityTransform.create(2), new AffineTransformation())
-            .convert(factory.createPoint(new Coordinate(1.0, -2.0)));
+            .convert(FACTORY.createPoint(new Coordinate(1.0, -2.0)));
 
         assertEquals(result.getCoordinate().getX(),  1.0, 0.0001);
         assertEquals(result.getCoordinate().getY(), -2.0, 0.0001);
 
         // Verify 180° rotation transformation
         result = new CoordsConverter(IdentityTransform.create(2), AffineTransformation.rotationInstance(Math.PI))
-            .convert(factory.createPoint(new Coordinate(1.0, -2.0)));
+            .convert(FACTORY.createPoint(new Coordinate(1.0, -2.0)));
 
         assertEquals(result.getCoordinate().getX(), -1.0, 0.0001);
         assertEquals(result.getCoordinate().getY(),  2.0, 0.0001);
 
         // Verify 90° rotation transformation
         result = new CoordsConverter(IdentityTransform.create(2), AffineTransformation.rotationInstance(Math.PI / 2))
-            .convert(factory.createPoint(new Coordinate(1.0, -2.0)));
+            .convert(FACTORY.createPoint(new Coordinate(1.0, -2.0)));
 
         assertEquals(result.getCoordinate().getX(), 2.0, 0.0001);
         assertEquals(result.getCoordinate().getY(), 1.0, 0.0001);
 
         // Verify translation transformation
         result = new CoordsConverter(IdentityTransform.create(2), AffineTransformation.translationInstance(-2.0, 1.0))
-            .convert(factory.createPoint(new Coordinate(1.0, -2.0)));
+            .convert(FACTORY.createPoint(new Coordinate(1.0, -2.0)));
 
         assertEquals(result.getCoordinate().getX(), -1.0, 0.0001);
         assertEquals(result.getCoordinate().getY(), -1.0, 0.0001);
@@ -63,7 +59,7 @@ public class TestCoordsConverter {
         Coordinate[] coords = {new Coordinate(-2.0, -2.0), new Coordinate(-1.0, 2.0), new Coordinate(2.0, 0.0)};
 
         result = new CoordsConverter(IdentityTransform.create(2), AffineTransformation.rotationInstance(Math.PI / 2))
-            .convert(factory.createLineString(coords));
+            .convert(FACTORY.createLineString(coords));
 
         coords = result.getCoordinates();
 
@@ -78,28 +74,28 @@ public class TestCoordsConverter {
 
     // Tests projection works as expected, combined or not with affine transformations
     @Test
-    public void testProjection() throws TransformException, NoSuchAuthorityCodeException, FactoryException {
+    public void testProjection() throws TransformException, FactoryException {
         Geometry result;
 
         // Check simple geographic conversion from WSG 84 to LAMBERT 93
         // IGN leveling mark https://geodesie.ign.fr/fiches/pdf/P.C.K3L3-20b_534424.pdf
         MathTransform crsTransform = CRS.findMathTransform(CRS.decode("EPSG:4326"), CRS.decode("EPSG:2154"));
         result = new CoordsConverter(crsTransform, new AffineTransformation())
-            .convert(factory.createPoint(new Coordinate(48.8452222, 2.4247222)));
+            .convert(FACTORY.createPoint(new Coordinate(48.8452222, 2.4247222)));
 
         assertEquals(result.getCoordinate().getX(),  657780.0, 2);
         assertEquals(result.getCoordinate().getY(), 6860730.0, 2);
 
         // Combine it with a translation
         result = new CoordsConverter(crsTransform, AffineTransformation.translationInstance(-657780.0, -6860730.0))
-            .convert(factory.createPoint(new Coordinate(48.8452222, 2.4247222)));
+            .convert(FACTORY.createPoint(new Coordinate(48.8452222, 2.4247222)));
 
         assertEquals(result.getCoordinate().getX(), 0.0, 2);
         assertEquals(result.getCoordinate().getY(), 0.0, 2);
 
         // Combine with translation & rotation (rotation center should be given point)
         result = new CoordsConverter(crsTransform, AffineTransformation.translationInstance(-657780.0, -6860730.0).rotate(1.0))
-            .convert(factory.createPoint(new Coordinate(48.8452222, 2.4247222)));
+            .convert(FACTORY.createPoint(new Coordinate(48.8452222, 2.4247222)));
 
         assertEquals(result.getCoordinate().getX(), 0.0, 2);
         assertEquals(result.getCoordinate().getY(), 0.0, 2);

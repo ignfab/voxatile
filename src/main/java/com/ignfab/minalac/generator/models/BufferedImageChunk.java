@@ -14,15 +14,14 @@ import java.util.Arrays;
 
 /**
  * A readable and writable 2d chunk of world map based on {@code BufferedImage}.
- *
  * Values are stored as bytes so their range is 0 to 255.
  */
 public class BufferedImageChunk implements IterableChunk2d, WritableChunk2d {
-    private BufferedImage image;
-    private WorldBBox2d bbox;
+    private final BufferedImage image;
+    private final WorldBBox2d bbox;
 
     /**
-     * Construct a new {@code BufferedImageChunk}
+     * Construct a new {@code BufferedImageChunk}.
      *
      * @param bbox Bounding box of that chunk
      *
@@ -36,7 +35,7 @@ public class BufferedImageChunk implements IterableChunk2d, WritableChunk2d {
         // To get rid of this hack, we should have a look on how to develop a specific
         // color model to store integers (I guess this could be lot of useless work).
         image = new BufferedImage(bbox.getSize().x(), bbox.getSize().y(), BufferedImage.TYPE_BYTE_GRAY);
-        Arrays.fill(((DataBufferByte) image.getRaster().getDataBuffer()).getData(), (byte)0);
+        Arrays.fill(((DataBufferByte) image.getRaster().getDataBuffer()).getData(), (byte) 0);
     }
 
     /**
@@ -91,7 +90,6 @@ public class BufferedImageChunk implements IterableChunk2d, WritableChunk2d {
 
     /**
      * Creates a {@code Graphics2D} able to draw on this chunk.
-     *
      * Coordinates in that {@code Graphics2D} are bounding box relative (starting at 0,0 and up to size).
      *
      * @return A {@code Graphics2D} instance linked to embedded {@code BufferedImage}.

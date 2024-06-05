@@ -26,7 +26,6 @@ import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.referencing.FactoryException;
-import org.geotools.api.referencing.NoSuchAuthorityCodeException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -51,16 +50,19 @@ import java.util.function.Supplier;
  * This is a temporary class to have an idea of how the program works.
  * It generates a Minetest map which is a 3D rendering from a heightmap
  */
-public class SampleImplementation {
+public final class SampleImplementation {
+    private SampleImplementation() {
+        throw new UnsupportedOperationException();
+    }
+
     private static final Map<String, Supplier<VoxelWorld>> FORMATS = Map.of(
         "minecraft", MCVoxelWorld::new,
         "minetest", MTVoxelWorld::new
     );
 
     public static void main(String[] args)
-    throws IOException, OutOfWorldException, MapWriteException, SAXException,
-           NoSuchAuthorityCodeException, FactoryException,
-           ParserConfigurationException, TransformException {
+            throws IOException, OutOfWorldException, MapWriteException, SAXException, FactoryException,
+            ParserConfigurationException, TransformException {
         long start = System.currentTimeMillis();
         HttpTrustAllSSL.applyGlobally();
         if (args.length != 9) {
@@ -117,7 +119,7 @@ public class SampleImplementation {
 
             // Add a vector layer
             System.out.println("Add vector layer");
-            WFS2DataProvider provider = new WFS2DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL +",urn:ogc:def:crs:EPSG::2154");
+            WFS2DataProvider provider = new WFS2DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154");
             placeVectorFeatures(provider.getFeatures(),
                 generation.makeCoordsConverter(crs), // This is supposed to be the layer CRS (actually the same for this demo)
                 world, heightMap);
@@ -143,13 +145,13 @@ public class SampleImplementation {
         VoxelType insideVT = world.getFactory().createVoxelType(SemanticType.COBBLE);
         VoxelType wallVT = world.getFactory().createVoxelType(SemanticType.BRICK);
         try (
-            SimpleFeatureIterator iterator = features.features();
+            SimpleFeatureIterator iterator = features.features()
         ) {
-            while( iterator.hasNext() ){
+            while (iterator.hasNext()) {
                 SimpleFeature feature = iterator.next();
 
                 // Create a model out of feature geometry
-                GeometryModel model = new GeometryModel((Geometry)feature.getDefaultGeometry(), converter);
+                GeometryModel model = new GeometryModel((Geometry) feature.getDefaultGeometry(), converter);
 
                 // Rasterize that model into a chunk
                 BufferedImageChunk chunk = model.getChunk();
@@ -160,7 +162,7 @@ public class SampleImplementation {
                     // TODO: Make Iterator able to intersect with another box
                     // TODO: Have a world bbox rather
                     if (heightMap.bbox().contains(c))
-                        switch(element.getValue()) {
+                        switch (element.getValue()) {
                             case GeometryModel.INSIDE:
                                 insideVT.place(c.x(), c.y(), heightMap.get(c) + 1);
                                 break;
@@ -186,8 +188,8 @@ public class SampleImplementation {
             dirtVT.place(x, y, (z - 1));
             dirtVT.place(x, y, (z - 2));
 
-            for (int z_stone = z - 3; z_stone > z - (3 + 10); z_stone--) {
-                stoneVT.place(x, y, z_stone);
+            for (int zStone = z - 3; zStone > z - (3 + 10); zStone--) {
+                stoneVT.place(x, y, zStone);
             }
         }
     }
@@ -198,8 +200,8 @@ public class SampleImplementation {
         URL url = new URL(partialUrl + "&WIDTH=" + width + "&HEIGHT=" + height);
 
         try (InputStream inputStream = url.openStream()) {
-            int total, read;
-            total = 0;
+            int total = 0;
+            int read;
             data = new byte[width * height * 4];
             while (0 < (read = inputStream.read(data, total, data.length - total)))
                 total = total + read;
@@ -218,8 +220,8 @@ public class SampleImplementation {
 
         int index = 0;
 
-        for (int y = height - 1 ; y >= 0 ; y--) // In raster, Y axis is downwards
-            for (int x = 0 ; x < width ; x++) {
+        for (int y = height - 1; y >= 0; y--) // In raster, Y axis is downwards
+            for (int x = 0; x < width; x++) {
                 heightMap.set(x + xMin, y + yMin, (int) (mntArray[index] / verticalScale));
                 index++;
             }
@@ -241,32 +243,37 @@ public class SampleImplementation {
             throw new MapWriteException("Cannot generate the map because the folder " + directory.getAbsolutePath() + " cannot be created");
     }
 
-    private static boolean deleteDirectory(File directoryToBeDeleted) {
+    private static void deleteDirectory(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();
         if (allContents != null) {
             for (File file : allContents)
                 deleteDirectory(file);
         }
-        return directoryToBeDeleted.delete();
+        directoryToBeDeleted.delete();
     }
 
     //This class will probably be added on an upcoming pull-request (since it doesn't belong to the package utils.world2d.chunk)
+    @SuppressWarnings("checkstyle:RedundantModifier")
     private static class HeightMap extends ArrayChunk2d implements IterableChunk2d {
-        protected int minZ, maxZ;
+        protected int minZ;
+        protected int maxZ;
 
         public HeightMap(int originX, int originY, int sizeX, int sizeY, int defaultValue) {
             super(originX, originY, sizeX, sizeY, defaultValue);
-            minZ = maxZ = defaultValue;
+            minZ = defaultValue;
+            maxZ = defaultValue;
         }
 
         public HeightMap(WorldBBox2d box, int defaultValue) {
             super(box, defaultValue);
-            minZ = maxZ = defaultValue;
+            minZ = defaultValue;
+            maxZ = defaultValue;
         }
 
         public HeightMap(WorldCoords2d coords, WorldSize2d size, int defaultValue) {
             super(coords, size, defaultValue);
-            minZ = maxZ = defaultValue;
+            minZ = defaultValue;
+            maxZ = defaultValue;
         }
 
         @Override

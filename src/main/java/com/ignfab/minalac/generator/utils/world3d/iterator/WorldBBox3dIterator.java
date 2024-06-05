@@ -11,7 +11,9 @@ import java.util.NoSuchElementException;
  */
 public class WorldBBox3dIterator implements Iterator<WorldCoords3d> {
     private final WorldBBox3d bbox;
-    private int x, y, z;
+    private int x;
+    private int y;
+    private int z;
     private boolean hasNext;
 
     /**

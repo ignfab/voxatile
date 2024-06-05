@@ -6,7 +6,7 @@ import com.ignfab.minalac.generator.world.VoxelType;
 import com.ignfab.minalac.generator.outputs.minetest.voxelType.MTSimpleVoxelType;
 
 public class MTVoxelTypeFactory implements VoxelTypeFactory {
-    private MTVoxelWorld world;
+    private final MTVoxelWorld world;
 
     public MTVoxelTypeFactory(MTVoxelWorld world) {
         this.world = world;
@@ -15,21 +15,14 @@ public class MTVoxelTypeFactory implements VoxelTypeFactory {
     @Override
     public VoxelType createVoxelType(SemanticType semanticType) {
         //Node string can be found on https://wiki.minetest.net/Games/Minetest_Game/Nodes
-        switch (semanticType) {
-            case GRASS:
-                return new MTSimpleVoxelType(this.world, "default:dirt_with_grass");
-            case STONE:
-                return new MTSimpleVoxelType(this.world, "default:stone");
-            case DIRT:
-                return new MTSimpleVoxelType(this.world, "default:dirt");
-            case COBBLE:
-                return new MTSimpleVoxelType(this.world, "default:cobble");
-            case BRICK:
-                return new MTSimpleVoxelType(this.world, "default:stonebrick");
-            case WATER:
-                return new MTSimpleVoxelType(this.world, "default:water_source");
-            default:
-                return new MTSimpleVoxelType(this.world, "air");
-        }
+        return switch (semanticType) {
+            case GRASS -> new MTSimpleVoxelType(this.world, "default:dirt_with_grass");
+            case STONE -> new MTSimpleVoxelType(this.world, "default:stone");
+            case DIRT -> new MTSimpleVoxelType(this.world, "default:dirt");
+            case COBBLE -> new MTSimpleVoxelType(this.world, "default:cobble");
+            case BRICK -> new MTSimpleVoxelType(this.world, "default:stonebrick");
+            case WATER -> new MTSimpleVoxelType(this.world, "default:water_source");
+            default -> new MTSimpleVoxelType(this.world, "air");
+        };
     }
 }

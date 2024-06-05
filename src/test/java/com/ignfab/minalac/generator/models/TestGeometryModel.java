@@ -12,14 +12,15 @@ import org.locationtech.jts.geom.util.AffineTransformation;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("checkstyle:ParenPad")
 public class TestGeometryModel {
-    private static CoordsConverter converter = new CoordsConverter(IdentityTransform.create(2), new AffineTransformation());
-    private static GeometryFactory factory = new GeometryFactory();
+    private static final CoordsConverter CONVERTER = new CoordsConverter(IdentityTransform.create(2), new AffineTransformation());
+    private static final GeometryFactory FACTORY = new GeometryFactory();
 
     @Test
     public void testPointRasterization() throws TransformException {
         System.out.println("testPointRasterization");
-        GeometryModel model = new GeometryModel(factory.createPoint(new Coordinate(10.0, -20.0)), converter);
+        GeometryModel model = new GeometryModel(FACTORY.createPoint(new Coordinate(10.0, -20.0)), CONVERTER);
         ReadableChunk2d chunk = model.getChunk();
 
         assertEquals(chunk.bbox().getSize().x(),  1, "x-size");
@@ -33,8 +34,9 @@ public class TestGeometryModel {
         Coordinate[] coords = {
             new Coordinate(-1.0, -1.0),
             new Coordinate(-1.0,  1.0),
-            new Coordinate( 2.0,  1.0)};
-        GeometryModel model = new GeometryModel(factory.createLineString(coords), converter);
+            new Coordinate( 2.0,  1.0)
+        };
+        GeometryModel model = new GeometryModel(FACTORY.createLineString(coords), CONVERTER);
         ReadableChunk2d chunk = model.getChunk();
 
         // Expected :
@@ -70,7 +72,7 @@ public class TestGeometryModel {
             new Coordinate( 2.0,  2.0),
             new Coordinate( 2.0, -2.0),
             new Coordinate(-2.0, -2.0)};
-        GeometryModel model = new GeometryModel(factory.createPolygon(coords), converter);
+        GeometryModel model = new GeometryModel(FACTORY.createPolygon(coords), CONVERTER);
         ReadableChunk2d chunk = model.getChunk();
 
         // Expected :
@@ -125,17 +127,19 @@ public class TestGeometryModel {
             new Coordinate(-2.0,  2.0),
             new Coordinate( 2.0,  2.0),
             new Coordinate( 2.0, -2.0),
-            new Coordinate(-2.0, -2.0)};
+            new Coordinate(-2.0, -2.0)
+        };
         Coordinate[] holecoords = {
             new Coordinate(-2.0, -2.0),
             new Coordinate( 2.0,  2.0),
             new Coordinate( 2.0, -2.0),
-            new Coordinate(-2.0, -2.0)};
+            new Coordinate(-2.0, -2.0)
+        };
 
-        LinearRing[] holes = { (LinearRing)factory.createLinearRing(holecoords) };
-        LinearRing shape = (LinearRing)factory.createLinearRing(shapecoords);
+        LinearRing[] holes = { FACTORY.createLinearRing(holecoords) };
+        LinearRing shape = FACTORY.createLinearRing(shapecoords);
 
-        GeometryModel model = new GeometryModel(factory.createPolygon(shape, holes), converter);
+        GeometryModel model = new GeometryModel(FACTORY.createPolygon(shape, holes), CONVERTER);
         ReadableChunk2d chunk = model.getChunk();
 
         // Expected :
@@ -178,8 +182,8 @@ public class TestGeometryModel {
 
         assertEquals(chunk.get(-2,  2), GeometryModel.BORDER,  "(-2, 2)");
         assertEquals(chunk.get(-1,  2), GeometryModel.BORDER,  "(-1, 2)");
-        assertEquals(chunk.get( 0,  2), GeometryModel.BORDER,  "(0, 2)" );
+        assertEquals(chunk.get( 0,  2), GeometryModel.BORDER,  "(0, 2)");
         assertEquals(chunk.get( 1,  2), GeometryModel.BORDER,  "(1, 2)");
-        assertEquals(chunk.get( 2,  2), GeometryModel.BORDER,  "(2, 2)" );
+        assertEquals(chunk.get( 2,  2), GeometryModel.BORDER,  "(2, 2)");
     }
 }

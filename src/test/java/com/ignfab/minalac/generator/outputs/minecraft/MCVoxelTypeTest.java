@@ -44,7 +44,7 @@ public class MCVoxelTypeTest {
         worldMock.assertBlockStateAt(-43, 192, 0, expectedStairs); // XYZ => XZY
     }
 
-    private static class WorldMock extends MCVoxelWorld {
+    private static final class WorldMock extends MCVoxelWorld {
         private final Map<String, CompoundTag> blockStates = new HashMap<>();
 
         @Override

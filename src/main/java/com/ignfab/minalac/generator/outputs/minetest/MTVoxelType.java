@@ -4,9 +4,22 @@ import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.VoxelType;
 
 public abstract class MTVoxelType implements VoxelType {
+    /**
+     * The Minetest World object.
+     */
     protected MTVoxelWorld world;
+    /**
+     * The node type string.
+     * @see <a href="https://wiki.minetest.net/Games/Minetest_Game/Nodes">List of node types (Minetest Wiki)</a>
+     */
     protected String type;
+    /**
+     * The param1 data of the node.
+     */
     protected byte param1;
+    /**
+     * The param2 data of the node.
+     */
     protected byte param2;
 
     public MTVoxelType(MTVoxelWorld world, String type, byte param1, byte param2) {
