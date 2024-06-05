@@ -52,6 +52,7 @@ public class MCVoxelWorldTest {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:ParenPad")
     public void testCheckLimits() {
         MCVoxelWorld world = new MCVoxelWorld();
 

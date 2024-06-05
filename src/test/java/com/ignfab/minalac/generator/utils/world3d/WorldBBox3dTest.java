@@ -18,6 +18,7 @@ public class WorldBBox3dTest {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:ParenPad")
     public void testContains() {
         WorldBBox3d box = new WorldBBox3d(-1, -2, -3, 4, 5, 6);
 

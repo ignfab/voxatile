@@ -10,8 +10,9 @@ import java.util.NoSuchElementException;
  * An iterator over all coordinates in a {@code WorldBBox2d}.
  */
 public class WorldBBox2dIterator implements Iterator<WorldCoords2d> {
-    private WorldBBox2d bbox;
-    private int x, y;
+    private final WorldBBox2d bbox;
+    private int x;
+    private int y;
     private boolean hasNext;
 
     /**

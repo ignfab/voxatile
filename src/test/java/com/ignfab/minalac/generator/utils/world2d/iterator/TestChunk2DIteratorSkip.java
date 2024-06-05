@@ -1,10 +1,9 @@
 package com.ignfab.minalac.generator.utils.world2d.iterator;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.ignfab.minalac.generator.utils.world2d.chunk.ArrayChunk2d;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestChunk2DIteratorSkip {
     @Test

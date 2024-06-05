@@ -38,7 +38,7 @@ public class TestBufferedImageChunk {
         v = 0;
         for (int y = bbox.getMin().y(); y <= bbox.getMax().y(); y++)
             for (int x = bbox.getMin().x(); x <= bbox.getMax().x(); x++)
-                assertEquals(chunk.get(x, y), v++, "("+x+", "+y+")");
+                assertEquals(chunk.get(x, y), v++, "(%d, %d)".formatted(x, y));
     }
 
     @Test
@@ -61,22 +61,22 @@ public class TestBufferedImageChunk {
 
         Graphics2D graphics = chunk.createGraphics();
         // Fill rectangle A
-        graphics.setColor(chunk.colorFor(123));
+        graphics.setColor(BufferedImageChunk.colorFor(123));
         graphics.fillRect(0, 0, 2, 3);
         // Fill rectangle B
-        graphics.setColor(chunk.colorFor(234));
+        graphics.setColor(BufferedImageChunk.colorFor(234));
         graphics.fillRect(1, 2, 3, 3);
 
         for (int x = 2; x < 6; x++)
             for (int y = 3; y < 8; y++)
                 // Check rectangle B
                 if (x >= 3 && y >= 5)
-                    assertEquals(chunk.get(x, y), 234, "("+x+", "+y+")");
+                    assertEquals(234, chunk.get(x, y), "Rectangle B (%d, %d)".formatted(x, y));
                 // Check rectangle A
                 else if (x <= 3 && y <= 5)
-                    assertEquals(chunk.get(x, y), 123, "("+x+", "+y+")");
+                    assertEquals(123, chunk.get(x, y), "Rectangle A (%d, %d)".formatted(x, y));
                 // Check outside both rectangles
                 else
-                    assertEquals(chunk.get(x, y), 0, "("+x+", "+y+")");
+                    assertEquals(0, chunk.get(x, y), "Outside (%d, %d)".formatted(x, y));
     }
 }
