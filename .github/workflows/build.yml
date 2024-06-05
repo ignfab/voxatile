@@ -1,0 +1,174 @@
+name: Build JAR
+run-name: ${{ github.actor }} is building ${{ github.repository }}#${{ github.ref_name }}
+on:
+  push:
+    paths:
+      - src/**
+      - pom.xml
+      - .github/workflows/build.yml
+
+env:
+  # Markdown template of the report message
+  # {0}: Commit SHA
+  # {1}: Build date
+  # {2}: Build status (see below, $BUILD_STATUS_*)
+  # {3}: Extra information (see below, $ARTIFACT_DOWNLOAD_TEMPLATE or $BUILD_LOGS_TEMPLATE)
+  REPORT_MESSAGE_TEMPLATE: |
+    ### [Maven Build Status]
+    📑 **Commit**: `{0}`
+    ⌚️ **Date**: {1}
+    🛠️ **Status**: {2}
+    
+    {3}
+  # Display text for a successful build
+  BUILD_STATUS_success: ✅ Success
+  # Display text for a failed build
+  BUILD_STATUS_failure: ❌ Failure
+  # Display text for a cancelled build
+  BUILD_STATUS_cancelled: 🚫 Cancelled
+  # Display text for a skipped build
+  BUILD_STATUS_skipped: ⏭️ Skipped
+  # Markdown template of the artifact download extra information
+  # {0}: Artifact download URL
+  ARTIFACT_DOWNLOAD_TEMPLATE: |
+    📦 **Download artifact**: [Generator.jar]({0})
+  # Markdown template of the build logs extra information
+  # {0}: Build logs
+  BUILD_LOGS_TEMPLATE: |
+    📦 _No artifact available._
+    
+    <details>
+    <summary>📝 Build logs</summary>
+    
+    ```
+    {0}
+    ```
+    </details>
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    outputs:
+      # ID of the pull request, or 0 if none found
+      pr-number: ${{ steps.find-pr.outputs.pr-number }}
+      # Markdown text of the report
+      report: ${{ steps.prepare-report.outputs.report }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Java & Maven
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: maven
+      - name: Build with Maven
+        id: maven-build
+        # We use `set +e` to revert GitHub's default `set -e`.
+        # If omitted, if the `mvn` command fails, the other ones are ignored (and we don't get the build logs).
+        # `set -o pipefail` is used to keep the exit code of `mvn` after the `tee`.
+        # `tee` is used to clone stdout into a file.
+        # We keep the exit code so we can re-apply it at the end.
+        # We write the build logs into the output of the step, under the name `logs`.
+        # Save the build date (timezone: Paris) into the output of the step, under the name `date`.
+        run: |
+          set +e
+          set -o pipefail
+          mvn --batch-mode --no-transfer-progress --update-snapshots -DskipTests=true package | tee -a build.log
+          code=$?
+          set -e
+          set +o pipefail
+          {
+            echo 'logs<<EOF'
+            cat build.log
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+          echo "date=$(TZ=Europe/Paris date +'%Y-%m-%dT%H:%M:%S (%Z)')" >> "$GITHUB_OUTPUT"
+          exit $code
+      - name: Upload Generator.jar as build artifact
+        uses: actions/upload-artifact@v4
+        id: upload-artifact
+        with:
+          name: Generator.jar
+          path: target/Generator.jar
+          if-no-files-found: error
+      - name: Find PR with commit
+        id: find-pr
+        # Run this step even if the build failed
+        if: ${{ always() }}
+        # We search for an active pull request containing the commit,
+        # and write its ID into the output of the step, under the name `pr-number`.
+        run: |
+          pr_number=$(gh pr list --search ${{ github.sha }} --json number --jq '.[0].number // 0')
+          echo "pr-number=$pr_number" >> "$GITHUB_OUTPUT"
+        env:
+          # Built-in GitHub token is required to use gh-cli
+          GH_TOKEN: ${{ github.token }}
+      - name: Compute build status
+        # Run this step even if the build failed
+        if: ${{ always() }}
+        # Since we can have dynamic indexing at workflow syntax level, we need to run a script.
+        # We write the status display text into the `BUILD_STATUS` environement variable.
+        run: |
+          echo "BUILD_STATUS=${BUILD_STATUS_${{ steps.maven-build.outcome }}:-${{ steps.maven-build.outcome }}}" >> "$GITHUB_ENV"
+      - name: Prepare report message
+        id: prepare-report
+        # Run this step even if the build failed
+        if: ${{ always() }}
+        # We write the report message into the output of the step, under the name `report`.
+        run: |
+          echo "::group::Report message"
+          echo "$MESSAGE"
+          echo "::endgroup::"
+          {
+            echo 'report<<EOF'
+            echo "$MESSAGE"
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+        env:
+          # Resolve Markdown templates.
+          # Using `condition && expression-if-true || expression-if-false` is the only way to do conditional expression.
+          MESSAGE: >-
+            ${{
+              format(env.REPORT_MESSAGE_TEMPLATE,
+                github.sha,
+                steps.maven-build.outputs.date,
+                env.BUILD_STATUS,
+                (steps.maven-build.outcome == 'success' && steps.upload-artifact.outputs.artifact-url != '')
+                  && format(env.ARTIFACT_DOWNLOAD_TEMPLATE, steps.upload-artifact.outputs.artifact-url)
+                  || format(env.BUILD_LOGS_TEMPLATE, steps.maven-build.outputs.logs)
+              )
+            }}
+  # This job is executed only if there is an active pull request, even if the build failed
+  report-status-in-pr-comment:
+    name: report-status-in-pr-comment
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ always() && needs.build.outputs.pr-number != 0 }}
+    steps:
+      - name: Find existing comment
+        uses: peter-evans/find-comment@v3
+        id: find-comment
+        with:
+          issue-number: ${{ needs.build.outputs.pr-number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "[Maven Build Status]"
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ needs.build.outputs.pr-number }}
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          body: ${{ needs.build.outputs.report }}
+          edit-mode: replace
+  # This job is executed only if there is no active pull request, even if the build failed
+  report-status-in-commit-comment:
+    name: report-status-in-commit-comment
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ always() && needs.build.outputs.pr-number == 0 }}
+    steps:
+      - name: Create commit comment with artifact URL
+        uses: peter-evans/commit-comment@v3
+        with:
+          body: ${{ needs.build.outputs.report }}
