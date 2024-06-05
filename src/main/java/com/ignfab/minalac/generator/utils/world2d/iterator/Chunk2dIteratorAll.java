@@ -10,8 +10,8 @@ import java.util.NoSuchElementException;
  */
 public class Chunk2dIteratorAll implements Chunk2dIterator {
 
-    private ReadableChunk2d chunk;
-    private WorldBBox2dIterator bboxIterator;
+    private final ReadableChunk2d chunk;
+    private final WorldBBox2dIterator bboxIterator;
 
     /**
      * Constructs a new {@code Chunk2dIteratorAll}.
@@ -40,7 +40,7 @@ public class Chunk2dIteratorAll implements Chunk2dIterator {
      * @throws NoSuchElementException if the iteration has no more elements.
      */
     @Override
-    public Chunk2dElement next() {
+    public Chunk2dElement next() throws NoSuchElementException {
         WorldCoords2d current = bboxIterator.next();
         return new Chunk2dElement(current, chunk.get(current));
     }

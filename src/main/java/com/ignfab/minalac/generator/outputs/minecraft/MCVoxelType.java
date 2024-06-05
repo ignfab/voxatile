@@ -7,8 +7,18 @@ import net.querz.nbt.tag.CompoundTag;
 import java.util.Map;
 
 public class MCVoxelType implements VoxelType {
+    /**
+     * The Minecraft World object.
+     */
     protected final MCVoxelWorld world;
+    /**
+     * The block type string.
+     * @see <a href="https://minecraft.wiki/w/Block">List of block types (Minecraft Wiki)</a>
+     */
     protected final String type;
+    /**
+     * The block state properties.
+     */
     protected final Map<String, String> properties;
 
     public MCVoxelType(MCVoxelWorld world, String type) {

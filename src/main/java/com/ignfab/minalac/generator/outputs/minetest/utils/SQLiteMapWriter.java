@@ -12,23 +12,24 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class SQLiteMapWriter {
-    private Connection connection;
-    private Serializer serializer;
+    private final Connection connection;
+    private final Serializer serializer;
 
     public SQLiteMapWriter(File directory) throws MapWriteException {
         if (!directory.exists() || !directory.isDirectory())
             throw new MapWriteException("The directory can not be accessed");
-        createAndConnectToFileDB(new File(directory, "map.sqlite"));
-        this.serializer = new Serializer();
+        connection = createAndConnectToFileDB(new File(directory, "map.sqlite"));
+        serializer = new Serializer();
     }
 
-    private void createAndConnectToFileDB(File database) throws MapWriteException {
+    private Connection createAndConnectToFileDB(File database) throws MapWriteException {
         try {
             String pathDBFile = "jdbc:sqlite:" + database.getAbsolutePath();
-            connection = DriverManager.getConnection(pathDBFile);
+            Connection connection = DriverManager.getConnection(pathDBFile);
             Statement statement = connection.createStatement();
             statement.execute("PRAGMA synchronous=OFF");
             statement.execute("CREATE TABLE `blocks` (`pos` INT NOT NULL PRIMARY KEY,`data` BLOB)");
+            return connection;
         } catch (SQLException e) {
             throw new MapWriteException(e);
         }

@@ -5,7 +5,6 @@ import com.ignfab.minalac.generator.outputs.minetest.Block;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.BufferedOutputStream;
 import java.util.Map;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Deflater;
@@ -13,7 +12,7 @@ import java.util.zip.Deflater;
 public class Serializer {
 
     // We use a static buffer to convert int32 and int64 to bytes.
-    // This avoid usage of OutputBuffer.write(int) which performs something similar
+    // This avoid usage of DeflaterOutputStream.write(int) which performs something similar
     // but with a byte array instantiation for each call.
     private final byte[] buffer;
 

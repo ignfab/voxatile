@@ -14,8 +14,10 @@ public record Region(int regionX, int regionZ, MCAFile file) {
 
     public Chunk getOrCreateChunk(int chunkX, int chunkZ) {
         Chunk chunk = file.getChunk(chunkX, chunkZ);
-        if (chunk == null)
-            file.setChunk(chunkX, chunkZ, chunk = Chunk.newChunk());
+        if (chunk == null) {
+            chunk = Chunk.newChunk();
+            file.setChunk(chunkX, chunkZ, chunk);
+        }
         return chunk;
     }
 

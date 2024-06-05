@@ -70,6 +70,7 @@ public class MCVoxelWorld implements VoxelWorld {
         }
     }
 
+    @SuppressWarnings({ "checkstyle:MethodLength", "checkstyle:AvoidNestedBlocks", "checkstyle:LocalVariableName" })
     private CompoundTag createLevelData() {
         long seed = new Random().nextLong();
 
@@ -478,8 +479,10 @@ public class MCVoxelWorld implements VoxelWorld {
         int regionZ = MCAUtil.blockToRegion(blockZ);
         int key = computeRegionKey(regionX, regionZ);
         Region region = regions.get(key);
-        if (region == null)
-            regions.put(key, region = new Region(regionX, regionZ));
+        if (region == null) {
+            region = new Region(regionX, regionZ);
+            regions.put(key, region);
+        }
         return region;
     }
 
@@ -498,6 +501,8 @@ public class MCVoxelWorld implements VoxelWorld {
 
     // TODO Replace by a better constraint management mechanism
     private boolean warnAboutClipping = true;
+
+    @SuppressWarnings("checkstyle:MethodName")
     private boolean shouldClipHeight_RemoveThisMethodWhenABetterSolutionIsImplemented(int y) {
         if (y < MIN_WORLD_HEIGHT || y > MAX_WORLD_HEIGHT) {
             if (warnAboutClipping) {

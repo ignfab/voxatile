@@ -20,7 +20,7 @@ public class MTVoxelWorld implements VoxelWorld {
     private final HashMap<Integer, Block> blocks;
     //See MAX_MAP_GENERATION_LIMIT constant on Minetest
     //https://github.com/minetest/minetest/blob/e10d8080ba6e53e0f3c4b20b32304f8bb36e5958/src/constants.h#L70
-    private static final int limitPosition = 31_007;
+    private static final int LIMIT_POSITION = 31_007;
 
     public MTVoxelWorld() {
         this.factory = new MTVoxelTypeFactory(this);
@@ -39,10 +39,9 @@ public class MTVoxelWorld implements VoxelWorld {
     }
 
     protected void set(int x, int y, int z, MTVoxelType voxel) throws OutOfWorldException {
-        if (-limitPosition > x || x > limitPosition ||
-                -limitPosition > y || y > limitPosition ||
-                -limitPosition > z || z > limitPosition
-        )
+        if (-LIMIT_POSITION > x || x > LIMIT_POSITION
+                || -LIMIT_POSITION > y || y > LIMIT_POSITION
+                || -LIMIT_POSITION > z || z > LIMIT_POSITION)
             throw new OutOfWorldException();
 
         int pos = getPosValue(getBlockPosition(x), getBlockPosition(y), getBlockPosition(z));

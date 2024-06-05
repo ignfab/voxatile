@@ -11,12 +11,12 @@ import org.locationtech.jts.geom.util.AffineTransformation;
  * Converts coordinates from a CRS to world coordinates.
  */
 public class CoordsConverter {
-    private MathTransform crsTransform;
-    private AffineTransformation postTransform;
+    private final MathTransform crsTransform;
+    private final AffineTransformation postTransform;
 
     /**
      * Constructs a new {@code CoordsConverter}.
-     *
+     * <p>
      * This is up to the caller to give proper transformations:
      * @param crsTransform Transformation from source CRS to world CRS.
      * @param postTransform Affine transformation applied for scale and rotation after CRS transformation.
