@@ -1,0 +1,25 @@
+name: checkstyle
+run-name: ${{ github.actor }} is style-checking ${{ github.repository }}#${{ github.ref_name }}
+on:
+  push:
+    paths:
+      - src/**
+      - pom.xml
+      - checkstyle.xml
+      - .github/workflows/checkstyle.yml
+
+jobs:
+  checkstyle:
+    name: checkstyle
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run checkstyle
+        uses: dbelyaev/action-checkstyle@v1.12.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkstyle_config: checkstyle.xml
+          level: error
+          reporter: github-check # Check may be reported on wrong checksuite, but it's a known issue of GitHub Checks API: https://github.com/reviewdog/reviewdog/issues/403
+          reviewdog_flags: -name checkstyle
