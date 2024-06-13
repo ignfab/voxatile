@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is building ${{ github.repository }}#${{ github.re
 on:
   push:
     paths:
-      - src/**
+      - src/main/**
       - pom.xml
       - .github/workflows/build.yml
 
@@ -109,7 +109,7 @@ jobs:
         # Run this step even if the build failed
         if: ${{ always() }}
         # Since we can have dynamic indexing at workflow syntax level, we need to run a script.
-        # We write the status display text into the `BUILD_STATUS` environement variable.
+        # We write the status display text into the `BUILD_STATUS` environment variable.
         run: |
           echo "BUILD_STATUS=${BUILD_STATUS_${{ steps.maven-build.outcome }}:-${{ steps.maven-build.outcome }}}" >> "$GITHUB_ENV"
       - name: Prepare report message
