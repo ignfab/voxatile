@@ -1,0 +1,41 @@
+name: Javadoc
+run-name: ${{ github.actor }} is generating Javadoc for ${{ github.repository }}#${{ github.ref_name }}
+on:
+  push:
+    # Only deploy main branch.
+    # Deploying a Pull Request as a GitHub Pages preview site
+    # is currently in alpha and not available to the public!
+    branches:
+      - main
+    paths:
+      - src/main/java/**
+      - pom.xml
+      - .github/workflows/javadoc.yml
+
+jobs:
+  javadoc:
+    name: javadoc
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Java & Maven
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: maven
+      - name: Generate Javadoc with Maven
+        run: mvn --batch-mode --no-transfer-progress --update-snapshots javadoc:javadoc
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./target/apidocs/
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
