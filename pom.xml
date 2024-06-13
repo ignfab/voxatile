@@ -34,50 +34,44 @@
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.10.2</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
+        <!--
+        COMPILE DEPENDENCIES
+        ====================
+        These dependencies are bundled into the final JAR.
+        Please try to avoid excessive library usage as it directly impacts the build time and JAR size.
+        -->
+
+        <!-- SQLite JDBC -->
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.43.2.2</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-nop -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
-            <version>2.0.9</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+        <!-- Logging framework abstraction -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>2.0.9</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
+        <!-- Simple logger (default Java implementation) -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>2.0.9</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+        <!-- Microsoft file formats -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>5.2.5</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.locationtech.jts/jts-core -->
+        <!-- JTS (vector geometry data library) -->
         <dependency>
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
             <version>1.19.0</version>
         </dependency>
-        <!-- Geotools -->
+        <!-- GeoTools (geographic data manipulation library) -->
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-main</artifactId>
@@ -94,75 +88,88 @@
             <version>${geotools.version}</version>
         </dependency>
         <!--
-            Important because without it won't be able to identify coordinates system
-            Example : No code "EPSG:4326" from authority "EPSG"
-            https://blog.csdn.net/jfqqqqq/article/details/124681727
+            Required to identify coordinates reference systems
+            Example error: No code "EPSG:4326" from authority "EPSG"
         -->
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-epsg-hsql</artifactId>
             <version>${geotools.version}</version>
         </dependency>
-        <!-- https://github.com/Querz/NBT -->
+        <!-- Minecraft NBT file format -->
         <dependency>
             <groupId>com.github.Querz</groupId>
             <artifactId>NBT</artifactId>
             <version>6.1</version>
         </dependency>
+
+        <!--
+        TEST DEPENDENCIES
+        =================
+        These dependencies are not included into the final JAR.
+        They are only available during the test phase, i.e. when running unit tests.
+        -->
+
+        <!-- Unit testing framework -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- No-op logger (to silent logs during unit tests) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>2.0.9</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
+        <!-- Final JAR will be named Generator.jar -->
         <finalName>Generator</finalName>
-        <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+        <pluginManagement>
             <plugins>
-                <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.3.2</version>
                 </plugin>
-                <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.0.2</version>
+                    <version>3.3.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.0</version>
+                    <version>3.13.0</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.1</version>
+                    <version>3.2.5</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.0.2</version>
+                    <version>3.4.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-install-plugin</artifactId>
-                    <version>2.5.2</version>
+                    <version>3.1.2</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
-                </plugin>
-                <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
-                <plugin>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.7.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.1.2</version>
                 </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
+            <!-- Bundles dependencies into a single executable JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.6.0</version>
                 <executions>
+                    <!-- Binds the shade:shade goal to the package phase -->
                     <execution>
                         <phase>package</phase>
                         <goals>
@@ -172,12 +179,16 @@
                 </executions>
                 <configuration>
                     <transformers>
+                        <!-- Ensures the JAR comes with a proper MANIFEST.MF file -->
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <!-- With at least an entry "Main-Class: ..." to make it executable -->
                             <mainClass>com.ignfab.minalac.generator.SampleImplementation</mainClass>
                         </transformer>
+                        <!-- Properly shades all resources, required for GeoTools HSQL embedded databases -->
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                     </transformers>
                     <filters>
+                        <!-- Removes some duplicated resources being shaded together -->
                         <filter>
                             <artifact>*:*</artifact>
                             <excludes>
@@ -190,6 +201,7 @@
                                 <exclude>META-INF/*.RSA</exclude>
                             </excludes>
                         </filter>
+                        <!-- Removes Eclipse-related duplicated resources -->
                         <filter>
                             <artifact>org.eclipse.*:*</artifact>
                             <excludes>
@@ -203,32 +215,35 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                 </configuration>
             </plugin>
+            <!-- Valides code-style rules -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.3.1</version>
-                <configuration>
-                    <configLocation>checkstyle.xml</configLocation>
-                    <consoleOutput>true</consoleOutput>
-                    <failsOnError>true</failsOnError>
-                    <linkXRef>false</linkXRef>
-                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                </configuration>
+                <version>3.4.0</version>
                 <executions>
+                    <!-- Binds the checkstyle:check goal to the verify phase -->
                     <execution>
-                        <id>verify</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                    <!-- Runs checkstyle on test sources as well -->
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                </configuration>
             </plugin>
+            <!-- Generates static HTML documentation from Javadoc -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.7.0</version>
                 <configuration>
+                    <!-- Disable warnings about missing Javadoc Comments -->
                     <doclint>all,-missing</doclint>
                 </configuration>
             </plugin>
