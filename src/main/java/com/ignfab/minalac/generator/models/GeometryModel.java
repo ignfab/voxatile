@@ -19,7 +19,7 @@ import java.awt.Graphics2D;
  * It is rasterizable. Rasterized chunk will include three values:
  * 0: Not in geometry, 1: On its edge, 2: Inside it (polygons only).
  */
-public class GeometryModel implements Rasterizable {
+public class GeometryModel implements Model, Rasterizable {
     private final Geometry geom;
     private BufferedImageChunk chunk;
 
@@ -39,8 +39,6 @@ public class GeometryModel implements Rasterizable {
     private static final Color OUTSIDE_COLOR = BufferedImageChunk.colorFor(OUTSIDE); // Not in shape color
     private static final Color BORDER_COLOR = BufferedImageChunk.colorFor(BORDER); // Shape border color
     private static final Color INSIDE_COLOR = BufferedImageChunk.colorFor(INSIDE); // Inside shape (fill) color
-
-
 
     /**
      * Constructs a new {@code GeometryModel}.
@@ -84,7 +82,7 @@ public class GeometryModel implements Rasterizable {
         Graphics2D graphics = chunk.createGraphics();
 
         // Draw geometry translated into bounding box relative coordinates (i.e. BufferedImage coordinates))
-        Geometry geom = AffineTransformation.translationInstance(-Math.floor(envelope.getMinX()), -Math.floor(envelope.getMinY())).transform(this.geom);
+        Geometry geom = AffineTransformation.translationInstance(-bbox.getMinX(), -bbox.getMinY()).transform(this.geom);
         draw(graphics, geom);
 
         graphics.dispose();

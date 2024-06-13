@@ -1,21 +1,17 @@
 package com.ignfab.minalac.generator;
 
-import com.ignfab.minalac.generator.generation.CoordsConverter;
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.inputs.WFS2DataProvider;
-import com.ignfab.minalac.generator.models.BufferedImageChunk;
+
 import com.ignfab.minalac.generator.models.GeometryModel;
+import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+import com.ignfab.minalac.generator.generation.CoordsConverter;
+import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.generation.HeightMap;
+import com.ignfab.minalac.generator.inputs.WFS2DataProvider;
+import com.ignfab.minalac.generator.renderers.VectorRenderer;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldSize2d;
-import com.ignfab.minalac.generator.utils.world2d.chunk.ArrayChunk2d;
-import com.ignfab.minalac.generator.utils.world2d.chunk.IterableChunk2d;
 import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dElement;
-import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dIterator;
-import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dIteratorAll;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
@@ -43,6 +39,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -107,22 +106,28 @@ public final class SampleImplementation {
             Envelope envelope = generation.getEnvelopeForCRS(crs);
             String bboxURL = "BBOX=" + envelope.getMinX() + "," + envelope.getMinY() + "," + envelope.getMaxX() + "," + envelope.getMaxY();
 
-            // Creation of heightmap
-
+            // Downloads
             System.out.println("Downloading height map");
             HeightMap heightMap = createGroundHeightMap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, extendX, extendY, verticalScale);
+
+            System.out.println("Downloading buildings");
+            WFS2DataProvider provider = new WFS2DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154");
+            Collection<Model> buildingModels = fetchVectorModels(
+                provider.getFeatures(),
+                generation.makeCoordsConverter(crs) // This is supposed to be the layer CRS (actually the same for this demo)
+            );
 
             System.out.println("World creation");
             VoxelWorld world = FORMATS.get(format).get();
             System.out.println("Placing ground");
             placeVoxelFromHeightMap(heightMap, world);
 
-            // Add a vector layer
-            System.out.println("Add vector layer");
-            WFS2DataProvider provider = new WFS2DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154");
-            placeVectorFeatures(provider.getFeatures(),
-                generation.makeCoordsConverter(crs), // This is supposed to be the layer CRS (actually the same for this demo)
-                world, heightMap);
+            System.out.println("Placing buildings");
+            new VectorRenderer(
+                heightMap, buildingModels,
+                world.getFactory().createVoxelType(SemanticType.COBBLE),
+                world.getFactory().createVoxelType(SemanticType.BRICK)
+            ).render();
 
             System.out.println("Saving");
             VoxelWorldMetadata metadata = world.getMetadata();
@@ -140,39 +145,20 @@ public final class SampleImplementation {
         System.out.println("Execution time: " + (end - start) / 1000 + "s");
     }
 
-    private static void placeVectorFeatures(SimpleFeatureCollection features, CoordsConverter converter, VoxelWorld world, HeightMap heightMap)
-        throws TransformException, OutOfWorldException {
-        VoxelType insideVT = world.getFactory().createVoxelType(SemanticType.COBBLE);
-        VoxelType wallVT = world.getFactory().createVoxelType(SemanticType.BRICK);
+    private static List<Model> fetchVectorModels(SimpleFeatureCollection features, CoordsConverter converter)
+        throws TransformException {
+        List<Model> models = new LinkedList<>();
+
         try (
             SimpleFeatureIterator iterator = features.features()
         ) {
             while (iterator.hasNext()) {
                 SimpleFeature feature = iterator.next();
-
-                // Create a model out of feature geometry
-                GeometryModel model = new GeometryModel((Geometry) feature.getDefaultGeometry(), converter);
-
-                // Rasterize that model into a chunk
-                BufferedImageChunk chunk = model.getChunk();
-
-                // Iterate over chunk and draw shape on map at heightMap altitude
-                for (Chunk2dElement element : chunk) {
-                    WorldCoords2d c = element.getCoords();
-                    // TODO: Make Iterator able to intersect with another box
-                    // TODO: Have a world bbox rather
-                    if (heightMap.bbox().contains(c))
-                        switch (element.getValue()) {
-                            case GeometryModel.INSIDE:
-                                insideVT.place(c.x(), c.y(), heightMap.get(c) + 1);
-                                break;
-                            case GeometryModel.BORDER:
-                                wallVT.place(c.x(), c.y(), heightMap.get(c) + 1);
-                                break;
-                        }
-                }
+                models.add((Model) (new GeometryModel((Geometry) feature.getDefaultGeometry(), converter)));
             }
         }
+
+        return models;
     }
 
     private static void placeVoxelFromHeightMap(HeightMap map, VoxelWorld world) throws OutOfWorldException {
@@ -250,54 +236,5 @@ public final class SampleImplementation {
                 deleteDirectory(file);
         }
         directoryToBeDeleted.delete();
-    }
-
-    //This class will probably be added on an upcoming pull-request (since it doesn't belong to the package utils.world2d.chunk)
-    @SuppressWarnings("checkstyle:RedundantModifier")
-    private static class HeightMap extends ArrayChunk2d implements IterableChunk2d {
-        protected int minZ;
-        protected int maxZ;
-
-        public HeightMap(int originX, int originY, int sizeX, int sizeY, int defaultValue) {
-            super(originX, originY, sizeX, sizeY, defaultValue);
-            minZ = defaultValue;
-            maxZ = defaultValue;
-        }
-
-        public HeightMap(WorldBBox2d box, int defaultValue) {
-            super(box, defaultValue);
-            minZ = defaultValue;
-            maxZ = defaultValue;
-        }
-
-        public HeightMap(WorldCoords2d coords, WorldSize2d size, int defaultValue) {
-            super(coords, size, defaultValue);
-            minZ = defaultValue;
-            maxZ = defaultValue;
-        }
-
-        @Override
-        public void set(int x, int y, int value) {
-            super.set(x, y, value);
-            minZ = Math.min(minZ, value);
-            maxZ = Math.max(maxZ, value);
-        }
-
-        @Override
-        public Chunk2dIterator iterator() {
-            return new Chunk2dIteratorAll(this);
-        }
-
-        public WorldBBox3d bbox3d() {
-            return bbox.to3d(minZ, maxZ - minZ + 1);
-        }
-
-        public int getMinZ() {
-            return minZ;
-        }
-
-        public int getMaxZ() {
-            return maxZ;
-        }
     }
 }
