@@ -5,17 +5,19 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestWorldBBox2d {
+public class WorldBBox2dTest {
     @Test
     public void testConstructor() {
-        // Instantiating a new voxel box
+        // Instantiating a new bounding box
         WorldBBox2d box = assertDoesNotThrow(() -> new WorldBBox2d(0, 0, 10, 10));
         assertEquals(new WorldCoords2d(0, 0), box.getMin());
         assertEquals(new WorldCoords2d(9, 9), box.getMax());
         assertEquals(new WorldSize2d(10, 10), box.getSize());
 
-        // Instantiating a 0 sized voxel box
-        assertThrows(IllegalArgumentException.class, () -> new WorldBBox2d(0, 0, 0, 0));
+        // Instanciating a 0 sized bounding box
+        assertDoesNotThrow(() -> new WorldBBox2d(0, 0, 0, 0));
+
+        // Instantiating a negative sized bounding box
         assertThrows(IllegalArgumentException.class, () -> new WorldBBox2d(0, 0, -1, -1));
     }
 
@@ -66,5 +68,37 @@ public class TestWorldBBox2d {
         WorldBBox2d box = new WorldBBox2d(-1, -2, 4, 5);
 
         assertEquals(new WorldBBox3d(-1, -2, -3, 4, 5, 6), box.to3d(-3, 6), "BBOX to 3d");
+    }
+
+    @Test
+    public void testIsEmpty() {
+        assertFalse(new WorldBBox2d(-1, 2, 3, 2).isEmpty());
+        assertTrue(new WorldBBox2d(-1, 2, 0, 2).isEmpty());
+        assertTrue(new WorldBBox2d(-1, 2, 3, 0).isEmpty());
+    }
+
+    @Test
+    public void testIntersection() {
+        WorldBBox2d box;
+        WorldBBox2d box2;
+
+        box = new WorldBBox2d(-2, 3, 5, 7);
+        box2 = new WorldBBox2d(-3, 2, 7, 8);
+
+        // Contained intersections and commutativity
+        assertEquals(box, box.intersection(box2));
+        assertEquals(box, box2.intersection(box));
+
+        // Various non intersecting boxes
+        assertTrue(box.intersection(new WorldBBox2d(3, -2, 3, 3)).isEmpty());
+        assertTrue(box.intersection(new WorldBBox2d(-2, -2, 3, 3)).isEmpty());
+        assertTrue(box.intersection(new WorldBBox2d(3, 3, 3, 3)).isEmpty());
+
+        // Various intersectig boxes
+        box = new WorldBBox2d(-2, -2, 5, 5);
+        assertEquals(new WorldBBox2d(-2, -2, 3, 3), box.intersection(new WorldBBox2d(-3, -3, 4, 4)));
+        assertEquals(new WorldBBox2d(0, -2, 3, 3), box.intersection(new WorldBBox2d(0, -3, 4, 4)));
+        assertEquals(new WorldBBox2d(-2, 0, 3, 3), box.intersection(new WorldBBox2d(-3, 0, 4, 4)));
+        assertEquals(new WorldBBox2d(0, 0, 3, 3), box.intersection(new WorldBBox2d(0, 0, 4, 4)));
     }
 }
