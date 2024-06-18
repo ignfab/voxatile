@@ -13,7 +13,8 @@ public class WorldBBox3dTest {
         assertEquals(new WorldCoords3d(9, 9, 9), box.getMax(), "BBOX max");
         assertEquals(new WorldSize3d(10, 10, 10), box.getSize(), "BBOX size");
 
-        assertThrows(IllegalArgumentException.class, () -> new WorldBBox3d(0, 0, 0, 0, 0, 0), "Invalid BBOX (size 0)");
+        assertDoesNotThrow(() -> new WorldBBox3d(0, 0, 0, 0, 0, 0), "Valid empty bounding box");
+
         assertThrows(IllegalArgumentException.class, () -> new WorldBBox3d(0, 0, 0, -1, -1, -1), "Invalid BBOX (negative size)");
     }
 
@@ -53,4 +54,43 @@ public class WorldBBox3dTest {
 
         assertEquals(new WorldBBox2d(-1, -2, 4, 5), box.to2d(), "BBOX to 2d");
     }
+
+    @Test
+    public void testIsEmpty() {
+        assertFalse(new WorldBBox3d(-1, 2, 0, 3, 2, 4).isEmpty());
+        assertTrue(new WorldBBox3d(-1, 2, 0, 0, 2, 4).isEmpty());
+        assertTrue(new WorldBBox3d(-1, 2, 0, 3, 0, 4).isEmpty());
+        assertTrue(new WorldBBox3d(-1, 2, 0, 3, 2, 0).isEmpty());
+    }
+
+    @Test
+    public void testIntersection() {
+        WorldBBox3d box;
+        WorldBBox3d box2;
+
+        box = new WorldBBox3d(-2, 3, -1, 5, 7, 6);
+        box2 = new WorldBBox3d(-3, 2, -2, 7, 9, 8);
+
+        // Contained intersections and commutativity
+        assertEquals(box, box.intersection(box2));
+        assertEquals(box, box2.intersection(box));
+
+        // Various non intersecting boxes
+        assertTrue(box.intersection(new WorldBBox3d(3, -2, 5, 3, 3, 3)).isEmpty());
+        assertTrue(box.intersection(new WorldBBox3d(-2, -2, -1, 3, 3, 3)).isEmpty());
+        assertTrue(box.intersection(new WorldBBox3d(3, 3, -1, 3, 3, 3)).isEmpty());
+        assertTrue(box.intersection(new WorldBBox3d(3, -2, 3, 3, 3, 3)).isEmpty());
+
+        // Various intersectig boxes
+        box = new WorldBBox3d(-2, -2, -2, 5, 5, 5);
+        assertEquals(new WorldBBox3d(-2, -2, -2, 3, 3, 3), box.intersection(new WorldBBox3d(-3, -3, -3, 4, 4, 4)));
+        assertEquals(new WorldBBox3d(0, -2, -2, 3, 3, 3), box.intersection(new WorldBBox3d(0, -3, -3, 4, 4, 4)));
+        assertEquals(new WorldBBox3d(-2, 0, -2, 3, 3, 3), box.intersection(new WorldBBox3d(-3, 0, -3, 4, 4, 4)));
+        assertEquals(new WorldBBox3d(0, 0, -2, 3, 3, 3), box.intersection(new WorldBBox3d(0, 0, -3, 4, 4, 4)));
+        assertEquals(new WorldBBox3d(-2, -2, 0, 3, 3, 3), box.intersection(new WorldBBox3d(-3, -3, 0, 4, 4, 4)));
+        assertEquals(new WorldBBox3d(0, -2, 0, 3, 3, 3), box.intersection(new WorldBBox3d(0, -3, 0, 4, 4, 4)));
+        assertEquals(new WorldBBox3d(-2, 0, 0, 3, 3, 3), box.intersection(new WorldBBox3d(-3, 0, 0, 4, 4, 4)));
+        assertEquals(new WorldBBox3d(0, 0, 0, 3, 3, 3), box.intersection(new WorldBBox3d(0, 0, 0, 4, 4, 4)));
+    }
 }
+

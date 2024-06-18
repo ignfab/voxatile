@@ -4,6 +4,8 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import org.junit.jupiter.api.Test;
 
+import java.util.NoSuchElementException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WorldBBox3dIteratorTest {
@@ -25,6 +27,8 @@ public class WorldBBox3dIteratorTest {
             count++;
         }
 
+        assertThrows(NoSuchElementException.class, () -> iterator.next());
+
         // Check if the iterator has visited every place exactly once.
         assertEquals(24, count, "Unexpected number of iterated element");
         for (int x = 0; x < 4; x++)
@@ -32,4 +36,13 @@ public class WorldBBox3dIteratorTest {
                 for (int z = 0; z < 2; z++)
                     assertTrue(done[x][y][z], String.format("Coordinates (x = %d, y = %d, z = %d) skipped !", x + 1, y + 2, z + 3));
     }
+
+    @Test
+    public void testIteratorOnEmptyBox() {
+        WorldBBox3d bbox = new WorldBBox3d(1, 2, 3, 0, 0, 0);
+        WorldBBox3dIterator iterator = new WorldBBox3dIterator(bbox);
+        assertFalse(iterator.hasNext());
+        assertThrows(NoSuchElementException.class, () -> iterator.next());
+    }
+
 }

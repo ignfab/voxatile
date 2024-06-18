@@ -199,6 +199,30 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
         return min.equals(that.min) && max.equals(that.max);
     }
 
+    /**
+     * Tells if box is empty.
+     *
+     * @return true if box is empty
+     */
+    public boolean isEmpty() {
+        return size.x() == 0 || size.y() == 0;
+    }
+
+    /**
+     * Returns intersection with another bounind box.
+     *
+     * @param box Other bounding box to intersect with
+     *
+     * @return A new bounding box representing the intersection (may be empty)
+     */
+    public WorldBBox2d intersection(WorldBBox2d box) {
+        int minX = Math.max(min.x(), box.getMinX());
+        int minY = Math.max(min.y(), box.getMinY());
+        int maxX = Math.min(max.x(), box.getMaxX());
+        int maxY = Math.min(max.y(), box.getMaxY());
+        return new WorldBBox2d(minX, minY, Math.max(0, maxX - minX + 1), Math.max(0, maxY - minY + 1));
+    }
+
     @Override
     public int hashCode() {
         int result = min.hashCode();

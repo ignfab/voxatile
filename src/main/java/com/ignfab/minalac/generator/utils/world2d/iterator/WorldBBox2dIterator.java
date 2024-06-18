@@ -22,11 +22,13 @@ public class WorldBBox2dIterator implements Iterator<WorldCoords2d> {
      */
     public WorldBBox2dIterator(WorldBBox2d bbox) {
         this.bbox = bbox;
-        x = bbox.getMin().x();
-        y = bbox.getMin().y();
-
-        if (bbox.getSize().area() > 0)
+        if (bbox.isEmpty()) {
+            hasNext = false;
+        } else {
+            x = bbox.getMin().x();
+            y = bbox.getMin().y();
             hasNext = true;
+        }
     }
 
     private void moveOn() {

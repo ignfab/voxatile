@@ -230,6 +230,32 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
         return min.equals(that.min) && max.equals(that.max);
     }
 
+    /**
+     * Tells if box is empty.
+     *
+     * @return true if box is empty
+     */
+    public boolean isEmpty() {
+        return size.x() == 0 || size.y() == 0 || size.z() == 0;
+    }
+
+    /**
+     * Returns intersection with another bounind box.
+     *
+     * @param box Other bounding box to intersect with
+     *
+     * @return A new bounding box representing the intersection (may be empty)
+     */
+    public WorldBBox3d intersection(WorldBBox3d box) {
+        int minX = Math.max(min.x(), box.getMinX());
+        int minY = Math.max(min.y(), box.getMinY());
+        int minZ = Math.max(min.z(), box.getMinZ());
+        int maxX = Math.min(max.x(), box.getMaxX());
+        int maxY = Math.min(max.y(), box.getMaxY());
+        int maxZ = Math.min(max.z(), box.getMaxZ());
+        return new WorldBBox3d(minX, minY, minZ, Math.max(0, maxX - minX + 1), Math.max(0, maxY - minY + 1), Math.max(0, maxZ - minZ + 1));
+    }
+
     @Override
     public int hashCode() {
         int result = min.hashCode();

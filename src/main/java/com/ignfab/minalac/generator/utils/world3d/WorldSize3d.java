@@ -24,8 +24,8 @@ public record WorldSize3d(int x, int y, int z) {
      * @throws IllegalArgumentException if either {@code x}, {@code y} or {@code z} is less than or equal to 0
      */
     public WorldSize3d {
-        if (x <= 0 || y <= 0 || z <= 0)
-            throw new IllegalArgumentException("Invalid size: x, y and z must be greater than 0");
+        if (x < 0 || y < 0 || z < 0)
+            throw new IllegalArgumentException("Invalid size: x, y and z must be positive numbers");
     }
 
     /**

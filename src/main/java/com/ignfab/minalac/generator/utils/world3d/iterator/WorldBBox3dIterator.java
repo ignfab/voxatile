@@ -23,12 +23,14 @@ public class WorldBBox3dIterator implements Iterator<WorldCoords3d> {
      */
     public WorldBBox3dIterator(WorldBBox3d bbox) {
         this.bbox = bbox;
-        x = bbox.getMin().x();
-        y = bbox.getMin().y();
-        z = bbox.getMin().z();
-
-        if (bbox.getSize().volume() > 0)
+        if (bbox.isEmpty()) {
+            hasNext = false;
+        } else {
+            x = bbox.getMin().x();
+            y = bbox.getMin().y();
+            z = bbox.getMin().z();
             hasNext = true;
+        }
     }
 
     private void moveOn() {

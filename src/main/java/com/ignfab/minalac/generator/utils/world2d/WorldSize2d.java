@@ -22,8 +22,8 @@ public record WorldSize2d(int x, int y) {
      * @throws IllegalArgumentException if either {@code x} or {@code y} is less than or equal to 0.
      */
     public WorldSize2d {
-        if (x <= 0 || y <= 0)
-            throw new IllegalArgumentException("Invalid size: x and y must be greater than 0");
+        if (x < 0 || y < 0)
+            throw new IllegalArgumentException("Invalid size: x and y must be positive numbers");
     }
 
     /**
