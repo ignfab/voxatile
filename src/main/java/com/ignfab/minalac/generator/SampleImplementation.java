@@ -2,7 +2,7 @@ package com.ignfab.minalac.generator;
 
 
 import com.ignfab.minalac.generator.models.GeometryModel;
-import com.ignfab.minalac.generator.models.Model;
+import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.generation.CoordsConverter;
@@ -20,11 +20,9 @@ import com.ignfab.minalac.generator.world.SemanticType;
 import com.ignfab.minalac.generator.world.VoxelType;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
-import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.api.referencing.operation.TransformException;
-import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Envelope;
@@ -39,10 +37,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 /**
@@ -107,24 +103,28 @@ public final class SampleImplementation {
             String bboxURL = "BBOX=" + envelope.getMinX() + "," + envelope.getMinY() + "," + envelope.getMaxX() + "," + envelope.getMaxY();
 
             // Downloads
+            ModelStore store = new ModelStore();
+
             System.out.println("Downloading height map");
             HeightMap heightMap = createGroundHeightMap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, extendX, extendY, verticalScale);
 
             System.out.println("Downloading buildings");
-            WFS2DataProvider provider = new WFS2DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154");
-            Collection<Model> buildingModels = fetchVectorModels(
-                provider.getFeatures(),
-                generation.makeCoordsConverter(crs) // This is supposed to be the layer CRS (actually the same for this demo)
-            );
+            downloadVectorFeatures(
+                new WFS2DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154"),
+                generation.makeCoordsConverter(crs),  // This is supposed to be the layer CRS (actually the same for this demo)
+                "building",
+                store);
 
             System.out.println("World creation");
             VoxelWorld world = FORMATS.get(format).get();
+
             System.out.println("Placing ground");
             placeVoxelFromHeightMap(heightMap, world);
 
             System.out.println("Placing buildings");
             new VectorRenderer(
-                heightMap, buildingModels,
+                heightMap,
+                store.getByType("building"),
                 world.getFactory().createVoxelType(SemanticType.COBBLE),
                 world.getFactory().createVoxelType(SemanticType.BRICK)
             ).render();
@@ -145,20 +145,11 @@ public final class SampleImplementation {
         System.out.println("Execution time: " + (end - start) / 1000 + "s");
     }
 
-    private static List<Model> fetchVectorModels(SimpleFeatureCollection features, CoordsConverter converter)
-        throws TransformException {
-        List<Model> models = new LinkedList<>();
-
-        try (
-            SimpleFeatureIterator iterator = features.features()
-        ) {
-            while (iterator.hasNext()) {
-                SimpleFeature feature = iterator.next();
-                models.add((Model) (new GeometryModel((Geometry) feature.getDefaultGeometry(), converter)));
-            }
-        }
-
-        return models;
+    private static void downloadVectorFeatures(WFS2DataProvider provider, CoordsConverter converter, String type, ModelStore store)
+            throws NoSuchElementException, TransformException, IOException, ParserConfigurationException, SAXException {
+        SimpleFeatureIterator iterator = provider.getFeatures().features();
+        while (iterator.hasNext())
+            store.add(type, new GeometryModel((Geometry) iterator.next().getDefaultGeometry(), converter));
     }
 
     private static void placeVoxelFromHeightMap(HeightMap map, VoxelWorld world) throws OutOfWorldException {
