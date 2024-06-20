@@ -1,0 +1,72 @@
+name: Commits
+run-name: ${{ github.actor }} is validating commits of ${{ github.repository }}#${{ github.head_ref }}
+on: pull_request
+
+env:
+  ALLOWED_TYPES: '[ "feat", "fix", "docs", "style", "refactor", "perf", "test", "build", "ci", "chore", "revert" ]'
+
+jobs:
+  validate-commits:
+    name: validate-commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: List commits
+        id: list-commits
+        run: |
+          {
+            echo 'commits<<EOF'
+            gh pr view ${{ github.event.number }} --repo ${{ github.repository }} --json commits --jq '.commits | map({ msg: .messageHeadline, sha: .oid })'
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Validate all commit rules
+        shell: python
+        run: |
+          import re
+
+          commits = ${{ steps.list-commits.outputs.commits }}
+          allowed_types = ${{ env.ALLOWED_TYPES }}
+
+          count = len(commits)
+          print(f"Found {count} commit{'s' if count > 1 else ''} to validate:")
+
+          invalid_count = 0
+          seen = {}
+          for commit in commits:
+            msg = commit["msg"]
+            sha = commit["sha"][:7]
+            print(f"\t{sha}: {msg}")
+
+            # Validate conventional commit format
+            match = re.fullmatch("^(?P<type>[a-z]+)\\([a-z]+\\)!?: .*$", msg)
+            if match is None:
+              print(f"::error title=Wrong format::Commit {sha} \"{msg}\" does not respect conventional commit syntax")
+              invalid_count += 1
+              continue
+
+            # Verify conventional commit type
+            commit_type = match.group("type")
+            if commit_type not in allowed_types:
+              print(f"::error title=Unknown type::Commit {sha} \"{msg}\" has unknown type {commit_type}")
+              invalid_count += 1
+              continue
+
+            # Look for duplicates
+            if msg in seen:
+              print(f"::error title=Duplicate commit::Commit {sha} \"{msg}\" has the same message as {seen[msg]}")
+              invalid_count += 1
+              continue
+            seen[msg] = sha
+
+            # Warn about WIP commits
+            if re.search("(wip|work[ -]in[ -]progress)", msg, re.IGNORECASE):
+              print(f"::warning title=WIP commit::Commit {sha} \"{msg}\" is a work-in-progress")
+              invalid_count += 1
+              continue
+
+          if invalid_count > 0:
+            print(f"❌ {invalid_count} commit{'s' if invalid_count > 1 else ''} did not conform to the rules")
+            exit(1)
+          else:
+            print("✅ All commits are valid")
