@@ -11,6 +11,7 @@ import com.ignfab.minalac.generator.generation.HeightMap;
 import com.ignfab.minalac.generator.inputs.WFS2DataProvider;
 import com.ignfab.minalac.generator.renderers.VectorRenderer;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dElement;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
@@ -113,7 +114,8 @@ public final class SampleImplementation {
                 new WFS2DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154"),
                 generation.makeCoordsConverter(crs),  // This is supposed to be the layer CRS (actually the same for this demo)
                 "building",
-                store);
+                store,
+                heightMap.bbox());
 
             System.out.println("World creation");
             VoxelWorld world = FORMATS.get(format).get();
@@ -145,11 +147,11 @@ public final class SampleImplementation {
         System.out.println("Execution time: " + (end - start) / 1000 + "s");
     }
 
-    private static void downloadVectorFeatures(WFS2DataProvider provider, CoordsConverter converter, String type, ModelStore store)
+    private static void downloadVectorFeatures(WFS2DataProvider provider, CoordsConverter converter, String type, ModelStore store, WorldBBox2d limits)
             throws NoSuchElementException, TransformException, IOException, ParserConfigurationException, SAXException {
         SimpleFeatureIterator iterator = provider.getFeatures().features();
         while (iterator.hasNext())
-            store.add(type, new GeometryModel((Geometry) iterator.next().getDefaultGeometry(), converter));
+            store.add(type, new GeometryModel((Geometry) iterator.next().getDefaultGeometry(), converter, limits));
     }
 
     private static void placeVoxelFromHeightMap(HeightMap map, VoxelWorld world) throws OutOfWorldException {

@@ -3,6 +3,9 @@ package com.ignfab.minalac.generator.models;
 import com.ignfab.minalac.generator.generation.CoordsConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+import com.ignfab.minalac.generator.utils.world2d.chunk.EmptyChunk2d;
+import com.ignfab.minalac.generator.utils.world2d.chunk.IterableChunk2d;
+
 import org.geotools.api.referencing.operation.TransformException;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -21,7 +24,8 @@ import java.awt.Graphics2D;
  */
 public class GeometryModel implements Model, Rasterizable {
     private final Geometry geom;
-    private BufferedImageChunk chunk;
+    private IterableChunk2d chunk;
+    private WorldBBox2d limits;
 
     /**
      * Outside the geometry.
@@ -45,18 +49,20 @@ public class GeometryModel implements Model, Rasterizable {
      *
      * @param geom A JTS Geometry
      * @param converter Converter from geometry CRS to world coordinates
+     * @param limits A bounding box of rendering limits
      */
-    public GeometryModel(Geometry geom, CoordsConverter converter) throws TransformException {
+    public GeometryModel(Geometry geom, CoordsConverter converter, WorldBBox2d limits) throws TransformException {
         // Until there is no need of it we don't keep original geometry.
         // Geometry is stored transformed into world coordinates
         this.geom = converter.convert(geom);
+        this.limits = limits;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public BufferedImageChunk getChunk() {
+    public IterableChunk2d getChunk() {
 
         if (chunk == null) {
             makeChunk();
@@ -77,8 +83,17 @@ public class GeometryModel implements Model, Rasterizable {
             new WorldCoords2d((int) Math.floor(envelope.getMinX()), (int) Math.floor(envelope.getMinY())),
             new WorldCoords2d((int) Math.floor(envelope.getMaxX()), (int) Math.floor(envelope.getMaxY())));
 
+        if (limits != null)
+            bbox = bbox.intersection(limits);
+
+        if (bbox.isEmpty()) {
+            chunk = EmptyChunk2d.getInstance();
+            return;
+        }
+
         // Create chunk
-        chunk = new BufferedImageChunk(bbox);
+        BufferedImageChunk chunk = new BufferedImageChunk(bbox);
+        this.chunk = chunk;
         Graphics2D graphics = chunk.createGraphics();
 
         // Draw geometry translated into bounding box relative coordinates (i.e. BufferedImage coordinates))
