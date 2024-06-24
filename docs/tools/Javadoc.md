@@ -103,7 +103,7 @@ Inserts a link similar to `@see` (but inline). `{@linkplain}` uses a text font i
 ```java
 /**
  * Register a {@linkplain TextLabel text label} for this element.
- * 
+ *
  * @deprecated Labels are now HTML. Use {@link #registerRichLabel(HtmlLabel)} instead.
  */
 ```
@@ -161,4 +161,4 @@ We try to document as much code as possible. However, we prioritize the document
 
 When adding elements that do meet the above criteria, or you think are worth documenting, you should write the documentation at the same time. Do not forget to check if the documentation of elements you modified is still correct!
 
-To generate the static HTML documentation, we use the `maven-javadoc-plugin` to run the Javadoc tool using the [`javadoc:javadoc` Maven goal](Maven.md#generate-javadoc). A [GitHub workflow](GitHub-workflows.md#javadoc) also generates automatically Javadoc on push and deploys it on GitHub Pages. It currently only triggers on the `main` branch.
+To generate the static HTML documentation, we use the `maven-javadoc-plugin` to run the Javadoc tool using the [`javadoc:javadoc` Maven goal](Maven.md#generate-javadoc). A [GitHub workflow](GitHub-workflows.md#javadoc) also generates automatically Javadoc on push. Due to technical limitation on GitHub's side, it currently only deploys on GitHub Pages from the `main` branch, and upload the generated files as workflow artifact otherwise.

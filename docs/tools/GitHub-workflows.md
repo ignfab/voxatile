@@ -49,7 +49,7 @@ The workflow never fails (except if the tools themselves fail, which is unlikely
 
 This workflow triggers when a push on any branch modifies the Java main source files.
 
-It consists of a single job, running the [Javadoc](Javadoc.md) tool to generate the static HTML documentation, and then deploying it to GitHub Pages.
+It consists of a single job, running the [Javadoc](Javadoc.md) tool to generate the static HTML documentation, and then deploying it to GitHub Pages or uploading it as workflow artifact, depending on the branch that triggered the workflow run. This behavior is the result of a technical limitation on GitHub's side: We can't deploy a "preview site" for a pull request. To maintain the Javadoc from the `main` branch available on GitHub Pages, this must be the only existing deployment.
 
 The workflow fails if the Javadoc tool itself fails, meaning there are errors in Javadoc Comments, and static HTML documentation cannot be generated.
 

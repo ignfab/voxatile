@@ -2,11 +2,6 @@ name: Javadoc
 run-name: ${{ github.actor }} is generating Javadoc for ${{ github.repository }}#${{ github.ref_name }}
 on:
   push:
-    # Only deploy main branch.
-    # Deploying a Pull Request as a GitHub Pages preview site
-    # is currently in alpha and not available to the public!
-    branches:
-      - main
     paths:
       - src/main/java/**
       - pom.xml
@@ -31,11 +26,25 @@ jobs:
       - name: Generate Javadoc with Maven
         run: mvn --batch-mode --no-transfer-progress --update-snapshots javadoc:javadoc
       - name: Setup Pages
+        # Only deploy main branch.
+        # Deploying a Pull Request as a GitHub Pages preview site
+        # is currently in alpha and not available to the public!
+        if: ${{ github.ref_name == github.event.repository.default_branch }}
         uses: actions/configure-pages@v5
-      - name: Upload artifact
+      - name: Upload GitHub Pages artifact
+        if: ${{ github.ref_name == github.event.repository.default_branch }}
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./target/apidocs/
+          path: target/site/apidocs
       - name: Deploy to GitHub Pages
+        if: ${{ github.ref_name == github.event.repository.default_branch }}
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Upload standard artifact
+        # Fallback to standard artifact on any other branch.
+        if: ${{ github.ref_name != github.event.repository.default_branch }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Javadoc
+          path: target/site/apidocs
+          if-no-files-found: error
