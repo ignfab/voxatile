@@ -31,7 +31,7 @@ public class VectorRenderer {
      * @param heightMap Height map of the ground (on which features will be placed)
      * @param models Models to be rendered (only Rasterizable ones will be)
      * @param inside Voxel type to draw inside geometries
-     * @param edge Voxel type to draw on edges of geometries (including points & lines)
+     * @param edge Voxel type to draw on edges of geometries (including points and lines)
      */
     public VectorRenderer(HeightMap heightMap, Iterable<Model> models, VoxelType inside, VoxelType edge) {
         this.heightMap = heightMap;
