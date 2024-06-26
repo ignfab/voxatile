@@ -2,6 +2,9 @@ name: Javadoc
 run-name: ${{ github.actor }} is generating Javadoc for ${{ github.repository }}#${{ github.ref_name }}
 on:
   push:
+    # Main branch already builds and deploy Javadoc as part of the GitHub Pages site deployment (see github-pages.yml)
+    branches-ignore:
+      - main
     paths:
       - src/main/java/**
       - pom.xml
@@ -11,9 +14,6 @@ jobs:
   javadoc:
     name: javadoc
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,24 +25,7 @@ jobs:
           cache: maven
       - name: Generate Javadoc with Maven
         run: mvn --batch-mode --no-transfer-progress --update-snapshots javadoc:javadoc
-      - name: Setup Pages
-        # Only deploy main branch.
-        # Deploying a Pull Request as a GitHub Pages preview site
-        # is currently in alpha and not available to the public!
-        if: ${{ github.ref_name == github.event.repository.default_branch }}
-        uses: actions/configure-pages@v5
-      - name: Upload GitHub Pages artifact
-        if: ${{ github.ref_name == github.event.repository.default_branch }}
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: target/site/apidocs
-      - name: Deploy to GitHub Pages
-        if: ${{ github.ref_name == github.event.repository.default_branch }}
-        id: deployment
-        uses: actions/deploy-pages@v4
       - name: Upload standard artifact
-        # Fallback to standard artifact on any other branch.
-        if: ${{ github.ref_name != github.event.repository.default_branch }}
         uses: actions/upload-artifact@v4
         with:
           name: Javadoc
