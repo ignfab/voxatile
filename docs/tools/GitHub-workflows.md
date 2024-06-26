@@ -12,9 +12,11 @@ The definition of the workflows are located in the `.github/workflows` directory
 
 ## Usage
 
-We have 4 workflows:
+We have 6 workflows:
 - [`build.yml`](#build-jar): Builds the executable JAR and uploads it as an artifact, then reports build status. Fails if the project does not compile.
 - [`checkstyle.yml`](#checkstyle): Ensures that the source code complies with checkstyle rules. Always succeeds, but creates a failed check with code-style violation (if any).
+- [`commits.yml`](#commits): Validate commit messages, to enforce conventional commits and some other rules. Only triggers in pull requests, and fails if it contains invalid commits.
+- [`github-pages.yml`](#github-pages): Deploys generated Javadoc to GitHub Pages. Only triggers on `main` branch, and should never fail because Javadoc generation is already validated in PRs.
 - [`javadoc.yml`](#javadoc): Generates a static HTML documentation from Javadoc Comments, and deploys it to GitHub Pages. Fails if Javadoc has any error.
 - [`unit-tests.yml`](#unit-tests): Runs unittests. Fails if any unit test do not pass.
 
@@ -42,14 +44,40 @@ It consists of a single job, running the [checkstyle](Checkstyle.md) tool and th
 
 The workflow never fails (except if the tools themselves fail, which is unlikely to happen). It instead creates a status check, with results (either success or failure) linked to their source files.
 
+### Commits
+
+> [!TIP]
+> See the [`commits.yml`](../../.github/workflows/commits.yml) file.
+
+This workflow triggers when a pull request from any branch is (re)opened or synchronized.
+
+It consists of a single job, listing all commits in the PR, and running a small script validating each of them against the following rules:
+- The message follows the conventional commits principles;
+- The type of the commit is listed in the `ALLOWED_TYPES` variable (see at the beginning of the workflow for the full list);
+- The same message is not found twice (or more);
+- The message does not contain "WIP" or "Work in progress" (ignoring case).
+
+The workflow fails if any of these rules is violated by one or more commit. Violation are reported through status annotations in the check, to better help the user fix the Git history.
+
+### GitHub-Pages
+
+> [!TIP]
+> See the [`github-pages.yml`](../../.github/workflows/github-pages.yml) file.
+
+This workflow triggers when a push on the `main` branch modifies the Java main source files.
+
+It consists of a single job, deploying generated Javadoc to GitHub Pages. The reason the workflow only deploys `main` branch is the result of a technical limitation on GitHub's side: We can't deploy a "preview site" for a pull request. To maintain the Javadoc from the `main` branch available on GitHub Pages, this must be the only existing deployment.
+
+The workflow should never fail because Javadoc generation is validated by the [`javadoc.yml`](#javadoc) workflow that triggers in pull requests.
+
 ### Javadoc
 
 > [!TIP]
 > See the [`javadoc.yml`](../../.github/workflows/javadoc.yml) file.
 
-This workflow triggers when a push on any branch modifies the Java main source files.
+This workflow triggers when a push on any branch other than `main` modifies the Java main source files.
 
-It consists of a single job, running the [Javadoc](Javadoc.md) tool to generate the static HTML documentation, and then deploying it to GitHub Pages or uploading it as workflow artifact, depending on the branch that triggered the workflow run. This behavior is the result of a technical limitation on GitHub's side: We can't deploy a "preview site" for a pull request. To maintain the Javadoc from the `main` branch available on GitHub Pages, this must be the only existing deployment.
+It consists of a single job, running the [Javadoc](Javadoc.md) tool to generate the static HTML documentation, and then uploading it as workflow artifact.
 
 The workflow fails if the Javadoc tool itself fails, meaning there are errors in Javadoc Comments, and static HTML documentation cannot be generated.
 
