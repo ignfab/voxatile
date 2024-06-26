@@ -39,7 +39,7 @@ jobs:
             print(f"\t{sha}: {msg}")
 
             # Validate conventional commit format
-            match = re.fullmatch("^(?P<type>[a-z]+)\\([a-z]+\\)!?: .*$", msg)
+            match = re.fullmatch("^(?P<type>[a-z]+)\\([a-z0-9_-]+\\)!?: .*$", msg)
             if match is None:
               print(f"::error title=Wrong format::Commit {sha} \"{msg}\" does not respect conventional commit syntax")
               invalid_count += 1
