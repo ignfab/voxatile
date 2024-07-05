@@ -2,16 +2,17 @@ package com.ignfab.minalac.generator;
 
 import com.ignfab.minalac.generator.models.GeometryModel;
 import com.ignfab.minalac.generator.models.ModelStore;
-import com.ignfab.minalac.generator.parsing.ParamsParser;
-import com.ignfab.minalac.generator.parsing.ParseException;
 import com.ignfab.minalac.generator.generation.CoordsConverter;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.HeightMap;
 import com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider;
+import com.ignfab.minalac.generator.parsing.ParamsParser;
+import com.ignfab.minalac.generator.parsing.ParseException;
 import com.ignfab.minalac.generator.renderers.VectorRenderer;
+import com.ignfab.minalac.generator.utils.execution.Scheduler;
+import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldSize2d;
 import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dElement;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
@@ -30,7 +31,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +39,7 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is a temporary class to have an idea of how the program works.
@@ -54,9 +55,7 @@ public final class SampleImplementation {
      *
      * @param args command line arguments
      */
-    public static void main(String[] args)
-        throws IOException, OutOfWorldException, MapWriteException, SAXException, FactoryException,
-        ParserConfigurationException, TransformException, ParseException {
+    public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException {
         long start = System.currentTimeMillis();
         HttpTrustAllSSL.applyGlobally();
 
@@ -76,38 +75,69 @@ public final class SampleImplementation {
         Envelope envelope = generation.getEnvelopeForCRS(crs);
         String bboxURL = "BBOX=" + envelope.getMinX() + "," + envelope.getMinY() + "," + envelope.getMaxX() + "," + envelope.getMaxY();
 
-        // Downloads
+        // Various data stores
         ModelStore store = new ModelStore();
-
-        System.out.println("Downloading height map");
-        WorldSize2d size = generation.getWorldBBox2d().getSize();
-        HeightMap heightMap = createGroundHeightMap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, size.x(), size.y(), generation.getVerticalScale());
-
-        System.out.println("Downloading buildings");
-        downloadVectorFeatures(
-            new WFS1_1_GML3_1_DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154&outputFormat=text%2Fxml%3B%20subtype%3Dgml%2F3.1.1"),
-            generation.makeCoordsConverter(crs),  // This is supposed to be the layer CRS (actually the same for this demo)
-            "building",
-            store,
-            heightMap.bbox());
-
-        // Rendering
-        System.out.println("World creation");
+        HeightMap heightMap = new HeightMap(generation.getWorldBBox2d(), 0);
         VoxelWorld world = parser.createVoxelWorld();
 
-        System.out.println("Placing ground");
-        placeVoxelFromHeightMap(heightMap, world);
+        Scheduler scheduler = new Scheduler();
 
-        System.out.println("Placing buildings");
-        new VectorRenderer(
-            heightMap,
-            store.getByType("building"),
-            world.getFactory().createVoxelType(SemanticType.COBBLE),
-            world.getFactory().createVoxelType(SemanticType.BRICK)
-        ).render();
+        // Downloads
+        scheduler.schedule("heightmaps.ground", () -> {
+            log("heightmaps.ground", "Downloading height map");
+            try {
+                fillGroundHeightMap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, heightMap, generation.getVerticalScale());
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+            log("heightmaps.ground", "Downloaded height map");
+        });
 
-        // Save map
-        System.out.println("Saving");
+        scheduler.schedule("models.buildings", () -> {
+            log("models.buildings", "Downloading buildings");
+            try {
+                downloadVectorFeatures(
+                    new WFS1_1_GML3_1_DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154&outputFormat=text%2Fxml%3B%20subtype%3Dgml%2F3.1.1"),
+                    generation.makeCoordsConverter(crs),  // This is supposed to be the layer CRS (actually the same for this demo)
+                    "building",
+                    store,
+                    heightMap.bbox());
+            } catch (TransformException | IOException | ParserConfigurationException | SAXException | FactoryException e) {
+                throw new RuntimeException(e);
+            }
+            log("models.buildings", "Downloaded buildings");
+        });
+
+        // Rendering
+        scheduler.schedule("renderers.ground", () -> {
+            log("renderers.ground", "Placing ground");
+            try {
+                placeVoxelFromHeightMap(heightMap, world);
+            } catch (OutOfWorldException e) {
+                throw new RuntimeException(e);
+            }
+            log("renderers.ground", "Placed ground");
+        }, "heightmaps.ground");
+
+        scheduler.schedule("renderers.buildings", () -> {
+            log("renderers.buildings", "Placing buildings");
+            new VectorRenderer(
+                heightMap,
+                store.getByType("building"),
+                world.getFactory().createVoxelType(SemanticType.COBBLE),
+                world.getFactory().createVoxelType(SemanticType.BRICK)
+            ).render();
+            log("renderers.buildings", "Placed buildings");
+        }, "heightmaps.ground", "models.buildings");
+
+        scheduler.start();
+        try {
+            scheduler.waitUntilAllTasksFinished(5, TimeUnit.MINUTES);
+        } finally {
+            scheduler.shutdown();
+        }
+
+        System.out.println("Saving world");
         VoxelWorldMetadata metadata = world.getMetadata();
         metadata.setSpawn(new WorldCoords3d(0, 0, heightMap.get(0, 0) + 1));
         metadata.setWorldName("Minalac");
@@ -119,11 +149,16 @@ public final class SampleImplementation {
         System.out.println("Execution time: " + (end - start) / 1000 + "s");
     }
 
+    private static void log(String prefix, String message) {
+        System.out.printf("[%s] (%s) %s%n", Thread.currentThread().getName(), prefix, message);
+    }
+
     private static void downloadVectorFeatures(WFS1_1_GML3_1_DataProvider provider, CoordsConverter converter, String type, ModelStore store, WorldBBox2d limits)
             throws NoSuchElementException, TransformException, IOException, ParserConfigurationException, SAXException {
-        SimpleFeatureIterator iterator = provider.getFeatures().features();
-        while (iterator.hasNext())
-            store.add(type, new GeometryModel((Geometry) iterator.next().getDefaultGeometry(), converter, limits));
+        try (SimpleFeatureIterator iterator = provider.getFeatures().features()) {
+            while (iterator.hasNext())
+                store.add(type, new GeometryModel((Geometry) iterator.next().getDefaultGeometry(), converter, limits));
+        }
     }
 
     private static void placeVoxelFromHeightMap(HeightMap map, VoxelWorld world) throws OutOfWorldException {
@@ -145,11 +180,12 @@ public final class SampleImplementation {
         }
     }
 
-    private static HeightMap createGroundHeightMap(String partialUrl, int width, int height, double verticalScale) throws MalformedURLException {
-        float[] mntArray;
-        byte[] data;
+    private static void fillGroundHeightMap(String partialUrl, HeightMap heightMap, double verticalScale) throws MalformedURLException {
+        int width = heightMap.bbox().getSizeX();
+        int height = heightMap.bbox().getSizeY();
         URL url = new URL(partialUrl + "&WIDTH=" + width + "&HEIGHT=" + height);
 
+        byte[] data;
         try (InputStream inputStream = url.openStream()) {
             int total = 0;
             int read;
@@ -162,22 +198,19 @@ public final class SampleImplementation {
             throw new RuntimeException(e);
         }
 
-        mntArray = byteArrayToFloatArray(data);
+        float[] mntArray = byteArrayToFloatArray(data);
 
-        int xMin = -width / 2;
-        int yMin = -height / 2;
-
-        HeightMap heightMap = new HeightMap(xMin, yMin, width, height, 0);
+        int xMin = heightMap.bbox().getMinX();
+        int yMin = heightMap.bbox().getMinY();
 
         int index = 0;
 
-        for (int y = height - 1; y >= 0; y--) // In raster, Y axis is downwards
+        for (int y = height - 1; y >= 0; y--) { // In raster, Y axis is downwards
             for (int x = 0; x < width; x++) {
                 heightMap.set(x + xMin, y + yMin, (int) (mntArray[index] / verticalScale));
                 index++;
             }
-
-        return heightMap;
+        }
     }
 
     private static float[] byteArrayToFloatArray(byte[] byteData) {
