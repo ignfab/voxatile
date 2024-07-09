@@ -10,10 +10,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-public class WFS2DataProvider {
+@SuppressWarnings("checkstyle:TypeName") // Underscore character used to better identify "WFS 1.1" and "GML 3.1"
+public class WFS1_1_GML3_1_DataProvider {
     private final String baseURL;
 
-    public WFS2DataProvider(String baseURL) {
+    public WFS1_1_GML3_1_DataProvider(String baseURL) {
         this.baseURL = baseURL;
     }
 
@@ -24,11 +25,8 @@ public class WFS2DataProvider {
 
         InputStream stream = url.openStream();
 
-        InputStream replacedStream = new ReplacingInputStream(new ReplacingInputStream(new ReplacingInputStream(new ReplacingInputStream(stream,
-                "</wfs:member>\n<wfs:member>", ""),
-                "wfs:member", "gml:featureMembers"),
-                "http://BDTOPO_V3", "http://BDTOPOV3"),
-                "xmlns:gml=\"http://www.opengis.net/gml/3.2\"", "xmlns:gml=\"http://www.opengis.net/gml\"");
+        // Invalidate schema declaration because GML version 3.1 is not used in this schema (version is unspecified, defaulting to 3.2)
+        InputStream replacedStream = new ReplacingInputStream(stream, "http://BDTOPO_V3", "explicitly-invalid");
 
         return gml.decodeFeatureCollection(replacedStream);
    }

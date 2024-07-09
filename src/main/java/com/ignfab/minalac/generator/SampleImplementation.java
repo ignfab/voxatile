@@ -8,7 +8,7 @@ import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.generation.CoordsConverter;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.HeightMap;
-import com.ignfab.minalac.generator.inputs.WFS2DataProvider;
+import com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider;
 import com.ignfab.minalac.generator.renderers.VectorRenderer;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
@@ -111,7 +111,7 @@ public final class SampleImplementation {
 
             System.out.println("Downloading buildings");
             downloadVectorFeatures(
-                new WFS2DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154"),
+                new WFS1_1_GML3_1_DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154&outputFormat=text%2Fxml%3B%20subtype%3Dgml%2F3.1.1"),
                 generation.makeCoordsConverter(crs),  // This is supposed to be the layer CRS (actually the same for this demo)
                 "building",
                 store,
@@ -147,7 +147,7 @@ public final class SampleImplementation {
         System.out.println("Execution time: " + (end - start) / 1000 + "s");
     }
 
-    private static void downloadVectorFeatures(WFS2DataProvider provider, CoordsConverter converter, String type, ModelStore store, WorldBBox2d limits)
+    private static void downloadVectorFeatures(WFS1_1_GML3_1_DataProvider provider, CoordsConverter converter, String type, ModelStore store, WorldBBox2d limits)
             throws NoSuchElementException, TransformException, IOException, ParserConfigurationException, SAXException {
         SimpleFeatureIterator iterator = provider.getFeatures().features();
         while (iterator.hasNext())
