@@ -29,4 +29,17 @@ public record WorldCoords2d(int x, int y) {
     public WorldCoords3d to3d(int z) {
         return new WorldCoords3d(this, z);
     }
+
+    /**
+     * Create a new {@link WorldCoords2d} from floating point coordinates.
+     *
+     * @param x The x-component value as double
+     * @param y The y-component value as double
+     */
+    public WorldCoords2d(double x, double y) {
+        this(
+            (int) Math.floor(x),
+            (int) Math.floor(y)
+        );
+    }
 }
