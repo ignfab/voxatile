@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.models;
 
-import com.ignfab.minalac.generator.generation.CoordsConverter;
+import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -14,7 +15,6 @@ import com.ignfab.minalac.generator.voxelization.shape3d.Polygon3d;
 import com.ignfab.minalac.generator.voxelization.shape3d.Polyline3d;
 import com.ignfab.minalac.generator.voxelization.shape3d.ShapesVoxelizer3d;
 
-import org.geotools.api.referencing.operation.TransformException;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -39,7 +39,7 @@ public class JTSGeometryModel extends Model implements ShapesVoxelizable2d, Shap
      * @param geom A JTS Geometry
      * @param converter Converter from geometry CRS to world coordinates
      */
-    public JTSGeometryModel(Geometry geom, CoordsConverter converter) throws TransformException {
+    public JTSGeometryModel(Geometry geom, MapToWorldConverter converter) throws TransformException {
         super();
         // Until there is no need of it we don't keep original geometry.
         // Geometry is stored transformed into world coordinates

@@ -1,11 +1,12 @@
 package com.ignfab.minalac.generator.generation;
 
+import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
+import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
-import org.geotools.api.referencing.operation.MathTransform;
-import org.geotools.api.referencing.operation.TransformException;
-import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -88,19 +89,17 @@ public class Generation {
      * @return Envelope covering generated world in CRS.
      */
     public Envelope getEnvelopeForCRS(CoordinateReferenceSystem crs) throws FactoryException, TransformException {
-        MathTransform crsTransform = CRS.findMathTransform(this.crs, crs);
+        WorldToMapConverter converter = makeCoordsConverter(crs).inverse();
 
-        Coordinate[] corners = {
+        Geometry geom = new GeometryFactory().createLinearRing(new Coordinate[] {
             new Coordinate(worldBBox.minX(), worldBBox.minY()),
             new Coordinate(worldBBox.maxX(), worldBBox.minY()),
             new Coordinate(worldBBox.maxX(), worldBBox.maxY()),
             new Coordinate(worldBBox.minX(), worldBBox.maxY()),
             new Coordinate(worldBBox.minX(), worldBBox.minY())
-        };
+        });
 
-        Geometry geom = voxelToCrs.transform(new GeometryFactory().createLinearRing(corners));
-
-        return JTS.transform(geom, crsTransform).getEnvelopeInternal();
+        return converter.convert(geom).getEnvelopeInternal();
     }
 
     /**
@@ -119,8 +118,8 @@ public class Generation {
      * @return A converter to be used to convert any map coordinates into generated world coordinates.
      * @throws FactoryException If not suitable transformation found for conversion.
      */
-    public CoordsConverter makeCoordsConverter(CoordinateReferenceSystem sourceCrs) throws FactoryException {
-        return new CoordsConverter(CRS.findMathTransform(sourceCrs, crs), crsToVoxel);
+    public MapToWorldConverter makeCoordsConverter(CoordinateReferenceSystem sourceCrs) throws FactoryException {
+        return new MapToWorldConverter(CRS.findMathTransform(sourceCrs, crs), crsToVoxel);
     }
 
     /**

@@ -7,13 +7,14 @@ import org.junit.jupiter.api.Test;
 
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.api.referencing.FactoryException;
-import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
+import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 import java.util.NoSuchElementException;
@@ -64,7 +65,7 @@ public class TestGeneration {
         assertEquals(1.7559, envelope.getMinY(), 0.0002);
 
         // Coords converter from WSG84
-        CoordsConverter converter = generation.makeCoordsConverter(crs4326);
+        MapToWorldConverter converter = generation.makeCoordsConverter(crs4326);
         // 44.1655934, 1.7682873 is WSG84 for 601500, 6341500 which correspond to voxel 250,250.
         Geometry geometry = new GeometryFactory().createPoint(new Coordinate(44.1655934, 1.7682873));
         geometry = converter.convert(geometry);

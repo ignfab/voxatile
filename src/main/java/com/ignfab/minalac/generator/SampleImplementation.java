@@ -3,44 +3,43 @@ package com.ignfab.minalac.generator;
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
-import com.ignfab.minalac.generator.generation.CoordsConverter;
+import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider;
+import com.ignfab.minalac.generator.inputs.WMSFloatBilDataProvider;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.parsing.ParamsParser;
 import com.ignfab.minalac.generator.parsing.ParseException;
+import com.ignfab.minalac.generator.processors.FloatMatrixProcessor;
 import com.ignfab.minalac.generator.processors.GeoToolsVectorProcessor;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.post.MetadataCopyPostProcessor;
 import com.ignfab.minalac.generator.processors.post.MetadataParsePostProcessor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
+import com.ignfab.minalac.generator.renderers.GroundRenderer;
+import com.ignfab.minalac.generator.renderers.HeightmapRenderer;
 import com.ignfab.minalac.generator.renderers.VectorRenderer;
+import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.execution.Scheduler;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
-import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.SemanticType;
-import com.ignfab.minalac.generator.world.VoxelType;
+import com.ignfab.minalac.generator.world.SimpleVoxelPattern;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
-import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Envelope;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -57,6 +56,7 @@ public final class SampleImplementation {
      *
      * @param args command line arguments
      */
+    @SuppressWarnings("MethodLength")
     public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException {
         long start = System.currentTimeMillis();
         HttpTrustAllSSL.applyGlobally();
@@ -85,19 +85,25 @@ public final class SampleImplementation {
         Scheduler scheduler = new Scheduler();
 
         // Downloads
-        scheduler.schedule("heightmaps.ground", () -> {
-            log("Downloading heightmap");
+
+        scheduler.schedule("models.ground", () -> {
+            log("Downloading height map");
+            MapToWorldConverter converter;
             try {
-                fillGroundHeightmap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, groundHeightmap, generation.getVerticalScale());
-            } catch (MalformedURLException e) {
+                converter = generation.makeCoordsConverter(crs);
+            } catch (FactoryException e) {
                 throw new RuntimeException(e);
             }
+            retrieveDataAndFillModelStore(store, "mnt",
+                new WMSFloatBilDataProvider("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS", crs, envelope),
+                new FloatMatrixProcessor(converter)
+            );
             log("Downloaded heightmap");
         });
 
         scheduler.schedule("models.buildings", () -> {
             log("Downloading buildings");
-            CoordsConverter converter; // This is supposed to be the layer CRS (actually the same for this demo)
+            MapToWorldConverter converter; // This is supposed to be the layer CRS (actually the same for this demo)
             try {
                 converter = generation.makeCoordsConverter(crs);
             } catch (FactoryException e) {
@@ -165,11 +171,28 @@ public final class SampleImplementation {
         });
 
         // Rendering
+        SimpleVoxelPattern soilPattern = new SimpleVoxelPattern();
+        soilPattern.set(0, 0, 0, world.getFactory().createVoxelType(SemanticType.GRASS));
+        soilPattern.set(new WorldBBox3d(0, 0, -3, 1, 1, 3), world.getFactory().createVoxelType(SemanticType.DIRT));
+        soilPattern.set(new WorldBBox3d(0, 0, -23, 1, 1, 20), world.getFactory().createVoxelType(SemanticType.STONE));
+
+        scheduler.schedule("renderers.heightmap", () -> {
+            log("Filling altitude heightmap");
+            new HeightmapRenderer(
+                generation.getHeightmap("ground"),
+                store.getByType("mnt")
+            ).render(generation.getWorldBBox2d().to3d(-32_000, 64_000));
+            log("Altitude heightmap filled");
+        }, "models.ground");
+
         scheduler.schedule("renderers.ground", () -> {
-            log("Placing ground");
-            placeVoxelFromHeightmap(groundHeightmap, world);
-            log("Placed ground");
-        }, "heightmaps.ground");
+            log("Rendering ground");
+            new GroundRenderer(
+                generation.getHeightmap("ground"),
+                soilPattern
+            ).render(generation.getWorldBBox2d().to3d(-32_000, 64_000));
+            log("Ground rendered");
+        }, "renderers.heightmap");
 
         scheduler.schedule("renderers.buildings", () -> {
             log("Placing buildings");
@@ -180,7 +203,9 @@ public final class SampleImplementation {
                 world.getFactory().createVoxelType(SemanticType.BRICK)
             ).render(generation.getWorldBBox2d().to3d(-32_000, 64_000));
             log("Placed buildings");
-        }, "heightmaps.ground", "models.buildings");
+        }, "renderers.heightmap", "models.buildings");
+
+        // Get work done!
 
         scheduler.start();
         try {
@@ -241,64 +266,6 @@ public final class SampleImplementation {
         } catch (IOException | GenerationFailedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static void placeVoxelFromHeightmap(Heightmap map, VoxelWorld world) {
-        VoxelType grassVT = world.getFactory().createVoxelType(SemanticType.GRASS);
-        VoxelType stoneVT = world.getFactory().createVoxelType(SemanticType.STONE);
-        VoxelType dirtVT = world.getFactory().createVoxelType(SemanticType.DIRT);
-
-        for (WorldCoords2d coords : map.bbox()) {
-            int x = coords.x();
-            int y = coords.y();
-            int z = map.get(coords);
-            grassVT.place(x, y, z);
-            dirtVT.place(x, y, (z - 1));
-            dirtVT.place(x, y, (z - 2));
-
-            for (int zStone = z - 3; zStone > z - (3 + 10); zStone--) {
-                stoneVT.place(x, y, zStone);
-            }
-        }
-    }
-
-    private static void fillGroundHeightmap(String partialUrl, Heightmap heightmap, double verticalScale) throws MalformedURLException {
-        int width = heightmap.bbox().sizeX();
-        int height = heightmap.bbox().sizeY();
-        URL url = new URL(partialUrl + "&WIDTH=" + width + "&HEIGHT=" + height);
-
-        byte[] data;
-        try (InputStream inputStream = url.openStream()) {
-            int total = 0;
-            int read;
-            data = new byte[width * height * 4];
-            while (0 < (read = inputStream.read(data, total, data.length - total)))
-                total = total + read;
-            if (total != data.length)
-                throw new RuntimeException("Incomplete data read from response stream");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        float[] mntArray = byteArrayToFloatArray(data);
-
-        int xMin = heightmap.bbox().minX();
-        int yMin = heightmap.bbox().minY();
-
-        int index = 0;
-
-        for (int y = height - 1; y >= 0; y--) { // In raster, Y axis is downwards
-            for (int x = 0; x < width; x++) {
-                heightmap.set(x + xMin, y + yMin, (int) (mntArray[index] / verticalScale));
-                index++;
-            }
-        }
-    }
-
-    private static float[] byteArrayToFloatArray(byte[] byteData) {
-        float[] floatData = new float[byteData.length / 4];
-        ByteBuffer.wrap(byteData).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer().get(floatData);
-        return floatData;
     }
 
     private static void save(File directory, VoxelWorld world) throws MapWriteException {
