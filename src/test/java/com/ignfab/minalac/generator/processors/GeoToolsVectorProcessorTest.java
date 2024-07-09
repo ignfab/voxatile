@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.processors;
 
-import com.ignfab.minalac.generator.generation.CoordsConverter;
 import com.ignfab.minalac.generator.models.JTSGeometryModel;
+import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
@@ -20,7 +20,7 @@ import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.assertB
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GeoToolsVectorProcessorTest {
-    private static final CoordsConverter IDENTITY_CONVERTER = new CoordsConverter(IdentityTransform.create(2), new AffineTransformation());
+    private static final MapToWorldConverter IDENTITY_CONVERTER = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
 
     @Test
     public void test() throws SchemaException {

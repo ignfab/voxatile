@@ -1,11 +1,12 @@
 package com.ignfab.minalac.generator.processors;
 
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
-import com.ignfab.minalac.generator.generation.CoordsConverter;
+import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.models.JTSGeometryModel;
+import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
+
 import org.geotools.api.feature.Property;
 import org.geotools.api.feature.simple.SimpleFeature;
-import org.geotools.api.referencing.operation.TransformException;
 import org.locationtech.jts.geom.Geometry;
 
 /**
@@ -16,13 +17,13 @@ import org.locationtech.jts.geom.Geometry;
  * This processor pairs well with {@link com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider}.
  */
 public class GeoToolsVectorProcessor implements Processor<SimpleFeature, JTSGeometryModel> {
-    private final CoordsConverter converter;
+    private final MapToWorldConverter converter;
 
     /**
      * Creates a new processor using the given converter to for the {@link JTSGeometryModel}.
      * @param converter the converter to pass to the geometry model
      */
-    public GeoToolsVectorProcessor(CoordsConverter converter) {
+    public GeoToolsVectorProcessor(MapToWorldConverter converter) {
         this.converter = converter;
     }
 
