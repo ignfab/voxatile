@@ -24,7 +24,7 @@ sources:
         to: height
       - type: parse
         metadata: height
-        as: integer
+        as: decimal
         ifMissing: ignore
         ifNotParsable: removeMetadata
       - type: default
@@ -64,16 +64,21 @@ renderers:
     filling: default:cobble
   building:
     after:
-      - renderer:altitude
-      - source:bati
-    type: vector
+      - renderer:building-leveling
+    type: building
     models:
       type: building
       filter:
-        hasMetadata: height
+        not:
+          or:
+            - metadata: height
+              lowerThan: 0
+            - metadata: height
+              equals: 0
     heightmap: ground
-    inside: default:cobble
-    edge: default:stone
+    roof: default:cobble
+    wall: default:stone
+    window: default:glass
 verticalScale: 1.0
 horizontalScale: 1.0
 area:

@@ -62,7 +62,7 @@ public final class ParamsTester {
 
 
     /**
-     * Deserializes parameters with "Testing" mapper.
+     * Deserializes parameters with "Testing" output format and given mapper.
      *
      * @param cls class to deserialize to
      * @param serialized text to deserialize

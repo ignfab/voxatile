@@ -3,10 +3,13 @@ package com.ignfab.minalac.generator.parameters;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
+import com.ignfab.minalac.generator.parameters.placeables.TestingVoxelTypeParams;
 import com.ignfab.minalac.generator.parameters.placeables.minetest.MTVoxelTypeParams;
 import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.TestingProviderParams;
 import com.ignfab.minalac.generator.parameters.renderers.TestingRendererParams;
+import com.ignfab.minalac.generator.parameters.renderers.BuildingRendererParams;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -111,6 +114,14 @@ public class GenerationParamsTest {
         params.sources.put("source1", new DataSourceParams("models1", new TestingProviderParams("value3"), new TestingProcessorParams("value4")));
         params.sources.put("source2", new DataSourceParams("models2", new TestingProviderParams("value5"), new TestingProcessorParams("value6")));
 
+        TestingVoxelTypeParams placeable = new TestingVoxelTypeParams("voxel");
+        params.renderers.put("building", new BuildingRendererParams(
+            new ModelSelectionParams("building"),
+            "ground",
+            placeable,
+            placeable,
+            placeable
+        ));
         Generation generation = params.create();
 
         assertNotNull(generation);
