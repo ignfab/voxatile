@@ -16,7 +16,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
     private final WorldSize3d size;
 
     /**
-     * Constructs a new {@link WorldBBox3d} by providing a starting position and the desired size of the bounding box.
+     * Creates a new {@link WorldBBox3d} by providing a starting position and the desired size of the bounding box.
      *
      * @param origin the starting position's coordinates (minimum point).
      * @param size   the bounding box size.
@@ -32,7 +32,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
     }
 
     /**
-     * Constructs a new {@link WorldBBox3d} by providing a starting position and the desired size of the bounding box.
+     * Creates a new {@link WorldBBox3d} by providing a starting position and the desired size of the bounding box.
      *
      * @param originX the x-coordinate of the starting position.
      * @param originY the y-coordinate of the starting position.
@@ -46,22 +46,35 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
     }
 
     /**
-     * Constructs a new {@link WorldBBox3d} by providing the minimum and maximum points of the bounding box.
+     * Creates a new {@link WorldBBox3d} containing all given coordinates.
      *
-     * @param min the minimum point's coordinates.
-     * @param max the maximum point's coordinates.
-     * @throws IllegalArgumentException if any coordinates of the maximum point is less than its counterpart in the minimum point.
+     * @param first a first mandatory coordinate that should be in resulting box
+     * @param others a list of coordinate that should be in resulting box
      */
-    public WorldBBox3d(WorldCoords3d min, WorldCoords3d max) {
-        if (min.x() > max.x() || min.y() > max.y() || min.z() > max.z())
-            throw new IllegalArgumentException("Minimum point must be less than or equal to maximum point");
-        this.min = min;
-        this.max = max;
-        size = new WorldSize3d(max.x() - min.x() + 1, max.y() - min.y() + 1, max.z() - min.z() + 1);
+    public WorldBBox3d(WorldCoords3d first, WorldCoords3d... others) {
+        int minX = first.x();
+        int minY = first.y();
+        int minZ = first.z();
+        int maxX = first.x();
+        int maxY = first.y();
+        int maxZ = first.z();
+
+        for (WorldCoords3d coord : others) {
+            minX = Math.min(minX, coord.x());
+            minY = Math.min(minY, coord.y());
+            minZ = Math.min(minZ, coord.z());
+            maxX = Math.max(maxX, coord.x());
+            maxY = Math.max(maxY, coord.y());
+            maxZ = Math.max(maxZ, coord.z());
+        }
+
+        min = new WorldCoords3d(minX, minY, minZ);
+        max = new WorldCoords3d(maxX, maxY, maxZ);
+        size = new WorldSize3d(maxX - minX + 1, maxY - minY + 1, maxZ - minZ + 1);
     }
 
     /**
-     * Create a new {@link WorldBBox3d} from an existing {@link WorldBBox2d} and additional components along the z-axis.
+     * Creates a new {@link WorldBBox3d} from an existing {@link WorldBBox2d} and additional components along the z-axis.
      *
      * @param bbox an existing {@link WorldBBox2d} object
      * @param originZ the z-coordinate of the starting position
