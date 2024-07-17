@@ -28,14 +28,13 @@ public final class ParamsTester {
      * @param cls class to deserialize to
      * @param serialized text to deserialize
      * @param format output format to use for deserialization
+     * @param mapper mapper to use for deserialization
      *
      * @param <T> type of deserialized object
      *
      * @return deserialized object
      */
-    public static <T> T deserialize(Class<T> cls, String serialized, OutputFormat format) throws JsonProcessingException {
-
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    public static <T> T deserialize(Class<T> cls, String serialized, OutputFormat format, ObjectMapper mapper) throws JsonProcessingException {
         mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
         mapper.enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
 
@@ -44,6 +43,37 @@ public final class ParamsTester {
         JsonNode node = mapper.readValue(serialized, JsonNode.class);
 
         return mapper.treeToValue(node, cls);
+    }
+
+    /**
+     * Deserializes parameters with a given output format.
+     *
+     * @param cls class to deserialize to
+     * @param serialized text to deserialize
+     * @param format output format to use for deserialization
+     *
+     * @param <T> type of deserialized object
+     *
+     * @return deserialized object
+     */
+    public static <T> T deserialize(Class<T> cls, String serialized, OutputFormat format) throws JsonProcessingException {
+        return deserialize(cls, serialized, format, new ObjectMapper(new YAMLFactory()));
+    }
+
+
+    /**
+     * Deserializes parameters with "Testing" mapper.
+     *
+     * @param cls class to deserialize to
+     * @param serialized text to deserialize
+     * @param mapper mapper to use for deserialization
+     *
+     * @param <T> type of deserialized object
+     *
+     * @return deserialized object
+     */
+    public static <T> T deserialize(Class<T> cls, String serialized, ObjectMapper mapper) throws JsonProcessingException {
+        return deserialize(cls, serialized, OUTPUT_FORMAT, mapper);
     }
 
     /**
@@ -57,9 +87,6 @@ public final class ParamsTester {
      * @return deserialized object
      */
     public static <T> T deserialize(Class<T> cls, String serialized) throws JsonProcessingException {
-
-        return deserialize(cls, serialized, OUTPUT_FORMAT);
+        return deserialize(cls, serialized, OUTPUT_FORMAT, new ObjectMapper(new YAMLFactory()));
     }
-
-
 }

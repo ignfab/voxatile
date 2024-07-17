@@ -78,6 +78,16 @@ public class TestingVoxelWorld extends VoxelWorld {
     /**
      * Get voxel string value at a given position.
      *
+     * @param pos position to get
+     * @return voxel value at this position
+     */
+    public String get(WorldCoords3d pos) {
+        return get(pos.x(), pos.y(), pos.z());
+    }
+
+    /**
+     * Get voxel string value at a given position.
+     *
      * @param x X-coordinates of position to get
      * @param y Y-coordinates of position to get
      * @param z Z-coordinates of position to get

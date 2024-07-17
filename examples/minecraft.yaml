@@ -53,6 +53,15 @@ renderers:
           height: 3
         - material: minecraft:stone
           height: 10
+  building-leveling:
+    after:
+      - source:bati
+      - renderer:ground
+    type: leveling
+    models:
+      type: building
+    heightmap: ground
+    filling: minecraft:cobblestone
   building:
     after:
       - renderer:altitude

@@ -53,6 +53,15 @@ renderers:
           height: 3
         - material: default:stone
           height: 10
+  building-leveling:
+    after:
+      - source:bati
+      - renderer:ground
+    type: leveling
+    models:
+      type: building
+    heightmap: ground
+    filling: default:cobble
   building:
     after:
       - renderer:altitude
