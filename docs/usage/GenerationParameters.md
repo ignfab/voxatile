@@ -28,8 +28,8 @@ renderers:
     type: vector
     modelType: building
     heightmap: ground
-    inside: COBBLE
-    edge: STONE
+    inside: default:cobble
+    edge: default:stone
 area:
   center:
     latitude: 48.845
@@ -247,6 +247,18 @@ Fields:
 - `type`: Must be the value `heightmap`
 - `modelType`: the type of models to render
 - `heightmap`: the name of the heightmap to use. It must exist.
+
+### Leveling renderer
+
+Levels ground under selected models.
+
+Ground height is given by `heightmap`. If it's not flat under a model, it will be risen enough to be flat over model surface. `filling` voxels will be added to world and `heightmap` will be updated accordingly.
+
+Fields:
+- `type`: Must be the value `leveling`
+- `models`: Type of models to render
+- `heightmap`: Heightmap of the ground, will be updated according to leveling.
+- `filling`: [Placeable](#placeables) placed beneath the model, ensuring it connects to the ground and does not appear to float.
 
 ## Model selections
 
@@ -492,4 +504,3 @@ Fields:
       - `height`: How many times to repeat that placeable (optional, default `1`)
 
 An upwards stack starts at reference position and stacks placeable upwards. A downards stack proceeds same but downwards.
-

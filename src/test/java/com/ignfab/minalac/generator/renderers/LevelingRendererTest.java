@@ -1,0 +1,87 @@
+package com.ignfab.minalac.generator.renderers;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.ignfab.minalac.generator.generation.Heightmap;
+import com.ignfab.minalac.generator.models.Model;
+import com.ignfab.minalac.generator.models.ModelSelection;
+import com.ignfab.minalac.generator.models.ModelStore;
+import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
+import com.ignfab.minalac.generator.parameters.placeables.TestingVoxelTypeParams;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class LevelingRendererTest {
+    private WorldBBox3d bbox;
+    private ModelStore models;
+
+    @BeforeEach
+    void setUp() {
+        bbox = new WorldBBox3d(-1, -2, -20, 7, 6, 40);
+        models = new ModelStore();
+    }
+
+    /**
+     * Non-flat world simulation.
+     *
+     * @param pos horizontal position in the voxel world.
+     * @return an arbitrary height
+     */
+    private int heightFormula(WorldCoords2d pos) {
+        return (int) Math.floor(pos.x() * .3 + pos.y() * .7);
+    }
+
+    @Test
+    void testLevelingRendering() {
+        TestingVoxelWorld world = new TestingVoxelWorld(bbox);
+
+        String placeableName = "voxel";
+        TestingVoxelTypeParams placeable = new TestingVoxelTypeParams(placeableName);
+
+        Heightmap heightmap = new Heightmap(world.limits().to2d(), -7);
+
+        // Prepare a non flat Heightmap
+        for (WorldCoords2d pos : heightmap.bbox())
+            heightmap.set(pos, heightFormula(pos));
+
+        // Prepare a single square model
+        WorldBBox2d modelBbox = new WorldBBox2d(0, -1, 5, 3);
+        int expectedHeight = 1;
+        Model model = new TestingRectangleShapeVoxelizable2dModel(modelBbox);
+        models.add("model", model);
+
+        // Try rendering
+        assertDoesNotThrow(() -> new LevelingRenderer(
+            new ModelSelection(models, "model", null),
+            heightmap,
+            placeable.create(world)
+        ).render(bbox));
+
+        // Verify Heightmap has been updated only where wanted
+        for (WorldCoords2d pos : world.limits().to2d()) {
+            if (modelBbox.contains(pos)) {
+                // According to formula, max is at (4, 1) (bottom right corner of model) and is 1
+                assertEquals(expectedHeight, heightmap.get(pos), "%s: unexpected value".formatted(pos));
+            } else {
+                // The rest of the map should not be changed
+                assertEquals(heightFormula(pos), heightmap.get(pos), "%s: unexpected value".formatted(pos));
+            }
+        }
+
+        // Verify world contents
+        for (WorldCoords3d pos : world.limits()) {
+            // Renderers fills from ground (included) to leveled height (1 here)
+            if (modelBbox.contains(pos.to2d()) && pos.z() >= heightFormula(pos.to2d()) && pos.z() <= expectedHeight) {
+                world.assertVoxel(placeableName, pos);
+            } else {
+                world.assertVoxelNull(pos);
+            }
+        }
+    }
+}

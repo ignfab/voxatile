@@ -18,6 +18,7 @@ import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
 import com.ignfab.minalac.generator.parameters.renderers.GroundRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.HeightmapRendererParams;
+import com.ignfab.minalac.generator.parameters.renderers.LevelingRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.VectorRendererParams;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
@@ -70,6 +71,7 @@ public final class SampleImplementation {
         parser.registerParams("heightmap", HeightmapRendererParams.class);
         parser.registerParams("ground", GroundRendererParams.class);
         parser.registerParams("vector", VectorRendererParams.class);
+        parser.registerParams("leveling", LevelingRendererParams.class);
 
         parser.registerParams("wfs", WFSProviderParams.class);
         parser.registerParams("wmsFloat", WMSFloatBilProviderParams.class);
