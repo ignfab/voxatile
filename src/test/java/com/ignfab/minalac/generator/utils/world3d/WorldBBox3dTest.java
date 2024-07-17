@@ -1,24 +1,52 @@
 package com.ignfab.minalac.generator.utils.world3d;
 
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WorldBBox3dTest {
     @Test
-    public void testConstructor() {
-        WorldBBox3d box = assertDoesNotThrow(() -> new WorldBBox3d(0, 0, 0, 10, 10, 10), "Valid BBOX creation (10x10x10)");
-        assertEquals(new WorldCoords3d(0, 0, 0), box.getMin(), "BBOX min");
-        assertEquals(new WorldCoords3d(9, 9, 9), box.getMax(), "BBOX max");
-        assertEquals(new WorldSize3d(10, 10, 10), box.getSize(), "BBOX size");
+    @DisplayName("Test constructor taking origin and size as integers")
+    public void testConstructorOriginSizeInt() {
+        // Instantiating a new bounding box
+        WorldBBox3d box = assertDoesNotThrow(() -> new WorldBBox3d(1, 2, 3, 4, 5, 6));
+        assertEquals(new WorldCoords3d(1, 2, 3), box.getMin());
+        assertEquals(new WorldCoords3d(4, 6, 8), box.getMax());
+        assertEquals(new WorldSize3d(4, 5, 6), box.getSize());
 
-        assertDoesNotThrow(() -> new WorldBBox3d(0, 0, 0, 0, 0, 0), "Valid empty bounding box");
+        // Instanciating a 0 sized bounding box
+        assertDoesNotThrow(() -> new WorldBBox3d(0, 0, 0, 0, 0, 0));
 
-        assertThrows(IllegalArgumentException.class, () -> new WorldBBox3d(0, 0, 0, -1, -1, -1), "Invalid BBOX (negative size)");
+        // Instantiating a negative sized bounding box
+        assertThrows(IllegalArgumentException.class, () -> new WorldBBox3d(0, 0, 0, -1, -1, -1));
     }
 
     @Test
+    @DisplayName("Test constructor taking a list of coordinates")
+    public void testConstructorFirstOthers() {
+        WorldBBox3d box;
+        box = assertDoesNotThrow(() -> new WorldBBox3d(
+            new WorldCoords3d(1, 2, 3)
+        ));
+        assertEquals(new WorldCoords3d(1, 2, 3), box.getMin());
+        assertEquals(new WorldCoords3d(1, 2, 3), box.getMax());
+        assertEquals(new WorldSize3d(1, 1, 1), box.getSize());
+
+        box = assertDoesNotThrow(() -> new WorldBBox3d(
+            new WorldCoords3d(1, -2, 3),
+            new WorldCoords3d(0, 4, -5),
+            new WorldCoords3d(-6, 0, 0)
+        ));
+
+        assertEquals(new WorldCoords3d(-6, -2, -5), box.getMin());
+        assertEquals(new WorldCoords3d(1, 4, 3), box.getMax());
+        assertEquals(new WorldSize3d(8, 7, 9), box.getSize());
+    }
+
+    @Test
+    @DisplayName("Test contains() method")
     @SuppressWarnings("checkstyle:ParenPad")
     public void testContains() {
         WorldBBox3d box = new WorldBBox3d(-1, -2, -3, 4, 5, 6);
@@ -49,6 +77,7 @@ public class WorldBBox3dTest {
     }
 
     @Test
+    @DisplayName("Test to2d() method")
     public void testTo2d() {
         WorldBBox3d box = new WorldBBox3d(-1, -2, -3, 4, 5, 6);
 
@@ -56,6 +85,7 @@ public class WorldBBox3dTest {
     }
 
     @Test
+    @DisplayName("Test isEmpty() method")
     public void testIsEmpty() {
         assertFalse(new WorldBBox3d(-1, 2, 0, 3, 2, 4).isEmpty());
         assertTrue(new WorldBBox3d(-1, 2, 0, 0, 2, 4).isEmpty());
@@ -64,6 +94,7 @@ public class WorldBBox3dTest {
     }
 
     @Test
+    @DisplayName("Test intersection() method")
     public void testIntersection() {
         WorldBBox3d box;
         WorldBBox3d box2;

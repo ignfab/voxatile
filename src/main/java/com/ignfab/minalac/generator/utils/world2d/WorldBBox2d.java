@@ -16,7 +16,7 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
     private final WorldSize2d size;
 
     /**
-     * Constructs a new {@code WorldBBox2d} by providing a starting position and the desired size of the bounding box.
+     * Creates a new {@code WorldBBox2d} by providing a starting position and the desired size of the bounding box.
      *
      * @param origin the starting position's coordinates (minimum point).
      * @param size   the bounding box size.
@@ -31,7 +31,7 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
     }
 
     /**
-     * Constructs a new {@code WorldBBox2d} by providing a starting position and the desired size of the bounding box.
+     * Creates a new {@code WorldBBox2d} by providing a starting position and the desired size of the bounding box.
      *
      * @param originX the x-coordinate of the starting position.
      * @param originY the y-coordinate of the starting position.
@@ -43,22 +43,31 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
     }
 
     /**
-     * Constructs a new {@code WorldBBox2d} by providing the minimum and maximum points of the bounding box.
+     * Creates a new {@link WorldBBox2d} containing all given coordinates.
      *
-     * @param min the minimum point's coordinates.
-     * @param max the maximum point's coordinates.
-     * @throws IllegalArgumentException if any coordinates of the maximum point is less than its counterpart in the minimum point.
+     * @param first a first mandatory coordinate that should be in resulting box
+     * @param others a list of coordinate that should be in resulting box
      */
-    public WorldBBox2d(WorldCoords2d min, WorldCoords2d max) {
-        if (min.x() > max.x() || min.y() > max.y())
-            throw new IllegalArgumentException("Minimum point must be less than or equal to maximum point");
-        this.min = min;
-        this.max = max;
-        size = new WorldSize2d(max.x() - min.x() + 1, max.y() - min.y() + 1);
+    public WorldBBox2d(WorldCoords2d first, WorldCoords2d... others) {
+        int minX = first.x();
+        int minY = first.y();
+        int maxX = first.x();
+        int maxY = first.y();
+
+        for (WorldCoords2d coord : others) {
+            minX = Math.min(minX, coord.x());
+            minY = Math.min(minY, coord.y());
+            maxX = Math.max(maxX, coord.x());
+            maxY = Math.max(maxY, coord.y());
+        }
+
+        min = new WorldCoords2d(minX, minY);
+        max = new WorldCoords2d(maxX, maxY);
+        size = new WorldSize2d(maxX - minX + 1, maxY - minY + 1);
     }
 
     /**
-     * Create a new {@link WorldBBox2d} from an existing {@link WorldBBox3d}, dropping its components along the z-axis.
+     * Creates a new {@link WorldBBox2d} from an existing {@link WorldBBox3d}, dropping its components along the z-axis.
      * The region represented by this bbox will be flattened.
      *
      * @param bbox an existing {@link WorldBBox3d} object

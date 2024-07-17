@@ -1,18 +1,20 @@
 package com.ignfab.minalac.generator.utils.world2d;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WorldBBox2dTest {
     @Test
-    public void testConstructor() {
+    @DisplayName("Test constructor taking origin and size as integers")
+    public void testConstructorOriginSizeInt() {
         // Instantiating a new bounding box
-        WorldBBox2d box = assertDoesNotThrow(() -> new WorldBBox2d(0, 0, 10, 10));
-        assertEquals(new WorldCoords2d(0, 0), box.getMin());
-        assertEquals(new WorldCoords2d(9, 9), box.getMax());
-        assertEquals(new WorldSize2d(10, 10), box.getSize());
+        WorldBBox2d box = assertDoesNotThrow(() -> new WorldBBox2d(1, 2, 3, 4));
+        assertEquals(new WorldCoords2d(1, 2), box.getMin());
+        assertEquals(new WorldCoords2d(3, 5), box.getMax());
+        assertEquals(new WorldSize2d(3, 4), box.getSize());
 
         // Instanciating a 0 sized bounding box
         assertDoesNotThrow(() -> new WorldBBox2d(0, 0, 0, 0));
@@ -22,6 +24,29 @@ public class WorldBBox2dTest {
     }
 
     @Test
+    @DisplayName("Test constructor taking a list of coordinates")
+    public void testConstructorFirstOthers() {
+        WorldBBox2d box;
+        box = assertDoesNotThrow(() -> new WorldBBox2d(
+            new WorldCoords2d(2, 3)
+        ));
+        assertEquals(new WorldCoords2d(2, 3), box.getMin());
+        assertEquals(new WorldCoords2d(2, 3), box.getMax());
+        assertEquals(new WorldSize2d(1, 1), box.getSize());
+
+        box = assertDoesNotThrow(() -> new WorldBBox2d(
+            new WorldCoords2d(1, -2),
+            new WorldCoords2d(0, 3),
+            new WorldCoords2d(-5, 0)
+        ));
+
+        assertEquals(new WorldCoords2d(-5, -2), box.getMin());
+        assertEquals(new WorldCoords2d(1, 3), box.getMax());
+        assertEquals(new WorldSize2d(7, 6), box.getSize());
+    }
+
+    @Test
+    @DisplayName("Test contains() method")
     public void testContains() {
         WorldBBox2d box = new WorldBBox2d(-1, -2, 3, 4);
 
@@ -64,6 +89,7 @@ public class WorldBBox2dTest {
     }
 
     @Test
+    @DisplayName("Test to3d() method")
     public void testTo3d() {
         WorldBBox2d box = new WorldBBox2d(-1, -2, 4, 5);
 
@@ -71,6 +97,7 @@ public class WorldBBox2dTest {
     }
 
     @Test
+    @DisplayName("Test isEmpty() method")
     public void testIsEmpty() {
         assertFalse(new WorldBBox2d(-1, 2, 3, 2).isEmpty());
         assertTrue(new WorldBBox2d(-1, 2, 0, 2).isEmpty());
@@ -78,6 +105,7 @@ public class WorldBBox2dTest {
     }
 
     @Test
+    @DisplayName("Test intersection() method")
     public void testIntersection() {
         WorldBBox2d box;
         WorldBBox2d box2;
