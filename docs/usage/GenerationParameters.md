@@ -260,6 +260,23 @@ Fields:
 - `heightmap`: Heightmap of the ground, will be updated according to leveling.
 - `filling`: [Placeable](#placeables) placed beneath the model, ensuring it connects to the ground and does not appear to float.
 
+### Building renderer
+
+Renders buildings using selected models as buildings footprint.
+
+Building height is given by `height` metadata (the behavior of this renderer is undefined if value is missing, negative or zero).
+
+Fields:
+- `type`: Must be the value `building`
+- `models`: Type of models to render.
+- `heightmap`: Name of the heightmap to use. It must exist.
+- `roof`: [Placeable](#placeables) used to render roofs.
+- `wall`: [Placeable](#placeables) used to render walls.
+- `window`: [Placeable](#placeables) used to render windows.
+
+#### Required model metadata
+- `height`: Height of building to render (must be a positive integer)
+
 ## Model selections
 
 A model selection describes characteristics that models must match to be processed.
