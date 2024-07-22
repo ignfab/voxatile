@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.renderers;
 
-import com.ignfab.minalac.generator.generation.HeightMap;
+import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.models.GeometryModel;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.TestingRasterizableModel;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class VectorRendererTest {
     private TestingVoxelWorld world;
-    private HeightMap heightMap;
+    private Heightmap heightMap;
     private WorldBBox3d bbox;
     private LinkedList<Model> models;
 
@@ -30,7 +30,7 @@ class VectorRendererTest {
     public void setUp() {
         bbox = new WorldBBox3d(-1, -2, -3, 4, 5, 6);
         world = new TestingVoxelWorld(bbox);
-        heightMap = new HeightMap(bbox.to2d(), -1);
+        heightMap = new Heightmap(bbox.to2d(), -1);
         models = new LinkedList<>();
     }
 

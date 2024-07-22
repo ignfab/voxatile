@@ -12,5 +12,5 @@ public class VoxelTypeIgnore implements VoxelType {
      * @param y y-coordinate where not to place voxel
      * @param z z-coordinate where not to place voxel
      */
-    public void place(int x, int y, int z) throws OutOfWorldException {};
+    public void place(int x, int y, int z) throws OutOfWorldException {}
 }

@@ -1,0 +1,9 @@
+package com.ignfab.minalac.generator.renderers;
+
+public class HeightmapRenderer {
+
+    public HeightmapRenderer(Heightmap heightmap, Models models, )
+    --> Il faudrait une interface pour les Raster 32bits ou float
+    --> Il faut faire la classe Heightmap
+
+}

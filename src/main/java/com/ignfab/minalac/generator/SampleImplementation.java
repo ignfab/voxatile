@@ -1,20 +1,19 @@
 package com.ignfab.minalac.generator;
 
 
+import com.ignfab.minalac.generator.generation.CoordsConverter;
+import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.generation.Heightmap;
+import com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider;
 import com.ignfab.minalac.generator.models.GeometryModel;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
-import com.ignfab.minalac.generator.generation.CoordsConverter;
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.HeightMap;
-import com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider;
 import com.ignfab.minalac.generator.renderers.VectorRenderer;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
-import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dElement;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.voxelization.Voxel3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.SemanticType;
@@ -107,15 +106,14 @@ public final class SampleImplementation {
             ModelStore store = new ModelStore();
 
             System.out.println("Downloading height map");
-            HeightMap heightMap = createGroundHeightMap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, extendX, extendY, verticalScale);
+            Heightmap heightMap = createGroundHeightMap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, extendX, extendY, verticalScale);
 
             System.out.println("Downloading buildings");
             downloadVectorFeatures(
                 new WFS1_1_GML3_1_DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154&outputFormat=text%2Fxml%3B%20subtype%3Dgml%2F3.1.1"),
                 generation.makeCoordsConverter(crs),  // This is supposed to be the layer CRS (actually the same for this demo)
                 "building",
-                store,
-                heightMap.bbox());
+                store);
 
             System.out.println("World creation");
             VoxelWorld world = FORMATS.get(format).get();
@@ -129,7 +127,7 @@ public final class SampleImplementation {
                 store.getByType("building"),
                 world.getFactory().createVoxelType(SemanticType.COBBLE),
                 world.getFactory().createVoxelType(SemanticType.BRICK)
-            ).render();
+            ).render(generation.getWorldBBox2d().to3d(-32_000, 64_000));
 
             System.out.println("Saving");
             VoxelWorldMetadata metadata = world.getMetadata();
@@ -147,22 +145,23 @@ public final class SampleImplementation {
         System.out.println("Execution time: " + (end - start) / 1000 + "s");
     }
 
-    private static void downloadVectorFeatures(WFS1_1_GML3_1_DataProvider provider, CoordsConverter converter, String type, ModelStore store, WorldBBox2d limits)
+    private static void downloadVectorFeatures(WFS1_1_GML3_1_DataProvider provider, CoordsConverter converter, String type, ModelStore store)
             throws NoSuchElementException, TransformException, IOException, ParserConfigurationException, SAXException {
         SimpleFeatureIterator iterator = provider.getFeatures().features();
         while (iterator.hasNext())
-            store.add(type, new GeometryModel((Geometry) iterator.next().getDefaultGeometry(), converter, limits));
+            store.add(type, new GeometryModel((Geometry) iterator.next().getDefaultGeometry(), converter));
     }
 
-    private static void placeVoxelFromHeightMap(HeightMap map, VoxelWorld world) throws OutOfWorldException {
+    private static void placeVoxelFromHeightMap(Heightmap map, VoxelWorld world) throws OutOfWorldException {
         VoxelType grassVT = world.getFactory().createVoxelType(SemanticType.GRASS);
         VoxelType stoneVT = world.getFactory().createVoxelType(SemanticType.STONE);
         VoxelType dirtVT = world.getFactory().createVoxelType(SemanticType.DIRT);
 
-        for (Chunk2dElement element : map) {
-            int x = element.getX();
-            int y = element.getY();
-            int z = element.getValue();
+        for (Voxel3d voxel : map.voxelize3d(map.bbox().to3d(-32_000, 64_000))) {
+            WorldCoords3d coords = voxel.coords();
+            int x = coords.x();
+            int y = coords.y();
+            int z = coords.z();
             grassVT.place(x, y, z);
             dirtVT.place(x, y, (z - 1));
             dirtVT.place(x, y, (z - 2));
@@ -173,7 +172,7 @@ public final class SampleImplementation {
         }
     }
 
-    private static HeightMap createGroundHeightMap(String partialUrl, int width, int height, float verticalScale) throws MalformedURLException {
+    private static Heightmap createGroundHeightMap(String partialUrl, int width, int height, float verticalScale) throws MalformedURLException {
         float[] mntArray;
         byte[] data;
         URL url = new URL(partialUrl + "&WIDTH=" + width + "&HEIGHT=" + height);
@@ -195,7 +194,7 @@ public final class SampleImplementation {
         int xMin = -width / 2;
         int yMin = -height / 2;
 
-        HeightMap heightMap = new HeightMap(xMin, yMin, width, height, 0);
+        Heightmap heightMap = new Heightmap(xMin, yMin, width, height, 0);
 
         int index = 0;
 

@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.models;
 
+import com.ignfab.minalac.generator.models.bufferedimage.BufferedImageChunk;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import org.junit.jupiter.api.Test;
 

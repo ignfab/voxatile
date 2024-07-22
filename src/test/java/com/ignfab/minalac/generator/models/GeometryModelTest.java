@@ -2,7 +2,6 @@ package com.ignfab.minalac.generator.models;
 
 import com.ignfab.minalac.generator.generation.CoordsConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
-import com.ignfab.minalac.generator.utils.world2d.chunk.ReadableChunk2d;
 import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.referencing.operation.transform.IdentityTransform;
 import org.junit.jupiter.api.DisplayName;

@@ -1,186 +1,209 @@
 package com.ignfab.minalac.generator.models;
 
 import com.ignfab.minalac.generator.generation.CoordsConverter;
+import com.ignfab.minalac.generator.utils.shape2d.Point2d;
+import com.ignfab.minalac.generator.utils.shape2d.PolyLine2d;
+import com.ignfab.minalac.generator.utils.shape2d.Polygon2d;
+import com.ignfab.minalac.generator.utils.shape2d.ShapesVoxelizer2d;
+import com.ignfab.minalac.generator.utils.shape3d.Point3d;
+import com.ignfab.minalac.generator.utils.shape3d.PolyLine3d;
+import com.ignfab.minalac.generator.utils.shape3d.Polygon3d;
+import com.ignfab.minalac.generator.utils.shape3d.ShapesVoxelizer3d;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.utils.world2d.chunk.EmptyChunk2d;
-import com.ignfab.minalac.generator.utils.world2d.chunk.IterableChunk2d;
-
+import com.ignfab.minalac.generator.utils.world2d.WorldMilliCoords2d;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldMilliCoords3d;
+import com.ignfab.minalac.generator.voxelization.EmptyVoxelizer2d;
+import com.ignfab.minalac.generator.voxelization.EmptyVoxelizer3d;
+import com.ignfab.minalac.generator.voxelization.Voxelizer2d;
+import com.ignfab.minalac.generator.voxelization.Voxelizer3d;
 import org.geotools.api.referencing.operation.TransformException;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.geom.util.AffineTransformation;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Model represented by a JTS Geometry.
- * It is rasterizable. Rasterized chunk will include three values:
- * 0: Not in geometry, 1: On its edge, 2: Inside it (polygons only).
+ * It is voxelizable both in 2d and 3d.
  */
-public class GeometryModel implements Model, Rasterizable {
+public class GeometryModel implements Model, Voxelizable2d, Voxelizable3d {
     private final Geometry geom;
-    private IterableChunk2d chunk;
-    private WorldBBox2d limits;
 
     /**
-     * Outside the geometry.
-     */
-    public static final int OUTSIDE = 0;
-    /**
-     * On the border of the geometry.
-     */
-    public static final int BORDER = 1;
-    /**
-     * Inside the geometry.
-     */
-    public static final int INSIDE = 2;
-
-    private static final Color OUTSIDE_COLOR = BufferedImageChunk.colorFor(OUTSIDE); // Not in shape color
-    private static final Color BORDER_COLOR = BufferedImageChunk.colorFor(BORDER); // Shape border color
-    private static final Color INSIDE_COLOR = BufferedImageChunk.colorFor(INSIDE); // Inside shape (fill) color
-
-    /**
-     * Constructs a new {@code GeometryModel}.
+     * Creates a new {@link GeometryModel}.
      *
      * @param geom A JTS Geometry
      * @param converter Converter from geometry CRS to world coordinates
-     * @param limits A bounding box of rendering limits
      */
-    public GeometryModel(Geometry geom, CoordsConverter converter, WorldBBox2d limits) throws TransformException {
+    public GeometryModel(Geometry geom, CoordsConverter converter) throws TransformException {
         // Until there is no need of it we don't keep original geometry.
         // Geometry is stored transformed into world coordinates
         this.geom = converter.convert(geom);
-        this.limits = limits;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IterableChunk2d getChunk() {
-
-        if (chunk == null) {
-            makeChunk();
-        }
-
-        return chunk;
+    public Voxelizer2d voxelize2d(WorldBBox2d bbox) {
+        if (computeGeometryBBox().intersection(bbox).isEmpty())
+            return EmptyVoxelizer2d.INSTANCE;
+        ShapesVoxelizer2d voxelizer = new ShapesVoxelizer2d(bbox);
+        convert(geom, new GeometryConverter2d(voxelizer));
+        return voxelizer;
     }
 
     /**
-     * Creates chunk, performing rasterization.
-     * This could be made public if really needed.
+     * {@inheritDoc}
      */
-    private void makeChunk() {
+    @Override
+    public Voxelizer3d voxelize3d(WorldBBox3d bbox) {
+        if (computeGeometryBBox().intersection(bbox.to2d()).isEmpty())
+            return EmptyVoxelizer3d.INSTANCE;
+        ShapesVoxelizer3d voxelizer = new ShapesVoxelizer3d(bbox);
+        convert(geom, new GeometryConverter3d(voxelizer));
+        return voxelizer;
+    }
+
+    private WorldBBox2d computeGeometryBBox() {
         // Compute bounding box
         Envelope envelope = geom.getEnvelopeInternal();
 
-        WorldBBox2d bbox = new WorldBBox2d(
+        return new WorldBBox2d(
             new WorldCoords2d((int) Math.floor(envelope.getMinX()), (int) Math.floor(envelope.getMinY())),
-            new WorldCoords2d((int) Math.floor(envelope.getMaxX()), (int) Math.floor(envelope.getMaxY())));
-
-        if (limits != null)
-            bbox = bbox.intersection(limits);
-
-        if (bbox.isEmpty()) {
-            chunk = EmptyChunk2d.getInstance();
-            return;
-        }
-
-        // Create chunk
-        BufferedImageChunk chunk = new BufferedImageChunk(bbox);
-        this.chunk = chunk;
-        Graphics2D graphics = chunk.createGraphics();
-
-        // Draw geometry translated into bounding box relative coordinates (i.e. BufferedImage coordinates))
-        Geometry geom = AffineTransformation.translationInstance(-bbox.getMinX(), -bbox.getMinY()).transform(this.geom);
-        draw(graphics, geom);
-
-        graphics.dispose();
+            new WorldCoords2d((int) Math.floor(envelope.getMaxX()), (int) Math.floor(envelope.getMaxY()))
+        );
     }
 
     /**
-     * Recursively draw geometry on buffered image.
-     * @param graphics the {@link Graphics2D} object to draw on
-     * @param geometry the {@link Geometry} to draw
+     * Recursively converts geometry using the provided converter.
+     * @param geometry the {@link Geometry} to treat
+     * @param converter the {@link GeometryConverter} object to convert geometries
      */
-    private void draw(Graphics2D graphics, Geometry geometry) {
-        ConvertedCoords coords;
-
+    private void convert(Geometry geometry, GeometryConverter converter) {
         switch (geometry.getGeometryType()) {
-
-            // Simple geometries
-            case Geometry.TYPENAME_POINT:
-            case Geometry.TYPENAME_LINESTRING:
-            case Geometry.TYPENAME_LINEARRING:
-                coords = new ConvertedCoords(geometry.getCoordinates());
-                graphics.setColor(BORDER_COLOR);
-                switch (geometry.getGeometryType()) {
-                    case Geometry.TYPENAME_POINT:
-                        graphics.drawRect(coords.x[0], coords.y[0], 1, 1);
-                        break;
-                    case Geometry.TYPENAME_LINESTRING:
-                        graphics.drawPolyline(coords.x, coords.y, coords.length);
-                        break;
-                    case Geometry.TYPENAME_LINEARRING:
-                        graphics.drawPolygon(coords.x, coords.y, coords.length);
-                        break;
-                }
-                break;
-
+            // Single point
+            case Geometry.TYPENAME_POINT -> converter.convertPoint((Point) geometry);
+            // Lines
+            case Geometry.TYPENAME_LINESTRING, Geometry.TYPENAME_LINEARRING -> converter.convertLine((LineString) geometry);
+            // Polygon (with holes)
+            case Geometry.TYPENAME_POLYGON -> converter.convertPolygon((Polygon) geometry);
             // Geometry collections
-            case Geometry.TYPENAME_GEOMETRYCOLLECTION:
-            case Geometry.TYPENAME_MULTILINESTRING:
-            case Geometry.TYPENAME_MULTIPOINT:
-            case Geometry.TYPENAME_MULTIPOLYGON:
+            case Geometry.TYPENAME_MULTIPOINT, Geometry.TYPENAME_MULTILINESTRING, Geometry.TYPENAME_MULTIPOLYGON, Geometry.TYPENAME_GEOMETRYCOLLECTION -> {
                 GeometryCollection collection = (GeometryCollection) geometry;
                 for (int n = 0; n < collection.getNumGeometries(); n++)
-                    draw(graphics, collection.getGeometryN(n));
-                break;
-
-            // Polygons (with holes)
-            case Geometry.TYPENAME_POLYGON:
-                Polygon polygon = (Polygon) geometry;
-                coords = new ConvertedCoords(polygon.getExteriorRing().getCoordinates());
-
-                graphics.setColor(INSIDE_COLOR);
-                graphics.fillPolygon(coords.x, coords.y, coords.length);
-                graphics.setColor(BORDER_COLOR);
-                graphics.drawPolygon(coords.x, coords.y, coords.length);
-
-                if (polygon.getNumInteriorRing() > 0) {
-                    for (int n = 0; n < polygon.getNumInteriorRing(); n++) {
-                        coords = new ConvertedCoords(polygon.getInteriorRingN(n).getCoordinates());
-
-                        graphics.setColor(OUTSIDE_COLOR); // Wipe inside hole
-                        graphics.fillPolygon(coords.x, coords.y, coords.length);
-                        graphics.setColor(BORDER_COLOR);
-                        graphics.drawPolygon(coords.x, coords.y, coords.length);
-                    }
-                }
-                break;
+                    convert(collection.getGeometryN(n), converter);
+            }
+            default -> System.err.println("Unable to treat geometry: " + geometry);
         }
     }
 
-    // This class converts float coord array into two integer arrays ready for Graphics2D
-    private static class ConvertedCoords {
-        private final int[] x;
-        private final int[] y;
-        private final int length;
+    /**
+     * Tool able to convert JTS geometries into something else.
+     */
+    private interface GeometryConverter {
+        /**
+         * Converts a single point.
+         * @param point the point to convert.
+         */
+        void convertPoint(Point point);
 
-        ConvertedCoords(Coordinate[] coords) {
-            length = coords.length;
-            x = new int[length];
-            y = new int[length];
+        /**
+         * Converts a line string (multiple lines connected with each other).
+         * It may be a basic line string (open) or a linear ring (end connected with start).
+         * @param line the line to convert.
+         */
+        void convertLine(LineString line);
 
-            for (int n = 0; n < length; n++) {
-                x[n] = (int) Math.floor(coords[n].x);
-                y[n] = (int) Math.floor(coords[n].y);
-            }
+        /**
+         * Converts a single polygon.
+         * It may contain holes.
+         * @param polygon the polygon to convert.
+         */
+        void convertPolygon(Polygon polygon);
+    }
+
+    /**
+     * Implementation converting JTS geometries into 2d shapes.
+     * Those shapes are stored in the given shapes voxelizer.
+     * @param voxelizer the voxelizer to store converted shapes.
+     */
+    private record GeometryConverter2d(ShapesVoxelizer2d voxelizer) implements GeometryConverter {
+        private WorldMilliCoords2d convertCoords(Coordinate coordinate) {
+            return WorldMilliCoords2d.fromWorldCoords(coordinate.x, coordinate.y);
+        }
+
+        private PolyLine2d convertPolyLine(LineString line) {
+            Coordinate[] coordinates = line.getCoordinates();
+            List<WorldMilliCoords2d> coords = new ArrayList<>(coordinates.length);
+            for (Coordinate coordinate : coordinates)
+                coords.add(convertCoords(coordinate));
+            return PolyLine2d.fromPoints(coords);
+        }
+
+        @Override
+        public void convertPoint(Point point) {
+            voxelizer.addPoint(new Point2d(convertCoords(point.getCoordinate())));
+        }
+
+        @Override
+        public void convertLine(LineString line) {
+            voxelizer.addLine(convertPolyLine(line));
+        }
+
+        @Override
+        public void convertPolygon(Polygon polygon) {
+            PolyLine2d shell = convertPolyLine(polygon.getExteriorRing());
+            List<PolyLine2d> holes = new ArrayList<>(polygon.getNumInteriorRing());
+            for (int n = 0; n < polygon.getNumInteriorRing(); n++)
+                holes.add(convertPolyLine(polygon.getInteriorRingN(n)));
+            voxelizer.addPolygon(new Polygon2d(shell, holes));
+        }
+    }
+
+    /**
+     * Implementation converting JTS geometries into 3d shapes.
+     * Those shapes are stored in the given shapes voxelizer.
+     * @param voxelizer the voxelizer to store converted shapes.
+     */
+    private record GeometryConverter3d(ShapesVoxelizer3d voxelizer) implements GeometryConverter {
+        private WorldMilliCoords3d convertCoords(Coordinate coordinate) {
+            return WorldMilliCoords3d.fromWorldCoords(coordinate.x, coordinate.y, coordinate.z);
+        }
+
+        private PolyLine3d convertPolyLine(LineString line) {
+            Coordinate[] coordinates = line.getCoordinates();
+            List<WorldMilliCoords3d> coords = new ArrayList<>(coordinates.length);
+            for (Coordinate coordinate : coordinates)
+                coords.add(convertCoords(coordinate));
+            return PolyLine3d.fromPoints(coords);
+        }
+
+        @Override
+        public void convertPoint(Point point) {
+            voxelizer.addPoint(new Point3d(convertCoords(point.getCoordinate())));
+        }
+
+        @Override
+        public void convertLine(LineString line) {
+            voxelizer.addLine(convertPolyLine(line));
+        }
+
+        @Override
+        public void convertPolygon(Polygon polygon) {
+            PolyLine3d shell = convertPolyLine(polygon.getExteriorRing());
+            List<PolyLine3d> holes = new ArrayList<>(polygon.getNumInteriorRing());
+            for (int n = 0; n < polygon.getNumInteriorRing(); n++)
+                holes.add(convertPolyLine(polygon.getInteriorRingN(n)));
+            voxelizer.addPolygon(new Polygon3d(shell, holes));
         }
     }
 }
