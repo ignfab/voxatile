@@ -3,57 +3,117 @@ package com.ignfab.minalac.generator.generation;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldSize2d;
-import com.ignfab.minalac.generator.utils.world2d.chunk.ArrayChunk2d;
-import com.ignfab.minalac.generator.utils.world2d.chunk.IterableChunk2d;
-import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dIterator;
-import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dIteratorAll;
+
+import java.util.Arrays;
 
 /**
- * A 2d height map in voxel world units.
+ * A 2d heightmap in voxel world units.
  */
-public class Heightmap extends ArrayChunk2d implements IterableChunk2d {
+public class Heightmap {
+    /**
+     * The bounding box of the heightmap.
+     */
+    protected final WorldBBox2d bbox;
+    /**
+     * The array used to store the height values.
+     */
+    protected final int[] values;
 
     /**
-     * Constructs a new Heightmap.
+     * Creates a new {@link Heightmap}.
      *
      * @param originX X-coordinate of origin point
      * @param originY Y-coordinate of origin point
-     * @param sizeX Size of height map along X-axis
-     * @param sizeY Size of height map along Y-axis
-     * @param defaultValue Default value for all height map cells
+     * @param sizeX Size of heightmap along X-axis
+     * @param sizeY Size of heightmap along Y-axis
+     * @param defaultValue Default value for all heightmap cells
      */
     public Heightmap(int originX, int originY, int sizeX, int sizeY, int defaultValue) {
-        super(originX, originY, sizeX, sizeY, defaultValue);
+        this(new WorldBBox2d(originX, originY, sizeX, sizeY), defaultValue);
     }
 
     /**
-     * Constructs a new Heightmap.
+     * Creates a new {@link Heightmap}.
      *
-     * @param box Bounding box of height map
-     * @param defaultValue Default value for all height map cells
+     * @param bbox Bounding box of heightmap
+     * @param defaultValue Default value for all heightmap cells
      */
-    public Heightmap(WorldBBox2d box, int defaultValue) {
-        super(box, defaultValue);
+    public Heightmap(WorldBBox2d bbox, int defaultValue) {
+        this.bbox = bbox;
+        values = new int[bbox.sizeX() * bbox.sizeY()];
+        if (defaultValue != 0)
+            Arrays.fill(values, defaultValue);
     }
 
     /**
-     * Constructs a new Heightmap.
+     * Creates a new {@link Heightmap}.
      *
-     * @param origin Origin point of height map
-     * @param size Size of height map
-     * @param defaultValue Default value for all height map cells
+     * @param origin Origin point of heightmap
+     * @param size Size of heightmap
+     * @param defaultValue Default value for all heightmap cells
      */
     public Heightmap(WorldCoords2d origin, WorldSize2d size, int defaultValue) {
-        super(origin, size, defaultValue);
+        this(new WorldBBox2d(origin, size), defaultValue);
+    }
+
+    private int index(int x, int y) {
+        if (!bbox.contains(x, y))
+            throw new IndexOutOfBoundsException("Index out of range at (x=%d, y=%d)".formatted(x, y));
+        return (x - bbox.minX()) * bbox.sizeY() + (y - bbox.minY());
     }
 
     /**
-     * Returns a default iterator for a height map.
+     * Returns the bounding box of the heightmap.
      *
-     * @return A {@code Chunk2dIterator} iterating over all elements of the height map
+     * @return the {@link WorldBBox2d} associated to the heightmap.
      */
-    @Override
-    public Chunk2dIterator iterator() {
-        return new Chunk2dIteratorAll(this);
+    public WorldBBox2d bbox() {
+        return bbox;
+    }
+
+    /**
+     * Returns the height at a specified position.
+     *
+     * @param x the x-coordinate of the position
+     * @param y the y-coordinate of the position
+     * @return the {@code int} height at specified position
+     * @throws IndexOutOfBoundsException if position is outside the heightmap.
+     */
+    public int get(int x, int y) {
+        return values[index(x, y)];
+    }
+
+    /**
+     * Returns the height at a specified position.
+     *
+     * @param position the position
+     * @return the {@code int} height at specified position
+     * @throws IndexOutOfBoundsException if position is outside the heightmap.
+     */
+    public int get(WorldCoords2d position) {
+        return get(position.x(), position.y());
+    }
+
+    /**
+     * Sets the height at a specified position.
+     *
+     * @param x the x-coordinate of the position
+     * @param y the y-coordinate of the position
+     * @param height the height to set at specified position
+     * @throws IndexOutOfBoundsException if position is outside the heightmap.
+     */
+    public void set(int x, int y, int height) {
+        values[index(x, y)] = height;
+    }
+
+    /**
+     * Sets the height at a specified position.
+     *
+     * @param position the position
+     * @param height the height to set at specified position
+     * @throws IndexOutOfBoundsException if position is outside the heightmap.
+     */
+    public void set(WorldCoords2d position, int height) {
+        set(position.x(), position.y(), height);
     }
 }

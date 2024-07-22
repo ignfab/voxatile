@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.utils.world3d;
 
+import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
 /**
@@ -11,23 +12,67 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
  * @param y The y-component value
  * @param z The z-component value
  */
-public record WorldCoords3d(int x, int y, int z) {
+public record WorldCoords3d(int x, int y, int z) implements Positioned3d {
     /**
-     * Create a new {@link WorldCoords3d} from an existing {@link WorldCoords2d} and an additional {@code z} value.
+     * Creates a new {@link WorldCoords3d} from an existing {@link Positioned2d} and an additional {@code z} value.
      *
-     * @param coords an existing {@link WorldCoords2d} object
+     * @param position an existing {@link Positioned2d} object
      * @param z the z-component value
      */
-    public WorldCoords3d(WorldCoords2d coords, int z) {
-        this(coords.x(), coords.y(), z);
+    public WorldCoords3d(Positioned2d position, int z) {
+        this(position.coords().x(), position.coords().y(), z);
     }
 
     /**
-     * Convert this {@link WorldCoords3d} to {@link WorldCoords2d}, dropping the z-axis.
+     * Converts this {@link WorldCoords3d} to {@link WorldCoords2d}, dropping the z-axis.
      *
      * @return a new {@link WorldCoords2d} with current (x, y)
      */
     public WorldCoords2d to2d() {
         return new WorldCoords2d(this);
+    }
+
+   /**
+     * Creates a new {@link WorldCoords3d} from double floating point coordinates.
+     * Given coordinates are rounded using {@code Math.round}.
+     *
+     * @param x x-component of coordinates
+     * @param y y-component of coordinates
+     * @param z z-component of coordinates
+     */
+    public static WorldCoords3d round(double x, double y, double z) {
+        return new WorldCoords3d((int) Math.round(x), (int) Math.round(y), (int) Math.round(z));
+    }
+    /**
+     * Creates a new {@link WorldCoords3d} from double floating point coordinates.
+     * Given coordinates are floored using {@code Math.floor}.
+     *
+     * @param x x-component of coordinates
+     * @param y y-component of coordinates
+     * @param z z-component of coordinates
+     *
+     * @return resulting {@link WorldCoords3d}.
+     */
+    public static WorldCoords3d floor(double x, double y, double z) {
+        return new WorldCoords3d((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
+    }
+
+    /**
+     * Creates a new {@link WorldCoords3d} from double floating point coordinates.
+     * Given coordinates are ceiled using {@code Math.ceil}.
+     *
+     * @param x x-component of coordinates
+     * @param y y-component of coordinates
+     * @param z z-component of coordinates
+     *
+     * @return resulting {@link WorldCoords3d}.
+     */
+    public static WorldCoords3d ceil(double x, double y, double z) {
+        return new WorldCoords3d((int) Math.ceil(x), (int) Math.ceil(y), (int) Math.ceil(z));
+    }
+
+    @Override
+    public WorldCoords3d coords() {
+        return this;
     }
 }

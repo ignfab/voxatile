@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * An utility class for operations on iterables.
+ * A utility class for operations on iterables.
  */
 public final class Iterables {
     private Iterables() {
@@ -13,7 +13,7 @@ public final class Iterables {
     }
 
     /**
-     * Creates an iterable oven given array.
+     * Creates an iterable over given array.
      *
      * @param array an array of items
      *
@@ -41,7 +41,7 @@ public final class Iterables {
     }
 
     /**
-     * Creates an iterable oven all items given as argument.
+     * Creates an iterable over all items given as argument.
      * Using this method with only one argument is the right way to create a singleton iterable.
      *
      * @param items items iterable should return
@@ -56,7 +56,7 @@ public final class Iterables {
     }
 
     /**
-     * Remap an iterable, transforming its result into another value using a
+     * Remaps an iterable, transforming its result into another value using a
      * provided function.
      *
      * @param iterable the iterable to remap
@@ -69,6 +69,19 @@ public final class Iterables {
      */
     public static <T, U> Iterable<U> remap(Iterable<T> iterable, Function<T, U> mapper) {
         return () -> Iterators.remap(iterable.iterator(), mapper);
+    }
+
+    /**
+     * Creates a singleton iterable over given item.
+     *
+     * @param item item returned by iterator
+     *
+     * @return an iterable returning only item given as argument
+     *
+     * @param <T> type of item
+     */
+    public static <T> Iterable<T> singleton(T item) {
+        return () -> Iterators.singleton(item);
     }
 
     /**

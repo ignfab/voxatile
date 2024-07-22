@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.utils.world2d;
 
+import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
+
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class WorldBBox2dTest {
     @Test
@@ -186,50 +189,63 @@ public class WorldBBox2dTest {
         WorldBBox2d box;
 
         // Empty collection
-        box = assertDoesNotThrow(() -> {
-            return WorldBBox2d.surrounding(Collections.emptyList());
-        });
+        box = WorldBBox2d.surrounding(Collections.emptyList());
 
         assertTrue(box.isEmpty());
 
         // Single Bounded collection
-        box = assertDoesNotThrow(() -> {
-            return WorldBBox2d.surrounding(Arrays.asList(new WorldBBox2d[] {
-                new WorldBBox2d(1, 2, 3, 4)
-            }));
-        });
+        box = WorldBBox2d.surrounding(Arrays.asList(
+            new WorldBBox2d(1, 2, 3, 4)
+        ));
 
         assertEquals(new WorldBBox2d(1, 2, 3, 4), box);
 
         // Multiple Bounded collection
-        box = assertDoesNotThrow(() -> {
-            return WorldBBox2d.surrounding(Arrays.asList(new WorldBBox2d[] {
-                new WorldBBox2d(1, 2, 3, 4),
-                new WorldBBox2d(-1, -2, 3, 4)
-            }));
-        });
+        box = WorldBBox2d.surrounding(Arrays.asList(
+            new WorldBBox2d(1, 2, 3, 4),
+            new WorldBBox2d(-1, -2, 3, 4)
+        ));
 
         assertEquals(new WorldBBox2d(-1, -2, 5, 8), box);
 
         // Empty boxes
-        box = assertDoesNotThrow(() -> {
-            return WorldBBox2d.surrounding(Arrays.asList(new WorldBBox2d[] {
-                new WorldBBox2d(-10, -8, 4, 2),
-                WorldBBox2d.EMPTY
-            }));
-        });
+        box = WorldBBox2d.surrounding(Arrays.asList(
+            new WorldBBox2d(-10, -8, 4, 2),
+            WorldBBox2d.EMPTY
+        ));
 
         assertEquals(new WorldBBox2d(-10, -8, 4, 2), box);
 
         // Empty only
-        box = assertDoesNotThrow(() -> {
-            return WorldBBox2d.surrounding(Arrays.asList(new WorldBBox2d[] {
-                WorldBBox2d.EMPTY,
-                WorldBBox2d.EMPTY,
-                WorldBBox2d.EMPTY
-            }));
-        });
+        box = WorldBBox2d.surrounding(Arrays.asList(
+            WorldBBox2d.EMPTY,
+            WorldBBox2d.EMPTY,
+            WorldBBox2d.EMPTY
+        ));
 
         assertTrue(box.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Test crop() method")
+    void testCrop() {
+        List<WorldCoords2d> list = Arrays.asList(
+            new WorldCoords2d(2, 3),
+            new WorldCoords2d(0, 1),
+            new WorldCoords2d(6, 7),
+            new WorldCoords2d(4, 5),
+            new WorldCoords2d(8, 9)
+        );
+        assertBrowsesAllOnce(
+            Arrays.asList(
+                new WorldCoords2d(4, 5),
+                new WorldCoords2d(6, 7)
+            ),
+            new WorldBBox2d(2, 4, 5, 4).crop(list.iterator())
+        );
+
+        assertEmpty(new WorldBBox2d(-2, -4, 1, 3).crop(list.iterator()));
+
+        assertEmpty(WorldBBox2d.EMPTY.crop(list.iterator()));
     }
 }

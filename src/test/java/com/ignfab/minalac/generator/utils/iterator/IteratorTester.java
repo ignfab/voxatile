@@ -12,7 +12,7 @@ import java.util.List;
  */
 public final class IteratorTester {
 
-    // Make this utility class uninstanciable
+    // Make this utility class uninstantiable
     private IteratorTester() {}
 
     private static String prefix(String message) {
@@ -29,7 +29,7 @@ public final class IteratorTester {
      */
     public static <T> void assertEmpty(Iterator<T> iterator, String message) {
         if (iterator.hasNext())
-            fail(prefix(message) + "<%s> expected to be empty".formatted(iterator.toString()));
+            fail(prefix(message) + "<%s> expected to be empty".formatted(iterator));
     }
 
     /**
@@ -53,7 +53,7 @@ public final class IteratorTester {
      */
     public static <T> void assertEmpty(Iterable<T> iterable, String message) {
         if (iterable.iterator().hasNext())
-            fail(prefix(message) + "<%s> expected to be empty".formatted(iterable.toString()));
+            fail(prefix(message) + "<%s> expected to be empty".formatted(iterable));
     }
 
     /**
@@ -79,15 +79,15 @@ public final class IteratorTester {
      * @param <T> Type of item for tested iterator
      */
     public static <T> void assertBrowsesAll(Collection<T> expected, Iterator<T> iterator, String message) {
-        ArrayList<T> remaining = new ArrayList<T>(expected);
+        List<T> remaining = new ArrayList<>(expected);
         while (iterator.hasNext()) {
             T item = iterator.next();
             remaining.remove(item);
             if (!expected.contains(item))
-                fail(prefix(message) + "unexpected item <%s> from <%s>".formatted(item.toString(), iterator.toString()));
+                fail(prefix(message) + "unexpected item <%s> from <%s>".formatted(item, iterator));
         }
         if (!remaining.isEmpty())
-            fail(prefix(message) + "%d items where not browsed by <%s>: %s".formatted(remaining.size(), iterator.toString(), remaining));
+            fail(prefix(message) + "%d items where not browsed by <%s>: %s".formatted(remaining.size(), iterator, remaining));
     }
 
     /**
@@ -144,14 +144,14 @@ public final class IteratorTester {
      * @param <T> Type of item for tested iterator
      */
     public static <T> void assertBrowsesAllOnce(Collection<T> expected, Iterator<T> iterator, String message) {
-        List<T> remaining = new ArrayList<T>(expected);
+        List<T> remaining = new ArrayList<>(expected);
         while (iterator.hasNext()) {
             T item = iterator.next();
             if (!remaining.remove(item))
-                fail(prefix(message) + "unexpected item <%s> from <%s>".formatted(item.toString(), iterator.toString()));
+                fail(prefix(message) + "unexpected item <%s> from <%s>".formatted(item, iterator));
         }
         if (!remaining.isEmpty())
-            fail(prefix(message) + "%d items where not browsed by <%s>: %s".formatted(remaining.size(), iterator.toString(), remaining));
+            fail(prefix(message) + "%d items where not browsed by <%s>: %s".formatted(remaining.size(), iterator, remaining));
     }
 
     /**

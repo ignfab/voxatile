@@ -56,6 +56,19 @@ public class IterablesTest {
     }
 
     @Test
+    void testSingleton() {
+        assertBrowsesAllOnce(
+            Arrays.asList("The One Ring"),
+            Iterables.singleton("The One Ring")
+        );
+
+        assertBrowsesAllOnce(
+            Arrays.asList((Object) null),
+            Iterables.singleton(null)
+        );
+    }
+
+    @Test
     void testRemap() {
         assertBrowsesAllOnce(
             Arrays.asList(3, 5, 5, 6, 6, 6, 7),
@@ -129,10 +142,10 @@ public class IterablesTest {
         list = new LinkedList<>();
         list.add(Arrays.asList("Frodo", "Sam"));
         list.add(Collections::emptyIterator);
-        list.add(Arrays.asList("Golum"));
+        list.add(Arrays.asList("Gollum"));
 
         assertBrowsesAllOnce(
-            Arrays.asList("Frodo", "Sam", "Golum"),
+            Arrays.asList("Frodo", "Sam", "Gollum"),
             Iterables.unwrap(list)
         );
     }

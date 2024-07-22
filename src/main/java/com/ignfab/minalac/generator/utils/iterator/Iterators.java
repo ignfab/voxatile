@@ -7,7 +7,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * An utility class for iterators operations.
+ * A utility class for iterators operations.
  */
 public final class Iterators {
     private Iterators() {
@@ -15,7 +15,7 @@ public final class Iterators {
     }
 
     /**
-     * Creates an iterator oven given array.
+     * Creates an iterator over given array.
      *
      * @param array an array of items
      *
@@ -24,14 +24,11 @@ public final class Iterators {
      * @param <T> type of items
      */
     public static <T> Iterator<T> array(T[] array) {
-        switch (array.length) {
-            case 0:
-                return Collections.emptyIterator();
-            case 1:
-                return new SingletonIterator<>(array[0]);
-            default:
-                return new ArrayIterator<>(array);
-        }
+        return switch (array.length) {
+            case 0 -> Collections.emptyIterator();
+            case 1 -> singleton(array[0]);
+            default -> new ArrayIterator<>(array);
+        };
     }
 
     /**
@@ -61,11 +58,11 @@ public final class Iterators {
      * @param <T> type returned by iterator
      */
     public static <T> Iterator<T> filter(Iterator<T> iterator, Predicate<T> condition) {
-        return new FilterIterator<T>(iterator, condition);
+        return new FilterIterator<>(iterator, condition);
     }
 
     /**
-     * Creates an iterator oven all items given as argument.
+     * Creates an iterator over all items given as argument.
      * Using this method with only one argument is the right way to create a singleton iterator.
      *
      * @param items items iterator should return
@@ -80,7 +77,7 @@ public final class Iterators {
     }
 
     /**
-     * Remap an iterator, transforming its result into another value using a
+     * Remaps an iterator, transforming its result into another value using a
      * provided function.
      *
      * @param iterator the iterator to remap
@@ -92,7 +89,20 @@ public final class Iterators {
      * @param <U> new type returned by resulting iterator
      */
     public static <T, U> Iterator<U> remap(Iterator<T> iterator, Function<T, U> mapper) {
-        return new RemapIterator<T, U>(iterator, mapper);
+        return new RemapIterator<>(iterator, mapper);
+    }
+
+    /**
+     * Creates a singleton iterator over given item.
+     *
+     * @param item item returned by iterator
+     *
+     * @return an iterator returning only item given as argument
+     *
+     * @param <T> type of item
+     */
+    public static <T> Iterator<T> singleton(T item) {
+        return new SingletonIterator<>(item);
     }
 
     /**
@@ -110,7 +120,7 @@ public final class Iterators {
     }
 
     /**
-     * Unwrap an iterator over iterators into an iterator over iterators results.
+     * Unwraps an iterator over iterators into an iterator over iterators results.
      *
      * @param iterator iterator over iterators
      *
@@ -123,7 +133,7 @@ public final class Iterators {
     }
 
     /**
-     * Unwrap an iterator over iterables into an iterator over iterables results.
+     * Unwraps an iterator over iterables into an iterator over iterables results.
      *
      * @param iterator iterator over iterables
      *
