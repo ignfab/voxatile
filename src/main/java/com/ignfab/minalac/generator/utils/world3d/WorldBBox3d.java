@@ -16,6 +16,13 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
     private final WorldSize3d size;
 
     /**
+     * A reusable instance of {@link WorldBBox3d} that is empty.
+     * The size of this bounding box is (0, 0, 0) and its origin is (0, 0, 0),
+     * meaning its maximum point is (-1, -1, -1).
+     */
+    public static final WorldBBox3d EMPTY = new WorldBBox3d(0, 0, 0, 0, 0, 0);
+
+    /**
      * Creates a new {@link WorldBBox3d} by providing a starting position and the desired size of the bounding box.
      *
      * @param origin the starting position's coordinates (minimum point).

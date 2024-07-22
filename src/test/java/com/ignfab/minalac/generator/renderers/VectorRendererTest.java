@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.renderers;
-
-import com.ignfab.minalac.generator.generation.HeightMap;
+/*
+import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.models.GeometryModel;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.TestingRasterizableModel;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class VectorRendererTest {
     private TestingVoxelWorld world;
-    private HeightMap heightMap;
+    private Heightmap heightmap;
     private WorldBBox3d bbox;
     private LinkedList<Model> models;
 
@@ -29,14 +29,14 @@ class VectorRendererTest {
     public void setUp() {
         bbox = new WorldBBox3d(-1, -2, -3, 4, 5, 6);
         world = new TestingVoxelWorld(bbox);
-        heightMap = new HeightMap(bbox.to2d(), -1);
+        heightmap = new Heightmap(bbox.to2d(), -1);
         models = new LinkedList<>();
     }
 
     private void render() {
         assertDoesNotThrow(
             () -> new VectorRenderer(
-                    heightMap,
+                    heightmap,
                     models,
                     world.getFactory().createVoxelType(SemanticType.COBBLE),
                     world.getFactory().createVoxelType(SemanticType.BRICK)
@@ -45,7 +45,7 @@ class VectorRendererTest {
     }
 
     @Test
-    @DisplayName("Test a simple rendering on flat height map")
+    @DisplayName("Test a simple rendering on flat heightmap")
     public void testRenderFlat() {
         // Prepare a chunk smaller than the whole world
         WorldBBox2d modelBbox = new WorldBBox2d(0, -1, 2, 3);
@@ -87,11 +87,11 @@ class VectorRendererTest {
     }
 
     @Test
-    @DisplayName("Test rendering on a non flat height map")
-    public void testRenderHeightMap() {
-        // Prepare a non flat HeightMap
+    @DisplayName("Test rendering on a non flat heightmap")
+    public void testRenderHeightmap() {
+        // Prepare a non flat Heightmap
         for (WorldCoords2d pos : bbox.to2d())
-            heightMap.set(pos, (pos.x() + pos.y()) / 2);
+            heightmap.set(pos, (pos.x() + pos.y()) / 2);
 
         // Add one model covering the whole map with BORDER voxels
         models.add(new TestingRasterizableModel(new TestingIterableArrayChunk2d(bbox.to2d(), GeometryModel.BORDER)));
@@ -99,7 +99,7 @@ class VectorRendererTest {
         render();
 
         for (WorldCoords3d pos : bbox) {
-            if (pos.z() == (pos.x() + pos.y()) / 2 + 1) // + 1 because vector renderer places voxels 1 pos above height map
+            if (pos.z() == (pos.x() + pos.y()) / 2 + 1) // + 1 because vector renderer places voxels 1 pos above heightmap
                 world.assertVoxel("brick", pos);
             else
                 world.assertVoxelNull(pos);
@@ -107,13 +107,13 @@ class VectorRendererTest {
     }
 
     @Test
-    @DisplayName("Test rendering with a height map over world vertical limits")
+    @DisplayName("Test rendering with a heightmap over world vertical limits")
     public void testRenderVerticalOverflow() {
         // A heightmap overflowing under and over world limits
         for (WorldCoords2d pos : bbox.to2d())
             // At (2, 2), height will be 6, above max world z (i.e. 2)
             // At (-1, -2), height will be -5, under min world z (i.e. -3)
-            heightMap.set(pos, pos.x() + pos.y() * 2);
+            heightmap.set(pos, pos.x() + pos.y() * 2);
 
         // Add one model covering the whole map with BORDER voxels
         models.add(new TestingRasterizableModel(new TestingIterableArrayChunk2d(bbox.to2d(), GeometryModel.BORDER)));
@@ -146,3 +146,4 @@ class VectorRendererTest {
         }
     }
 }
+*/

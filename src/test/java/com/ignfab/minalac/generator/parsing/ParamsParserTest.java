@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.parsing;
 
-import com.ignfab.minalac.generator.generation.HeightMap;
+import com.ignfab.minalac.generator.generation.Heightmap;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ParamsParserTest {
     private static final String WORKING_JSON = """
         {
-            "heightMaps": [
+            "heightmaps": [
             {
               "name": "altitude",
               "default": "minimal"
@@ -44,7 +44,7 @@ public class ParamsParserTest {
     @Test
     public void testSuccessfulYamlInstantiation() {
         assertDoesNotThrow(() -> new ParamsParser("""
-            heightMaps:
+            heightmaps:
               - name: altitude
                 default: min
               - name: ground
@@ -80,9 +80,9 @@ public class ParamsParserTest {
     }
 
     @Test
-    public void testOptionalFieldHeightMapEmpty() {
+    public void testOptionalFieldHeightmapEmpty() {
         assertDoesNotThrow(() -> new ParamsParser("""
-            heightMaps: []
+            heightmaps: []
             verticalScale: 3
             horizontalScale: 4
             area:
@@ -97,9 +97,9 @@ public class ParamsParserTest {
     }
 
     @Test
-    public void testMissingRequiredFieldNameHeightMap() {
+    public void testMissingRequiredFieldNameHeightmap() {
         assertThrows(ParseException.class, () -> new ParamsParser("""
-            heightMaps:
+            heightmaps:
               - name: altitude
                 default: -9
               - default: 0
@@ -117,9 +117,9 @@ public class ParamsParserTest {
     }
 
     @Test
-    public void testMissingRequiredFieldDefaultHeightMap() {
+    public void testMissingRequiredFieldDefaultHeightmap() {
         assertThrows(ParseException.class, () -> new ParamsParser("""
-            heightMaps:
+            heightmaps:
               - name: altitude
                 default: -9
               - name: ground
@@ -252,10 +252,10 @@ public class ParamsParserTest {
         assertEquals(2500, generation.getWorldBBox2d().getSize().y());
         assertEquals(3.0, generation.getVerticalScale(), 0.001);
 
-        HeightMap ground = assertDoesNotThrow(() -> generation.getHeightMap("ground"));
+        Heightmap ground = assertDoesNotThrow(() -> generation.getHeightmap("ground"));
         assertEquals(0, ground.get(0, 0));
 
-        HeightMap altitude = assertDoesNotThrow(() -> generation.getHeightMap("altitude"));
+        Heightmap altitude = assertDoesNotThrow(() -> generation.getHeightmap("altitude"));
         assertEquals(Integer.MIN_VALUE, altitude.get(0, 0));
     }
 

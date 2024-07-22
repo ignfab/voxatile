@@ -25,13 +25,13 @@ public class RawParams {
      * The list of heightmaps used during the generation.
      * This field is optional.
      */
-    public List<HeightMapParams> heightMaps;
+    public List<HeightmapParams> heightmaps;
 
     /**
      * Heightmap used during the generation.
      * This field is optional.
      */
-    public static class HeightMapParams {
+    public static class HeightmapParams {
         /**
          * The name of the heightmap.
          * The name must be unique.
@@ -39,9 +39,9 @@ public class RawParams {
          */
         public String name;
         /**
-         * The default value for all height map cells.
+         * The default value for all heightmap cells.
          * This field is required.
-         * When initialized by {@link HeightMapParams}:
+         * When initialized by {@link HeightmapParams}:
          * <ul>
          *     <li>"minimal" and "min" are transformed to {@link Integer#MIN_VALUE}</li>
          *     <li>"maximal" and "max" are transformed to {@link Integer#MAX_VALUE}</li>
@@ -60,7 +60,7 @@ public class RawParams {
          * @throws ParseException if {@code defaultValue} is not a valid integer string or is not "minimal", "min", "maximal" or "max"
          */
         @ConstructorProperties({"name", "default"})
-        public HeightMapParams(String name, String defaultValue) throws ParseException {
+        public HeightmapParams(String name, String defaultValue) throws ParseException {
             this.name = name;
             this.defaultValue = parseDefaultValue(defaultValue);
         }
