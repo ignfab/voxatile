@@ -1,4 +1,4 @@
-heightMaps:
+heightmaps:
   - name: ground
     default: 0
 verticalScale: 1.0
