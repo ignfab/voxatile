@@ -1,11 +1,11 @@
 package com.ignfab.minalac.generator.inputs;
 
-import org.apache.poi.util.ReplacingInputStream;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.wfs.GML;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -40,7 +40,11 @@ public class WFS1_1_GML3_1_DataProvider {
         InputStream stream = url.openStream();
 
         // Invalidate schema declaration because GML version 3.1 is not used in this schema (version is unspecified, defaulting to 3.2)
-        InputStream replacedStream = new ReplacingInputStream(stream, "http://BDTOPO_V3", "explicitly-invalid");
+        // This code is temporary and no attention is given to its (bad) performance
+        byte[] bytes = stream.readAllBytes();
+        stream.close();
+        String string = new String(bytes).replace("http://BDTOPO_V3", "explicitly-invalid");
+        InputStream replacedStream = new ByteArrayInputStream(string.getBytes());
 
         return gml.decodeFeatureCollection(replacedStream);
    }
