@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.utils.world2d;
 
+import com.ignfab.minalac.generator.utils.iterator.Iterators;
 import com.ignfab.minalac.generator.utils.world2d.iterator.WorldBBox2dIterator;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
@@ -136,11 +137,11 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
     /**
      * Returns {@code true} if the given position is in the bounding box.
      *
-     * @param coords the position to be checked.
-     * @return {@code true} if posiiton is in the bounding box.
+     * @param position the position to be checked.
+     * @return {@code true} if position is in the bounding box.
      */
-    public boolean contains(WorldCoords2d coords) {
-        return contains(coords.x(), coords.y());
+    public boolean contains(Positioned2d position) {
+        return contains(position.coords().x(), position.coords().y());
     }
 
     /**
@@ -154,7 +155,7 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
     }
 
     /**
-     * Tells if bounding box intersects another bounind box.
+     * Tells if bounding box intersects another boundind box.
      *
      * @param other Other bounding box to test intersection with
      *
@@ -168,7 +169,7 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
     }
 
     /**
-     * Returns intersection with another bounind box.
+     * Returns intersection with another boundind box.
      *
      * @param other Other bounding box to intersect with
      *
@@ -180,6 +181,32 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
         int maxX = Math.min(maxX(), other.maxX());
         int maxY = Math.min(maxY(), other.maxY());
         return new WorldBBox2d(minX, minY, Math.max(0, maxX - minX + 1), Math.max(0, maxY - minY + 1));
+    }
+
+    /**
+     * Crops an iterator over positioned items to the bounding box.
+     *
+     * @param iterator iterator over positioned items
+     *
+     * @return an iterator only with items contained in the bounding box
+     *
+     * @param <T> type of iterator results
+     */
+    public <T extends Positioned2d> Iterator<T> crop(Iterator<? extends T> iterator) {
+        return Iterators.cast(Iterators.filter(iterator, this::contains));
+    }
+
+    /**
+     * Same as {@link WorldBBox2d#crop(Iterator)}} but with an iterable as argument.
+     *
+     * @param iterable iterable giving an iterator over positioned items
+     *
+     * @return an iterator only with items contained in the bounding box
+     *
+     * @param <T> type of iterator results
+     */
+    public <T extends Positioned2d> Iterator<T> crop(Iterable<? extends T> iterable) {
+        return crop(iterable.iterator());
     }
 
     /**

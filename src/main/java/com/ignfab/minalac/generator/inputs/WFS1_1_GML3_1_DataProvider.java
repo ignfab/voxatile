@@ -41,6 +41,7 @@ public class WFS1_1_GML3_1_DataProvider {
 
         // Invalidate schema declaration because GML version 3.1 is not used in this schema (version is unspecified, defaulting to 3.2)
         // This code is temporary and no attention is given to its (bad) performance
+        // TODO: Improve that!
         byte[] bytes = stream.readAllBytes();
         stream.close();
         String string = new String(bytes).replace("http://BDTOPO_V3", "explicitly-invalid");

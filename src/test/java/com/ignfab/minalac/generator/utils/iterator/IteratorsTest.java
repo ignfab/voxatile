@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class IteratorsTest {
     @Test
@@ -66,6 +67,19 @@ public class IteratorsTest {
     }
 
     @Test
+    void testSingleton() {
+        assertBrowsesAllOnce(
+            Arrays.asList("The One Ring"),
+            Iterators.singleton("The One Ring")
+        );
+
+        assertBrowsesAllOnce(
+            Arrays.asList((Object) null),
+            Iterators.singleton(null)
+        );
+    }
+
+    @Test
     void testRemap() {
         assertBrowsesAllOnce(
             Arrays.asList(3, 5, 5, 6, 6, 6, 7),
@@ -111,7 +125,7 @@ public class IteratorsTest {
 
     @Test
     void testUnwrap() {
-        LinkedList<Iterator<String>> list = new LinkedList<>();
+        List<Iterator<String>> list = new LinkedList<>();
 
         assertBrowsesAllOnce(
             Collections.emptyList(),
@@ -140,10 +154,10 @@ public class IteratorsTest {
         list = new LinkedList<>();
         list.add(Iterators.iterator("Frodo", "Sam"));
         list.add(Iterators.iterator());
-        list.add(Iterators.iterator("Golum"));
+        list.add(Iterators.iterator("Gollum"));
 
         assertBrowsesAllOnce(
-            Arrays.asList("Frodo", "Sam", "Golum"),
+            Arrays.asList("Frodo", "Sam", "Gollum"),
             Iterators.unwrap(list.iterator())
         );
     }

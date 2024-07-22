@@ -11,6 +11,7 @@ import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Testing purpose voxel world output.
@@ -156,7 +157,7 @@ public class TestingVoxelWorld extends VoxelWorld {
      * @param z z-coordinate of tested voxel
      */
     public void assertVoxelNull(int x, int y, int z) {
-        assertVoxelNull(x, y, z, "Voxel mismatch at (%d, %d, %d)".formatted(x, y, z));
+        assertVoxelNull(x, y, z, "Not null voxel at (%d, %d, %d)".formatted(x, y, z));
     }
 
     /**
@@ -176,5 +177,47 @@ public class TestingVoxelWorld extends VoxelWorld {
      */
     public void assertVoxelNull(WorldCoords3d pos) {
         assertVoxelNull(pos.x(), pos.y(), pos.z());
+    }
+
+    /**
+     * Asserts a voxel has a value.
+     *
+     * @param x x-coordinate of tested voxel
+     * @param y y-coordinate of tested voxel
+     * @param z z-coordinate of tested voxel
+     * @param message Message to be displayed in case of failure
+     */
+    public void assertVoxelNotNull(int x, int y, int z, String message) {
+        assertNotNull(get(x, y, z), message);
+    }
+
+    /**
+     * Asserts a voxel has a value.
+     *
+     * @param x x-coordinate of tested voxel
+     * @param y y-coordinate of tested voxel
+     * @param z z-coordinate of tested voxel
+     */
+    public void assertVoxelNotNull(int x, int y, int z) {
+        assertVoxelNotNull(x, y, z, "Null voxel at (%d, %d, %d)".formatted(x, y, z));
+    }
+
+    /**
+     * Asserts a voxel has a value.
+     *
+     * @param pos Position of tested voxel
+     * @param message Message to be displayed in case of failure
+     */
+    public void assertVoxelNotNull(WorldCoords3d pos, String message) {
+        assertVoxelNotNull(pos.x(), pos.y(), pos.z(), message);
+    }
+
+    /**
+     * Asserts a voxel has a value.
+     *
+     * @param pos Position of tested voxel
+     */
+    public void assertVoxelNotNull(WorldCoords3d pos) {
+        assertVoxelNotNull(pos.x(), pos.y(), pos.z());
     }
 }

@@ -1,14 +1,12 @@
 package com.ignfab.minalac.generator.generation;
 
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
-
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.api.referencing.operation.MathTransform;
 import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -145,7 +143,7 @@ public class Generation {
      */
     public void addHeightmap(String name, Heightmap heightmap) throws IllegalArgumentException {
         if (name == null || heightmaps.containsKey(name))
-            throw new IllegalArgumentException("Illegal name for heightmap, duplicate or null name : " + name);
+            throw new IllegalArgumentException("Illegal name for heightmap, duplicate or null name: " + name);
         heightmaps.put(name, heightmap);
     }
 
@@ -159,7 +157,7 @@ public class Generation {
     public Heightmap getHeightmap(String name) throws NoSuchElementException {
         Heightmap heightmap = heightmaps.get(name);
         if (heightmap == null)
-            throw new NoSuchElementException("This heightmap does not exist : " + name);
+            throw new NoSuchElementException("This heightmap does not exist: " + name);
         return heightmap;
     }
 }

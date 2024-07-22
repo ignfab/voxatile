@@ -82,7 +82,7 @@ public class ParamsParserTest {
     @Test
     public void testOptionalFieldHeightmapEmpty() {
         assertDoesNotThrow(() -> new ParamsParser("""
-            heightaps: []
+            heightmaps: []
             verticalScale: 3
             horizontalScale: 4
             area:

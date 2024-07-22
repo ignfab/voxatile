@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.utils.world3d;
 
+import com.ignfab.minalac.generator.utils.iterator.Iterators;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.iterator.WorldBBox3dIterator;
 
@@ -150,11 +151,11 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
     /**
      * Returns {@code true} if the given position is in the bounding box.
      *
-     * @param coords the position to be checked.
+     * @param position the position to be checked.
      * @return {@code true} if position is in the bounding box.
      */
-    public boolean contains(WorldCoords3d coords) {
-        return contains(coords.x(), coords.y(), coords.z());
+    public boolean contains(Positioned3d position) {
+        return contains(position.coords().x(), position.coords().y(), position.coords().z());
     }
 
     /**
@@ -198,6 +199,32 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
         int maxY = Math.min(maxY(), other.maxY());
         int maxZ = Math.min(maxZ(), other.maxZ());
         return new WorldBBox3d(minX, minY, minZ, Math.max(0, maxX - minX + 1), Math.max(0, maxY - minY + 1), Math.max(0, maxZ - minZ + 1));
+    }
+
+    /**
+     * Crops an iterator over positioned items to the bounding box.
+     *
+     * @param iterator iterator over positioned items
+     *
+     * @return an iterator only with items contained in the bounding box
+     *
+     * @param <T> type of iterator results
+     */
+    public <T extends Positioned3d> Iterator<T> crop(Iterator<? extends T> iterator) {
+        return Iterators.cast(Iterators.filter(iterator, this::contains));
+    }
+
+    /**
+     * Same as {@link WorldBBox3d#crop(Iterator)}} but with an iterable as argument.
+     *
+     * @param iterable iterable giving an iterator over positioned items
+     *
+     * @return an iterator only with items contained in the bounding box
+     *
+     * @param <T> type of iterator results
+     */
+    public <T extends Positioned3d> Iterator<T> crop(Iterable<? extends T> iterable) {
+        return crop(iterable.iterator());
     }
 
     /**
