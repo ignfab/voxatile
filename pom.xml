@@ -59,12 +59,6 @@
             <artifactId>slf4j-simple</artifactId>
             <version>2.0.9</version>
         </dependency>
-        <!-- Microsoft file formats -->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>5.2.5</version>
-        </dependency>
         <!-- JTS (vector geometry data library) -->
         <dependency>
             <groupId>org.locationtech.jts</groupId>
