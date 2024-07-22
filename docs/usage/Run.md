@@ -8,7 +8,7 @@
 Run and compile from repository root:
 
 ```shell
-mvn -DskipTests=true clean package && java -jar target/Generator.jar -p examples/default.yaml $HOME/.minetest/worlds/minalac
+mvn -Dmaven.test.skip=true clean package && java -jar target/Generator.jar -p examples/default.yaml $HOME/.minetest/worlds/minalac
 ```
 
 Run jar only:
@@ -37,7 +37,7 @@ Output path and generation parameters has to be provided.
 
 If you have cloned the project repository, you can [build the JAR using Maven](../tools/Maven.md#create-an-executable-jar) and run it:
 ```shell
-mvn -DskipTests=true clean package && java -jar target/Generator.jar -p examples/default.yaml $HOME/.minetest/worlds/minalac
+mvn -Dmaven.test.skip=true clean package && java -jar target/Generator.jar -p examples/default.yaml $HOME/.minetest/worlds/minalac
 ```
 
 ## Download workflow artifact
