@@ -39,7 +39,7 @@ public class RawParams {
          */
         public String name;
         /**
-         * The default value for all height map cells.
+         * The default value for all heightmap cells.
          * This field is required.
          * When initialized by {@link HeightmapParams}:
          * <ul>

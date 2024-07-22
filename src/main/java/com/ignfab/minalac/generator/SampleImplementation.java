@@ -1,26 +1,24 @@
 package com.ignfab.minalac.generator;
 
-import com.ignfab.minalac.generator.models.GeometryModel;
-import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.generation.CoordsConverter;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider;
+import com.ignfab.minalac.generator.models.JTSGeometryModel;
+import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.parsing.ParamsParser;
 import com.ignfab.minalac.generator.parsing.ParseException;
 import com.ignfab.minalac.generator.renderers.VectorRenderer;
 import com.ignfab.minalac.generator.utils.execution.Scheduler;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
-import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dElement;
+import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.SemanticType;
 import com.ignfab.minalac.generator.world.VoxelType;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
-
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
@@ -85,13 +83,13 @@ public final class SampleImplementation {
 
         // Downloads
         scheduler.schedule("heightmaps.ground", () -> {
-            log("heightmaps.ground", "Downloading height map");
+            log("heightmaps.ground", "Downloading heightmap");
             try {
                 fillGroundHeightmap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, groundHeightmap, generation.getVerticalScale());
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
-            log("heightmaps.ground", "Downloaded height map");
+            log("heightmaps.ground", "Downloaded heightmap");
         });
 
         scheduler.schedule("models.buildings", () -> {
@@ -101,8 +99,7 @@ public final class SampleImplementation {
                     new WFS1_1_GML3_1_DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154&outputFormat=text%2Fxml%3B%20subtype%3Dgml%2F3.1.1"),
                     generation.makeCoordsConverter(crs),  // This is supposed to be the layer CRS (actually the same for this demo)
                     "building",
-                    store,
-                    groundHeightmap.bbox());
+                    store);
             } catch (TransformException | IOException | ParserConfigurationException | SAXException | FactoryException e) {
                 throw new RuntimeException(e);
             }
@@ -123,7 +120,7 @@ public final class SampleImplementation {
                 store.getByType("building"),
                 world.getFactory().createVoxelType(SemanticType.COBBLE),
                 world.getFactory().createVoxelType(SemanticType.BRICK)
-            ).render();
+            ).render(generation.getWorldBBox2d().to3d(-32_000, 64_000));
             log("renderers.buildings", "Placed buildings");
         }, "heightmaps.ground", "models.buildings");
 
@@ -150,13 +147,12 @@ public final class SampleImplementation {
         System.out.printf("[%s] (%s) %s%n", Thread.currentThread().getName(), prefix, message);
     }
 
-    private static void downloadVectorFeatures(WFS1_1_GML3_1_DataProvider provider, CoordsConverter converter,
-            String type, ModelStore store, WorldBBox2d limits)
+    private static void downloadVectorFeatures(WFS1_1_GML3_1_DataProvider provider, CoordsConverter converter, String type, ModelStore store)
             throws NoSuchElementException, TransformException, IOException, ParserConfigurationException, SAXException {
         try (SimpleFeatureIterator iterator = provider.getFeatures().features()) {
             while (iterator.hasNext()) {
                 SimpleFeature feature = iterator.next();
-                GeometryModel model = new GeometryModel((Geometry) feature.getDefaultGeometry(), converter, limits);
+                JTSGeometryModel model = new JTSGeometryModel((Geometry) feature.getDefaultGeometry(), converter);
                 Object height = feature.getAttribute("hauteur");
 
                 // TODO: Value 20 is a temporary value for building renderings.
@@ -178,10 +174,10 @@ public final class SampleImplementation {
         VoxelType stoneVT = world.getFactory().createVoxelType(SemanticType.STONE);
         VoxelType dirtVT = world.getFactory().createVoxelType(SemanticType.DIRT);
 
-        for (Chunk2dElement element : map) {
-            int x = element.getX();
-            int y = element.getY();
-            int z = element.getValue();
+        for (WorldCoords2d coords : map.bbox()) {
+            int x = coords.x();
+            int y = coords.y();
+            int z = map.get(coords);
             grassVT.place(x, y, z);
             dirtVT.place(x, y, (z - 1));
             dirtVT.place(x, y, (z - 2));

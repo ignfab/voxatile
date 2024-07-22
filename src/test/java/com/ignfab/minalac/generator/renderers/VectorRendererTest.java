@@ -1,9 +1,8 @@
 package com.ignfab.minalac.generator.renderers;
 
 import com.ignfab.minalac.generator.generation.Heightmap;
-import com.ignfab.minalac.generator.models.GeometryModel;
 import com.ignfab.minalac.generator.models.Model;
-import com.ignfab.minalac.generator.models.TestingRasterizableModel;
+import com.ignfab.minalac.generator.models.TestingVoxelizable2dBoxModel;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
@@ -40,74 +39,93 @@ class VectorRendererTest {
                     models,
                     world.getFactory().createVoxelType(SemanticType.COBBLE),
                     world.getFactory().createVoxelType(SemanticType.BRICK)
-                ).render()
+                ).render(bbox)
         );
     }
 
     @Test
-    @DisplayName("Test a simple rendering on flat height map")
+    public void testConstructor() {
+        assertDoesNotThrow(() -> new VectorRenderer(
+            heightmap,
+            models,
+            world.getFactory().createVoxelType(SemanticType.COBBLE),
+            world.getFactory().createVoxelType(SemanticType.BRICK)
+        ));
+    }
+
+
+    private final class TestNotVoxelizableModel extends Model {}
+
+    @Test
+    @DisplayName("Test a simple rendering on flat heightmap with no inside")
     public void testRenderFlat() {
-        // Prepare a chunk smaller than the whole world
+
+        // This box is too small to have inside voxels
         WorldBBox2d modelBbox = new WorldBBox2d(0, -1, 2, 3);
 
         // Add one model covering the whole map with INSIDE voxels
-        models.add(new TestingRasterizableModel(new TestingIterableArrayChunk2d(modelBbox, GeometryModel.INSIDE)));
+        models.add(new TestingVoxelizable2dBoxModel(modelBbox));
 
         render();
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == 0 && modelBbox.contains(pos.to2d()))
-                world.assertVoxel("cobble", pos);
+                world.assertVoxel("brick", pos);
             else
                 world.assertVoxelNull(pos);
         }
     }
 
     @Test
-    @DisplayName("Test rendering outside, inside and border")
-    public void testRenderOutsideInsideBorder() {
-        // Prepare a chunk with only three pixels, one per available value
-        TestingIterableArrayChunk2d chunk = new TestingIterableArrayChunk2d(new WorldBBox2d(0, 0, 1, 3), GeometryModel.OUTSIDE);
-        chunk.set(0, 1, GeometryModel.BORDER);
-        chunk.set(0, 2, GeometryModel.INSIDE);
+    @DisplayName("Test rendering inside and border")
+    public void testRenderInsideBorder() {
 
-        // Add one model covering the whole map with INSIDE voxels
-        models.add(new TestingRasterizableModel(chunk));
+        WorldBBox2d modelBbox = new WorldBBox2d(0, -1, 3, 4);
+        models.add(new TestingVoxelizable2dBoxModel(modelBbox));
 
         render();
 
         for (WorldCoords3d pos : bbox) {
-            if (pos.z() == 0 && pos.x() == 0 && pos.y() == 1)
-                world.assertVoxel("brick", pos);
-            else if (pos.z() == 0 && pos.x() == 0 && pos.y() == 2)
-                world.assertVoxel("cobble", pos);
-            else
+            if (pos.z() != 0 || !modelBbox.contains(pos.to2d())) {
+                // Outside
                 world.assertVoxelNull(pos);
+                continue;
+            }
+
+            if (pos.x() == modelBbox.minX()
+                || pos.x() == modelBbox.maxX()
+                || pos.y() == modelBbox.minY()
+                || pos.y() == modelBbox.maxY())
+                // Border
+                world.assertVoxel("brick", pos);
+            else
+                // Inside
+                world.assertVoxel("cobble", pos);
         }
     }
 
     @Test
-    @DisplayName("Test rendering on a non flat height map")
+    @DisplayName("Test rendering on a non flat heightmap")
     public void testRenderHeightmap() {
         // Prepare a non flat Heightmap
         for (WorldCoords2d pos : bbox.to2d())
             heightmap.set(pos, (pos.x() + pos.y()) / 2);
 
-        // Add one model covering the whole map with BORDER voxels
-        models.add(new TestingRasterizableModel(new TestingIterableArrayChunk2d(bbox.to2d(), GeometryModel.BORDER)));
+        // Add one model covering the whole map
+        models.add(new TestingVoxelizable2dBoxModel(bbox.to2d()));
 
         render();
 
         for (WorldCoords3d pos : bbox) {
-            if (pos.z() == (pos.x() + pos.y()) / 2 + 1) // + 1 because vector renderer places voxels 1 pos above height map
-                world.assertVoxel("brick", pos);
+            if (pos.z() == (pos.x() + pos.y()) / 2 + 1) // + 1 because vector renderer places voxels 1 pos above heightmap
+                world.assertVoxelNotNull(pos);
             else
                 world.assertVoxelNull(pos);
         }
     }
 
     @Test
-    @DisplayName("Test rendering with a height map over world vertical limits")
+    @DisplayName("Test rendering with a heightmap over world vertical limits")
     public void testRenderVerticalOverflow() {
         // A heightmap overflowing under and over world limits
         for (WorldCoords2d pos : bbox.to2d())
@@ -116,25 +134,25 @@ class VectorRendererTest {
             heightmap.set(pos, pos.x() + pos.y() * 2);
 
         // Add one model covering the whole map with BORDER voxels
-        models.add(new TestingRasterizableModel(new TestingIterableArrayChunk2d(bbox.to2d(), GeometryModel.BORDER)));
+        models.add(new TestingVoxelizable2dBoxModel(bbox.to2d()));
 
         render();
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == pos.x() + pos.y() * 2 + 1)
-                world.assertVoxel("brick", pos);
+                world.assertVoxelNotNull(pos);
             else
                 world.assertVoxelNull(pos);
         }
     }
 
     @Test
-    @DisplayName("Test rendering of a chunk larger than world horizontal limits")
+    @DisplayName("Test rendering of a model larger than world horizontal limits")
     public void testRenderHorizontalOverflow() {
         // Prepare a larger model bbox
         WorldBBox2d modelBbox = new WorldBBox2d(bbox.minX() - 1, bbox.minY() - 1, bbox.sizeX() + 2, bbox.sizeY() + 2);
-
-        models.add(new TestingRasterizableModel(new TestingIterableArrayChunk2d(modelBbox, GeometryModel.INSIDE)));
+        System.out.println(modelBbox);
+        models.add(new TestingVoxelizable2dBoxModel(modelBbox));
 
         render();
 
@@ -144,5 +162,13 @@ class VectorRendererTest {
             else
                 world.assertVoxelNull(pos);
         }
+    }
+
+    @Test
+    @DisplayName("Test rendering of a non voxelizable model")
+    public void testRenderNonVoxelizable() {
+        models.add(new TestNotVoxelizableModel());
+
+        render();
     }
 }

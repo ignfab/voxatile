@@ -30,4 +30,43 @@ public record WorldCoords3d(int x, int y, int z) {
     public WorldCoords2d to2d() {
         return new WorldCoords2d(this);
     }
+
+   /**
+     * Create a new {@link WorldCoords3d} from double floating point coordinates.
+     * Given coordinates are {@code Math.round}ed.
+     *
+     * @param x x-component of coordinates
+     * @param y y-compoment of coordinates
+     * @param z z-compoment of coordinates
+     */
+    public static WorldCoords3d round(double x, double y, double z) {
+        return new WorldCoords3d((int) Math.round(x), (int) Math.round(y), (int) Math.round(z));
+    }
+    /**
+     * Create a new {@link WorldCoords3d} from double floating point coordinates.
+     * Given coordinates are {@code Math.floor}ed.
+     *
+     * @param x x-component of coordinates
+     * @param y y-compoment of coordinates
+     * @param z z-compoment of coordinates
+     *
+     * @return resulting {@WorldCoords3d}.
+     */
+    public static WorldCoords3d floor(double x, double y, double z) {
+        return new WorldCoords3d((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
+    }
+
+    /**
+     * Create a new {@link WorldCoords3d} from double floating point coordinates.
+     * Given coordinates are {@code Math.ceil}ed.
+     *
+     * @param x x-component of coordinates
+     * @param y y-compoment of coordinates
+     * @param z z-compoment of coordinates
+     *
+     * @return resulting {@WorldCoords3d}.
+     */
+    public static WorldCoords3d ceil(double x, double y, double z) {
+        return new WorldCoords3d((int) Math.ceil(x), (int) Math.ceil(y), (int) Math.ceil(z));
+    }
 }

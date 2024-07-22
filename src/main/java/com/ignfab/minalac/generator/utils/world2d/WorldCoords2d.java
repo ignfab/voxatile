@@ -29,4 +29,43 @@ public record WorldCoords2d(int x, int y) {
     public WorldCoords3d to3d(int z) {
         return new WorldCoords3d(this, z);
     }
+
+    /**
+     * Create a new {@link WorldCoords2d} from double floating point coordinates.
+     * Given coordinates are {@code Math.round}ed.
+     *
+     * @param x x-component of coordinates
+     * @param y y-compoment of coordinates
+     *
+     * @return resulting {@WorldCoords2d}.
+     */
+    public static WorldCoords2d round(double x, double y) {
+        return new WorldCoords2d((int) Math.round(x), (int) Math.round(y));
+    }
+
+    /**
+     * Create a new {@link WorldCoords2d} from double floating point coordinates.
+     * Given coordinates are {@code Math.floor}ed.
+     *
+     * @param x x-component of coordinates
+     * @param y y-compoment of coordinates
+     *
+     * @return resulting {@WorldCoords2d}.
+     */
+    public static WorldCoords2d floor(double x, double y) {
+        return new WorldCoords2d((int) Math.floor(x), (int) Math.floor(y));
+    }
+
+    /**
+     * Create a new {@link WorldCoords2d} from double floating point coordinates.
+     * Given coordinates are {@code Math.ceil}ed.
+     *
+     * @param x x-component of coordinates
+     * @param y y-compoment of coordinates
+     *
+     * @return resulting {@WorldCoords2d}.
+     */
+    public static WorldCoords2d ceil(double x, double y) {
+        return new WorldCoords2d((int) Math.ceil(x), (int) Math.ceil(y));
+    }
 }
