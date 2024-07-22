@@ -75,7 +75,7 @@ jobs:
         run: |
           set +e
           set -o pipefail
-          mvn --batch-mode --no-transfer-progress --update-snapshots -DskipTests=true package | tee -a build.log
+          mvn --batch-mode --no-transfer-progress --update-snapshots -Dmaven.test.skip=true package | tee -a build.log
           code=$?
           set -e
           set +o pipefail
