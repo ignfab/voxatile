@@ -16,6 +16,11 @@ public final class EmptyChunk2d implements IterableChunk2d, WritableChunk2d {
 
     private EmptyChunk2d() {}
 
+    /**
+     * Returns the single instance of EmptyChunk2d.
+     *
+     * @return the single instance of EmptyChunk2d
+     */
     public static EmptyChunk2d getInstance() {
         return INSTANCE;
     }

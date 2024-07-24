@@ -109,7 +109,7 @@
       <property name="scope" value="protected"/>
     </module>
     <module name="JavadocStyle"/>
-<!--    <module name="MissingJavadocMethod"/>-->
+   <module name="MissingJavadocMethod"/>
 
     <!-- Checks for Naming Conventions.                  -->
     <!-- See https://checkstyle.org/config_naming.html -->
@@ -220,5 +220,12 @@
     <module name="SuppressWarningsHolder" />
 
   </module>
+
+    <!-- Configures the suppression filter to use the suppressions.xml file.
+     It is used to ignore missing Javadoc checks on test classes -->
+    <module name="SuppressionFilter">
+        <property name="file" value="suppressions.xml"/>
+        <property name="optional" value="false"/>
+    </module>
 
 </module>

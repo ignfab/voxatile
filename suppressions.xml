@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+    <suppress checks="MissingJavadocMethod" files=".*[\\/]src[\\/]test[\\/]"/>
+
+    <!-- Temporary suppression: This will be removed when the Javadoc is added in an upcoming PR -->
+    <suppress checks="MissingJavadocMethod" files=".*[\\/]minalac[\\/]generator[\\/]outputs[\\/]"/>
+    <!-- Temporary suppression: This will be removed when the Javadoc is added in an upcoming PR -->
+    <suppress checks="MissingJavadocMethod" files=".*[\\/]minalac[\\/]generator[\\/]world[\\/]"/>
+</suppressions>
+
