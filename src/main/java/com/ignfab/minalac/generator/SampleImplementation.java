@@ -56,6 +56,11 @@ public final class SampleImplementation {
         "minetest", MTVoxelWorld::new
     );
 
+    /**
+     * Serves as the entry point for the program.
+     *
+     * @param args command line arguments
+     */
     public static void main(String[] args)
             throws IOException, OutOfWorldException, MapWriteException, SAXException, FactoryException,
             ParserConfigurationException, TransformException {

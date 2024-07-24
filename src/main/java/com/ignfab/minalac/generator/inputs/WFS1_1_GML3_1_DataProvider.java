@@ -14,10 +14,21 @@ import java.net.URL;
 public class WFS1_1_GML3_1_DataProvider {
     private final String baseURL;
 
+    /**
+     * Constructs a new {@code WFS1_1_GML3_1_DataProvider}.
+     *
+     * @param baseURL the base URL.
+     */
     public WFS1_1_GML3_1_DataProvider(String baseURL) {
         this.baseURL = baseURL;
     }
 
+
+    /**
+     * Retrieves a collection of features from the data provider.
+     *
+     * @return a collection of features
+     */
     public SimpleFeatureCollection getFeatures() throws IOException, ParserConfigurationException, SAXException {
         GML gml = new GML(GML.Version.GML3);
 
