@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import java.beans.ConstructorProperties;
+import java.util.List;
 
 /**
  * RawParams is a POJO representing the parameters used during the generation.
@@ -20,6 +21,60 @@ import java.beans.ConstructorProperties;
 @SuppressWarnings("checkstyle:VisibilityModifier")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RawParams {
+    /**
+     * The list of heightmaps used during the generation.
+     * This field is optional.
+     */
+    public List<HeightMapParams> heightMaps;
+
+    public static class HeightMapParams {
+        /**
+         * The name of the heightmap.
+         * The name must be unique.
+         * This field is required.
+         */
+        public String name;
+        /**
+         * The default value for all height map cells.
+         * This field is required.
+         * When initialized by {@link HeightMapParams}:
+         * <ul>
+         *     <li>"minimal" and "min" are transformed to {@link Integer#MIN_VALUE}</li>
+         *     <li>"maximal" and "max" are transformed to {@link Integer#MAX_VALUE}</li>
+         * </ul>
+         */
+        public int defaultValue;
+
+        /**
+         * Constructor used to ensure that the required fields are present during deserialization.
+         * The {@code defaultValue} must be a valid string integer or one of the following: "minimal", "min", "maximal" or "max".
+         * When parsed "minimal" or "min" will be transformed to {@link Integer#MIN_VALUE}
+         * and "maximal" or "max" will be transformed to {@link Integer#MAX_VALUE}.
+         *
+         * @param name         the name of the heightmap.
+         * @param defaultValue the default value for all heightmap cells. It must be an integer or one of the following: "minimal", "min", "maximal" or "max"
+         * @throws ParseException if {@code defaultValue} is not a valid integer string or is not "minimal", "min", "maximal" or "max"
+         */
+        @ConstructorProperties({"name", "default"})
+        public HeightMapParams(String name, String defaultValue) throws ParseException {
+            this.name = name;
+            this.defaultValue = parseDefaultValue(defaultValue);
+        }
+
+        private int parseDefaultValue(String defaultValue) throws ParseException {
+            return switch (defaultValue) {
+                case "minimal", "min" -> Integer.MIN_VALUE;
+                case "maximal", "max" -> Integer.MAX_VALUE;
+                default -> {
+                    try {
+                        yield Integer.parseInt(defaultValue);
+                    } catch (NumberFormatException e) {
+                        throw new ParseException("Invalid heightmap default field value : " + defaultValue, e);
+                    }
+                }
+            };
+        }
+    }
 
     /**
      * Area to be rendered.

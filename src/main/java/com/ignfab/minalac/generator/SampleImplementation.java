@@ -77,7 +77,7 @@ public final class SampleImplementation {
 
         // Various data stores
         ModelStore store = new ModelStore();
-        HeightMap heightMap = new HeightMap(generation.getWorldBBox2d(), 0);
+        HeightMap groundHeightMap = generation.getHeightMap("ground");
         VoxelWorld world = parser.createVoxelWorld();
 
         Scheduler scheduler = new Scheduler();
@@ -86,7 +86,7 @@ public final class SampleImplementation {
         scheduler.schedule("heightmaps.ground", () -> {
             log("heightmaps.ground", "Downloading height map");
             try {
-                fillGroundHeightMap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, heightMap, generation.getVerticalScale());
+                fillGroundHeightMap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, groundHeightMap, generation.getVerticalScale());
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
@@ -101,7 +101,7 @@ public final class SampleImplementation {
                     generation.makeCoordsConverter(crs),  // This is supposed to be the layer CRS (actually the same for this demo)
                     "building",
                     store,
-                    heightMap.bbox());
+                    groundHeightMap.bbox());
             } catch (TransformException | IOException | ParserConfigurationException | SAXException | FactoryException e) {
                 throw new RuntimeException(e);
             }
@@ -112,7 +112,7 @@ public final class SampleImplementation {
         scheduler.schedule("renderers.ground", () -> {
             log("renderers.ground", "Placing ground");
             try {
-                placeVoxelFromHeightMap(heightMap, world);
+                placeVoxelFromHeightMap(groundHeightMap, world);
             } catch (OutOfWorldException e) {
                 throw new RuntimeException(e);
             }
@@ -122,7 +122,7 @@ public final class SampleImplementation {
         scheduler.schedule("renderers.buildings", () -> {
             log("renderers.buildings", "Placing buildings");
             new VectorRenderer(
-                heightMap,
+                groundHeightMap,
                 store.getByType("building"),
                 world.getFactory().createVoxelType(SemanticType.COBBLE),
                 world.getFactory().createVoxelType(SemanticType.BRICK)
@@ -139,7 +139,7 @@ public final class SampleImplementation {
 
         System.out.println("Saving world");
         VoxelWorldMetadata metadata = world.getMetadata();
-        metadata.setSpawn(new WorldCoords3d(0, 0, heightMap.get(0, 0) + 1));
+        metadata.setSpawn(new WorldCoords3d(0, 0, groundHeightMap.get(0, 0) + 1));
         metadata.setWorldName("Minalac");
         save(cli.getOutputPath().toFile(), world);
 

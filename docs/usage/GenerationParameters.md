@@ -5,6 +5,9 @@ Generation parameters can be written in Yaml or Json. Yaml is better for readabi
 These parameters generate a map of 1000x1000 voxels around IGN building at Saint-Mandé (FR), in Minetest format, with 1 meter voxels in every direction:
 
 ```yaml
+heightMaps:
+  - name: ground
+    default: 0
 area:
   center:
     latitude: 48.845
@@ -18,6 +21,9 @@ format: minetest
 ```
 
 Available fields:
+- `heightMaps`: list of the heightmaps
+  - `name`: name of the heightmap (Must be unique)
+  - `default`: default value for all heightmap cells (Must be an integer, `minimal`, `min`, `maximal` or `max`)
  - `area`: Area to be rendered
    - `center`: `longitude` and `latitude` of the center point
    - `extendsX` and `extendsY`: Area extends in both horizontal directions (in voxels)
