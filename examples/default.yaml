@@ -1,3 +1,6 @@
+heightMaps:
+  - name: ground
+    default: 0
 verticalScale: 1.0
 horizontalScale: 1.0
 area:
