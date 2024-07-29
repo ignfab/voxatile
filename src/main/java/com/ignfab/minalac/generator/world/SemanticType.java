@@ -1,5 +1,11 @@
 package com.ignfab.minalac.generator.world;
 
+/**
+ * An enum for the semantic representation of voxels.
+ *
+ * @see VoxelType
+ * @see VoxelTypeFactory#createVoxelType(SemanticType)
+ */
 public enum SemanticType {
     /**
      * Represent a grass voxel.

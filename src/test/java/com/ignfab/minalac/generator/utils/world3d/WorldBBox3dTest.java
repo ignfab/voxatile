@@ -16,7 +16,7 @@ public class WorldBBox3dTest {
         assertEquals(new WorldCoords3d(4, 6, 8), box.getMax());
         assertEquals(new WorldSize3d(4, 5, 6), box.getSize());
 
-        // Instanciating a 0 sized bounding box
+        // Instantiating a 0 sized bounding box
         assertDoesNotThrow(() -> new WorldBBox3d(0, 0, 0, 0, 0, 0));
 
         // Instantiating a negative sized bounding box

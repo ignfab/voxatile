@@ -27,6 +27,10 @@ public class RawParams {
      */
     public List<HeightMapParams> heightMaps;
 
+    /**
+     * Heightmap used during the generation.
+     * This field is optional.
+     */
     public static class HeightMapParams {
         /**
          * The name of the heightmap.

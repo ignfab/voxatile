@@ -25,7 +25,7 @@ public class BufferedImageChunk implements IterableChunk2d, WritableChunk2d {
      *
      * @param bbox Bounding box of that chunk
      *
-     * Chunk is initalized with 0 values.
+     * Chunk is initialized with 0 values.
      */
     BufferedImageChunk(WorldBBox2d bbox) {
         this.bbox = bbox;

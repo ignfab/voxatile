@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+/**
+ * Data provider using WFS 1.1 and GML 3.1.
+ */
 @SuppressWarnings("checkstyle:TypeName") // Underscore character used to better identify "WFS 1.1" and "GML 3.1"
 public class WFS1_1_GML3_1_DataProvider {
     private final String baseURL;

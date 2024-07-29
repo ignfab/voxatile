@@ -9,16 +9,24 @@ import java.util.Map;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Deflater;
 
+/**
+ * This class is responsible for providing the serialized {@code Block} needed by the {@code map.sqlite} file.
+ * @see SQLiteMapWriter
+ * @see com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld#save(File)
+ */
 public class Serializer {
 
     // We use a static buffer to convert int32 and int64 to bytes.
-    // This avoid usage of DeflaterOutputStream.write(int) which performs something similar
+    // This avoids usage of DeflaterOutputStream.write(int) which performs something similar
     // but with a byte array instantiation for each call.
     private final byte[] buffer;
 
     // Using a static deflater avoids many useless instantiations.
     private final Deflater deflater;
 
+    /**
+     * Constructs a new {@code Serializer}.
+     */
     public Serializer() {
         buffer = new byte[8192];
         deflater = new Deflater(Deflater.BEST_COMPRESSION);
@@ -73,9 +81,14 @@ public class Serializer {
         }
     }
 
-    //Serializer for map version 28
-    //See World Format Documentation for version 28
-    //https://github.com/minetest/minetest/blob/master/doc/world_format.md
+    /**
+     * Serialize the specified {@link Block} for Minetest map version 28.
+     *
+     * @param block the block to serialize
+     * @return a {@code byte[]} representing the serialized block
+     * @throws IOException if an error occurs during serialization
+     * @see <a href="https://github.com/minetest/minetest/blob/master/doc/world_format.md#mapblock-serialization-format">Minetest world format documentation</a>
+     */
     public byte[] serialize(Block block) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream(16384);
 

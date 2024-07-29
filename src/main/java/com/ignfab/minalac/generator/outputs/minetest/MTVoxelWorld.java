@@ -14,30 +14,54 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Implementation of {@link VoxelWorld} that creates a playable world specifically for Minetest.
+ */
 public class MTVoxelWorld implements VoxelWorld {
     private final VoxelTypeFactory factory;
     private final VoxelWorldMetadata metadata;
     private final HashMap<Integer, Block> blocks;
     //See MAX_MAP_GENERATION_LIMIT constant on Minetest
-    //https://github.com/minetest/minetest/blob/e10d8080ba6e53e0f3c4b20b32304f8bb36e5958/src/constants.h#L70
+    //https://github.com/minetest/minetest/blob/master/src/constants.h#L69
     private static final int LIMIT_POSITION = 31_007;
 
+    /**
+     * Constructs a new {@code MTVoxelWorld}.
+     */
     public MTVoxelWorld() {
         this.factory = new MTVoxelTypeFactory(this);
         metadata = new VoxelWorldMetadata();
         this.blocks = new HashMap<>();
     }
 
+    /**
+     * Returns the factory for creating {@link MTVoxelType}.
+     *
+     * @return the factory for creating voxels
+     */
     @Override
     public VoxelTypeFactory getFactory() {
         return this.factory;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public VoxelWorldMetadata getMetadata() {
         return metadata;
     }
 
+    /**
+     * Places the voxel into this world at the specified coordinates.
+     * The specified coordinates must be in the coordinate system used by Minetest.
+     *
+     * @param x the x-coordinate value
+     * @param y the y-coordinate value
+     * @param z the z-coordinate value
+     * @param voxel the voxel to place
+     * @throws OutOfWorldException if the given coordinates are outside the world limits
+     */
     protected void set(int x, int y, int z, MTVoxelType voxel) throws OutOfWorldException {
         if (-LIMIT_POSITION > x || x > LIMIT_POSITION
                 || -LIMIT_POSITION > y || y > LIMIT_POSITION
@@ -54,6 +78,11 @@ public class MTVoxelWorld implements VoxelWorld {
         this.blocks.put(pos, block);
     }
 
+    /**
+     * {@inheritDoc}
+     * The world is exported in a format for Minetest.
+     */
+    @Override
     public void save(File destination) throws MapWriteException {
         createFile(new File(destination, "world.mt"), """
                 world_name = %s

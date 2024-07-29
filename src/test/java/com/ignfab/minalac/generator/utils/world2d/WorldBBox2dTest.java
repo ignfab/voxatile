@@ -16,7 +16,7 @@ public class WorldBBox2dTest {
         assertEquals(new WorldCoords2d(3, 5), box.getMax());
         assertEquals(new WorldSize2d(3, 4), box.getSize());
 
-        // Instanciating a 0 sized bounding box
+        // Instantiating a 0 sized bounding box
         assertDoesNotThrow(() -> new WorldBBox2d(0, 0, 0, 0));
 
         // Instantiating a negative sized bounding box
@@ -122,7 +122,7 @@ public class WorldBBox2dTest {
         assertTrue(box.intersection(new WorldBBox2d(-2, -2, 3, 3)).isEmpty());
         assertTrue(box.intersection(new WorldBBox2d(3, 3, 3, 3)).isEmpty());
 
-        // Various intersectig boxes
+        // Various intersecting boxes
         box = new WorldBBox2d(-2, -2, 5, 5);
         assertEquals(new WorldBBox2d(-2, -2, 3, 3), box.intersection(new WorldBBox2d(-3, -3, 4, 4)));
         assertEquals(new WorldBBox2d(0, -2, 3, 3), box.intersection(new WorldBBox2d(0, -3, 4, 4)));

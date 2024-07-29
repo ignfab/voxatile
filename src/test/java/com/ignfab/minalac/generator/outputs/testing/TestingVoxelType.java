@@ -4,8 +4,7 @@ import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.VoxelType;
 
 /**
- * A dummuy voxelType implementation for {@code TestingVoxelWorld}.
- *
+ * A dummy voxelType implementation for {@code TestingVoxelWorld}.
  * All testing voxel type are represented by simple strings.
  */
 public class TestingVoxelType implements VoxelType {
