@@ -253,7 +253,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
     }
 
     /**
-     * Returns intersection with another bounind box.
+     * Returns intersection with another bounding box.
      *
      * @param box Other bounding box to intersect with
      *

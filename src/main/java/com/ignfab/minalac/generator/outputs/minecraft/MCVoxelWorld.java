@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * Implementation of {@link VoxelWorld} that creates a playable world specifically for Minecraft.
+ */
 public class MCVoxelWorld implements VoxelWorld {
     private final MCVoxelTypeFactory factory;
     private final VoxelWorldMetadata metadata;
@@ -36,22 +39,37 @@ public class MCVoxelWorld implements VoxelWorld {
     private static final int MIN_WORLD_HEIGHT = 0; // -64
     private static final int MAX_WORLD_HEIGHT = 255; // 320
 
+    /**
+     * Constructs a new {@code MCVoxelWorld}.
+     */
     public MCVoxelWorld() {
         factory = new MCVoxelTypeFactory(this);
         metadata = new VoxelWorldMetadata();
         regions = new HashMap<>();
     }
 
+    /**
+     * Returns the factory for creating {@link MCVoxelType}.
+     *
+     * @return the factory for creating voxels
+     */
     @Override
     public MCVoxelTypeFactory getFactory() {
         return factory;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public VoxelWorldMetadata getMetadata() {
         return metadata;
     }
 
+    /**
+     * {@inheritDoc}
+     * The world is exported in a format for Minecraft.
+     */
     @Override
     public void save(File destination) throws MapWriteException {
         try {

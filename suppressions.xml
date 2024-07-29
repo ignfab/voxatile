@@ -6,10 +6,6 @@
 
 <suppressions>
     <suppress checks="MissingJavadocMethod" files=".*[\\/]src[\\/]test[\\/]"/>
-
-    <!-- Temporary suppression: This will be removed when the Javadoc is added in an upcoming PR -->
-    <suppress checks="MissingJavadocMethod" files=".*[\\/]minalac[\\/]generator[\\/]outputs[\\/]"/>
-    <!-- Temporary suppression: This will be removed when the Javadoc is added in an upcoming PR -->
-    <suppress checks="MissingJavadocMethod" files=".*[\\/]minalac[\\/]generator[\\/]world[\\/]"/>
+    <suppress checks="MissingJavadocType" files=".*[\\/]src[\\/]test[\\/]"/>
 </suppressions>
 

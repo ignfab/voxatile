@@ -96,7 +96,7 @@ public class GeometryModel implements Model, Rasterizable {
         this.chunk = chunk;
         Graphics2D graphics = chunk.createGraphics();
 
-        // Draw geometry translated into bounding box relative coordinates (i.e. BufferedImage coordinates))
+        // Draw geometry translated into bounding box relative coordinates (i.e. BufferedImage coordinates)
         Geometry geom = AffineTransformation.translationInstance(-bbox.getMinX(), -bbox.getMinY()).transform(this.geom);
         draw(graphics, geom);
 

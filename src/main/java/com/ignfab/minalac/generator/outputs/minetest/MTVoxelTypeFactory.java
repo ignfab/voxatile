@@ -5,13 +5,29 @@ import com.ignfab.minalac.generator.world.VoxelTypeFactory;
 import com.ignfab.minalac.generator.world.VoxelType;
 import com.ignfab.minalac.generator.outputs.minetest.voxelType.MTSimpleVoxelType;
 
+/**
+ * Factory for creating {@link MTVoxelType}.
+ */
 public class MTVoxelTypeFactory implements VoxelTypeFactory {
     private final MTVoxelWorld world;
 
+    /**
+     * Constructs a new {@code MTVoxelTypeFactory}.
+     * The created voxels will be only able to be placed in the specified world.
+     *
+     * @param world the {@link MTVoxelWorld} from which the created voxels will be associated
+     */
     public MTVoxelTypeFactory(MTVoxelWorld world) {
         this.world = world;
     }
 
+    /**
+     * Creates a new {@link MTSimpleVoxelType} corresponding to the provided {@link SemanticType}.
+     * The created voxels are associated with this factory's world.
+     *
+     * @param semanticType the semantic type of the voxel to be created
+     * @return the corresponding {@link MTSimpleVoxelType}
+     */
     @Override
     public VoxelType createVoxelType(SemanticType semanticType) {
         //Node string can be found on https://wiki.minetest.net/Games/Minetest_Game/Nodes
