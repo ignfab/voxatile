@@ -22,7 +22,7 @@ import java.awt.Graphics2D;
  * It is rasterizable. Rasterized chunk will include three values:
  * 0: Not in geometry, 1: On its edge, 2: Inside it (polygons only).
  */
-public class GeometryModel implements Model, Rasterizable {
+public class GeometryModel extends Model implements Rasterizable {
     private final Geometry geom;
     private IterableChunk2d chunk;
     private WorldBBox2d limits;
@@ -52,6 +52,7 @@ public class GeometryModel implements Model, Rasterizable {
      * @param limits A bounding box of rendering limits
      */
     public GeometryModel(Geometry geom, CoordsConverter converter, WorldBBox2d limits) throws TransformException {
+        super();
         // Until there is no need of it we don't keep original geometry.
         // Geometry is stored transformed into world coordinates
         this.geom = converter.convert(geom);
