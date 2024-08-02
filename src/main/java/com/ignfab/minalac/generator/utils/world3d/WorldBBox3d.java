@@ -107,6 +107,16 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
     }
 
     /**
+     * Returns {@code true} if the given bbox is in this bounding box.
+     *
+     * @param bbox the bbox to be checked.
+     * @return {@code true} if the provided bbox is in this bounding box.
+     */
+    public boolean contains(WorldBBox3d bbox) {
+        return contains(bbox.getMin()) && contains(bbox.getMax());
+    }
+
+    /**
      * Returns the size of the bounding box.
      *
      * @return the size of the bounding box as a {@link WorldSize3d}.

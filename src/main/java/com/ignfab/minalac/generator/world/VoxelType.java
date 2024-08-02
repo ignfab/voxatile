@@ -9,11 +9,11 @@ public interface VoxelType {
      * Places the voxel in its corresponding {@link VoxelWorld} at the given coordinates.
      * Coordinates are expressed using the system used in {@link com.ignfab.minalac.generator.utils.world3d.WorldCoords3d}.
      * In that system, the z-axis represents the altitude and increments correspond to the size of a voxel.
+     * If provided coordinates are outside the limits of the world, the voxel will not be placed.
      *
      * @param x the x-coordinate value
      * @param y the y-coordinate value
      * @param z the z-coordinate value
-     * @throws OutOfWorldException if the given coordinates are outside the world limits
      */
-    void place(int x, int y, int z) throws OutOfWorldException;
+    void place(int x, int y, int z);
 }

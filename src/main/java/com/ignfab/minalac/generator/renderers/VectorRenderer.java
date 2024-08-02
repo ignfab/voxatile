@@ -7,7 +7,6 @@ import com.ignfab.minalac.generator.models.Rasterizable;
 import com.ignfab.minalac.generator.utils.world2d.chunk.IterableChunk2d;
 import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dElement;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.VoxelType;
 import com.ignfab.minalac.generator.world.VoxelTypeIgnore;
 
@@ -62,17 +61,14 @@ public class VectorRenderer {
                 WorldCoords2d c = element.getCoords();
                 // TODO: Make Iterator able to intersect with another box
                 // TODO: Have a world bbox rather
-                try {
-                    if (heightMap.bbox().contains(c)) {
-                        VoxelType vt = switch (element.getValue()) {
-                            case GeometryModel.INSIDE -> inside;
-                            case GeometryModel.BORDER -> edge;
-                            default -> IGNORE; // Should never get there
-                        };
-                        vt.place(c.x(), c.y(), heightMap.get(c) + 1);
-                    }
-                } catch (OutOfWorldException e) {
-                    // TODO: Would be much better to intersect feature and word bbox rather.
+                // TODO: Would be much better to intersect feature and word bbox rather.
+                if (heightMap.bbox().contains(c)) {
+                    VoxelType vt = switch (element.getValue()) {
+                        case GeometryModel.INSIDE -> inside;
+                        case GeometryModel.BORDER -> edge;
+                        default -> IGNORE; // Should never get there
+                    };
+                    vt.place(c.x(), c.y(), heightMap.get(c) + 1);
                 }
             }
         }

@@ -1,7 +1,8 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
-import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.VoxelTypeFactory;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
@@ -17,21 +18,33 @@ import java.util.Map;
 /**
  * Implementation of {@link VoxelWorld} that creates a playable world specifically for Minetest.
  */
-public class MTVoxelWorld implements VoxelWorld {
+public class MTVoxelWorld extends VoxelWorld {
     private final VoxelTypeFactory factory;
-    private final VoxelWorldMetadata metadata;
     private final HashMap<Integer, Block> blocks;
     //See MAX_MAP_GENERATION_LIMIT constant on Minetest
     //https://github.com/minetest/minetest/blob/master/src/constants.h#L69
-    private static final int LIMIT_POSITION = 31_007;
+    private static final WorldBBox3d MAX_LIMIT = new WorldBBox3d(
+        new WorldCoords3d(-31_007, -31_007, -31_007),
+        new WorldCoords3d(31_007, 31_007, 31_007)
+    );
 
     /**
      * Constructs a new {@code MTVoxelWorld}.
+     * The limits of the world have to be set using {@link #setLimits(WorldBBox3d)}
      */
     public MTVoxelWorld() {
-        this.factory = new MTVoxelTypeFactory(this);
-        metadata = new VoxelWorldMetadata();
-        this.blocks = new HashMap<>();
+        super(new VoxelWorldMetadata());
+        factory = new MTVoxelTypeFactory(this);
+        blocks = new HashMap<>();
+    }
+
+    /**
+     * {@inheritDoc}
+     * Maximum limits represent the hard limits of the format.
+     */
+    @Override
+    public WorldBBox3d maxLimits() {
+        return MAX_LIMIT;
     }
 
     /**
@@ -41,15 +54,7 @@ public class MTVoxelWorld implements VoxelWorld {
      */
     @Override
     public VoxelTypeFactory getFactory() {
-        return this.factory;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public VoxelWorldMetadata getMetadata() {
-        return metadata;
+        return factory;
     }
 
     /**
@@ -60,13 +65,10 @@ public class MTVoxelWorld implements VoxelWorld {
      * @param y the y-coordinate value
      * @param z the z-coordinate value
      * @param voxel the voxel to place
-     * @throws OutOfWorldException if the given coordinates are outside the world limits
      */
-    protected void set(int x, int y, int z, MTVoxelType voxel) throws OutOfWorldException {
-        if (-LIMIT_POSITION > x || x > LIMIT_POSITION
-                || -LIMIT_POSITION > y || y > LIMIT_POSITION
-                || -LIMIT_POSITION > z || z > LIMIT_POSITION)
-            throw new OutOfWorldException();
+    protected void set(int x, int y, int z, MTVoxelType voxel) {
+        // (In-Game coords to world coords) XZY => XYZ
+        if (!limits().contains(x, z, y)) return;
 
         int pos = getPosValue(getBlockPosition(x), getBlockPosition(y), getBlockPosition(z));
         Block block = blocks.get(pos);

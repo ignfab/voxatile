@@ -9,7 +9,6 @@ import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.SemanticType;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +46,7 @@ class VectorRendererTest {
 
     @Test
     @DisplayName("Test a simple rendering on flat height map")
-    public void testRenderFlat() throws OutOfWorldException {
+    public void testRenderFlat() {
         // Prepare a chunk smaller than the whole world
         WorldBBox2d modelBbox = new WorldBBox2d(0, -1, 2, 3);
 
@@ -66,7 +65,7 @@ class VectorRendererTest {
 
     @Test
     @DisplayName("Test rendering outside, inside and border")
-    public void testRenderOutsideInsideBorder() throws OutOfWorldException {
+    public void testRenderOutsideInsideBorder() {
         // Prepare a chunk with only three pixels, one per available value
         TestingIterableArrayChunk2d chunk = new TestingIterableArrayChunk2d(new WorldBBox2d(0, 0, 1, 3), GeometryModel.OUTSIDE);
         chunk.set(0, 1, GeometryModel.BORDER);
@@ -89,7 +88,7 @@ class VectorRendererTest {
 
     @Test
     @DisplayName("Test rendering on a non flat height map")
-    public void testRenderHeightMap() throws OutOfWorldException {
+    public void testRenderHeightMap() {
         // Prepare a non flat HeightMap
         for (WorldCoords2d pos : bbox.to2d())
             heightMap.set(pos, (pos.x() + pos.y()) / 2);
@@ -109,7 +108,7 @@ class VectorRendererTest {
 
     @Test
     @DisplayName("Test rendering with a height map over world vertical limits")
-    public void testRenderVerticalOverflow() throws OutOfWorldException {
+    public void testRenderVerticalOverflow() {
         // A heightmap overflowing under and over world limits
         for (WorldCoords2d pos : bbox.to2d())
             // At (2, 2), height will be 6, above max world z (i.e. 2)
@@ -131,7 +130,7 @@ class VectorRendererTest {
 
     @Test
     @DisplayName("Test rendering of a chunk larger than world horizontal limits")
-    public void testRenderHorizontalOverflow() throws OutOfWorldException {
+    public void testRenderHorizontalOverflow() {
         // Prepare a larger model bbox
         WorldBBox2d modelBbox = new WorldBBox2d(bbox.getMinX() - 1, bbox.getMinY() - 1, bbox.getSizeX() + 2, bbox.getSizeY() + 2);
 

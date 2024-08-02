@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.outputs.minecraft;
 
-import com.ignfab.minalac.generator.world.OutOfWorldException;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import net.querz.nbt.tag.CompoundTag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,12 +17,13 @@ public class MCVoxelTypeTest {
     @BeforeEach
     public void setUp() {
         worldMock = new WorldMock();
+        worldMock.setLimits(new WorldBBox3d(new WorldCoords3d(-50, -10, 0), new WorldCoords3d(10, 0, 200)));
     }
 
     @Test
     public void testPlace() {
         MCVoxelType air = new MCVoxelType(worldMock, "minecraft:air");
-        assertDoesNotThrow(() -> air.place(3, -7, 64));
+        air.place(3, -7, 64);
         CompoundTag expectedAir = new CompoundTag();
         expectedAir.putString("Name", "minecraft:air");
         worldMock.assertBlockStateAt(3, 64, -7, expectedAir); // XYZ => XZY
@@ -32,7 +34,7 @@ public class MCVoxelTypeTest {
             "shape", "straight",
             "waterlogged", "false"
         ));
-        assertDoesNotThrow(() -> stairs.place(-43, 0, 192));
+        stairs.place(-43, 0, 192);
         CompoundTag expectedStairs = new CompoundTag();
         expectedStairs.putString("Name", "minecraft:oak_stairs");
         CompoundTag properties = new CompoundTag();
@@ -48,8 +50,8 @@ public class MCVoxelTypeTest {
         private final Map<String, CompoundTag> blockStates = new HashMap<>();
 
         @Override
-        void setBlockState(int blockX, int blockY, int blockZ, CompoundTag block) throws OutOfWorldException {
-            super.setBlockState(blockX, blockY, blockZ, block);
+        void setBlockState(int blockX, int blockY, int blockZ, CompoundTag block)  {
+            if (isOutOfLimits(blockX, blockY, blockZ)) return;
             blockStates.put(key(blockX, blockY, blockZ), block);
         }
 

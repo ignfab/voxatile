@@ -5,7 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.SemanticType;
 import com.ignfab.minalac.generator.world.VoxelType;
 
@@ -14,7 +13,7 @@ import java.io.File;
 public class TestingVoxelWorldTest {
     @Test
     @DisplayName("Ensure that everything that is stored in the world can be retreived")
-    public void testSetAndGet() throws OutOfWorldException {
+    public void testSetAndGet() {
         TestingVoxelWorld world = new TestingVoxelWorld(new WorldBBox3d(-1, -2, -3, 5, 4, 3));
         // Fill the world with unique values
         for (int x = -1; x <= 3; x++)
@@ -31,7 +30,7 @@ public class TestingVoxelWorldTest {
 
     @Test
     @DisplayName("Test setting in the world using voxel type can be retrieved")
-    public void testGetVoxelType() throws OutOfWorldException {
+    public void testGetVoxelType() {
         TestingVoxelWorld world = new TestingVoxelWorld(new WorldBBox3d(1, 2, 3, 4, 5, 6));
         VoxelType vt1 = world.getFactory().createVoxelType(SemanticType.STONE);
         VoxelType vt2 = world.getFactory().createVoxelType(SemanticType.DIRT);

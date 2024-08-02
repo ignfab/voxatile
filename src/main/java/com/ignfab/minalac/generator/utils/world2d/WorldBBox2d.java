@@ -98,6 +98,16 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
     }
 
     /**
+     * Returns {@code true} if the given bbox is in this bounding box.
+     *
+     * @param bbox the bbox to be checked.
+     * @return {@code true} if the provided bbox is in this bounding box.
+     */
+    public boolean contains(WorldBBox2d bbox) {
+        return contains(bbox.getMin()) && contains(bbox.getMax());
+    }
+
+    /**
      * Returns the size of the bounding box.
      *
      * @return the size of the bounding box as a {@code WorldSize2d}.

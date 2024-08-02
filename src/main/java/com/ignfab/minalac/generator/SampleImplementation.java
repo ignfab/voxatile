@@ -16,7 +16,6 @@ import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.iterator.Chunk2dElement;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
-import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.SemanticType;
 import com.ignfab.minalac.generator.world.VoxelType;
 import com.ignfab.minalac.generator.world.VoxelWorld;
@@ -111,11 +110,7 @@ public final class SampleImplementation {
         // Rendering
         scheduler.schedule("renderers.ground", () -> {
             log("renderers.ground", "Placing ground");
-            try {
-                placeVoxelFromHeightMap(groundHeightMap, world);
-            } catch (OutOfWorldException e) {
-                throw new RuntimeException(e);
-            }
+            placeVoxelFromHeightMap(groundHeightMap, world);
             log("renderers.ground", "Placed ground");
         }, "heightmaps.ground");
 
@@ -161,7 +156,7 @@ public final class SampleImplementation {
         }
     }
 
-    private static void placeVoxelFromHeightMap(HeightMap map, VoxelWorld world) throws OutOfWorldException {
+    private static void placeVoxelFromHeightMap(HeightMap map, VoxelWorld world) {
         VoxelType grassVT = world.getFactory().createVoxelType(SemanticType.GRASS);
         VoxelType stoneVT = world.getFactory().createVoxelType(SemanticType.STONE);
         VoxelType dirtVT = world.getFactory().createVoxelType(SemanticType.DIRT);

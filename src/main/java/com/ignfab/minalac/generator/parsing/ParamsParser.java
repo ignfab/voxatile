@@ -110,13 +110,14 @@ public class ParamsParser {
      */
     public VoxelWorld createVoxelWorld() {
         VoxelWorld world = FORMATS.get(rawParams.format).get();
-        world.getMetadata().setBbox(new WorldBBox3d(
+        WorldBBox3d maximumLimits = world.maxLimits();
+        world.setLimits(new WorldBBox3d(
             -rawParams.area.extendX / 2,
             -rawParams.area.extendY / 2,
-            0, // Not used for now but should be the minimum altitude
+            maximumLimits.getMinZ(),
             rawParams.area.extendX,
             rawParams.area.extendY,
-            1 // Not used for now but should be world z size
+            maximumLimits.getSizeZ()
         ));
         return world;
     }
