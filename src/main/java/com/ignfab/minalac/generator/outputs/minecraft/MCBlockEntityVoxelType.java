@@ -1,6 +1,5 @@
 package com.ignfab.minalac.generator.outputs.minecraft;
 
-import com.ignfab.minalac.generator.world.OutOfWorldException;
 import net.querz.nbt.tag.CompoundTag;
 
 import java.util.Map;
@@ -38,7 +37,7 @@ public abstract class MCBlockEntityVoxelType extends MCVoxelType {
      * {@inheritDoc}
      */
     @Override
-    public void place(int x, int y, int z) throws OutOfWorldException {
+    public void place(int x, int y, int z)  {
         super.place(x, y, z);
         CompoundTag block = new CompoundTag();
         block.putString("id", type);

@@ -77,6 +77,27 @@ public class WorldBBox3dTest {
     }
 
     @Test
+    public void testContainsBBox() {
+        WorldBBox3d bboxA = new WorldBBox3d(new WorldCoords3d(-2, -3, -4), new WorldCoords3d(6, 7, 8));
+        WorldBBox3d bboxB = new WorldBBox3d(new WorldCoords3d(1, 0, -1), new WorldCoords3d(3, 4, 5));
+        WorldBBox3d bboxC = new WorldBBox3d(new WorldCoords3d(4, 5, 6), new WorldCoords3d(8, 9, 10));
+        WorldBBox3d bboxD = new WorldBBox3d(new WorldCoords3d(6, -3, -4), new WorldCoords3d(14, 7, 8));
+
+        assertTrue(bboxA.contains(bboxA), "BBOX contains itself");
+
+        assertTrue(bboxA.contains(bboxB), "BBOX A contains B: B is a strict subset of A");
+        assertFalse(bboxB.contains(bboxA), "BBOX B does not contain A: B is a strict subset of A");
+
+        assertFalse(bboxA.contains(bboxC), "BBOX A does not contains C: some elements of C, but not all, are in A");
+        assertFalse(bboxC.contains(bboxA), "BBOX C does not contains A: some elements of A, but not all, are in C");
+
+        assertFalse(bboxA.contains(bboxD), "BBOX A does not contains D: they share a surface but are distinct");
+        assertFalse(bboxB.contains(bboxD), "BBOX B does not contains D: they are distinct");
+
+        // TODO: When EmptyBBOX is implemented, depending on the usage, decide whether or not it should be included in every BBOX
+    }
+
+    @Test
     @DisplayName("Test to2d() method")
     public void testTo2d() {
         WorldBBox3d box = new WorldBBox3d(-1, -2, -3, 4, 5, 6);

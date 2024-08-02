@@ -263,7 +263,7 @@ public class ParamsParserTest {
     public void testCreateVoxelWorld() {
         VoxelWorld world = assertDoesNotThrow(() -> new ParamsParser(WORKING_JSON).createVoxelWorld());
         assertNotNull(world);
-        assertEquals(500, world.getMetadata().getBbox().getSizeX());
-        assertEquals(2500, world.getMetadata().getBbox().getSizeY());
+        assertEquals(500, world.limits().getSizeX());
+        assertEquals(2500, world.limits().getSizeY());
     }
 }

@@ -2,7 +2,6 @@ package com.ignfab.minalac.generator.outputs.minecraft;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.OutOfWorldException;
 import net.querz.nbt.tag.CompoundTag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -18,11 +17,13 @@ public class MCVoxelWorldTest {
     private File dir;
 
     @Test
-    public void testSave() throws OutOfWorldException {
+    public void testSave() {
         MCVoxelWorld world = new MCVoxelWorld();
+        world.setLimits(new WorldBBox3d(
+            new WorldCoords3d(-16, -16, 0),
+            new WorldCoords3d(15, 15, 255)));
         world.getMetadata().setWorldName("testSave");
         world.getMetadata().setSpawn(new WorldCoords3d(0, 64, 0));
-        world.getMetadata().setBbox(new WorldBBox3d(-16, 0, -16, 32, 255, 32));
         CompoundTag block = new CompoundTag();
         block.putString("Name", "minecraft:stone");
 
@@ -52,20 +53,21 @@ public class MCVoxelWorldTest {
     }
 
     @Test
-    @SuppressWarnings("checkstyle:ParenPad")
-    public void testCheckLimits() {
+    public void testIsOutOfLimits() {
         MCVoxelWorld world = new MCVoxelWorld();
+        world.setLimits(new WorldBBox3d(new WorldCoords3d(-10, -20, 0), new WorldCoords3d(20, 30, 40)));
 
-        assertDoesNotThrow(() -> world.checkLimits(-30_000_000, 0, -30_000_000));
-        assertDoesNotThrow(() -> world.checkLimits(30_000_000, 255, 30_000_000));
+        // Y -> Z
+        assertFalse(world.isOutOfLimits(-10, 0, -20));
+        assertFalse(world.isOutOfLimits(20, 40, 30));
 
-        assertDoesNotThrow(() -> world.checkLimits(0, 64, 0));
+        assertFalse(world.isOutOfLimits(5, 5, 20));
 
-        assertThrows(OutOfWorldException.class, () -> world.checkLimits(-30_000_001, 64,           0));
-        assertThrows(OutOfWorldException.class, () -> world.checkLimits(          0, -1,           0));
-        assertThrows(OutOfWorldException.class, () -> world.checkLimits(          0, 64, -30_000_001));
-        assertThrows(OutOfWorldException.class, () -> world.checkLimits(30_000_001,  64,          0));
-        assertThrows(OutOfWorldException.class, () -> world.checkLimits(         0, 256,          0));
-        assertThrows(OutOfWorldException.class, () -> world.checkLimits(         0,  64, 30_000_001));
+        assertTrue(world.isOutOfLimits(21, 40, 30));
+        assertTrue(world.isOutOfLimits(20, 41, 30));
+        assertTrue(world.isOutOfLimits(20, 40, 31));
+        assertTrue(world.isOutOfLimits(-11, 0, -20));
+        assertTrue(world.isOutOfLimits(-10, -1, -20));
+        assertTrue(world.isOutOfLimits(-10, 0, -21));
     }
 }

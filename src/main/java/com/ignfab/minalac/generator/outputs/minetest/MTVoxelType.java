@@ -1,6 +1,5 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
-import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.VoxelType;
 
 /**
@@ -46,7 +45,7 @@ public abstract class MTVoxelType implements VoxelType {
     }
 
     @Override
-    public void place(int x, int y, int z) throws OutOfWorldException {
+    public void place(int x, int y, int z)  {
         //The y-axis in Minetest corresponds, in our chosen coordinate system, to the z-axis, hence the inversion
         this.world.set(x, z, y, this);
     }

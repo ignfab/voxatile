@@ -1,6 +1,5 @@
 package com.ignfab.minalac.generator.outputs.testing;
 
-import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.VoxelType;
 
 /**
@@ -37,7 +36,7 @@ public class TestingVoxelType implements VoxelType {
      * @param z z-coordinate where to place voxel
      */
     @Override
-    public void place(int x, int y, int z) throws OutOfWorldException {
+    public void place(int x, int y, int z) {
         this.world.set(x, y, z, this);
     }
 

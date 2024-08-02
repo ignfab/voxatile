@@ -1,6 +1,5 @@
 package com.ignfab.minalac.generator.world;
 
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 /**
@@ -15,11 +14,6 @@ public class VoxelWorldMetadata {
      * Name of the generated world.
      */
     protected String worldName;
-    /**
-     * Bounding box of the generated area.
-     * Can be used in some output format to restrict player's movements to the generated area only.
-     */
-    protected WorldBBox3d bbox;
 
     /**
      * Returns the initial position of the player.
@@ -55,23 +49,5 @@ public class VoxelWorldMetadata {
      */
     public void setWorldName(String worldName) {
         this.worldName = worldName;
-    }
-
-    /**
-     * Returns the {@link WorldBBox3d} of the world.
-     *
-     * @return the {@link WorldBBox3d} of the world
-     */
-    public WorldBBox3d getBbox() {
-        return bbox;
-    }
-
-    /**
-     * Sets the {@link WorldBBox3d} of the world.
-     *
-     * @param bbox the {@link WorldBBox3d} of the world
-     */
-    public void setBbox(WorldBBox3d bbox) {
-        this.bbox = bbox;
     }
 }

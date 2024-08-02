@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -30,6 +32,10 @@ public class TestMTVoxelWorld {
     @Test
     public void testGetPosValue() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         MTVoxelWorld world = new MTVoxelWorld();
+        world.setLimits(new WorldBBox3d(
+            new WorldCoords3d(-5, -5, -5),
+            new WorldCoords3d(5, 5, 5))
+        );
 
         assertEquals(0, getGetPosValueMethod().invoke(world, 0, 0, 0));
 
@@ -52,6 +58,10 @@ public class TestMTVoxelWorld {
     @Test
     public void testGetNodeRelativePosition() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         MTVoxelWorld world = new MTVoxelWorld();
+        world.setLimits(new WorldBBox3d(
+            new WorldCoords3d(-5, -5, -5),
+            new WorldCoords3d(5, 5, 5))
+        );
 
         assertEquals(0, getGetNodeRelativePositionMethod().invoke(world, 0));
         assertEquals(10, getGetNodeRelativePositionMethod().invoke(world, 10));
@@ -73,6 +83,10 @@ public class TestMTVoxelWorld {
     @Test
     public void testGetBlockPosition() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         MTVoxelWorld world = new MTVoxelWorld();
+        world.setLimits(new WorldBBox3d(
+            new WorldCoords3d(-5, -5, -5),
+            new WorldCoords3d(5, 5, 5))
+        );
 
         assertEquals(0, getGetBlockPositionMethod().invoke(world, 0));
         assertEquals(0, getGetBlockPositionMethod().invoke(world, 10));

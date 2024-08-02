@@ -3,10 +3,9 @@ package com.ignfab.minalac.generator.outputs.testing;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
-import com.ignfab.minalac.generator.world.OutOfWorldException;
+
 import com.ignfab.minalac.generator.world.VoxelTypeFactory;
 import com.ignfab.minalac.generator.world.VoxelWorld;
-import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
 import java.io.File;
 
@@ -19,11 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * TestingVoxelWorld does not produce any file output. It is intended to be used in unit tests
  * as output world.
  */
-public class TestingVoxelWorld implements VoxelWorld {
+public class TestingVoxelWorld extends VoxelWorld {
     private VoxelTypeFactory factory;
-    private WorldBBox3d bbox;
+    private WorldBBox3d maxLimits;
     private String[] voxels;
-    private VoxelWorldMetadata metadata;
 
     /**
      * Constructs a new TestingVoxelWorld.
@@ -34,10 +32,16 @@ public class TestingVoxelWorld implements VoxelWorld {
      * Each voxel is stored in memory as a string, which could be very large.
      */
     public TestingVoxelWorld(WorldBBox3d bbox) {
-        this.bbox = bbox;
+        super(null);
         factory = new TestingVoxelTypeFactory(this);
+        maxLimits = bbox;
         voxels = new String[bbox.getSize().volume()];
-        metadata = new VoxelWorldMetadata();
+        setLimits(bbox);
+    }
+
+    @Override
+    public WorldBBox3d maxLimits() {
+        return maxLimits;
     }
 
     @Override
@@ -48,20 +52,14 @@ public class TestingVoxelWorld implements VoxelWorld {
     @Override
     public void save(File destination) throws MapWriteException {}
 
-    @Override
-    public VoxelWorldMetadata getMetadata() {
-        return metadata;
-    };
-
-    private int index(int x, int y, int z) throws OutOfWorldException {
-        if (!bbox.contains(x, y, z))
-            throw new OutOfWorldException();
-        return x - bbox.getMinX() + bbox.getSizeX()
-            * (y - bbox.getMinY() + bbox.getSizeY()
-            * (z - bbox.getMinZ()));
+    //This method should not be called with out of bounds coordinate
+    private int index(int x, int y, int z) {
+        return x - limits().getMinX() + limits().getSizeX()
+            * (y - limits().getMinY() + limits().getSizeY()
+            * (z - limits().getMinZ()));
     }
 
-    protected void set(int x, int y, int z, TestingVoxelType voxelType) throws OutOfWorldException {
+    protected void set(int x, int y, int z, TestingVoxelType voxelType) {
         set(x, y, z, voxelType.getType());
     }
 
@@ -73,8 +71,9 @@ public class TestingVoxelWorld implements VoxelWorld {
      * @param z Z-coordinates of position to set
      * @param value Voxel value to set at this position
      */
-    public void set(int x, int y, int z, String value) throws OutOfWorldException {
-        voxels[index(x, y, z)] = value;
+    public void set(int x, int y, int z, String value) {
+        if (limits().contains(x, y, z))
+            voxels[index(x, y, z)] = value;
     }
 
     /**
@@ -85,7 +84,9 @@ public class TestingVoxelWorld implements VoxelWorld {
      * @param z Z-coordinates of position to get
      * @return Voxel value at this position
      */
-    public String get(int x, int y, int z) throws OutOfWorldException {
+    public String get(int x, int y, int z) {
+        if (!limits().contains(x, y, z))
+            throw new IndexOutOfBoundsException("Specified coordinates (%d, %d, %d) are off limit".formatted(x, y, z));
         return voxels[index(x, y, z)];
     }
 
@@ -98,7 +99,7 @@ public class TestingVoxelWorld implements VoxelWorld {
      * @param z z-coordinate of tested voxel
      * @param message Message to be displayed in case of failure
      */
-    public void assertVoxel(String expected, int x, int y, int z, String message) throws OutOfWorldException {
+    public void assertVoxel(String expected, int x, int y, int z, String message) {
         assertEquals(expected, get(x, y, z), message);
     }
 
@@ -110,7 +111,7 @@ public class TestingVoxelWorld implements VoxelWorld {
      * @param y y-coordinate of tested voxel
      * @param z z-coordinate of tested voxel
      */
-    public void assertVoxel(String expected, int x, int y, int z) throws OutOfWorldException {
+    public void assertVoxel(String expected, int x, int y, int z) {
         assertVoxel(expected, x, y, z, "Voxel mismatch at (%d, %d, %d)".formatted(x, y, z));
     }
 
@@ -121,7 +122,7 @@ public class TestingVoxelWorld implements VoxelWorld {
      * @param pos Position of tested voxel
      * @param message Message to be displayed in case of failure
      */
-    public void assertVoxel(String expected, WorldCoords3d pos, String message) throws OutOfWorldException {
+    public void assertVoxel(String expected, WorldCoords3d pos, String message) {
         assertVoxel(expected, pos.x(), pos.y(), pos.z(), message);
     }
 
@@ -131,7 +132,7 @@ public class TestingVoxelWorld implements VoxelWorld {
      * @param expected Expected value
      * @param pos Position of tested voxel
      */
-    public void assertVoxel(String expected, WorldCoords3d pos) throws OutOfWorldException {
+    public void assertVoxel(String expected, WorldCoords3d pos) {
         assertVoxel(expected, pos.x(), pos.y(), pos.z());
     }
 
@@ -143,7 +144,7 @@ public class TestingVoxelWorld implements VoxelWorld {
      * @param z z-coordinate of tested voxel
      * @param message Message to be displayed in case of failure
      */
-    public void assertVoxelNull(int x, int y, int z, String message) throws OutOfWorldException {
+    public void assertVoxelNull(int x, int y, int z, String message) {
         assertNull(get(x, y, z), message);
     }
 
@@ -154,7 +155,7 @@ public class TestingVoxelWorld implements VoxelWorld {
      * @param y y-coordinate of tested voxel
      * @param z z-coordinate of tested voxel
      */
-    public void assertVoxelNull(int x, int y, int z) throws OutOfWorldException {
+    public void assertVoxelNull(int x, int y, int z) {
         assertVoxelNull(x, y, z, "Voxel mismatch at (%d, %d, %d)".formatted(x, y, z));
     }
 
@@ -164,7 +165,7 @@ public class TestingVoxelWorld implements VoxelWorld {
      * @param pos Position of tested voxel
      * @param message Message to be displayed in case of failure
      */
-    public void assertVoxelNull(WorldCoords3d pos, String message) throws OutOfWorldException {
+    public void assertVoxelNull(WorldCoords3d pos, String message) {
         assertVoxelNull(pos.x(), pos.y(), pos.z(), message);
     }
 
@@ -173,7 +174,7 @@ public class TestingVoxelWorld implements VoxelWorld {
      *
      * @param pos Position of tested voxel
      */
-    public void assertVoxelNull(WorldCoords3d pos) throws OutOfWorldException {
+    public void assertVoxelNull(WorldCoords3d pos) {
         assertVoxelNull(pos.x(), pos.y(), pos.z());
     }
 }

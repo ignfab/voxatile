@@ -79,7 +79,6 @@ Same perspective but during sunset. In Minetest, the sun's path aligns with the 
 ```java
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.world.MapWriteException;
-import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.SemanticType;
 import com.ignfab.minalac.generator.world.VoxelType;
 import com.ignfab.minalac.generator.world.VoxelTypeFactory;
@@ -88,7 +87,7 @@ import com.ignfab.minalac.generator.world.VoxelWorld;
 import java.io.File;
 
 public class SampleCode {
-    public static void main(String[] args) throws OutOfWorldException, MapWriteException {
+    public static void main(String[] args) throws MapWriteException {
         VoxelWorld minetestWorld = new MTVoxelWorld();
         VoxelTypeFactory voxelTypeFactory = minetestWorld.getFactory();
 

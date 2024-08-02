@@ -1,9 +1,9 @@
 package com.ignfab.minalac.generator.outputs.minecraft;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldSize3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
-import com.ignfab.minalac.generator.world.OutOfWorldException;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 import net.querz.mca.Chunk;
@@ -26,26 +26,34 @@ import java.util.Random;
 /**
  * Implementation of {@link VoxelWorld} that creates a playable world specifically for Minecraft.
  */
-public class MCVoxelWorld implements VoxelWorld {
+public class MCVoxelWorld extends VoxelWorld {
     private final MCVoxelTypeFactory factory;
-    private final VoxelWorldMetadata metadata;
     private final Map<Integer, Region> regions;
-
-    private static final int WORLD_SIZE = 30_000_000;
-    // Note: Theses two values aren't strictly hard-limits.
+    // Note: The two z-component values aren't strictly hard-limits.
     // We can extends from -2032 to 2031 but the client
     // will need higher performances to play the game!
     // The Querz library does not support extended limits...
-    private static final int MIN_WORLD_HEIGHT = 0; // -64
-    private static final int MAX_WORLD_HEIGHT = 255; // 320
+    private static final WorldBBox3d MAX_LIMIT = new WorldBBox3d(
+        new WorldCoords3d(-30_000_000, -30_000_000, 0),
+        new WorldCoords3d(30_000_000, 30_000_000, 255)
+    );
 
     /**
      * Constructs a new {@code MCVoxelWorld}.
+     * The limits of the world have to be set using {@link #setLimits(WorldBBox3d)}
      */
     public MCVoxelWorld() {
+        super(new VoxelWorldMetadata());
         factory = new MCVoxelTypeFactory(this);
-        metadata = new VoxelWorldMetadata();
         regions = new HashMap<>();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public WorldBBox3d maxLimits() {
+        return MAX_LIMIT;
     }
 
     /**
@@ -56,14 +64,6 @@ public class MCVoxelWorld implements VoxelWorld {
     @Override
     public MCVoxelTypeFactory getFactory() {
         return factory;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public VoxelWorldMetadata getMetadata() {
-        return metadata;
     }
 
     /**
@@ -97,9 +97,8 @@ public class MCVoxelWorld implements VoxelWorld {
             CompoundTag data = new CompoundTag();
             {
                 data.putBoolean("allowCommands", true);
-
-                WorldBBox3d bbox = metadata.getBbox();
-                WorldSize3d size = bbox.getSize();
+                WorldBBox3d bbox = limits();
+                WorldSize3d size = limits().getSize();
                 double minSize = Math.max(size.x(), size.y());
                 data.putDouble("BorderCenterX", (bbox.getMinX() + bbox.getMaxX()) / 2d);
                 data.putDouble("BorderCenterZ", (bbox.getMinY() + bbox.getMaxY()) / 2d); // Y => Z
@@ -299,7 +298,7 @@ public class MCVoxelWorld implements VoxelWorld {
                         pos.addDouble(metadata.getSpawn().x() + 0.5);
                         // TODO Replace by a better constraint management mechanism
                         // pos.addDouble(metadata.getSpawn().z());
-                        pos.addDouble(Math.min(Math.max(MIN_WORLD_HEIGHT, metadata.getSpawn().z()), MAX_WORLD_HEIGHT));
+                        pos.addDouble(Math.min(Math.max(limits().getMinZ(), metadata.getSpawn().z()), limits().getMaxZ()));
                         pos.addDouble(metadata.getSpawn().y() + 0.5);
                     }
                     player.put("Pos", pos);
@@ -365,7 +364,7 @@ public class MCVoxelWorld implements VoxelWorld {
                 data.putInt("SpawnX", metadata.getSpawn().x());
                 // TODO Replace by a better constraint management mechanism
                 // data.putInt("SpawnY", metadata.getSpawn().z());
-                data.putInt("SpawnY", Math.min(Math.max(MIN_WORLD_HEIGHT, metadata.getSpawn().z()), MAX_WORLD_HEIGHT));
+                data.putInt("SpawnY", Math.min(Math.max(limits().getMinZ(), metadata.getSpawn().z()), limits().getMaxZ()));
                 data.putInt("SpawnZ", metadata.getSpawn().y());
 
                 data.putBoolean("thundering", false);
@@ -473,15 +472,15 @@ public class MCVoxelWorld implements VoxelWorld {
     }
 
     // In-Game coords
-    /* package-private */ void setBlockState(int blockX, int blockY, int blockZ, CompoundTag block) throws OutOfWorldException {
-        if (shouldClipHeight_RemoveThisMethodWhenABetterSolutionIsImplemented(blockY)) return;
-        getOrCreateRegion(blockX, blockY, blockZ).file().setBlockStateAt(blockX, blockY, blockZ, block, false);
+    /* package-private */ void setBlockState(int blockX, int blockY, int blockZ, CompoundTag block) {
+        if (isOutOfLimits(blockX, blockY, blockZ)) return;
+        getOrCreateRegion(blockX, blockZ).file().setBlockStateAt(blockX, blockY, blockZ, block, false);
     }
 
     // In-Game coords
-    /* package-private */ void addBlockEntity(int blockX, int blockY, int blockZ, CompoundTag block) throws OutOfWorldException {
-        if (shouldClipHeight_RemoveThisMethodWhenABetterSolutionIsImplemented(blockY)) return;
-        Chunk chunk = getOrCreateRegion(blockX, blockY, blockZ).getOrCreateChunk(MCAUtil.blockToChunk(blockX), MCAUtil.blockToChunk(blockZ));
+    /* package-private */ void addBlockEntity(int blockX, int blockY, int blockZ, CompoundTag block)  {
+        if (isOutOfLimits(blockX, blockY, blockZ)) return;
+        Chunk chunk = getOrCreateRegion(blockX, blockZ).getOrCreateChunk(MCAUtil.blockToChunk(blockX), MCAUtil.blockToChunk(blockZ));
         ListTag<CompoundTag> blockEntities = chunk.getTileEntities();
         if (blockEntities == null) {
             blockEntities = new ListTag<>(CompoundTag.class);
@@ -491,8 +490,7 @@ public class MCVoxelWorld implements VoxelWorld {
     }
 
     // In-Game coords
-    private Region getOrCreateRegion(int blockX, int blockY, int blockZ) throws OutOfWorldException {
-        checkLimits(blockX, blockY, blockZ);
+    private Region getOrCreateRegion(int blockX, int blockZ)  {
         int regionX = MCAUtil.blockToRegion(blockX);
         int regionZ = MCAUtil.blockToRegion(blockZ);
         int key = computeRegionKey(regionX, regionZ);
@@ -510,25 +508,8 @@ public class MCVoxelWorld implements VoxelWorld {
     }
 
     // In-Game coords
-    /* package-private */ void checkLimits(int blockX, int blockY, int blockZ) throws OutOfWorldException {
-        if (blockX < -WORLD_SIZE || blockX > WORLD_SIZE
-                || blockZ < -WORLD_SIZE || blockZ > WORLD_SIZE
-                || blockY < MIN_WORLD_HEIGHT || blockY > MAX_WORLD_HEIGHT)
-            throw new OutOfWorldException();
-    }
-
-    // TODO Replace by a better constraint management mechanism
-    private boolean warnAboutClipping = true;
-
-    @SuppressWarnings("checkstyle:MethodName")
-    private boolean shouldClipHeight_RemoveThisMethodWhenABetterSolutionIsImplemented(int y) {
-        if (y < MIN_WORLD_HEIGHT || y > MAX_WORLD_HEIGHT) {
-            if (warnAboutClipping) {
-                System.err.println("WARNING! Some blocks have been clipped out of the map because they were beyond height limits!");
-                warnAboutClipping = false;
-            }
-            return true;
-        }
-        return false;
+    /* package-private */ boolean isOutOfLimits(int blockX, int blockY, int blockZ) {
+        // (In-Game coords to world coords) XZY => XYZ
+        return !limits().contains(blockX, blockZ, blockY);
     }
 }
