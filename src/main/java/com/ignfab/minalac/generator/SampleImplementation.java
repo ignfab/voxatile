@@ -20,6 +20,8 @@ import com.ignfab.minalac.generator.world.SemanticType;
 import com.ignfab.minalac.generator.world.VoxelType;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
+
+import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.api.referencing.operation.TransformException;
@@ -148,11 +150,26 @@ public final class SampleImplementation {
         System.out.printf("[%s] (%s) %s%n", Thread.currentThread().getName(), prefix, message);
     }
 
-    private static void downloadVectorFeatures(WFS1_1_GML3_1_DataProvider provider, CoordsConverter converter, String type, ModelStore store, WorldBBox2d limits)
+    private static void downloadVectorFeatures(WFS1_1_GML3_1_DataProvider provider, CoordsConverter converter,
+            String type, ModelStore store, WorldBBox2d limits)
             throws NoSuchElementException, TransformException, IOException, ParserConfigurationException, SAXException {
         try (SimpleFeatureIterator iterator = provider.getFeatures().features()) {
-            while (iterator.hasNext())
-                store.add(type, new GeometryModel((Geometry) iterator.next().getDefaultGeometry(), converter, limits));
+            while (iterator.hasNext()) {
+                SimpleFeature feature = iterator.next();
+                GeometryModel model = new GeometryModel((Geometry) feature.getDefaultGeometry(), converter, limits);
+                Object height = feature.getAttribute("hauteur");
+
+                // TODO: Value 20 is a temporary value for building renderings.
+                model.setMetadata("height", 20.0);
+                if (height instanceof String s) {
+                    try {
+                        model.setMetadata("height", Double.valueOf(s));
+                    } catch (NumberFormatException e) {}
+                } else if (height instanceof Number n) {
+                    model.setMetadata("height", n);
+                }
+                store.add(type, model);
+            }
         }
     }
 
