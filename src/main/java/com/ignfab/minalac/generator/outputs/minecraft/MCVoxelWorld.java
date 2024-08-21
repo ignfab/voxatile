@@ -147,9 +147,9 @@ public class MCVoxelWorld extends VoxelWorld {
                 {
                     // Commented out gamerule were added after 1.16.1
                     gameRules.putString("announceAdvancements", "true");
-                    //gameRules.putString("blockExplosionDropDecay", "true"); // 1.19.3
+                    // gameRules.putString("blockExplosionDropDecay", "true"); // 1.19.3
                     gameRules.putString("commandBlockOutput", "true");
-                    //gameRules.putString("commandModificationBlockLimit", "32768"); // 1.19.4
+                    // gameRules.putString("commandModificationBlockLimit", "32768"); // 1.19.4
                     gameRules.putString("disableElytraMovementCheck", "false");
                     gameRules.putString("disableRaids", "false");
                     gameRules.putString("doDaylightCycle", "true");
@@ -163,49 +163,49 @@ public class MCVoxelWorld extends VoxelWorld {
                     gameRules.putString("doPatrolSpawning", "true");
                     gameRules.putString("doTileDrops", "true");
                     gameRules.putString("doTraderSpawning", "true");
-                    //gameRules.putString("doVinesSpread", "true"); // 1.19.4
+                    // gameRules.putString("doVinesSpread", "true"); // 1.19.4
                     gameRules.putString("doWeatherCycle", "true");
-                    //gameRules.putString("doWardenSpawning", "true"); // 1.19
+                    // gameRules.putString("doWardenSpawning", "true"); // 1.19
                     gameRules.putString("drowningDamage", "true");
-                    //gameRules.putString("enderPearlsVanishOnDeath", "true"); // 1.20.2
+                    // gameRules.putString("enderPearlsVanishOnDeath", "true"); // 1.20.2
                     gameRules.putString("fallDamage", "true");
                     gameRules.putString("fireDamage", "true");
                     gameRules.putString("forgiveDeadPlayers", "true");
-                    //gameRules.putString("freezeDamage", "true"); // 1.17
-                    //gameRules.putString("globalSoundEvents", "true"); // 1.19.3
+                    // gameRules.putString("freezeDamage", "true"); // 1.17
+                    // gameRules.putString("globalSoundEvents", "true"); // 1.19.3
                     gameRules.putString("keepInventory", "false");
-                    //gameRules.putString("lavaSourceConversion", "false"); // 1.19.3
+                    // gameRules.putString("lavaSourceConversion", "false"); // 1.19.3
                     gameRules.putString("logAdminCommands", "true");
                     gameRules.putString("maxCommandChainLength", "65536");
-                    //gameRules.putString("maxCommandForkCount", "65536"); // 1.20.3
+                    // gameRules.putString("maxCommandForkCount", "65536"); // 1.20.3
                     gameRules.putString("maxEntityCramming", "24");
-                    //gameRules.putString("mobExplosionDropDecay", "true"); // 1.19.3
+                    // gameRules.putString("mobExplosionDropDecay", "true"); // 1.19.3
                     gameRules.putString("mobGriefing", "true");
                     gameRules.putString("naturalRegeneration", "true");
-                    //gameRules.putString("playersNetherPortalCreativeDelay", "1"); // 1.20.3
-                    //gameRules.putString("playersNetherPortalDefaultDelay", "80"); // 1.20.3
-                    //gameRules.putString("playersSleepingPercentage", "100"); // 1.17
-                    //gameRules.putString("projectilesCanBreakBlocks", "true"); // 1.20.3
+                    // gameRules.putString("playersNetherPortalCreativeDelay", "1"); // 1.20.3
+                    // gameRules.putString("playersNetherPortalDefaultDelay", "80"); // 1.20.3
+                    // gameRules.putString("playersSleepingPercentage", "100"); // 1.17
+                    // gameRules.putString("projectilesCanBreakBlocks", "true"); // 1.20.3
                     gameRules.putString("randomTickSpeed", "3");
                     gameRules.putString("reducedDebugInfo", "false");
                     gameRules.putString("sendCommandFeedback", "true");
                     gameRules.putString("showDeathMessages", "true");
-                    //gameRules.putString("snowAccumulationHeight", "1"); // 1.19.3
-                    //gameRules.putString("spawnChunkRadius", "2"); // 1.20.5
+                    // gameRules.putString("snowAccumulationHeight", "1"); // 1.19.3
+                    // gameRules.putString("spawnChunkRadius", "2"); // 1.20.5
                     gameRules.putString("spawnRadius", "10");
                     gameRules.putString("spectatorsGenerateChunks", "true");
-                    //gameRules.putString("tntExplosionDropDecay", "false"); // 1.19.3
+                    // gameRules.putString("tntExplosionDropDecay", "false"); // 1.19.3
                     gameRules.putString("universalAnger", "false");
-                    //gameRules.putString("waterSourceConversion", "true"); // 1.19.3
+                    // gameRules.putString("waterSourceConversion", "true"); // 1.19.3
                 }
                 data.put("GameRules", gameRules);
 
                 data.putInt("GameType", 1);
 
                 // Legacy (1.15 and below)
-                //data.putString("generatorName", "default");
-                //data.putInt("generatorVersion", 0);
-                //data.putString("generatorOptions", "generatorOptions");
+                // data.putString("generatorName", "default");
+                // data.putInt("generatorVersion", 0);
+                // data.putString("generatorOptions", "generatorOptions");
 
                 data.putBoolean("hardcore", false);
 

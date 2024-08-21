@@ -130,7 +130,7 @@ public class Generation {
      *
      * @return the vertical scale
      */
-    //To be removed when vertical is used by this class. (Renderers will probably contain that value)
+    // To be removed when vertical is used by this class. (Renderers will probably contain that value)
     public double getVerticalScale() {
         return verticalScale;
     }

@@ -10,7 +10,7 @@ public class TestChunk2DIteratorAll {
     @Test
     public void testFullyFilledMapIterator() {
         ArrayChunk2d chunk = new ArrayChunk2d(1, 2, 3, 4, 1);
-        //Fill chunk with unique values
+        // Fill chunk with unique values
         for (int x = 1; x <= 3; x++)
             for (int y = 2; y <= 5; y++)
                 chunk.set(x, y, x + y * 3);

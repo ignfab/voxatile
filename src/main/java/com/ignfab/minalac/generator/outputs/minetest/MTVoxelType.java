@@ -46,7 +46,7 @@ public abstract class MTVoxelType implements VoxelType {
 
     @Override
     public void place(int x, int y, int z)  {
-        //The y-axis in Minetest corresponds, in our chosen coordinate system, to the z-axis, hence the inversion
+        // The y-axis in Minetest corresponds, in our chosen coordinate system, to the z-axis, hence the inversion
         this.world.set(x, z, y, this);
     }
 

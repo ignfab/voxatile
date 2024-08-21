@@ -52,7 +52,7 @@ public class TestingVoxelWorld extends VoxelWorld {
     @Override
     public void save(File destination) throws MapWriteException {}
 
-    //This method should not be called with out of bounds coordinate
+    // This method should not be called with out of bounds coordinate
     private int index(int x, int y, int z) {
         return x - limits().getMinX() + limits().getSizeX()
             * (y - limits().getMinY() + limits().getSizeY()

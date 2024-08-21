@@ -50,41 +50,41 @@ public class WorldBBox2dTest {
     public void testContains() {
         WorldBBox2d box = new WorldBBox2d(-1, -2, 3, 4);
 
-        //four points bounding the box
+        // four points bounding the box
         assertTrue(box.contains(-1, -2));
         assertTrue(box.contains(1, -2));
         assertTrue(box.contains(1, 1));
         assertTrue(box.contains(-1, 1));
 
-        //Point inside
+        // Point inside
         assertTrue(box.contains(0, -1));
 
-        //Four points outside the box bounding it
+        // Four points outside the box bounding it
         assertFalse(box.contains(-2, -2));
         assertFalse(box.contains(2, -2));
         assertFalse(box.contains(1, 2));
         assertFalse(box.contains(-1, 2));
 
-        //Point outside
+        // Point outside
         assertFalse(box.contains(20, 10));
 
-        //Same with other version
+        // Same with other version
 
         assertTrue(box.contains(new WorldCoords2d(-1, -2)));
         assertTrue(box.contains(new WorldCoords2d(1, -2)));
         assertTrue(box.contains(new WorldCoords2d(1, 1)));
         assertTrue(box.contains(new WorldCoords2d(-1, 1)));
 
-        //Point inside
+        // Point inside
         assertTrue(box.contains(new WorldCoords2d(0, -1)));
 
-        //Four points outside the box bounding it
+        // Four points outside the box bounding it
         assertFalse(box.contains(new WorldCoords2d(-2, -2)));
         assertFalse(box.contains(new WorldCoords2d(2, -2)));
         assertFalse(box.contains(new WorldCoords2d(1, 2)));
         assertFalse(box.contains(new WorldCoords2d(-1, 2)));
 
-        //Point outside
+        // Point outside
         assertFalse(box.contains(new WorldCoords2d(20, 10)));
     }
 

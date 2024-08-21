@@ -11,6 +11,6 @@ public interface VoxelTypeFactory {
      * @return the corresponding {@link VoxelType}
      */
     VoxelType createVoxelType(SemanticType semanticType);
-    //TODO : implementation of a method that takes into account advanced voxel creation
-    //VoxelType createVoxelType(SemanticType semanticType, parameters);
+    // TODO : implementation of a method that takes into account advanced voxel creation
+    // VoxelType createVoxelType(SemanticType semanticType, parameters);
 }

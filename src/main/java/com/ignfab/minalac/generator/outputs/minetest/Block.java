@@ -19,7 +19,7 @@ public class Block {
      * Constructs a new {@code Block}.
      */
     public Block() {
-        //Array length defined by map version (https://github.com/minetest/minetest/blob/master/doc/world_format.md#node-data)
+        // Array length defined by map version (https://github.com/minetest/minetest/blob/master/doc/world_format.md#node-data)
         this.param0 = new short[4096];
         this.param1 = new byte[4096];
         this.param2 = new byte[4096];
@@ -39,8 +39,8 @@ public class Block {
      * @param voxel the {@link MTVoxelType} to place within the block
      */
     public void set(int x, int y, int z, MTVoxelType voxel) {
-        //Node location on arrays
-        //https://github.com/minetest/minetest/blob/master/doc/world_format.md#node-data
+        // Node location on arrays
+        // https://github.com/minetest/minetest/blob/master/doc/world_format.md#node-data
         int i = z << 8 | y << 4 | x;
         param1[i] = voxel.getParam1();
         param2[i] = voxel.getParam2();

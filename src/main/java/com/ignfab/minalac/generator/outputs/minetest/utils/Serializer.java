@@ -60,23 +60,23 @@ public class Serializer {
         stream.write(buffer);
     }
 
-    //See World Format Documentation for more information about block serialization
-    //https://github.com/minetest/minetest/blob/master/doc/world_format.md#node-timers
+    // See World Format Documentation for more information about block serialization
+    // https://github.com/minetest/minetest/blob/master/doc/world_format.md#node-timers
     private void generateNameIdMapping(OutputStream stream, Block block) throws IOException {
-        //u8 name-id-mapping version
+        // u8 name-id-mapping version
         write8Bits(stream, 0);
 
-        //u16 num_name_id_mappings
+        // u16 num_name_id_mappings
         write16Bits(stream, block.getNameIdMapping().size());
 
         for (Map.Entry<Integer, String> entry : block.getNameIdMapping().entrySet()) {
-            //u16 : id
+            // u16 : id
             write16Bits(stream, entry.getKey());
 
-            //u16 : name_len
+            // u16 : name_len
             write16Bits(stream, entry.getValue().length());
 
-            //u8[name_len]
+            // u8[name_len]
             stream.write(entry.getValue().getBytes());
         }
     }
@@ -92,22 +92,22 @@ public class Serializer {
     public byte[] serialize(Block block) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream(16384);
 
-        //u8 : map version number
+        // u8 : map version number
         write8Bits(stream, 28);
 
-        //u8 : flags
+        // u8 : flags
         write8Bits(stream, 0);
 
-        //u16 : lighting_complete
+        // u16 : lighting_complete
         write16Bits(stream, 0);
 
-        //u8 : content_width
+        // u8 : content_width
         write8Bits(stream, 2);
 
-        //u8 : params_width
+        // u8 : params_width
         write8Bits(stream, 2);
 
-        //Zlib Node data
+        // Zlib Node data
         DeflaterOutputStream nodeDataStream = new DeflaterOutputStream(stream, deflater);
 
         writeParam0IntoStream(nodeDataStream, block);
@@ -118,32 +118,32 @@ public class Serializer {
         nodeDataStream.finish();
         deflater.reset();
 
-        //Zlib Node metadata
+        // Zlib Node metadata
         DeflaterOutputStream nodeMetadataStream = new DeflaterOutputStream(stream, deflater);
 
-        //u8 : version
+        // u8 : version
         write16Bits(nodeMetadataStream, 2);
         write16Bits(nodeMetadataStream, 0);
         nodeMetadataStream.flush();
         nodeMetadataStream.finish();
         deflater.reset();
 
-        //u8 : static object version
+        // u8 : static object version
         write8Bits(stream, 0);
 
-        //u16 : static object count
+        // u16 : static object count
         write16Bits(stream, 0);
 
-        //u32 : timestamp
+        // u32 : timestamp
         write32Bits(stream, 0);
 
-        //name id mapping
+        // name id mapping
         generateNameIdMapping(stream, block);
 
-        //u8 : length of the data of a single time
+        // u8 : length of the data of a single time
         write8Bits(stream, 10);
 
-        //u16 : num_of_timers
+        // u16 : num_of_timers
         write16Bits(stream, 0);
 
         return stream.toByteArray();
