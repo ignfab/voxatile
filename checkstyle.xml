@@ -213,9 +213,8 @@
 
     <!-- https://checkstyle.org/config_filters.html#SuppressionXpathFilter -->
     <module name="SuppressionXpathFilter">
-      <property name="file" value="${org.checkstyle.sun.suppressionxpathfilter.config}"
-                default="checkstyle-xpath-suppressions.xml" />
-      <property name="optional" value="true"/>
+      <property name="file" value="suppressions.xml"/>
+      <property name="optional" value="false"/>
     </module>
 
     <!-- Make the @SuppressWarnings annotations available to Checkstyle -->

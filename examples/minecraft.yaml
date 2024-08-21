@@ -1,0 +1,13 @@
+heightmaps:
+  - name: ground
+    default: 0
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 48.845
+    longitude: 2.425
+  extendX: 1000
+  extendY: 1000
+crs: EPSG:2154
+format: minecraft

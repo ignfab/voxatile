@@ -1,13 +1,22 @@
 package com.ignfab.minalac.generator;
 
+import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
+import com.ignfab.minalac.generator.exceptions.IgnorableException;
+import com.ignfab.minalac.generator.exceptions.RetryableException;
 import com.ignfab.minalac.generator.generation.CoordsConverter;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.Heightmap;
+import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider;
-import com.ignfab.minalac.generator.models.JTSGeometryModel;
+import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.parsing.ParamsParser;
 import com.ignfab.minalac.generator.parsing.ParseException;
+import com.ignfab.minalac.generator.processors.GeoToolsVectorProcessor;
+import com.ignfab.minalac.generator.processors.Processor;
+import com.ignfab.minalac.generator.processors.post.MetadataCopyPostProcessor;
+import com.ignfab.minalac.generator.processors.post.MetadataParsePostProcessor;
+import com.ignfab.minalac.generator.processors.post.PostProcessor;
 import com.ignfab.minalac.generator.renderers.VectorRenderer;
 import com.ignfab.minalac.generator.utils.execution.Scheduler;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
@@ -19,17 +28,12 @@ import com.ignfab.minalac.generator.world.SemanticType;
 import com.ignfab.minalac.generator.world.VoxelType;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
-import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.api.referencing.operation.TransformException;
-import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +41,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -94,15 +97,70 @@ public final class SampleImplementation {
 
         scheduler.schedule("models.buildings", () -> {
             log("Downloading buildings");
+            CoordsConverter converter; // This is supposed to be the layer CRS (actually the same for this demo)
             try {
-                downloadVectorFeatures(
-                    new WFS1_1_GML3_1_DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154&outputFormat=text%2Fxml%3B%20subtype%3Dgml%2F3.1.1"),
-                    generation.makeCoordsConverter(crs),  // This is supposed to be the layer CRS (actually the same for this demo)
-                    "building",
-                    store);
-            } catch (TransformException | IOException | ParserConfigurationException | SAXException | FactoryException e) {
+                converter = generation.makeCoordsConverter(crs);
+            } catch (FactoryException e) {
                 throw new RuntimeException(e);
             }
+            retrieveDataAndFillModelStore(store, "building",
+                new WFS1_1_GML3_1_DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154&outputFormat=text%2Fxml%3B%20subtype%3Dgml%2F3.1.1"),
+                new GeoToolsVectorProcessor(converter),
+                new MetadataCopyPostProcessor("hauteur", "height", false, false),
+                new MetadataParsePostProcessor<>(
+                    "height",
+                    Double.class,
+                    obj -> {
+                        if (obj instanceof Number number)
+                            return number.doubleValue();
+                        else if (obj instanceof String string)
+                            return Double.parseDouble(string);
+                        return null;
+                    },
+                    MetadataParsePostProcessor.ParsingFailurePolicy.REMOVE_METADATA,
+                    false,
+                    false
+                ),
+                // TODO Transform into something like "MetadataDefaultPostProcessor"
+                new PostProcessor<>() {
+                    @Override
+                    public Class<? super Model> acceptedModelType() {
+                        return Model.class;
+                    }
+
+                    @Override
+                    public Class<? extends Model> processedModelType(Class<? extends Model> inputModelType) {
+                        return inputModelType;
+                    }
+
+                    @Override
+                    public Model process(Model model) {
+                        if (!model.hasMetadata("height"))
+                            model.setMetadata("height", 20d);
+                        return model;
+                    }
+                },
+                // TODO Remove once the value is really used (currently useful to simulate value usage and failure in case of incorrect value)
+                new PostProcessor<>() {
+                    @Override
+                    public Class<? super Model> acceptedModelType() {
+                        return Model.class;
+                    }
+
+                    @Override
+                    public Class<? extends Model> processedModelType(Class<? extends Model> inputModelType) {
+                        return inputModelType;
+                    }
+
+                    @Override
+                    public Model process(Model model) throws GenerationFailedException {
+                        Object height = model.getMetadata("height");
+                        if (!(height instanceof Double))
+                            throw new GenerationFailedException("Illegal height value: " + (height == null ? "null" : (height + " (" + height.getClass() + ")")));
+                        return model;
+                    }
+                }
+            );
             log("Downloaded buildings");
         });
 
@@ -147,25 +205,41 @@ public final class SampleImplementation {
         System.out.printf("[%s] %s%n", Thread.currentThread().getName(), message);
     }
 
-    private static void downloadVectorFeatures(WFS1_1_GML3_1_DataProvider provider, CoordsConverter converter, String type, ModelStore store)
-            throws NoSuchElementException, TransformException, IOException, ParserConfigurationException, SAXException {
-        try (SimpleFeatureIterator iterator = provider.getFeatures().features()) {
-            while (iterator.hasNext()) {
-                SimpleFeature feature = iterator.next();
-                JTSGeometryModel model = new JTSGeometryModel((Geometry) feature.getDefaultGeometry(), converter);
-                Object height = feature.getAttribute("hauteur");
-
-                // TODO: Value 20 is a temporary value for building renderings.
-                model.setMetadata("height", 20.0);
-                if (height instanceof String s) {
-                    try {
-                        model.setMetadata("height", Double.valueOf(s));
-                    } catch (NumberFormatException e) {}
-                } else if (height instanceof Number n) {
-                    model.setMetadata("height", n);
+    private static <T> void retrieveDataAndFillModelStore(ModelStore store, String type, Provider<T> provider, Processor<? super T, ?> processor, PostProcessor<?, ?>... postProcessors) {
+        if (!processor.acceptedType().isAssignableFrom(provider.providedType()))
+            throw new IllegalArgumentException("Processor cannot treat provided type. Provided = %s, Accepted = %s".formatted(provider.providedType(), processor.acceptedType()));
+        Class<? extends Model> modelType = processor.modelType();
+        for (PostProcessor<?, ?> postProcessor : postProcessors) {
+            if (!postProcessor.acceptedModelType().isAssignableFrom(modelType))
+                throw new IllegalArgumentException("PostProcessor cannot treat model type. Current model type = %s, Accepted model type = %s".formatted(modelType, postProcessor.acceptedModelType()));
+            @SuppressWarnings("unchecked") // The model type has been validated above
+            PostProcessor<Model, ?> uncheckedPostProcessor = (PostProcessor<Model, ?>) postProcessor;
+            modelType = uncheckedPostProcessor.processedModelType(modelType);
+        }
+        try (Provider.Result<T> result = provider.provide()) {
+            for (T data : result) {
+                try {
+                    Model model = processor.process(data);
+                    for (PostProcessor<?, ?> postProcessor : postProcessors) {
+                        if (model == null)
+                            break;
+                        @SuppressWarnings("unchecked") // All model types have been validated above
+                        PostProcessor<Model, ?> uncheckedPostProcessor = (PostProcessor<Model, ?>) postProcessor;
+                        model = uncheckedPostProcessor.process(model);
+                    }
+                    if (model != null)
+                        store.add(type, model);
+                } catch (IgnorableException e) {
+                    // TODO Add an exception handling policy
+                    // To fail even on ignorable exceptions:
+                    // throw e;
                 }
-                store.add(type, model);
             }
+        } catch (RetryableException e) {
+            // TODO Implement a retry mechanism
+            throw new RuntimeException(e);
+        } catch (IOException | GenerationFailedException e) {
+            throw new RuntimeException(e);
         }
     }
 
