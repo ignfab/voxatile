@@ -242,7 +242,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>3.5.0</version>
+                <dependencies>
+                    <dependency>
+                        <!-- Overrides checkstyle version -->
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>10.18.1</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <!-- Binds the checkstyle:check goal to the verify phase -->
                     <execution>
