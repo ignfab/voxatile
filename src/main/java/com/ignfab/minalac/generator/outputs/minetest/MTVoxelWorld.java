@@ -21,8 +21,8 @@ import java.util.Map;
 public class MTVoxelWorld extends VoxelWorld {
     private final VoxelTypeFactory factory;
     private final HashMap<Integer, Block> blocks;
-    //See MAX_MAP_GENERATION_LIMIT constant on Minetest
-    //https://github.com/minetest/minetest/blob/master/src/constants.h#L69
+    // See MAX_MAP_GENERATION_LIMIT constant on Minetest
+    // https://github.com/minetest/minetest/blob/master/src/constants.h#L69
     private static final WorldBBox3d MAX_LIMIT = new WorldBBox3d(
         new WorldCoords3d(-31_007, -31_007, -31_007),
         new WorldCoords3d(31_007, 31_007, 31_007)
@@ -123,8 +123,8 @@ public class MTVoxelWorld extends VoxelWorld {
         }
     }
 
-    //See position hashing algorithm on world format documentation
-    //https://github.com/minetest/minetest/blob/master/doc/world_format.md#position-hashing
+    // See position hashing algorithm on world format documentation
+    // https://github.com/minetest/minetest/blob/master/doc/world_format.md#position-hashing
     private int getPosValue(int x, int y, int z) {
         return z * 16777216 + y * 4096 + x;
     }
@@ -134,8 +134,8 @@ public class MTVoxelWorld extends VoxelWorld {
         return p < 0 ? p + 16 : p;
     }
 
-    //See getContainerPos(s16 p, s16 d)
-    //https://github.com/minetest/minetest/blob/master/src/util/numeric.h#L45
+    // See getContainerPos(s16 p, s16 d)
+    // https://github.com/minetest/minetest/blob/master/src/util/numeric.h#L45
     private int getBlockPosition(int p) {
         return (p >= 0 ? p : p - 16 + 1) / 16;
     }

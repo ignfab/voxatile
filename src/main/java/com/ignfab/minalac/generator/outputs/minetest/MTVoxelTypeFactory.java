@@ -30,7 +30,7 @@ public class MTVoxelTypeFactory implements VoxelTypeFactory {
      */
     @Override
     public VoxelType createVoxelType(SemanticType semanticType) {
-        //Node string can be found on https://wiki.minetest.net/Games/Minetest_Game/Nodes
+        // Node string can be found on https://wiki.minetest.net/Games/Minetest_Game/Nodes
         return switch (semanticType) {
             case GRASS -> new MTSimpleVoxelType(this.world, "default:dirt_with_grass");
             case STONE -> new MTSimpleVoxelType(this.world, "default:stone");

@@ -62,7 +62,7 @@ public class ParamsParser {
         if (!FORMATS.containsKey(rawParams.format))
             throw new ParseException("The provided format is not supported");
         try {
-            //TODO : If not provided its default value should be calculated by finding the appropriated projected CRS for the provided center point.
+            // TODO : If not provided its default value should be calculated by finding the appropriated projected CRS for the provided center point.
             // At the moment the default value is EPSG:2154
             targetCrs = CRS.decode(rawParams.crs == null ? "EPSG:2154" : rawParams.crs);
         } catch (FactoryException e) {
