@@ -22,7 +22,7 @@ This command assume you already have the `Generator.jar` file in your current wo
 
 If you have cloned the project repository, you can [build the JAR using Maven](../tools/Maven.md#create-an-executable-jar) and run it:
 ```shell
-mvn -DskipTests=true clean package && java -jar target/Generator.jar $options
+mvn -Dmaven.test.skip=true clean package && java -jar target/Generator.jar $options
 ```
 
 ## Download workflow artifact
