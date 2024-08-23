@@ -34,4 +34,14 @@ public class EmptyVoxelizer2d implements Voxelizer2d {
     public Iterable<IndexedVoxel2d> borders() {
         return Collections::emptyIterator;
     }
+
+    /**
+     * Returns an empty iterable.
+     *
+     * @return an empty iterable.
+     */
+    @Override
+    public Iterable<Voxel2d> inside() {
+        return Collections::emptyIterator;
+    }
 }

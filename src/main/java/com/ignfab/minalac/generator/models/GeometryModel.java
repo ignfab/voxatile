@@ -11,9 +11,8 @@ import com.ignfab.minalac.generator.utils.shape3d.Polygon3d;
 import com.ignfab.minalac.generator.utils.shape3d.ShapesVoxelizer3d;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldMilliCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.utils.world3d.WorldMilliCoords3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.voxelization.EmptyVoxelizer2d;
 import com.ignfab.minalac.generator.voxelization.EmptyVoxelizer3d;
 import com.ignfab.minalac.generator.voxelization.Voxelizer2d;
@@ -137,21 +136,22 @@ public class GeometryModel implements Model, Voxelizable2d, Voxelizable3d {
      * @param voxelizer the voxelizer to store converted shapes.
      */
     private record GeometryConverter2d(ShapesVoxelizer2d voxelizer) implements GeometryConverter {
-        private WorldMilliCoords2d convertCoords(Coordinate coordinate) {
-            return WorldMilliCoords2d.fromWorldCoords(coordinate.x, coordinate.y);
+        private WorldCoords2d convertCoordinate(Coordinate coordinate) {
+            return new WorldCoords2d((int) Math.round(coordinate.x), (int) Math.round(coordinate.y));
         }
 
         private PolyLine2d convertPolyLine(LineString line) {
             Coordinate[] coordinates = line.getCoordinates();
-            List<WorldMilliCoords2d> coords = new ArrayList<>(coordinates.length);
+            List<WorldCoords2d> coords = new ArrayList<>(coordinates.length);
             for (Coordinate coordinate : coordinates)
-                coords.add(convertCoords(coordinate));
+                coords.add(convertCoordinate(coordinate));
             return PolyLine2d.fromPoints(coords);
         }
 
         @Override
         public void convertPoint(Point point) {
-            voxelizer.addPoint(new Point2d(convertCoords(point.getCoordinate())));
+            Coordinate coordinate = point.getCoordinate();
+            voxelizer.addPoint(new Point2d(convertCoordinate(coordinate)));
         }
 
         @Override
@@ -175,21 +175,21 @@ public class GeometryModel implements Model, Voxelizable2d, Voxelizable3d {
      * @param voxelizer the voxelizer to store converted shapes.
      */
     private record GeometryConverter3d(ShapesVoxelizer3d voxelizer) implements GeometryConverter {
-        private WorldMilliCoords3d convertCoords(Coordinate coordinate) {
-            return WorldMilliCoords3d.fromWorldCoords(coordinate.x, coordinate.y, coordinate.z);
+        private WorldCoords3d convertCoordinate(Coordinate coordinate) {
+            return new WorldCoords3d((int) Math.round(coordinate.x), (int) Math.round(coordinate.y), (int) Math.round(coordinate.z));
         }
 
         private PolyLine3d convertPolyLine(LineString line) {
             Coordinate[] coordinates = line.getCoordinates();
-            List<WorldMilliCoords3d> coords = new ArrayList<>(coordinates.length);
+            List<WorldCoords3d> coords = new ArrayList<>(coordinates.length);
             for (Coordinate coordinate : coordinates)
-                coords.add(convertCoords(coordinate));
+                coords.add(convertCoordinate(coordinate));
             return PolyLine3d.fromPoints(coords);
         }
 
         @Override
         public void convertPoint(Point point) {
-            voxelizer.addPoint(new Point3d(convertCoords(point.getCoordinate())));
+            voxelizer.addPoint(new Point3d(convertCoordinate(point.getCoordinate())));
         }
 
         @Override

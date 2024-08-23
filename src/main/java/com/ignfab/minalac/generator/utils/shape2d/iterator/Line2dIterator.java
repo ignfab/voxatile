@@ -33,7 +33,7 @@ public class Line2dIterator implements Iterator<IndexedVoxel2d> {
     public IndexedVoxel2d next() {
         if (t > line.maxIndex())
             throw new NoSuchElementException();
-        IndexedVoxel2d coords = new IndexedVoxel2d.Impl(line.atIndex(t).toWorldCoords(), t);
+        IndexedVoxel2d coords = new IndexedVoxel2d.Impl(line.atIndex(t), t);
         t++;
         return coords;
     }

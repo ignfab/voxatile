@@ -85,4 +85,15 @@ public class ShapesVoxelizer2d implements Voxelizer2d {
             () -> new MultiIterator<>(new MultiIterator<>(new RemapIterator<>(polygons, Polygon2d::borders)))
         ), bbox);
     }
+
+    /**
+     * Returns an iterable over inside voxel on all shapes stored in this voxelizer.
+     * Only polygon shapes have inside voxels.
+     *
+     * @return the inside iterable of all shapes.
+     */
+    @Override
+    public Iterable<Voxel2d> inside() {
+        return () -> new BoundedIterator2d<>(new MultiIterator<>(new RemapIterator<>(polygons, Polygon2d::inside)), bbox);
+    }
 }

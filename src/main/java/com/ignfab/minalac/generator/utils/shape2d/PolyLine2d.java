@@ -3,10 +3,10 @@ package com.ignfab.minalac.generator.utils.shape2d;
 import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldMilliCoords2d;
 import com.ignfab.minalac.generator.voxelization.IndexedVoxel2d;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -31,11 +31,11 @@ public record PolyLine2d(List<Line2d> lines) implements Iterable<IndexedVoxel2d>
             return WorldBBox2d.EMPTY;
         Line2d line = lines.get(0);
         if (lines.size() == 1)
-            return new WorldBBox2d(line.start().toWorldCoords(), line.end().toWorldCoords());
+            return new WorldBBox2d(line.start(), line.end());
         WorldCoords2d[] ends = new WorldCoords2d[lines.size()];
         for (int i = 0; i < lines.size(); i++)
-            ends[i] = lines.get(i).end().toWorldCoords();
-        return new WorldBBox2d(line.start().toWorldCoords(), ends);
+            ends[i] = lines.get(i).end();
+        return new WorldBBox2d(line.start(), ends);
     }
 
     /**
@@ -55,7 +55,8 @@ public record PolyLine2d(List<Line2d> lines) implements Iterable<IndexedVoxel2d>
      * @param points the points of the polyline.
      * @return a new polyline.
      */
-    public static PolyLine2d fromPoints(List<WorldMilliCoords2d> points) {
+
+     public static PolyLine2d fromPoints(List<WorldCoords2d> points) {
         if (points.size() < 2)
             return new PolyLine2d(Collections.emptyList());
         if (points.size() == 2)
@@ -64,5 +65,9 @@ public record PolyLine2d(List<Line2d> lines) implements Iterable<IndexedVoxel2d>
         for (int i = 1; i < points.size(); i++)
             lines.add(new Line2d(points.get(i - 1), points.get(i)));
         return new PolyLine2d(lines);
+    }
+
+    public static PolyLine2d fromPoints(WorldCoords2d... points) {
+        return PolyLine2d.fromPoints(Arrays.asList(points));
     }
 }

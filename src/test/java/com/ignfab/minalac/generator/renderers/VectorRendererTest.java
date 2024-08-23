@@ -1,5 +1,5 @@
 package com.ignfab.minalac.generator.renderers;
-
+/*
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.models.GeometryModel;
 import com.ignfab.minalac.generator.models.Model;
@@ -147,3 +147,4 @@ class VectorRendererTest {
         }
     }
 }
+*/

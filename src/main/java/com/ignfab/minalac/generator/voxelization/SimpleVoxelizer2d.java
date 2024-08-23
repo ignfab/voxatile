@@ -62,4 +62,15 @@ public class SimpleVoxelizer2d implements Voxelizer2d {
     public Iterable<IndexedVoxel2d> borders() {
         return Collections::emptyIterator;
     }
+
+    /**
+     * Returns main iterator.
+     * No voxel is in border, so all voxels are inside.
+     *
+     * @return an iterator over all voxels
+     */
+    @Override
+    public Iterable<Voxel2d> inside() {
+        return this;
+    }
 }

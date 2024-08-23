@@ -3,7 +3,6 @@ package com.ignfab.minalac.generator.utils.shape3d;
 import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.utils.world3d.WorldMilliCoords3d;
 import com.ignfab.minalac.generator.voxelization.IndexedVoxel3d;
 
 import java.util.ArrayList;
@@ -31,11 +30,11 @@ public record PolyLine3d(List<Line3d> lines) implements Iterable<IndexedVoxel3d>
             return WorldBBox3d.EMPTY;
         Line3d line = lines.get(0);
         if (lines.size() == 1)
-            return new WorldBBox3d(line.start().toWorldCoords(), line.end().toWorldCoords());
+            return new WorldBBox3d(line.start(), line.end());
         WorldCoords3d[] ends = new WorldCoords3d[lines.size()];
         for (int i = 0; i < lines.size(); i++)
-            ends[i] = lines.get(i).end().toWorldCoords();
-        return new WorldBBox3d(line.start().toWorldCoords(), ends);
+            ends[i] = lines.get(i).end();
+        return new WorldBBox3d(line.start(), ends);
     }
 
     /**
@@ -55,7 +54,7 @@ public record PolyLine3d(List<Line3d> lines) implements Iterable<IndexedVoxel3d>
      * @param points the points of the polyline.
      * @return a new polyline.
      */
-    public static PolyLine3d fromPoints(List<WorldMilliCoords3d> points) {
+    public static PolyLine3d fromPoints(List<WorldCoords3d> points) {
         if (points.size() < 2)
             return new PolyLine3d(Collections.emptyList());
         if (points.size() == 2)

@@ -33,7 +33,7 @@ public class Line3dIterator implements Iterator<IndexedVoxel3d> {
     public IndexedVoxel3d next() {
         if (t > line.maxIndex())
             throw new NoSuchElementException();
-        IndexedVoxel3d coords = new IndexedVoxel3d.Impl(line.atIndex(t).toWorldCoords(), t);
+        IndexedVoxel3d coords = new IndexedVoxel3d.Impl(line.atIndex(t), t);
         t++;
         return coords;
     }

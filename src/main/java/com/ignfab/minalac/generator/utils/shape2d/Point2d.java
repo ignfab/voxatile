@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.utils.shape2d;
 
 import com.ignfab.minalac.generator.utils.iterator.SingletonIterator;
-import com.ignfab.minalac.generator.utils.world2d.WorldMilliCoords2d;
+import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.IndexedVoxel2d;
 
 import java.util.Iterator;
@@ -11,14 +11,14 @@ import java.util.Iterator;
  * It stores position in milli-voxel precision.
  */
 public class Point2d implements Iterable<IndexedVoxel2d> {
-    private final WorldMilliCoords2d coords;
+    private final WorldCoords2d coords;
 
     /**
      * Creates a new point at the given coordinate.
      *
      * @param coords the coordinate of the point.
      */
-    public Point2d(WorldMilliCoords2d coords) {
+    public Point2d(WorldCoords2d coords) {
         this.coords = coords;
     }
 
@@ -31,6 +31,6 @@ public class Point2d implements Iterable<IndexedVoxel2d> {
      */
     @Override
     public Iterator<IndexedVoxel2d> iterator() {
-        return new SingletonIterator<>(new IndexedVoxel2d.Impl(coords.toWorldCoords(), 0));
+        return new SingletonIterator<>(new IndexedVoxel2d.Impl(coords, 0));
     }
 }

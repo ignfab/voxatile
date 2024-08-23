@@ -1,40 +1,36 @@
 package com.ignfab.minalac.generator.utils.shape2d;
 
 import com.ignfab.minalac.generator.utils.shape2d.iterator.Line2dIterator;
-import com.ignfab.minalac.generator.utils.world2d.WorldMilliCoords2d;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.IndexedVoxel2d;
 
 /**
  * Represents a 2d line segment in the voxel world.
- * It stores start and end in milli-voxel precision.
  * A few operations are done when creating a line
  * to compute values needed during voxelization.
  * <p>
  * The line is modelled using a parametric equation:
  * <pre>{@code
- *  x = ax * t + bx
- *  y = ay * t + by
+ *  x = ax * t + start.x
+ *  y = ay * t + start.y
  * }</pre>
  * With {@code 0 <= t <= tMax}.
  *
  * @see #maxIndex() tMax
- * @see #directionX() ax
- * @see #directionY() ay
- * @see #originX() bx
- * @see #originY() by
  */
 public class Line2d implements Iterable<IndexedVoxel2d> {
-    private final WorldMilliCoords2d start;
-    private final WorldMilliCoords2d end;
+    private final WorldCoords2d start;
+    private final WorldCoords2d end;
 
     // 0 <= t <= tMax
-    // { x = ax * t + bx
-    // { y = ay * t + by
+    // { x = ax * t + start.x
+    // { y = ay * t + start.y
     private final int tMax;
     private final double ax;
-    private final double bx;
     private final double ay;
-    private final double by;
+
+    private final WorldBBox2d bbox;
 
     /**
      * Creates a new line between the given start and end.
@@ -43,38 +39,37 @@ public class Line2d implements Iterable<IndexedVoxel2d> {
      * @param start the start of the line.
      * @param end the end of the line.
      */
-    public Line2d(WorldMilliCoords2d start, WorldMilliCoords2d end) {
+    public Line2d(WorldCoords2d start, WorldCoords2d end) {
         this.start = start;
         this.end = end;
 
-        // At t == 0, we are at start position
-        bx = start.realX();
-        by = start.realY();
-        // Compute direction vector of the line
-        double dx = end.realX() - bx;
-        double dy = end.realY() - by;
+        // This will be involved in intersection calculation
+        bbox = new WorldBBox2d(start, end);
 
-        // Find the direction of the line (x or y)
-        // to compute tMax and scale direction vector
-        // to get a step of 1 voxel in the line direction
-        double x = Math.abs(dx);
-        double y = Math.abs(dy);
-        double dir;
-        if (x < 1e-4 && y < 1e-4) {
-            // If start == end, there is no direction so
-            // we take a value to prevent division by 0
-            dir = 1e-4;
-            tMax = 0;
-        } else if (x >= y) {
-            dir = x;
-            tMax = Math.abs(end.x() - start.x());
+        // Compute direction vector of the line
+        int dx = end.x() - start.x();
+        int dy = end.y() - start.y();
+
+        // Maximum index is the largest coordinate distance
+        tMax = Math.max(Math.abs(dx), Math.abs(dy));
+
+        // Normalize vector to index
+        if (tMax == 0) {
+            ax = 0.0;
+            ay = 0.0;
         } else {
-            dir = y;
-            tMax = Math.abs(end.y() - start.y());
+            ax = dx / (double) tMax;
+            ay = dy / (double) tMax;
         }
-        // Scale direction vector to get voxel step
-        ax = dx / dir;
-        ay = dy / dir;
+    }
+
+    /**
+     * Returns line bounding box.
+     *
+     * @return line bounding box.
+     */
+    public WorldBBox2d bbox() {
+        return bbox;
     }
 
     /**
@@ -82,7 +77,7 @@ public class Line2d implements Iterable<IndexedVoxel2d> {
      *
      * @return the start of the line.
      */
-    public WorldMilliCoords2d start() {
+    public WorldCoords2d start() {
         return start;
     }
 
@@ -91,7 +86,7 @@ public class Line2d implements Iterable<IndexedVoxel2d> {
      *
      * @return the end of the line.
      */
-    public WorldMilliCoords2d end() {
+    public WorldCoords2d end() {
         return end;
     }
 
@@ -106,50 +101,17 @@ public class Line2d implements Iterable<IndexedVoxel2d> {
     }
 
     /**
-     * Returns the x-component of a direction vector of the line.
-     *
-     * @return the x-component of a direction vector of the line.
-     */
-    public double directionX() {
-        return ax;
-    }
-
-    /**
-     * Returns the y-component of a direction vector of the line.
-     *
-     * @return the y-component of a direction vector of the line.
-     */
-    public double directionY() {
-        return ay;
-    }
-
-    /**
-     * Returns the x-component of the origin point of the line.
-     *
-     * @return the x-component of the origin point of the line.
-     */
-    public double originX() {
-        return bx;
-    }
-
-    /**
-     * Returns the y-component of the origin point of the line.
-     *
-     * @return the y-component of the origin point of the line.
-     */
-    public double originY() {
-        return by;
-    }
-
-    /**
      * Computes the coordinate of the point on the line at the given index.
      * This corresponds to the coordinate of the nth voxel of this line.
      *
      * @param index the index in the line.
-     * @return the coordinate in milli-voxel precision.
+     * @return the voxel coordinate for this index.
      */
-    public WorldMilliCoords2d atIndex(double index) {
-        return WorldMilliCoords2d.fromWorldCoords(ax * index + bx, ay * index + by);
+    public WorldCoords2d atIndex(int index) {
+        return new WorldCoords2d(
+            (int) Math.round(ax * index + start.x()),
+            (int) Math.round(ay * index + start.y())
+        );
     }
 
     /**
@@ -162,6 +124,69 @@ public class Line2d implements Iterable<IndexedVoxel2d> {
     @Override
     public Line2dIterator iterator() {
         return new Line2dIterator(this);
+    }
+
+    /**
+     * Computes all intersecting positions at a given Y-coordinate.
+     * If line is rather horizontal than vertical, intersection concerns several voxels.
+     * This is used for polygon filling. It could be used for line drawing if we would
+     * not need an index position for each voxel.
+     *
+     * @param y Y-coordinate for which we want intersection positions
+     *
+     * @return An Intersection object or {@code null} if there is no intersection
+     */
+    public Intersection intersection(int y) {
+        // No intersection
+        if (y < bbox.getMinY() || y > bbox.getMaxY())
+            return null;
+
+        // Find start and end indexes of intersection (reciprocal computation from Y)
+        // Ceils and floors depends on the line direction
+        double startT;
+        double endT;
+        if (start.y() == end.y()) {
+            // Horizontal line
+            startT = 0;
+            endT = tMax;
+        } else if (ay < 0) {
+            // Ascending line
+            startT = Math.max(0, Math.floor((y + 0.5 - start.y()) / ay) + 1);
+            endT = Math.min(tMax, Math.floor((y - 0.5 - start.y()) / ay));
+        } else {
+            // Descending line
+            startT = Math.max(0, Math.ceil((y - 0.5 - start.y()) / ay));
+            endT = Math.min(tMax, Math.ceil((y + 0.5 - start.y()) / ay) - 1);
+        }
+
+        int x1 = (int) Math.round(ax * endT + start.x());
+        int x2 = (int) Math.round(ax * startT + start.x());
+
+        return new Intersection(
+            Math.min(x1, x2),
+            Math.max(x1, x2),
+            y > bbox.getMinY(), // Line crosses top voxel line border if Y is not minimum Y
+            y < bbox.getMaxY()  // Line crosses bottom voxel line border if Y is not maximum Y
+        );
+    }
+
+    /**
+     * An intersection with a line at given Y-coordinate.
+     * Intersection is not only a point, it can be several voxels large if
+     * line is rather vertical than horizontal. Here we store min and max
+     * X-coordinate value of intersection, plus some information useful for
+     * polygon filling (how does line crosses Y-coord voxel line).
+     *
+     * @param start Minimum X-coordinate of intersection
+     * @param end Maximum X-coordinate of intersection
+     * @param top True if the line crosses Y-coord voxel line upper side
+     * @param bottom True if the line crosses Y-coord voxel line lower side
+     */
+    public record Intersection(int start, int end, boolean top, boolean bottom) implements Comparable<Intersection> {
+        @Override
+        public int compareTo(Intersection other) {
+            return start - other.start;
+        }
     }
 
     @Override

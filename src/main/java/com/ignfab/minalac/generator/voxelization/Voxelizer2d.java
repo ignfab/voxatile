@@ -32,4 +32,19 @@ public interface Voxelizer2d extends Iterable<Voxel2d> {
      * @return the border iterable of this object.
      */
     Iterable<IndexedVoxel2d> borders();
+
+    /**
+     * Returns an iterable over voxels strictly inside this object
+     * (only polygons have inside voxels).
+     * Example usage:
+     * <pre>{@code
+     *  Voxelizer2d voxelizer = ...;
+     *  for (Voxel2d voxel : voxelizer.inside()) {
+     *      // Code using voxel here...
+     *  }
+     * }</pre>
+     *
+     * @return the inside iterable of this object.
+     */
+    Iterable<Voxel2d> inside();
 }

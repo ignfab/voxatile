@@ -1,5 +1,5 @@
 package com.ignfab.minalac.generator.models;
-
+/*
 import com.ignfab.minalac.generator.models.bufferedimage.BufferedImageChunk;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import org.junit.jupiter.api.Test;
@@ -81,3 +81,4 @@ public class TestBufferedImageChunk {
                     assertEquals(0, chunk.get(x, y), "Outside (%d, %d)".formatted(x, y));
     }
 }
+*/

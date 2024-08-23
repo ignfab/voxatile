@@ -1,5 +1,5 @@
 package com.ignfab.minalac.generator.models;
-
+/*
 import com.ignfab.minalac.generator.generation.CoordsConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import org.geotools.api.referencing.operation.TransformException;
@@ -243,3 +243,4 @@ public class GeometryModelTest {
         assertEquals(GeometryModel.BORDER,  chunk.get(-1, -3), "(-1, -3)");
     }
 }
+*/

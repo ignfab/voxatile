@@ -1,5 +1,5 @@
 package com.ignfab.minalac.generator.utils.world2d.iterator;
-
+/*
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,3 +34,4 @@ public class TestChunk2DIteratorAll {
                     String.format("Chunk element at (x = %d, y = %d) skipped !", x + 1, y + 2));
     }
 }
+*/

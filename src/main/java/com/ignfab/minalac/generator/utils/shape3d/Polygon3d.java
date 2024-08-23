@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+
 /**
  * Represents a 3d polygon with holes in the voxel world.
  * It consists of an outer shell (polyline) and inside holes (collection of polyline).
@@ -32,42 +33,6 @@ public class Polygon3d implements Iterable<Voxel3d> {
         this.shell = shell;
         this.holes = holes;
         bbox = shell.bbox();
-    }
-
-    /**
-     * Computes intersections of this polygon at a given y.
-     * Very useful for voxelization purpose.
-     * <p>
-     * The intersection are computed between lines of this polygon
-     * and a line segment from ({@code bbox.getMinX()}, {@code y + 0.5})
-     * to ({@code bbox.getMaxX() + 1}, {@code y + 0.5}).
-     *
-     * @param y the y-component value of the straight line to intersect.
-     * @return the list of intersections sorted from lower to higher.
-     */
-    public List<Double> intersections(int y) {
-        if (y < bbox.getMinY() || y > bbox.getMaxY())
-            return Collections.emptyList();
-        List<Double> xValues = new ArrayList<>();
-        for (Line3d line : borders()) {
-            Double inter = intersection(y, line);
-            if (inter != null)
-                xValues.add(inter);
-        }
-        xValues.sort(null);
-        return xValues;
-    }
-
-    private Double intersection(int y, Line3d line) {
-        int startMilliY = line.start().milliY();
-        int endMilliY = line.end().milliY();
-        int milliY = y * 1000 + 500;
-        if ((startMilliY < milliY && endMilliY < milliY) || (startMilliY > milliY && endMilliY > milliY))
-            return null;
-        if (Math.abs(line.directionY()) < 1e-4)
-            return null;
-        double t = (y + 0.5 - line.originY()) / line.directionY();
-        return line.atIndex(t).realX();
     }
 
     /**
@@ -96,6 +61,30 @@ public class Polygon3d implements Iterable<Voxel3d> {
      */
     @Override
     public Polygon3dIterator iterator() {
-        return new Polygon3dIterator(this);
+        return new Polygon3dIterator(this, false);
+    }
+
+    /**
+     * Lists intersections of this polygon at a given y.
+     * Very useful for voxelization purpose.
+     * <p>
+     * {@code Line2d} computes intersection of a line at that given y.
+     * This method lists all these intersection.
+     *
+     * @param y the y-component value of the straight line to intersect.
+     * @return the list of intersections.
+     */
+    public List<Line3d.Intersection> intersections(int y) {
+        if (y < bbox.getMinY() || y > bbox.getMaxY())
+            return Collections.emptyList();
+
+        List<Line3d.Intersection> intersections = new ArrayList<>();
+        for (Line3d line : borders()) {
+            Line3d.Intersection inter = line.intersection(y);
+            if (inter != null)
+                intersections.add(inter);
+        }
+
+        return intersections;
     }
 }
