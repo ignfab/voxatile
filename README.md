@@ -24,3 +24,7 @@ mvn -DskipTests=true clean package && java -jar target/Generator.jar -p examples
 ### From pre-built JAR
 
 TODO Download JAR from latest release and run it with default params -->
+
+## License
+
+This project is licensed under the terms of the [GNU AGPL v3](LICENSE.txt) license.
