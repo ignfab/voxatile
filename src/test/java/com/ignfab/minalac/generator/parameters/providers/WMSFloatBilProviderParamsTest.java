@@ -19,7 +19,7 @@ public class WMSFloatBilProviderParamsTest {
         Generation generation = new Generation(
             new TestingVoxelWorld(
                 new WorldBBox3d(-50, -50, -50, 100, 100, 100)
-            ), null, crs, 0, 0, 100, 100, 1, 1);
+            ), null, crs, 0, 0, 100, 100, 1, 1, 0.0);
 
         // A simple OK test
         final WMSFloatBilProviderParams params = new WMSFloatBilProviderParams("http://toto.com", "layer1");

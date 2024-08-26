@@ -37,11 +37,15 @@ public class TestGeneration {
         seed = new Seed("ABCD");
     }
 
+    // 657_781, 6_860_729 (EPSG:2154) IGN Saint Mandé
+    private final int x2154 = 657_781;
+    private final int y2154 = 6_860_729;
+
     @Test
     public void testGeneration() throws FactoryException, TransformException {
         VoxelWorld world = new EmptyVoxelWorld(500, 500);
-        // 657_781, 6_860_729 (EPSG:2154) IGN Saint Mandé
-        Generation generation = new Generation(world, seed, crs2154, 657_781, 6_860_729, 500, 500, 2.0, 3.0);
+
+        Generation generation = new Generation(world, seed, crs2154, x2154, y2154, 500, 500, 2.0, 3.0, 0.5 * Math.PI);
 
         assertEquals(seed, generation.seed());
         WorldBBox3d box = generation.world().limits();
@@ -62,10 +66,20 @@ public class TestGeneration {
         assertEquals(48.8407, envelope.getMinX(), 0.0002);
         assertEquals(2.4179, envelope.getMinY(), 0.0002);
 
+        MapToWorldConverter converter;
+        Geometry geometry;
+
+        // Check rotation
+        converter = generation.makeCoordsConverter(crs2154);
+        geometry = new GeometryFactory().createPoint(new Coordinate(x2154 + 10, y2154 + 20));
+        geometry = converter.convert(geometry);
+        assertEquals(10.0, geometry.getCoordinate().x, 0.01); // (We have a 2m per voxel scale factor)
+        assertEquals(-5.0, geometry.getCoordinate().y, 0.01);
+
         // Coords converter from WSG84
-        MapToWorldConverter converter = generation.makeCoordsConverter(crs3857);
+        converter = generation.makeCoordsConverter(crs3857);
         // 269_919.0354, 6_248_639.6317 is EPSG:3857 for 657_781, 6_860_729 which correspond to voxel 0,0.
-        Geometry geometry = new GeometryFactory().createPoint(new Coordinate(269_919.0354, 6_248_639.6317));
+        geometry = new GeometryFactory().createPoint(new Coordinate(269_919.0354, 6_248_639.6317));
         geometry = converter.convert(geometry);
         assertEquals(0.0, geometry.getCoordinate().x, 0.01);
         assertEquals(0.0, geometry.getCoordinate().y, 0.01);

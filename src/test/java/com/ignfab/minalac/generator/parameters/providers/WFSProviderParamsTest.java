@@ -20,7 +20,7 @@ public class WFSProviderParamsTest {
         Generation generation = new Generation(
             new TestingVoxelWorld(
                 new WorldBBox3d(-10, -10, -10, 20, 20, 20)
-            ), null, crs, 0, 0, 20, 20, 1, 1);
+            ), null, crs, 0, 0, 20, 20, 1, 1, 0.0);
 
         // A simple OK test
         final WFSProviderParams params = new WFSProviderParams("http://toto.com", "feature1");

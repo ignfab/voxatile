@@ -44,7 +44,8 @@ public class HeightmapParamsTest {
             501,
             501,
             2.0,
-            3.0);
+            3.0,
+            0.0);
         HeightmapParams params = new HeightmapParams("3");
 
         Heightmap heightmap = params.create(generation);

@@ -52,7 +52,8 @@ public final class GenerationCreator {
             params.area.extendX,
             params.area.extendY,
             params.horizontalScale,
-            params.verticalScale
+            params.verticalScale,
+            Math.toRadians(params.area.angle)
         );
 
         // TODO: refactor when placeable deserialization is implemented

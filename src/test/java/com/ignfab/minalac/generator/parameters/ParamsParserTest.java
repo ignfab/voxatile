@@ -18,6 +18,7 @@ public class ParamsParserTest {
             longitude: 2.4
           extendX: 500
           extendY: 2500
+          angle: 30
         format: minetest
         """;
 
@@ -73,6 +74,7 @@ public class ParamsParserTest {
 
         assertEquals(2.5, params.verticalScale);
         assertEquals(5.2, params.horizontalScale);
+        assertEquals(30, params.area.angle);
         assertEquals(1, params.heightmaps.size());
         assertEquals(3, params.heightmaps.get("someHeightmap").defaultValue);
     }

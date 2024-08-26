@@ -36,6 +36,7 @@ area:
     longitude: 2.425
   extendX: 1000
   extendY: 1000
+  angle: 0
 verticalScale: 1.0
 horizontalScale: 1.0
 crs: EPSG:2154
@@ -72,6 +73,7 @@ format: minetest
     - `longitude`: longitude in decimal degrees
   - `extendX` (int): Horizontal extend of the area along the x-axis (in voxels)
   - `extendY` (int):  Horizontal extend of the area along the y-axis (in voxels)
+  - `angle` (float): Clockwise rotation angle around area center (in degrees, optional, default 0)
 - `verticalScale`: Vertical size of voxels (in map units, usually meters)
 - `horizontalScale`: Horizontal size of voxels (in map units, usually meters)
 - `crs`: Coordinate Reference System to be used for projecting geographical data into voxel world

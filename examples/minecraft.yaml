@@ -67,6 +67,7 @@ area:
   center:
     latitude: 48.845
     longitude: 2.425
+  angle: 0
   extendX: 1000
   extendY: 1000
 crs: EPSG:2154
