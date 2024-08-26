@@ -49,7 +49,9 @@ public class Generation {
      * @param extendY Generated world size (in voxels) along y-coordinates
      * @param horizontalScale Horizontal size of voxel in CRS units
      * @param verticalScale Vertical size of voxel in CRS units
+     * @param angle Rotation angle around center in radians
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     public Generation(
         CoordinateReferenceSystem crs,
         double centerX,
@@ -57,11 +59,11 @@ public class Generation {
         int extendX,
         int extendY,
         double horizontalScale,
-        double verticalScale) {
+        double verticalScale,
+        double angle) {
 
         // For now:
         // - Center is in target CRS (should be lon/lat).
-        // - Rotation is not yet implemented (should be).
 
         this.crs = crs;
         this.verticalScale = verticalScale;
@@ -72,13 +74,13 @@ public class Generation {
         // CRS to Voxel transformation (basically, translates, rotates and scale)
         crsToVoxel = new AffineTransformation();
         crsToVoxel.translate(-centerX, -centerY);
-        // crsToVoxel.rotate(rotate * pi / 180.0, 0.0, 0.0);
         crsToVoxel.scale(1.0 / horizontalScale, 1.0 / horizontalScale);
+        crsToVoxel.rotate(-angle);
 
         // Voxel to CRS transformation (reverse of crsToVoxel transformation)
         voxelToCrs = new AffineTransformation();
+        voxelToCrs.rotate(angle);
         voxelToCrs.scale(horizontalScale, horizontalScale);
-        // VoxelToCrs.rotate(- rotate * pi / 180.0, 0.0, 0.0);
         voxelToCrs.translate(centerX, centerY);
     }
 

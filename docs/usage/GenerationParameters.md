@@ -14,6 +14,7 @@ area:
     longitude: 2.425
   extendX: 1000
   extendY: 1000
+  rotation: 45
 verticalScale: 1.0
 horizontalScale: 1.0
 crs: EPSG:2154
@@ -27,7 +28,8 @@ Available fields:
  - `area`: Area to be rendered
    - `center`: `longitude` and `latitude` of the center point
    - `extendsX` and `extendsY`: Area extends in both horizontal directions (in voxels)
- - `verticalScale`: Vertical size of voxels (in map units, usually meters)
- - `horizontalScale`: Horizontal size of voxels (in map units, usually meters)
+   - `rotation` : Rotation angle around center (in degrees, optional, default 0)
+ - `verticalScale`: Vertical size of voxels (in map units, usually meters, optional, default 1.0)
+ - `horizontalScale`: Horizontal size of voxels (in map units, usually meters, optional, default 1.0)
  - `crs`: Coordinate Reference System to be used for projecting geographical data into voxel world
  - `format`: Output format (`minetest` or `minecraft`)

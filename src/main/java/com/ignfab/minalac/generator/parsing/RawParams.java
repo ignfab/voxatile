@@ -127,6 +127,13 @@ public class RawParams {
         public int extendY;
 
         /**
+         * Rotation around center in degrees.
+         * Default 0.
+         */
+        @JsonSetter(nulls = Nulls.SKIP)
+        public int rotation = 0;
+
+        /**
          * Constructor used to ensure that the required fields are present during deserialization.
          *
          * @param center  the center of the area.

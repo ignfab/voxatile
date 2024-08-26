@@ -33,7 +33,7 @@ public class TestGeneration {
 
     @BeforeEach
     public void init() {
-        generation = new Generation(crs2154, 601000.0, 6341000.0, 501, 501, 2.0, 3.0);
+        generation = new Generation(crs2154, 601000.0, 6341000.0, 501, 501, 2.0, 3.0, 0.0);
     }
 
     @AfterEach
@@ -43,7 +43,7 @@ public class TestGeneration {
 
     @Test
     public void testGeneration() throws FactoryException, TransformException {
-        Generation generation = new Generation(crs2154, 601000.0, 6341000.0, 501, 501, 2.0, 3.0);
+        Generation generation = new Generation(crs2154, 601000.0, 6341000.0, 501, 501, 2.0, 3.0, 0.0);
 
         WorldBBox2d box = generation.getWorldBBox2d();
         assertEquals(-250, box.getMinX());

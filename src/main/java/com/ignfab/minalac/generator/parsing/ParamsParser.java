@@ -93,7 +93,8 @@ public class ParamsParser {
             rawParams.area.extendX,
             rawParams.area.extendY,
             rawParams.horizontalScale,
-            rawParams.verticalScale
+            rawParams.verticalScale,
+            Math.toRadians(rawParams.area.rotation)
         );
 
         if (rawParams.heightMaps != null)
