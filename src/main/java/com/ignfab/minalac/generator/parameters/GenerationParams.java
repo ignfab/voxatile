@@ -188,6 +188,13 @@ public class GenerationParams {
         public int extendY;
 
         /**
+         * Rotation angle around center in degrees.
+         * Default 0.
+         */
+        @JsonSetter(nulls = Nulls.SKIP)
+        public double angle = 0d;
+
+        /**
          * Constructor used to ensure that the required fields are present during deserialization.
          *
          * @param center  the center of the area.

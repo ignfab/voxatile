@@ -21,7 +21,7 @@ public class GeoToolsVectorProcessorParamsTest {
         Generation generation = new Generation(
             new TestingVoxelWorld(
                 new WorldBBox3d(-10, -10, -10, 20, 20, 20)
-            ), null, crs2154, 0, 0, 20, 20, 1, 1);
+            ), null, crs2154, 0, 0, 20, 20, 1, 1, 0.0);
 
         // A simple OK test with same CRS
         final GeoToolsVectorProcessorParams params = new GeoToolsVectorProcessorParams();
