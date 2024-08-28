@@ -1,26 +1,25 @@
 package com.ignfab.minalac.generator.generation;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.models.ModelStore;
+import com.ignfab.minalac.generator.renderers.Renderer;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
-
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.world.VoxelWorld;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.util.AffineTransformation;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-
 /**
- * Generation context class.
- * Contains stuff about ongoing generation and its context.
+ * This {@code Generation} class contains information about the ongoing generation
+ * such as the voxel world, the renderers or the heightmaps.
  */
 public class Generation {
     // Target coordinate reference system (CRS used for voxel world rendering)
@@ -33,23 +32,27 @@ public class Generation {
     private final AffineTransformation crsToVoxel;
     private final AffineTransformation voxelToCrs;
 
-    // TODO: use a 3d bbox when its implemented:
-    private final WorldBBox2d worldBBox;
-
-    private final Map<String, Heightmap> heightmaps = new HashMap<>();
+    private final VoxelWorld world;
+    private final ModelStore models = new ModelStore();
+    private final Store<Heightmap> heightmaps = new Store<>();
+    private final Store<Renderer> renderers = new Store<>();
 
     /**
      * Constructs a new generation context.
+     * It sets {@code VoxelWorld}'s limits in way the center is at {@code WorldCoords2d} (0, 0).
      *
+     * @param world the voxel world without its {@code limits()} set
      * @param crs Coordinate reference system used for generated world
-     * @param centerX Generation center x-coordinate (in generated world CRS)
-     * @param centerY Generation center y-coordinate (in generated world CRS)
+     * @param centerX first coordinate of the center in the specified CRS
+     * @param centerY second coordinate of the center in the specified CRS
      * @param extendX Generated world size (in voxels) along x-coordinates
      * @param extendY Generated world size (in voxels) along y-coordinates
      * @param horizontalScale Horizontal size of voxel in CRS units
      * @param verticalScale Vertical size of voxel in CRS units
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     public Generation(
+        VoxelWorld world,
         CoordinateReferenceSystem crs,
         double centerX,
         double centerY,
@@ -57,16 +60,22 @@ public class Generation {
         int extendY,
         double horizontalScale,
         double verticalScale) {
-
         // For now:
-        // - Center is in target CRS (should be lon/lat).
         // - Rotation is not yet implemented (should be).
 
+        WorldBBox3d maximumLimits = world.maxLimits();
+        world.setLimits(new WorldBBox3d(
+            -extendX / 2,
+            -extendY / 2,
+            maximumLimits.minZ(),
+            extendX,
+            extendY,
+            maximumLimits.sizeZ()
+        ));
+
+        this.world = world;
         this.crs = crs;
         this.verticalScale = verticalScale;
-
-        // Voxel BBox
-        worldBBox = new WorldBBox2d(-extendX / 2, -extendY / 2, extendX, extendY);
 
         // CRS to Voxel transformation (basically, translates, rotates and scale)
         crsToVoxel = new AffineTransformation();
@@ -82,6 +91,38 @@ public class Generation {
     }
 
     /**
+     * Returns the {@code VoxelWorld} with the limits corresponding the specified parameters for this {@code Generation}.
+     * @return the voxel world
+     */
+    public VoxelWorld world() {
+        return world;
+    }
+
+    /**
+     * Returns the {@link ModelStore}.
+     * @return the model store
+     */
+    public ModelStore models() {
+        return models;
+    }
+
+    /**
+     * Returns the {@link Store} for the heightmaps.
+     * @return the heightmaps.
+     */
+    public Store<Heightmap> heightmaps() {
+        return heightmaps;
+    }
+
+    /**
+     * Returns the {@link Store} for the renderers.
+     * @return the renderers.
+     */
+    public Store<Renderer> renderers() {
+        return renderers;
+    }
+
+    /**
      * Returns geographic envelope (bounding box equivalent) of generated world
      * in a given CRS.
      *
@@ -92,23 +133,14 @@ public class Generation {
         WorldToMapConverter converter = makeCoordsConverter(crs).inverse();
 
         Geometry geom = new GeometryFactory().createLinearRing(new Coordinate[] {
-            new Coordinate(worldBBox.minX(), worldBBox.minY()),
-            new Coordinate(worldBBox.maxX(), worldBBox.minY()),
-            new Coordinate(worldBBox.maxX(), worldBBox.maxY()),
-            new Coordinate(worldBBox.minX(), worldBBox.maxY()),
-            new Coordinate(worldBBox.minX(), worldBBox.minY())
+            new Coordinate(world.limits().minX(), world.limits().minY()),
+            new Coordinate(world.limits().maxX(), world.limits().minY()),
+            new Coordinate(world.limits().maxX(), world.limits().maxY()),
+            new Coordinate(world.limits().minX(), world.limits().maxY()),
+            new Coordinate(world.limits().minX(), world.limits().minY())
         });
 
         return converter.convert(geom).getEnvelopeInternal();
-    }
-
-    /**
-     * Returns World 2d box in voxels.
-     *
-     * @return a WorldBBox2d representing horizontal world size
-     */
-    public WorldBBox2d getWorldBBox2d() {
-        return worldBBox;
     }
 
     /**
@@ -130,33 +162,5 @@ public class Generation {
     // To be removed when vertical is used by this class. (Renderers will probably contain that value)
     public double getVerticalScale() {
         return verticalScale;
-    }
-
-    /**
-     * Registers a new {@link Heightmap} with the given name.
-     * Name must be unique, case-sensitive.
-     *
-     * @param name      the name of the heightmap which will be used to identify it
-     * @param heightmap the heightmap to be added
-     * @throws IllegalArgumentException if the specified name is already registered or if the name is null
-     */
-    public void addHeightmap(String name, Heightmap heightmap) throws IllegalArgumentException {
-        if (name == null || heightmaps.containsKey(name))
-            throw new IllegalArgumentException("Illegal name for heightmap, duplicate or null name: " + name);
-        heightmaps.put(name, heightmap);
-    }
-
-    /**
-     * Returns the {@link Heightmap} associated to the given name.
-     *
-     * @param name the name of the heightmap
-     * @return the associated heightmap
-     * @throws NoSuchElementException if there is not a heightmap associated with the specified name
-     */
-    public Heightmap getHeightmap(String name) throws NoSuchElementException {
-        Heightmap heightmap = heightmaps.get(name);
-        if (heightmap == null)
-            throw new NoSuchElementException("This heightmap does not exist: " + name);
-        return heightmap;
     }
 }

@@ -1,9 +1,10 @@
 package com.ignfab.minalac.generator.models;
 
-import java.util.Map;
-import java.util.List;
-import java.util.LinkedList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Collections;
 
 /**
  * A basic model store, storing and retrieving models by type.
@@ -34,6 +35,6 @@ public class ModelStore {
      * @return List of models of the given type
      */
     public List<Model> getByType(String type) {
-        return byType.get(type);
+        return byType.containsKey(type) ? byType.get(type) : Collections.emptyList();
     }
 }

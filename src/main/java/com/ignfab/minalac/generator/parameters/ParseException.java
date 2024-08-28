@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.parsing;
+package com.ignfab.minalac.generator.parameters;
 
 /**
  * Exception thrown if a problem occurs during parsing.

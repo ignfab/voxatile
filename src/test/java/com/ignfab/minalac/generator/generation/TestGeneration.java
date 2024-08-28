@@ -1,8 +1,13 @@
 package com.ignfab.minalac.generator.generation;
 
-import org.junit.jupiter.api.AfterEach;
+import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.world.MapWriteException;
+import com.ignfab.minalac.generator.world.VoxelTypeFactory;
+import com.ignfab.minalac.generator.world.VoxelWorld;
+import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
@@ -13,40 +18,29 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
-import com.ignfab.minalac.generator.exceptions.TransformException;
-import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
-
-import java.util.NoSuchElementException;
+import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestGeneration {
     private static CoordinateReferenceSystem crs2154;
     private static CoordinateReferenceSystem crs4326;
-    private static Generation generation;
+    private static CoordinateReferenceSystem crs3857;
 
     @BeforeAll
     public static void setUp() throws FactoryException {
         crs2154 = CRS.decode("EPSG:2154");
         crs4326 = CRS.decode("EPSG:4326");
-    }
-
-    @BeforeEach
-    public void init() {
-        generation = new Generation(crs2154, 601000.0, 6341000.0, 501, 501, 2.0, 3.0);
-    }
-
-    @AfterEach
-    public void tearDown() {
-        generation = null;
+        crs3857 = CRS.decode("EPSG:3857");
     }
 
     @Test
     public void testGeneration() throws FactoryException, TransformException {
-        Generation generation = new Generation(crs2154, 601000.0, 6341000.0, 501, 501, 2.0, 3.0);
+        VoxelWorld world = new EmptyVoxelWorld(501, 501);
+        // 657_781, 6_860_729 (EPSG:2154) IGN Saint Mandé
+        Generation generation = new Generation(world, crs2154, 657_781, 6_860_729, 501, 501, 2.0, 3.0);
 
-        WorldBBox2d box = generation.getWorldBBox2d();
+        WorldBBox3d box = generation.world().limits();
         assertEquals(-250, box.minX());
         assertEquals(-250, box.minY());
         assertEquals(250, box.maxX());
@@ -54,44 +48,47 @@ public class TestGeneration {
 
         // We should have an envelope +/- 500 around center (250 voxel * 2.0 meters/voxels = 500m)
         Envelope envelope = generation.getEnvelopeForCRS(crs2154);
-        assertEquals(600500.0, envelope.getMinX(), 0.01);
-        assertEquals(6340500.0, envelope.getMinY(), 0.01);
-        assertEquals(601500.0, envelope.getMaxX(), 0.01);
-        assertEquals(6341500.0, envelope.getMaxY(), 0.01);
+        assertEquals(657_280.0, envelope.getMinX(), 2);
+        assertEquals(6_860_230.0, envelope.getMinY(), 2);
+        assertEquals(658_280.0, envelope.getMaxX(), 2);
+        assertEquals(6_861_230.0, envelope.getMaxY(), 2);
 
         // Try another CRS
         envelope = generation.getEnvelopeForCRS(crs4326);
-        assertEquals(44.1564, envelope.getMinX(), 0.0002);
-        assertEquals(1.7559, envelope.getMinY(), 0.0002);
+        assertEquals(48.8407, envelope.getMinX(), 0.0002);
+        assertEquals(2.4179, envelope.getMinY(), 0.0002);
 
         // Coords converter from WSG84
-        MapToWorldConverter converter = generation.makeCoordsConverter(crs4326);
-        // 44.1655934, 1.7682873 is WSG84 for 601500, 6341500 which correspond to voxel 250,250.
-        Geometry geometry = new GeometryFactory().createPoint(new Coordinate(44.1655934, 1.7682873));
+        MapToWorldConverter converter = generation.makeCoordsConverter(crs3857);
+        // 269_919.0354, 6_248_639.6317 is EPSG:3857 for 657_781, 6_860_729 which correspond to voxel 0,0.
+        Geometry geometry = new GeometryFactory().createPoint(new Coordinate(269_919.0354, 6_248_639.6317));
         geometry = converter.convert(geometry);
-        assertEquals(250.0, geometry.getCoordinate().x, 0.01);
-        assertEquals(250.0, geometry.getCoordinate().y, 0.01);
+        assertEquals(0.0, geometry.getCoordinate().x, 0.01);
+        assertEquals(0.0, geometry.getCoordinate().y, 0.01);
     }
 
-    @Test
-    public void testAddHeightmap() {
-        Heightmap heightmap = new Heightmap(0, 0, 5, 5, 20);
+    private static class EmptyVoxelWorld extends VoxelWorld {
+        private int extendX;
+        private int extendY;
 
-        assertDoesNotThrow(() -> generation.addHeightmap("ground", heightmap));
-        assertDoesNotThrow(() -> generation.addHeightmap("second-ground", heightmap));
-        assertThrows(IllegalArgumentException.class, () -> generation.addHeightmap("ground", heightmap), "Should not be able to add a heightmap with an existing name");
-        assertThrows(IllegalArgumentException.class, () -> generation.addHeightmap(null, heightmap), "Should not be able to add a heightmap with a null name");
-        assertEquals(heightmap, generation.getHeightmap("ground"));
-    }
+        protected EmptyVoxelWorld(int extendX, int extendY) {
+            super(new VoxelWorldMetadata());
+            this.extendX = extendX;
+            this.extendY = extendY;
+        }
 
-    @Test
-    public void testGetHeightmap() {
-        Heightmap heightmap = new Heightmap(0, 0, 5, 5, 20);
-        generation.addHeightmap("ground", heightmap);
+        @Override
+        public WorldBBox3d maxLimits() {
+            return new WorldBBox3d(-extendX / 2, -extendY / 2, 0, extendX, extendY, 1);
+        }
 
-        Heightmap retreivedHeightmap = assertDoesNotThrow(() -> generation.getHeightmap("ground"));
-        assertEquals(heightmap, retreivedHeightmap);
-        assertEquals(heightmap, generation.getHeightmap("ground"));
-        assertThrows(NoSuchElementException.class, () -> generation.getHeightmap("foo"));
+        @Override
+        public VoxelTypeFactory getFactory() {
+            return null;
+        }
+
+        @Override
+        public void save(File destination) throws MapWriteException {
+        }
     }
 }

@@ -1,0 +1,251 @@
+package com.ignfab.minalac.generator.parameters;
+
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.parameters.renderers.RendererParams;
+import com.ignfab.minalac.generator.renderers.Renderer;
+import org.junit.jupiter.api.Test;
+
+import java.beans.ConstructorProperties;
+import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ParamsParserTest {
+    private static final String MINIMAL_YAML = """
+        area:
+          center:
+            latitude: 5.8
+            longitude: 2.4
+          extendX: 500
+          extendY: 2500
+        format: minetest
+        """;
+
+    @Test
+    public void testParseFormat() {
+        assertDoesNotThrow(() -> new ParamsParser().parse("""
+            {
+              "area": {
+                "center": {
+                  "latitude": 5.8,
+                  "longitude": 2.4
+                },
+                "extendX": 500,
+                "extendY": 2500
+              },
+              "format": "minetest"
+            }
+            """
+        ), "Should be able to parse JSON format");
+
+        assertDoesNotThrow(() -> new ParamsParser().parse(MINIMAL_YAML), "Should be able to parse YAML format");
+    }
+
+    @Test
+    public void testParseWithoutOptionalFields() {
+        GenerationParams params = assertDoesNotThrow(() -> new ParamsParser().parse(MINIMAL_YAML));
+
+        // Checks if the configuration for default values was properly done, should equal to default values
+        assertEquals(1.0, params.verticalScale);
+        assertEquals(1.0, params.horizontalScale);
+        assertEquals(Collections.emptyMap(), params.heightmaps);
+        assertEquals(Collections.emptyMap(), params.renderers);
+    }
+
+    @Test
+    public void testParseWithOptionalFields() {
+        // optional renderers field deserialization is tested on testRegisterRenderer()
+        GenerationParams params = assertDoesNotThrow(() -> new ParamsParser().parse("""
+            verticalScale: 2.5
+            horizontalScale: 5.2
+            heightmaps:
+              someHeightmap:
+                default: 3
+            """
+            + MINIMAL_YAML
+        ));
+
+        assertEquals(2.5, params.verticalScale);
+        assertEquals(5.2, params.horizontalScale);
+        assertEquals(1, params.heightmaps.size());
+        assertEquals(3, params.heightmaps.get("someHeightmap").defaultValue);
+    }
+
+    @Test
+    public void testParseMissingRequiredField() {
+        assertThrows(ParseException.class, () -> new ParamsParser().parse("format: minetest"), "Absence of the area field should throw an exception");
+
+        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+            area:
+              center:
+                longitude: 2.4
+              extendX: 500
+              extendY: 2500
+            format: minetest
+            """
+        ), "Absence of the latitude field should throw an exception");
+
+        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+            area:
+              center:
+                latitude: 5.8
+              extendX: 500
+              extendY: 2500
+            format: minetest
+            """
+        ), "Absence of the longitude field should throw an exception");
+
+        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+            area:
+              center:
+                latitude: 5.8
+                longitude: 2.4
+              extendY: 2500
+            format: minetest
+            """
+        ), "Absence of the extendX field should throw an exception");
+
+        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+            area:
+              center:
+                latitude: 5.8
+                longitude: 2.4
+              extendX: 500
+            format: minetest
+            """
+        ), "Absence of the extendY field should throw an exception");
+
+        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+            area:
+              center:
+                latitude: 5.8
+                longitude: 2.4
+              extendX: 500
+              extendY: 2500
+            """
+        ), "Absence of the format field should throw an exception");
+    }
+
+    @Test
+    public void testParseHeightmaps() {
+        // By default, jackson doesn't check the existence of duplicates keys: last occurrence takes precedence.
+        // Checks if configuration was properly done so an exception is thrown.
+        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+            heightmaps:
+              ground:
+                default: -9
+              ground:
+                default: 8
+            """
+            + MINIMAL_YAML
+        ), "Presence of duplicate keys should throw an exception");
+
+        // Testing explicit and implicit empty heightmaps
+        GenerationParams paramsExplicit = assertDoesNotThrow(() -> new ParamsParser().parse(MINIMAL_YAML + "heightmaps: {}"), "Explicit empty heightmaps should not throw an exception");
+        assertEquals(Collections.emptyMap(), paramsExplicit.heightmaps, "Explicit empty heightmaps should result in a empty map");
+        // `heightmaps:` is by default deserialized as null
+        GenerationParams paramsImplicit = assertDoesNotThrow(() -> new ParamsParser().parse(MINIMAL_YAML + "heightmaps:"), "Implicit empty heightmaps should not throw an exception");
+        assertEquals(Collections.emptyMap(), paramsImplicit.heightmaps, "Implicit empty heightmaps should result in a empty map");
+
+        // By default, jackson sets null values for empty elements.
+        // Checks if configuration was properly done, so an exception is thrown.
+        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+            heightmaps:
+              altitude:
+                default: -9
+              ground:
+            """
+            + MINIMAL_YAML
+        ), "Empty ground heightmap should throw an exception");
+
+        // To ensure that an illegal value for the default is caught and thrown as a ParseException when deserialized
+        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+            heightmaps:
+              altitude:
+                default: illegal
+            """
+            + MINIMAL_YAML
+        ), "Illegal value for default field");
+    }
+
+    @Test
+    public void testParseRenderers() {
+        // Testing explicit and implicit empty renderers
+        GenerationParams paramsExplicit = assertDoesNotThrow(() -> new ParamsParser().parse(MINIMAL_YAML + "renderers: {}"), "Explicit empty renderers should not trigger exception");
+        assertEquals(Collections.emptyMap(), paramsExplicit.renderers, "Explicit empty renderers should result in a empty map");
+        // `renderers:` is by default deserialized as null
+        GenerationParams paramsImplicit = assertDoesNotThrow(() -> new ParamsParser().parse(MINIMAL_YAML + "renderers:"), "Implicit empty renderers should not trigger exception");
+        assertEquals(Collections.emptyMap(), paramsImplicit.renderers, "Implicit empty renderers should result in a empty map");
+
+        // There is a field `type` needed for resolving the concrete class.
+        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+            renderers:
+              someRendererName:
+                someField: foo
+            """
+            + MINIMAL_YAML
+        ), "Type field is missing");
+
+        ParamsParser parser = new ParamsParser();
+        parser.registerRenderer("customIdentifier", TestingRendererParams.class);
+
+        GenerationParams genParams = assertDoesNotThrow(() -> parser.parse("""
+            renderers:
+              smeargle:
+                type: customIdentifier
+                requiredField: sketch
+            """
+            + MINIMAL_YAML
+        ), "Renderer should be deserialized");
+
+        // type field is not deserialized only used to find out the class that should be used for deserialization
+        assertNotNull(genParams.renderers.get("smeargle"));
+        assertNull(genParams.renderers.get("smeargle").type, "Type field should not be deserialized");
+
+        TestingRendererParams rendererParams = (TestingRendererParams) genParams.renderers.get("smeargle");
+        assertEquals("sketch", rendererParams.requiredField);
+        assertEquals("defaultOptionalValue", rendererParams.optionalField);
+
+        assertThrows(ParseException.class, () -> parser.parse("""
+            renderers:
+              zorua:
+                type: wrongIdentifier
+                requiredField: rest
+            """
+            + MINIMAL_YAML
+        ), "Wrong type field value");
+    }
+
+    /**
+     * A RendererParams class for testing purposes.
+     */
+    @SuppressWarnings("checkstyle:VisibilityModifier")
+    public static class TestingRendererParams extends RendererParams {
+        /**
+         * A required field.
+         */
+        public String requiredField;
+        /**
+         * An optional field.
+         */
+        @JsonSetter(nulls = Nulls.SKIP)
+        public String optionalField = "defaultOptionalValue";
+
+        /**
+         * Constructor used to ensure that the required fields are present during deserialization.
+         *
+         * @param requiredField the required field.
+         */
+        @ConstructorProperties({"requiredField"})
+        public TestingRendererParams(String requiredField) {
+            this.requiredField = requiredField;
+        }
+
+        @Override
+        public Renderer create(Generation generation) {
+            throw new UnsupportedOperationException("This class is only for testing deserialization mechanisms");
+        }
+    }
+}

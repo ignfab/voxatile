@@ -15,6 +15,6 @@ public class ModelStoreTest {
         store.add("titi", new TestModel());
         assertEquals(2, store.getByType("toto").size());
         assertEquals(1, store.getByType("titi").size());
-        assertNull(store.getByType("tata"));
+        assertEquals(0, store.getByType("tata").size());
     }
 }

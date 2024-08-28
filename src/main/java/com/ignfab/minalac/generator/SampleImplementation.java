@@ -5,14 +5,15 @@ import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider;
 import com.ignfab.minalac.generator.inputs.WMSFloatBilDataProvider;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelStore;
-import com.ignfab.minalac.generator.parsing.ParamsParser;
-import com.ignfab.minalac.generator.parsing.ParseException;
+import com.ignfab.minalac.generator.parameters.ParamsParser;
+import com.ignfab.minalac.generator.parameters.ParseException;
+import com.ignfab.minalac.generator.parameters.renderers.HeightmapRendererParams;
+import com.ignfab.minalac.generator.parameters.renderers.VectorRendererParams;
 import com.ignfab.minalac.generator.processors.FloatMatrixProcessor;
 import com.ignfab.minalac.generator.processors.GeoToolsVectorProcessor;
 import com.ignfab.minalac.generator.processors.Processor;
@@ -20,8 +21,6 @@ import com.ignfab.minalac.generator.processors.post.MetadataCopyPostProcessor;
 import com.ignfab.minalac.generator.processors.post.MetadataParsePostProcessor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
 import com.ignfab.minalac.generator.renderers.GroundRenderer;
-import com.ignfab.minalac.generator.renderers.HeightmapRenderer;
-import com.ignfab.minalac.generator.renderers.VectorRenderer;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.execution.Scheduler;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
@@ -65,22 +64,20 @@ public final class SampleImplementation {
         MinalacGeneratorCLI cli = new MinalacGeneratorCLI();
         cli.parse(args);
 
-        // Generation parameters parsing
-        ParamsParser parser = new ParamsParser(cli.readParameters());
+        // Generation parsing
+        ParamsParser parser = new ParamsParser();
+        // TODO: Static method that provides a ParamsParser with all default renderers
+        // If those name values are modified, update the documentation accordingly
+        parser.registerRenderer("vector", VectorRendererParams.class);
+        parser.registerRenderer("heightmap", HeightmapRendererParams.class);
+        Generation generation = parser.parse(cli.readParameters()).create();
 
         System.out.println("Creation of the map.");
-
-        Generation generation = parser.createGeneration();
 
         String crsName = "EPSG:2154";
         CoordinateReferenceSystem crs = CRS.decode(crsName);
         Envelope envelope = generation.getEnvelopeForCRS(crs);
         String bboxURL = "BBOX=" + envelope.getMinX() + "," + envelope.getMinY() + "," + envelope.getMaxX() + "," + envelope.getMaxY();
-
-        // Various data stores
-        ModelStore store = new ModelStore();
-        Heightmap groundHeightmap = generation.getHeightmap("ground");
-        VoxelWorld world = parser.createVoxelWorld();
 
         Scheduler scheduler = new Scheduler();
 
@@ -94,7 +91,7 @@ public final class SampleImplementation {
             } catch (FactoryException e) {
                 throw new RuntimeException(e);
             }
-            retrieveDataAndFillModelStore(store, "mnt",
+            retrieveDataAndFillModelStore(generation.models(), "mnt",
                 new WMSFloatBilDataProvider("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS", crs, envelope),
                 new FloatMatrixProcessor(converter)
             );
@@ -109,7 +106,7 @@ public final class SampleImplementation {
             } catch (FactoryException e) {
                 throw new RuntimeException(e);
             }
-            retrieveDataAndFillModelStore(store, "building",
+            retrieveDataAndFillModelStore(generation.models(), "building",
                 new WFS1_1_GML3_1_DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154&outputFormat=text%2Fxml%3B%20subtype%3Dgml%2F3.1.1"),
                 new GeoToolsVectorProcessor(converter),
                 new MetadataCopyPostProcessor("hauteur", "height", false, false),
@@ -171,40 +168,33 @@ public final class SampleImplementation {
         });
 
         // Rendering
+
         SimpleVoxelPattern soilPattern = new SimpleVoxelPattern();
-        soilPattern.set(0, 0, 0, world.getFactory().createVoxelType(SemanticType.GRASS));
-        soilPattern.set(new WorldBBox3d(0, 0, -3, 1, 1, 3), world.getFactory().createVoxelType(SemanticType.DIRT));
-        soilPattern.set(new WorldBBox3d(0, 0, -23, 1, 1, 20), world.getFactory().createVoxelType(SemanticType.STONE));
+        soilPattern.set(0, 0, 0, generation.world().getFactory().createVoxelType(SemanticType.GRASS));
+        soilPattern.set(new WorldBBox3d(0, 0, -3, 1, 1, 3), generation.world().getFactory().createVoxelType(SemanticType.DIRT));
+        soilPattern.set(new WorldBBox3d(0, 0, -23, 1, 1, 20), generation.world().getFactory().createVoxelType(SemanticType.STONE));
 
         scheduler.schedule("renderers.heightmap", () -> {
             log("Filling altitude heightmap");
-            new HeightmapRenderer(
-                generation.getHeightmap("ground"),
-                store.getByType("mnt")
-            ).render(generation.getWorldBBox2d().to3d(-32_000, 64_000));
+            generation.renderers().get("heightmap-ground").render(generation.world().limits());
             log("Altitude heightmap filled");
         }, "models.ground");
 
+        // TODO: Create GroundRendererParams when VoxelPattern deserialization is implemented
         scheduler.schedule("renderers.ground", () -> {
             log("Rendering ground");
             new GroundRenderer(
-                generation.getHeightmap("ground"),
+                generation.heightmaps().get("ground"),
                 soilPattern
-            ).render(generation.getWorldBBox2d().to3d(-32_000, 64_000));
+            ).render(generation.world().limits());
             log("Ground rendered");
         }, "renderers.heightmap");
 
         scheduler.schedule("renderers.buildings", () -> {
             log("Placing buildings");
-            new VectorRenderer(
-                groundHeightmap,
-                store.getByType("building"),
-                world.getFactory().createVoxelType(SemanticType.COBBLE),
-                world.getFactory().createVoxelType(SemanticType.BRICK)
-            ).render(generation.getWorldBBox2d().to3d(-32_000, 64_000));
+            generation.renderers().get("building").render(generation.world().limits());
             log("Placed buildings");
         }, "renderers.heightmap", "models.buildings");
-
         // Get work done!
 
         scheduler.start();
@@ -215,10 +205,10 @@ public final class SampleImplementation {
         }
 
         System.out.println("Saving world");
-        VoxelWorldMetadata metadata = world.getMetadata();
-        metadata.setSpawn(new WorldCoords3d(0, 0, groundHeightmap.get(0, 0) + 1));
+        VoxelWorldMetadata metadata = generation.world().getMetadata();
+        metadata.setSpawn(new WorldCoords3d(0, 0, generation.heightmaps().get("ground").get(0, 0) + 1));
         metadata.setWorldName("Minalac");
-        save(cli.getOutputPath().toFile(), world);
+        save(cli.getOutputPath().toFile(), generation.world());
 
         System.out.println("Done");
 

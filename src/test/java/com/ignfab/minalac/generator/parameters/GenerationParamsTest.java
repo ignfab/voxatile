@@ -1,0 +1,131 @@
+package com.ignfab.minalac.generator.parameters;
+
+import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.generation.Heightmap;
+import com.ignfab.minalac.generator.parameters.renderers.VectorRendererParams;
+import com.ignfab.minalac.generator.world.SemanticType;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class GenerationParamsTest {
+    private GenerationParams params;
+
+    @BeforeEach
+    void setUp() {
+        GenerationParams.Area.LatitudeLongitude center = new GenerationParams.Area.LatitudeLongitude(5.8, 2.4);
+        GenerationParams.Area area = new GenerationParams.Area(center, 500, 2500);
+        params = new GenerationParams(area, "minetest");
+        params.heightmaps = new HashMap<>();
+        params.renderers = new HashMap<>();
+    }
+
+    @Test
+    public void testValidateValidParams() {
+        assertDoesNotThrow(params::validate);
+    }
+
+    @Test
+    public void testValidateVerticalScale() {
+        params.verticalScale = 0.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+
+        params.verticalScale = -5.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
+    public void testValidateHorizontalScale() {
+        params.horizontalScale = 0.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+
+        params.horizontalScale = -1.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
+    public void testValidateLatitude() {
+        params.area.center.latitude = 90.0;
+        assertDoesNotThrow(params::validate);
+
+        params.area.center.latitude = 91.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+
+        params.area.center.latitude = -90.0;
+        assertDoesNotThrow(params::validate);
+
+        params.area.center.latitude = -91.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
+    public void testValidateLongitude() {
+        params.area.center.longitude = 180.0;
+        assertDoesNotThrow(params::validate);
+
+        params.area.center.longitude = 181.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+
+        params.area.center.longitude = -180.0;
+        assertDoesNotThrow(params::validate);
+
+        params.area.center.longitude = -181.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
+    public void testValidateExtendX() {
+        params.area.extendX = 0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+
+        params.area.extendX = -500;
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
+    public void testValidateExtendY() {
+        params.area.extendY = 0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+
+        params.area.extendY = -10;
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
+    public void testValidateFormat() {
+        params.format = "illegal";
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
+    public void testCreate() throws ParseException {
+        params.verticalScale = 3.0;
+        params.horizontalScale = 4.0;
+        params.crs = "EPSG:5643";
+        params.heightmaps.put("ground", new HeightmapParams("0"));
+        params.heightmaps.put("altitude", new HeightmapParams("minimal"));
+        params.renderers.put("building", new VectorRendererParams(
+            "building",
+            "ground",
+            SemanticType.COBBLE,
+            SemanticType.STONE)
+        );
+        Generation generation = params.create();
+
+        assertNotNull(generation);
+        assertEquals(500, generation.world().limits().sizeX());
+        assertEquals(2500, generation.world().limits().sizeY());
+        assertEquals(3.0, generation.getVerticalScale(), 0.001);
+
+        Heightmap ground = assertDoesNotThrow(() -> generation.heightmaps().get("ground"));
+        assertEquals(0, ground.get(0, 0));
+
+        Heightmap altitude = assertDoesNotThrow(() -> generation.heightmaps().get("altitude"));
+        assertEquals(Integer.MIN_VALUE, altitude.get(0, 0));
+
+        assertDoesNotThrow(() -> generation.renderers().get("building"));
+    }
+}
