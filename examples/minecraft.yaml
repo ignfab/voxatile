@@ -1,6 +1,17 @@
 heightmaps:
-  - name: ground
+  ground:
     default: 0
+renderers:
+  heightmap-ground:
+    type: heightmap
+    modelType: mnt
+    heightmap: ground
+  building:
+    type: vector
+    modelType: building
+    heightmap: ground
+    inside: COBBLE
+    edge: STONE
 verticalScale: 1.0
 horizontalScale: 1.0
 area:

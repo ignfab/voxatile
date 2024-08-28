@@ -1,0 +1,85 @@
+package com.ignfab.minalac.generator.parameters;
+
+import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
+import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+import com.ignfab.minalac.generator.world.VoxelWorld;
+import org.geotools.api.geometry.Position;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.TransformException;
+import org.geotools.geometry.Position2D;
+import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
+/**
+ * This class is used to create a new {@link Generation} from {@link GenerationParams} parameters.
+ */
+public final class GenerationCreator {
+
+    private GenerationCreator() {}
+
+    private static final Map<String, Supplier<VoxelWorld>> FORMATS = Map.of(
+        "minecraft", MCVoxelWorld::new,
+        "minetest", MTVoxelWorld::new
+    );
+
+    /**
+     * Creates a new {@code Generation} from the specified parameters.
+     *
+     * @param params the parameters
+     * @return the corresponding generation object
+     */
+    static Generation create(GenerationParams params) {
+        // TODO : If not provided its default value should be calculated by finding the appropriated projected CRS for the provided center point.
+        // At the moment the default value is EPSG:2154
+        CoordinateReferenceSystem targetCrs;
+        double[] center;
+        try {
+            targetCrs = CRS.decode(params.crs == null ? "EPSG:2154" : params.crs);
+            MathTransform mathTransform = CRS.findMathTransform(DefaultGeographicCRS.WGS84, targetCrs);
+            Position position = new Position2D(DefaultGeographicCRS.WGS84, params.area.center.longitude, params.area.center.latitude);
+            center = mathTransform.transform(position, position).getCoordinate();
+        } catch (FactoryException e) {
+            throw new RuntimeException("Wasn't able to decode the CRS code", e);
+        } catch (TransformException e) {
+            throw new RuntimeException("Wasn't able to convert the coordinates", e);
+        }
+
+        Generation generation = new Generation(
+            FORMATS.get(params.format).get(),
+            targetCrs,
+            center[0],
+            center[1],
+            params.area.extendX,
+            params.area.extendY,
+            params.horizontalScale,
+            params.verticalScale
+        );
+
+        // TODO: refactor when placeable deserialization is implemented
+        params.heightmaps.forEach((name, heightmapParams) ->
+            generation.heightmaps().add(
+                name,
+                heightmapParams.create(generation)
+            )
+        );
+
+        params.renderers.forEach((name, rendererParams) -> {
+            generation.renderers().add(
+                name,
+                rendererParams.create(generation)
+            );
+        });
+
+        return generation;
+    }
+
+    static boolean isFormatSupported(String format) {
+        return FORMATS.containsKey(format);
+    }
+}

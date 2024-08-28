@@ -8,7 +8,7 @@ import com.ignfab.minalac.generator.world.VoxelPattern;
 /**
  * Ground renderer renders a basic ground using altitude from given heightmap.
  */
-public class GroundRenderer {
+public class GroundRenderer implements Renderer {
     private final Heightmap heightmap;
     private final VoxelPattern pattern;
 
@@ -24,10 +24,9 @@ public class GroundRenderer {
     }
 
     /**
-     * Performs rendering.
-     *
-     * @param bbox the limits of the rendering area.
+     * {@inheritDoc}
      */
+    @Override
     public void render(WorldBBox3d bbox) {
         for (WorldCoords2d c : heightmap.bbox().intersection(bbox))
             pattern.place(c.x(), c.y(), heightmap.get(c));
