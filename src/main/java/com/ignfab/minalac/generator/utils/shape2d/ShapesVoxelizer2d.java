@@ -1,7 +1,8 @@
 package com.ignfab.minalac.generator.utils.shape2d;
 
-import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
 import com.ignfab.minalac.generator.utils.iterator.RemapIterator;
+import com.ignfab.minalac.generator.utils.iterator.UnionIterator;
+import com.ignfab.minalac.generator.utils.iterator.UnwrapIterator;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.iterator.BoundedIterator2d;
 import com.ignfab.minalac.generator.voxelization.IndexedVoxel2d;
@@ -64,11 +65,13 @@ public class ShapesVoxelizer2d implements Voxelizer2d {
      */
     @Override
     public Iterator<Voxel2d> iterator() {
-        return new BoundedIterator2d<>(MultiIterator.concat(
-            () -> new MultiIterator<>(points),
-            () -> new MultiIterator<>(lines),
-            () -> new MultiIterator<>(polygons)
-        ), bbox);
+        return new BoundedIterator2d<>(
+            new UnionIterator<Voxel2d>(
+                new UnwrapIterator<>(points),
+                new UnwrapIterator<>(lines),
+                new UnwrapIterator<>(polygons)
+            ),
+        bbox);
     }
 
     /**
@@ -79,11 +82,16 @@ public class ShapesVoxelizer2d implements Voxelizer2d {
      */
     @Override
     public Iterable<IndexedVoxel2d> borders() {
-        return () -> new BoundedIterator2d<>(MultiIterator.concat(
-            () -> new MultiIterator<>(points),
-            () -> new MultiIterator<>(lines),
-            () -> new MultiIterator<>(new MultiIterator<>(new RemapIterator<>(polygons, Polygon2d::borders)))
-        ), bbox);
+        return () -> new BoundedIterator2d<>(
+            new UnionIterator<>(
+                new UnwrapIterator<>(points),
+                new UnwrapIterator<>(lines),
+                new UnwrapIterator<>(
+                    new RemapIterator<>(polygons, Polygon2d::borders)
+                )
+            ),
+            bbox
+        );
     }
 
     /**
@@ -94,6 +102,11 @@ public class ShapesVoxelizer2d implements Voxelizer2d {
      */
     @Override
     public Iterable<Voxel2d> inside() {
-        return () -> new BoundedIterator2d<>(new MultiIterator<>(new RemapIterator<>(polygons, Polygon2d::inside)), bbox);
+        return () -> new BoundedIterator2d<>(
+            new UnwrapIterator<>(
+                new RemapIterator<>(polygons, Polygon2d::inside)
+            ),
+            bbox
+        );
     }
 }

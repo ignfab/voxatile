@@ -1,9 +1,11 @@
 package com.ignfab.minalac.generator.utils.shape2d;
 
-import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
+import com.ignfab.minalac.generator.utils.iterator.UnionIterator;
+import com.ignfab.minalac.generator.utils.iterator.UnwrapIterator;
 import com.ignfab.minalac.generator.utils.iterator.RemapIterator;
 import com.ignfab.minalac.generator.utils.shape2d.iterator.Polygon2dIterator;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+import com.ignfab.minalac.generator.voxelization.IndexedVoxel2d;
 import com.ignfab.minalac.generator.voxelization.Voxel2d;
 
 import java.util.ArrayList;
@@ -60,8 +62,10 @@ public class Polygon2d implements Iterable<Voxel2d> {
      *
      * @return the border iterable of this polygon.
      */
-    public Iterable<Line2d> borders() {
-        return () -> MultiIterator.concat(shell.lines(), () -> new MultiIterator<>(new RemapIterator<>(holes, PolyLine2d::lines)));
+    public Iterable<IndexedVoxel2d> borders() {
+        return () -> new UnionIterator<>(
+            shell.iterator(),
+            new UnwrapIterator<>(holes));
     }
 
     /**
@@ -84,6 +88,16 @@ public class Polygon2d implements Iterable<Voxel2d> {
     }
 
     /**
+     * Returns a new iterable over all lines (shell and holes) of this polygon.
+     *
+     * @return iterator over lines
+     */
+    public Iterable<Line2d> lines() {
+        return () -> new UnionIterator<>(
+            new UnwrapIterator<>(new RemapIterator<>(holes, PolyLine2d::lines)),
+            shell.lines().iterator());
+    }
+    /**
      * Lists intersections of this polygon at a given y.
      * Very useful for voxelization purpose.
      * <p>
@@ -98,7 +112,7 @@ public class Polygon2d implements Iterable<Voxel2d> {
             return Collections.emptyList();
 
         List<Line2d.Intersection> intersections = new ArrayList<>();
-        for (Line2d line : borders()) {
+        for (Line2d line : lines()) {
             Line2d.Intersection inter = line.intersection(y);
             if (inter != null)
                 intersections.add(inter);

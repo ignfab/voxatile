@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.utils.shape2d;
 
-import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
+import com.ignfab.minalac.generator.utils.iterator.UnwrapIterator;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.IndexedVoxel2d;
@@ -46,7 +46,7 @@ public record PolyLine2d(List<Line2d> lines) implements Iterable<IndexedVoxel2d>
      */
     @Override
     public Iterator<IndexedVoxel2d> iterator() {
-        return new MultiIterator<>(lines);
+        return new UnwrapIterator<>(lines);
     }
 
     /**
