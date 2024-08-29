@@ -3,15 +3,29 @@ package com.ignfab.minalac.generator.models;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ignfab.minalac.generator.utils.random.Salting;
+
 /**
  * This {@code class} is intended to evolve. Models are objects that can be
  * rendered.
  */
-public abstract class Model {
+public abstract class Model implements Salting {
     /**
-     * Additional data about the model.
+     * Model metadata.
      */
     private final Map<String, Object> metadata = new HashMap<>();
+
+    /**
+     * This method should provide a salt specific to the item represented
+     * by this model. It should depend only on the item (its geometry, its
+     * attributes), so if fetched again, same item, should always give the
+     * same salt.
+     *
+     * @return a unique but constant salt for this model
+     *
+     * See docs/development/RandomNumbers.md for more detailed information.
+     */
+    public abstract String salt();
 
     /**
      * Tells if a metadata exists.

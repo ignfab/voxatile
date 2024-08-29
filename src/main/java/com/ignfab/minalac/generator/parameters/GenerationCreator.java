@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.parameters;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import org.geotools.api.geometry.Position;
 import org.geotools.api.referencing.FactoryException;
@@ -52,6 +53,7 @@ public final class GenerationCreator {
 
         Generation generation = new Generation(
             FORMATS.get(params.format).get(),
+            new Seed(params.seed),
             targetCrs,
             center[0],
             center[1],

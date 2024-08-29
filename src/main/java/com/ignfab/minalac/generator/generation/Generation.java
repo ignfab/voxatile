@@ -7,6 +7,7 @@ import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.VoxelWorld;
+import com.ignfab.minalac.generator.utils.random.Seed;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
@@ -22,6 +23,9 @@ import org.locationtech.jts.geom.util.AffineTransformation;
  * such as the voxel world, the renderers or the heightmaps.
  */
 public class Generation {
+    // Main generation seed for random number generation
+    private final Seed seed;
+
     // Target coordinate reference system (CRS used for voxel world rendering)
     private final CoordinateReferenceSystem crs;
 
@@ -42,6 +46,7 @@ public class Generation {
      * It sets {@code VoxelWorld}'s limits in way the center is at {@code WorldCoords2d} (0, 0).
      *
      * @param world the voxel world without its {@code limits()} set
+     * @param seed Seed for random number generation
      * @param crs Coordinate reference system used for generated world
      * @param centerX first coordinate of the center in the specified CRS
      * @param centerY second coordinate of the center in the specified CRS
@@ -53,6 +58,7 @@ public class Generation {
     @SuppressWarnings("checkstyle:ParameterNumber")
     public Generation(
         VoxelWorld world,
+        Seed seed,
         CoordinateReferenceSystem crs,
         double centerX,
         double centerY,
@@ -60,6 +66,9 @@ public class Generation {
         int extendY,
         double horizontalScale,
         double verticalScale) {
+
+        this.seed = seed;
+
         // For now:
         // - Rotation is not yet implemented (should be).
 
@@ -162,5 +171,14 @@ public class Generation {
     // To be removed when vertical is used by this class. (Renderers will probably contain that value)
     public double getVerticalScale() {
         return verticalScale;
+    }
+
+    /**
+     * Returns the random number seed for this generation.
+     *
+     * @return the seed
+     */
+    public Seed seed() {
+        return seed;
     }
 }

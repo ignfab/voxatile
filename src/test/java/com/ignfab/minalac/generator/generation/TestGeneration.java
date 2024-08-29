@@ -2,11 +2,13 @@ package com.ignfab.minalac.generator.generation;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
+import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelTypeFactory;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -26,20 +28,23 @@ public class TestGeneration {
     private static CoordinateReferenceSystem crs2154;
     private static CoordinateReferenceSystem crs4326;
     private static CoordinateReferenceSystem crs3857;
+    private static Seed seed;
 
     @BeforeAll
     public static void setUp() throws FactoryException {
         crs2154 = CRS.decode("EPSG:2154");
         crs4326 = CRS.decode("EPSG:4326");
         crs3857 = CRS.decode("EPSG:3857");
+        seed = new Seed("ABCD");
     }
 
     @Test
     public void testGeneration() throws FactoryException, TransformException {
         VoxelWorld world = new EmptyVoxelWorld(501, 501);
         // 657_781, 6_860_729 (EPSG:2154) IGN Saint Mandé
-        Generation generation = new Generation(world, crs2154, 657_781, 6_860_729, 501, 501, 2.0, 3.0);
+        Generation generation = new Generation(world, seed, crs2154, 657_781, 6_860_729, 501, 501, 2.0, 3.0);
 
+        assertEquals(seed, generation.seed());
         WorldBBox3d box = generation.world().limits();
         assertEquals(-250, box.minX());
         assertEquals(-250, box.minY());

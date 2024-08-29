@@ -80,5 +80,12 @@ public class FloatMatrixModel extends Model implements Matrix2d<Float> {
         return (1 - fy) * ((1 - fx) * data.get(xf, yf) + fx * data.get(xc, yf))
             + fy * ((1 - fx) * data.get(xf, yc) + fx * data.get(xc, yc));
     }
+
+    @Override
+    public String salt() {
+        // TODO: Seed mechanism for matrix cannot rely on feature (matrix model is a extract
+        // of a unique huge data matrix).
+        throw new UnsupportedOperationException("Unimplemented method 'salt'");
+    }
 }
 

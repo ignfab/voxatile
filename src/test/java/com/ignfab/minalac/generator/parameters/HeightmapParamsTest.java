@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.parameters;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.referencing.CRS;
@@ -36,6 +37,7 @@ public class HeightmapParamsTest {
     public void testCreate() throws FactoryException, ParseException {
         Generation generation = new Generation(
             new MTVoxelWorld(),
+            new Seed(""),
             CRS.decode("EPSG:2154"),
             657_781,
             6_860_729,

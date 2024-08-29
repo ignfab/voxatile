@@ -38,5 +38,9 @@ public class TestingRectangleShapeVoxelizable2dModel extends Model implements Sh
         );
         return voxelizer;
     }
-}
 
+    @Override
+    public String salt() {
+        return "";
+    }
+}

@@ -32,4 +32,9 @@ public class TestingModel extends Model {
     public void assertMetadataAbsent(String name, String message) {
         assertFalse(hasMetadata(name), prefix(message) + "Unexpected metadata with name: " + name);
     }
+
+    @Override
+    public String salt() {
+        throw new UnsupportedOperationException("Unimplemented method 'salt'");
+    }
 }
