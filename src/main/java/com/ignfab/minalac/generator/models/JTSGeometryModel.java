@@ -46,6 +46,17 @@ public class JTSGeometryModel extends Model implements ShapesVoxelizable2d, Shap
         this.geom = converter.convert(geom);
     }
 
+    @Override
+    public String salt() {
+        Point p = this.geom.getCentroid();
+        if (p == null)
+            // Maybe we should rely on something else in that case (metadata?)?
+            return "";
+
+        // This should ensure enough uniqueness
+        return p.getX() + "/" + p.getY();
+    }
+
     /**
      * {@inheritDoc}
      */

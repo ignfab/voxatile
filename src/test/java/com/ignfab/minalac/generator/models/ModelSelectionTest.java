@@ -35,5 +35,10 @@ public class ModelSelectionTest {
 
     private static class ModelImpl extends Model {
         ModelImpl() {}
+
+        @Override
+        public String salt() {
+            throw new UnsupportedOperationException("Unimplemented method 'salt'");
+        }
     }
 }

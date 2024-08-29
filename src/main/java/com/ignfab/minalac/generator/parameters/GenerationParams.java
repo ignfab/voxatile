@@ -57,6 +57,12 @@ public class GenerationParams {
     public String format;
 
     /**
+     * The random number seed.
+     * This field is optional, default "".
+     */
+    public String seed;
+
+    /**
      * The map of heightmaps used during the generation.
      * This field is optional.
      */

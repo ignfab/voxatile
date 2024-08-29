@@ -9,6 +9,10 @@ import org.junit.jupiter.api.Test;
 
 public class ModelTest {
     private static final class DummyModel extends Model {
+        @Override
+        public String salt() {
+            return "";
+        }
     }
 
     private DummyModel model;

@@ -80,5 +80,10 @@ public class ModelRendererTest {
         public int hashCode() {
             return Objects.hashCode(type);
         }
+
+        @Override
+        public String salt() {
+            throw new UnsupportedOperationException("Unimplemented method 'salt'");
+        }
     }
 }
