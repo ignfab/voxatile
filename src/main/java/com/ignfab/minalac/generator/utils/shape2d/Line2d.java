@@ -4,6 +4,9 @@ import com.ignfab.minalac.generator.utils.shape2d.iterator.Line2dIterator;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.IndexedVoxel2d;
+import com.ignfab.minalac.generator.voxelization.Voxel2d;
+
+import java.util.Collections;
 
 /**
  * Represents a 2d line segment in the voxel world.
@@ -19,7 +22,7 @@ import com.ignfab.minalac.generator.voxelization.IndexedVoxel2d;
  *
  * @see #maxIndex() tMax
  */
-public class Line2d implements Iterable<IndexedVoxel2d> {
+public class Line2d implements Shape2d {
     private final WorldCoords2d start;
     private final WorldCoords2d end;
 
@@ -115,15 +118,20 @@ public class Line2d implements Iterable<IndexedVoxel2d> {
     }
 
     /**
-     * Returns an iterator over the voxels of this line.
+     * Returns an iterable over the voxels of this line.
      * Each voxel will be indexed by its position in the line,
      * with an index between {@code 0} and {@link #maxIndex()}.
      *
-     * @return a new {@link Line2dIterator} on this line.
+     * @return an iterable returning {@link Line2dIterator}.
      */
     @Override
-    public Line2dIterator iterator() {
-        return new Line2dIterator(this);
+    public Iterable<IndexedVoxel2d> borderVoxels() {
+        return () -> new Line2dIterator(this);
+    }
+
+    @Override
+    public Iterable<Voxel2d> insideVoxels() {
+        return Collections::emptyIterator;
     }
 
     /**

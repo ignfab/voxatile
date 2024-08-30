@@ -4,6 +4,7 @@ import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
 import com.ignfab.minalac.generator.utils.iterator.RemapIterator;
 import com.ignfab.minalac.generator.utils.shape2d.iterator.Polygon2dIterator;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+import com.ignfab.minalac.generator.voxelization.IndexedVoxel2d;
 import com.ignfab.minalac.generator.voxelization.Voxel2d;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.List;
  * Both shell and all holes must be closed polyline,
  * and all holes must be contained inside the shell.
  */
-public class Polygon2d implements Iterable<Voxel2d> {
+public class Polygon2d implements Shape2d {
     private final PolyLine2d shell;
     private final Collection<PolyLine2d> holes;
     private final WorldBBox2d bbox;
@@ -56,11 +57,11 @@ public class Polygon2d implements Iterable<Voxel2d> {
     }
 
     /**
-     * Returns a new iterable over voxels on the edge of this polygon.
+     * Returns a new iterable over lines of this polygon.
      *
-     * @return the border iterable of this polygon.
+     * @return the lines iterable of this polygon.
      */
-    public Iterable<Line2d> borders() {
+    public Iterable<Line2d> lines() {
         return () -> MultiIterator.concat(shell.lines(), () -> new MultiIterator<>(new RemapIterator<>(holes, PolyLine2d::lines)));
     }
 
@@ -75,11 +76,22 @@ public class Polygon2d implements Iterable<Voxel2d> {
     }
 
     /**
+     * Returns a new iterable over voxels on the edge of this polygon.
+     *
+     * @return the border iterable of this polygon.
+     */
+    @Override
+    public Iterable<IndexedVoxel2d> borderVoxels() {
+        return () -> new MultiIterator<>(lines());
+    }
+
+    /**
      * Returns a new iterable over voxels strictly inside polygon.
      *
      * @return the inside iterable of this polygon.
      */
-    public Iterable<Voxel2d> inside() {
+    @Override
+    public Iterable<Voxel2d> insideVoxels() {
         return () -> new Polygon2dIterator(this, false);
     }
 
@@ -98,7 +110,7 @@ public class Polygon2d implements Iterable<Voxel2d> {
             return Collections.emptyList();
 
         List<Line2d.Intersection> intersections = new ArrayList<>();
-        for (Line2d line : borders()) {
+        for (Line2d line : lines()) {
             Line2d.Intersection inter = line.intersection(y);
             if (inter != null)
                 intersections.add(inter);
