@@ -1,9 +1,9 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
-import com.ignfab.minalac.generator.world.SemanticType;
-import com.ignfab.minalac.generator.world.VoxelTypeFactory;
-import com.ignfab.minalac.generator.world.VoxelType;
 import com.ignfab.minalac.generator.outputs.minetest.voxelType.MTSimpleVoxelType;
+import com.ignfab.minalac.generator.world.SemanticType;
+import com.ignfab.minalac.generator.world.VoxelType;
+import com.ignfab.minalac.generator.world.VoxelTypeFactory;
 
 /**
  * Factory for creating {@link MTVoxelType}.
@@ -38,6 +38,7 @@ public class MTVoxelTypeFactory implements VoxelTypeFactory {
             case COBBLE -> new MTSimpleVoxelType(this.world, "default:cobble");
             case BRICK -> new MTSimpleVoxelType(this.world, "default:stonebrick");
             case WATER -> new MTSimpleVoxelType(this.world, "default:water_source");
+            case CONCRETE -> new MTSimpleVoxelType(this.world, "default:obsidian");
             default -> new MTSimpleVoxelType(this.world, "air");
         };
     }
