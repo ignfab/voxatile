@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.utils.iterator.Iterators;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Line2d;
-import com.ignfab.minalac.generator.voxelization.shape2d.LineVoxel2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.LinearVoxel2d;
 
 import java.util.Arrays;
 
@@ -23,7 +23,7 @@ public class Line2dIteratorTest {
 
         assertBrowsesAllOnce(
             Arrays.asList(0, 1, 2, 3, 4, 5),
-            Iterators.remap(line.borderVoxels().iterator(), LineVoxel2d::index)
+            Iterators.remap(line.borderVoxels().iterator(), LinearVoxel2d::index)
         );
     }
 }

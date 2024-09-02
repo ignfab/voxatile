@@ -1,14 +1,18 @@
 package com.ignfab.minalac.generator.voxelization.shape3d;
 
+import com.ignfab.minalac.generator.utils.Pair;
 import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.world3d.Bounded3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.voxelization.shape3d.iterator.Line3dIterator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Represents a 3d polyline in the voxel world.
@@ -70,7 +74,57 @@ public class Polyline3d implements Bounded3d, Shape3d {
     }
 
     @Override
-    public Iterable<LineVoxel3d> borderVoxels() {
-        return Iterables.unwrap(Iterables.remap(lines, Shape3d::borderVoxels));
+    public Iterable<LinearVoxel3d> borderVoxels() {
+        return Iterables.unwrap(
+            Iterables.remap(
+                () -> new LinesIterator(lines),
+                (Pair<Line3d, Line3d> p) -> () -> new Line3dIterator(p.first(), p.second())
+            )
+        );
+    }
+
+    /**
+     * An iterator over lines that returns current and next line and closes the loop if in a ring.
+     */
+    public class LinesIterator implements Iterator<Pair<Line3d, Line3d>> {
+
+        private Iterator<Line3d> iterator;
+        private Line3d next;
+        private Line3d first;
+
+        /**
+         * Creates a new LinesIterator from an {@code Iterable<Line3d>}.
+         *
+         * @param iterable iterable to create iterator from
+         */
+        public LinesIterator(Iterable<Line3d> iterable) {
+            iterator = iterable.iterator();
+            if (iterator.hasNext()) {
+                first = iterator.next();
+                next = first;
+            } else {
+                next = null;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return next != null;
+        }
+
+        @Override
+        public Pair<Line3d, Line3d> next() {
+            if (next == null)
+                throw new NoSuchElementException();
+
+            Line3d last = next;
+            next = (iterator.hasNext()) ? iterator.next() : null;
+
+            // Close the loop if we are in a de facto linear ring
+            if (next == null && last.end() == first.start())
+                return new Pair<>(last, first);
+
+            return new Pair<>(last, next);
+        }
     }
 }

@@ -23,7 +23,7 @@ public interface Shape2d {
      *
      * @return the border iterable of this shape.
      */
-    default Iterable<LineVoxel2d> borderVoxels() {
+    default Iterable<LinearVoxel2d> borderVoxels() {
         return Collections::emptyIterator;
     }
 

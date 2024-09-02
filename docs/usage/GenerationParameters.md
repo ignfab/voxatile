@@ -248,6 +248,7 @@ Fields:
 - `modelType`: the type of models to render
 - `heightmap`: the name of the heightmap to use. It must exist.
 
+<<<<<<< HEAD
 ### Leveling renderer
 
 Levels ground under selected models.
@@ -431,3 +432,27 @@ Fields:
   - `metadata` (required): Name of the metadata to check
   - `lowerThan` (required): Threshold value that the metadata must be lower than. (Only possible to compare numbers with this filter)
 
+=======
+### Linear renderer
+
+A generic renderer for linear stuff like roads, rails, rivers.
+
+Placeable are placed symetrically all along the model axis (Position 0 being the axis, greater is further away from the axis).
+
+**Type**: linear
+
+**Extra parameters**:
+- `modelType`: the type of models to render (required).
+- `at`: Positions where to place stuff around the axis (optional, default 0).
+- `place`: [Placeable](#placeables) to place at each position (required).
+- `renderOnlyWhenAbove`: If given, renders only if a part of the model is above that heightmap (optional, default none, meaning "render anyway").
+
+Example:
+```yaml
+type: linear
+modelType: road
+at: 1..3
+place: default:cobble
+renderOnlyWhenAbove: ground
+```
+>>>>>>> 12de6a0 (feat(linear): Add linear renderer with thickness and joins.)

@@ -162,6 +162,9 @@ Fields:
 - `blueprint`: The actual blueprint of the structure (required). It may be a string (1 dimension), a list of strings (2 dimensions), or a list of list of strings (3 dimensions). First level of list corresponds to the first axis in `axes` and position in string correspond to the last axis (or the unique one if only one dimension). Space character always means `nothing` (no voxel to place) and does not need declaration in `with`. If you need *air* voxels, declare them in `with` using a dot for example.
 - `xOffset`, `yOffset`, `zOffset`: an offset to the structure origin point (optional, default 0). The default point is on bottom left of the `blueprint`.
 
+In linear context, `x`, `y` and `z` can be replaced by their respective synonyms `length`, `width` and `height` which reflects better the way coordinates are used.
+
+In `axes` field, each axis can be `x`, `y` or `z`.
 
 Example of a two-dimensional structure (z is always 0 here):
 ```yaml

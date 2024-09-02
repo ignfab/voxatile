@@ -4,7 +4,7 @@ import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.voxelization.shape2d.LineVoxel2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.LinearVoxel2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
@@ -69,7 +69,7 @@ public class BuildingRenderer extends ModelRenderer<ShapesVoxelizable2d> {
 
         ShapesVoxelizer2d voxelizer = model.voxelize2d(bbox.to2d());
         // Build walls and place windows of the building
-        for (LineVoxel2d voxel : voxelizer.borders()) {
+        for (LinearVoxel2d voxel : voxelizer.borders()) {
             WorldCoords2d c = voxel.coords();
             int zMin = heightmap.get(c);
 

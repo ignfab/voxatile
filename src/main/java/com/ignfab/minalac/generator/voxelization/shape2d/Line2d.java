@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.voxelization.shape2d;
 import com.ignfab.minalac.generator.utils.world2d.Bounded2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+import com.ignfab.minalac.generator.utils.world2d.Vector2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.iterator.Line2dIterator;
 
 /**
@@ -27,8 +28,7 @@ public class Line2d implements Bounded2d, Shape2d {
     // { x = slopeX * index + start.x
     // { y = slopeY * index + start.y
     private final int maxIndex;
-    private final double slopeX;
-    private final double slopeY;
+    private Vector2d slope;
 
     private final WorldBBox2d bbox;
 
@@ -54,13 +54,13 @@ public class Line2d implements Bounded2d, Shape2d {
         maxIndex = Math.max(Math.abs(deltaX), Math.abs(deltaY));
 
         // Normalize vector to index
-        if (maxIndex == 0) {
-            slopeX = 0.0;
-            slopeY = 0.0;
-        } else {
-            slopeX = deltaX / (double) maxIndex;
-            slopeY = deltaY / (double) maxIndex;
-        }
+        if (maxIndex == 0)
+            slope = new Vector2d(0.0, 0.0);
+        else
+            slope = new Vector2d(
+                deltaX / (double) maxIndex,
+                deltaY / (double) maxIndex
+            );
     }
 
     /**
@@ -100,8 +100,8 @@ public class Line2d implements Bounded2d, Shape2d {
      */
     public WorldCoords2d atIndex(int index) {
         return WorldCoords2d.round(
-            slopeX * index + start.x(),
-            slopeY * index + start.y()
+            slope.x() * index + start.x(),
+            slope.y() * index + start.y()
         );
     }
 
@@ -128,18 +128,18 @@ public class Line2d implements Bounded2d, Shape2d {
             // Horizontal line
             startT = 0;
             endT = maxIndex;
-        } else if (slopeY < 0) {
+        } else if (slope.y() < 0) {
             // Ascending line
-            startT = Math.max(0, Math.floor((y + 0.5 - start.y()) / slopeY) + 1);
-            endT = Math.min(maxIndex, Math.floor((y - 0.5 - start.y()) / slopeY));
+            startT = Math.max(0, Math.floor((y + 0.5 - start.y()) / slope.y()) + 1);
+            endT = Math.min(maxIndex, Math.floor((y - 0.5 - start.y()) / slope.y()));
         } else {
             // Descending line
-            startT = Math.max(0, Math.ceil((y - 0.5 - start.y()) / slopeY));
-            endT = Math.min(maxIndex, Math.ceil((y + 0.5 - start.y()) / slopeY) - 1);
+            startT = Math.max(0, Math.ceil((y - 0.5 - start.y()) / slope.y()));
+            endT = Math.min(maxIndex, Math.ceil((y + 0.5 - start.y()) / slope.y()) - 1);
         }
 
-        int x1 = (int) Math.round(slopeX * endT + start.x());
-        int x2 = (int) Math.round(slopeX * startT + start.x());
+        int x1 = (int) Math.round(slope.x() * endT + start.x());
+        int x2 = (int) Math.round(slope.x() * startT + start.x());
 
         return new Intersection(
             Math.min(x1, x2),
@@ -179,7 +179,16 @@ public class Line2d implements Bounded2d, Shape2d {
     }
 
     @Override
-    public Iterable<LineVoxel2d> borderVoxels() {
+    public Iterable<LinearVoxel2d> borderVoxels() {
         return () -> new Line2dIterator(this);
+    }
+
+    /**
+     * Returns slope vector.
+     *
+     * @return the slope vector.
+     */
+    public Vector2d slope() {
+        return slope;
     }
 }

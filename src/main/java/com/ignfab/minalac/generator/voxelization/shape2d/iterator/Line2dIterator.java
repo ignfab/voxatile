@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.voxelization.shape2d.iterator;
 
 import com.ignfab.minalac.generator.voxelization.shape2d.Line2d;
-import com.ignfab.minalac.generator.voxelization.shape2d.LineVoxel2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.LinearVoxel2d;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
  *
  * @see Line2d
  */
-public class Line2dIterator implements Iterator<LineVoxel2d> {
+public class Line2dIterator implements Iterator<LinearVoxel2d> {
     private final Line2d line;
     private int index = 0;
 
@@ -30,10 +30,10 @@ public class Line2dIterator implements Iterator<LineVoxel2d> {
     }
 
     @Override
-    public LineVoxel2d next() {
+    public LinearVoxel2d next() {
         if (index > line.maxIndex())
             throw new NoSuchElementException();
-        LineVoxel2d coords = new LineVoxel2d(line, index);
+        LinearVoxel2d coords = new LinearVoxel2d(line, index);
         index++;
         return coords;
     }

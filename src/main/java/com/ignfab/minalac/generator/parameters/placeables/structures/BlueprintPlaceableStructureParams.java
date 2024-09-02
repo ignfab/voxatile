@@ -84,7 +84,23 @@ public class BlueprintPlaceableStructureParams extends PlaceableStructureParams.
          * Z-axis.
          */
         @JsonProperty("z")
-        Z_DESC(new WorldCoords3d(0, 0, 1));
+        Z_DESC(new WorldCoords3d(0, 0, 1)),
+
+        /**
+         * In length axis (same as X but seen in linear context)
+         */
+        @JsonProperty("length")
+        LENGTH_ASC(new WorldCoords3d(1, 0, 0)),
+        /**
+         * In width axis (same as Y but seen in linear context)
+         */
+        @JsonProperty("width")
+        WIDTH(new WorldCoords3d(0, 1, 0)),
+        /**
+         * Height axis (same as Z but seen in linear context)
+         */
+        @JsonProperty("height")
+        HEIGHT_DESC(new WorldCoords3d(0, 0, 1));
 
         /**
          * Direction vector of the axis.

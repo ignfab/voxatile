@@ -89,7 +89,7 @@ public class Polygon2d implements Bounded2d, Shape2d {
     }
 
     @Override
-    public Iterable<LineVoxel2d> borderVoxels() {
+    public Iterable<LinearVoxel2d> borderVoxels() {
         return Iterables.unwrap(Iterables.remap(lines, Shape2d::borderVoxels));
     }
 

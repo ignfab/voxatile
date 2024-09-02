@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.voxelization.shape3d;
 
 import com.ignfab.minalac.generator.utils.world3d.Bounded3d;
+import com.ignfab.minalac.generator.utils.world3d.Vector3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.voxelization.shape3d.iterator.Line3dIterator;
@@ -25,13 +26,11 @@ public class Line3d implements Bounded3d, Shape3d {
     private final WorldCoords3d end;
 
     // 0 <= index <= maxIndex
-    // { x = slopeX * index + start.x
-    // { y = slopeY * index + start.y
-    // { z = slopeZ * index + start.z
+    // { x = slope.x() * index + start.x()
+    // { y = slope.y() * index + start.y()
+    // { z = slope.z() * index + start.z()
     private final int maxIndex;
-    private final double slopeX;
-    private final double slopeY;
-    private final double slopeZ;
+    private Vector3d slope;
 
     private final WorldBBox3d bbox;
 
@@ -59,13 +58,13 @@ public class Line3d implements Bounded3d, Shape3d {
 
         // Normalize vector to index
         if (maxIndex == 0) {
-            slopeX = 0.0;
-            slopeY = 0.0;
-            slopeZ = 0.0;
+            slope = new Vector3d(0.0, 0.0, 0.0);
         } else {
-            slopeX = deltaX / (double) maxIndex;
-            slopeY = deltaY / (double) maxIndex;
-            slopeZ = deltaZ / (double) maxIndex;
+            slope = new Vector3d(
+                deltaX / (double) maxIndex,
+                deltaY / (double) maxIndex,
+                deltaZ / (double) maxIndex
+            );
         }
     }
 
@@ -98,6 +97,15 @@ public class Line3d implements Bounded3d, Shape3d {
     }
 
     /**
+     * Returns slope vector.
+     *
+     * @return the slope vector.
+     */
+    public Vector3d slope() {
+        return slope;
+    }
+
+    /**
      * Computes the coordinate of the point on the line at the given index.
      * This corresponds to the coordinate of the nth voxel of this line.
      *
@@ -106,10 +114,32 @@ public class Line3d implements Bounded3d, Shape3d {
      */
     public WorldCoords3d atIndex(int index) {
         return WorldCoords3d.round(
-            slopeX * index + start.x(),
-            slopeY * index + start.y(),
-            slopeZ * index + start.z()
+            slope.x() * index + start.x(),
+            slope.y() * index + start.y(),
+            slope.z() * index + start.z()
         );
+    }
+
+    /**
+     * Give Z value for a given index on the line (index may be out of line).
+     *
+     * @param index index which give Z value for
+     * @return Z value at given index.
+     */
+    public int zAtIndex(int index) {
+        return (int) Math.round(slope.z() * index + start.z());
+    }
+
+    /**
+     * Computes index of orthogonal projection on the line from a given point (index may be out of line).
+     *
+     * @param x x-axis component of the point position
+     * @param y y-axis component of the point position
+     *
+     * @return index, in the line, of the projected point.
+     */
+    public int projectedIndexFromXY(int x, int y) {
+        return (int) Math.round(((x - start.x()) * slope.x() + (y - start.y()) * slope.y()) / (slope.x() * slope.x() + slope.y() * slope.y()));
     }
 
     @Override
@@ -123,7 +153,7 @@ public class Line3d implements Bounded3d, Shape3d {
     }
 
     @Override
-    public Iterable<LineVoxel3d> borderVoxels() {
-        return () -> new Line3dIterator(this);
+    public Iterable<LinearVoxel3d> borderVoxels() {
+        return () -> new Line3dIterator(this, null);
     }
 }

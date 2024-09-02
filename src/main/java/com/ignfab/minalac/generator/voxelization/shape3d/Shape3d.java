@@ -23,7 +23,7 @@ public interface Shape3d {
      *
      * @return the border iterable of this shape.
      */
-    default Iterable<LineVoxel3d> borderVoxels() {
+    default Iterable<LinearVoxel3d> borderVoxels() {
         return Collections::emptyIterator;
     };
 

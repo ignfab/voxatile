@@ -11,6 +11,12 @@ import java.io.File;
 
 public class TestingVoxelWorldTest {
     @Test
+    public void testConstructor() {
+        assertDoesNotThrow(() -> new TestingVoxelWorld(WorldBBox3d.EMPTY));
+        assertDoesNotThrow(() -> new TestingVoxelWorld(new WorldBBox3d(-1, -2, -3, 5, 4, 3)));
+    }
+
+    @Test
     @DisplayName("Ensure that everything that is stored in the world can be retreived")
     public void testSetAndGet() {
         TestingVoxelWorld world = new TestingVoxelWorld(new WorldBBox3d(-1, -2, -3, 5, 4, 3));

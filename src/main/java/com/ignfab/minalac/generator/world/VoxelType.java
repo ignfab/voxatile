@@ -1,9 +1,13 @@
 package com.ignfab.minalac.generator.world;
 
+import com.ignfab.minalac.generator.utils.world3d.Structure3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+
 /**
  * The {@code VoxelType} interface represents a type of voxel that can be placed within a {@link VoxelWorld}.
  */
-public interface VoxelType extends Placeable {
+public interface VoxelType extends Placeable, Structure3d {
     // TODO : Since the javadoc was added, see if it is still relevant to keep the content of doc/legacy/QuickStart.md
     /**
      * Places the voxel in its corresponding {@link VoxelWorld} at the given coordinates.
@@ -16,4 +20,12 @@ public interface VoxelType extends Placeable {
      * @param z the z-coordinate value
      */
     void place(int x, int y, int z);
+
+    default Placeable get(WorldCoords3d position) {
+        return this;
+    }
+
+    default WorldBBox3d bbox() {
+        return WorldBBox3d.ORIGIN;
+    }
 }

@@ -32,6 +32,22 @@ sources:
         metadata: height
         value: 5
         as: integer
+  road:
+    modelType: road
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:troncon_de_route
+    processor:
+      type: geoToolsVector
+  railroad:
+    modelType: railroad
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:troncon_de_voie_ferree
+    processor:
+      type: geoToolsVector
 renderers:
   altitude:
     after:
@@ -79,13 +95,97 @@ renderers:
     roof: default:cobble
     wall: default:stone
     window: default:glass
+  bridge:
+    after:
+      - source:road
+      - renderer:ground
+    type: linear
+    models:
+      type: road
+    structure:
+      axes: [ z, y ]
+      blueprint:
+        - "      XX"
+        - "XXXXXXXX"
+      with:
+        "X": default:stone
+  roads-pass1:
+    after:
+      - source:road
+      - renderer:bridge
+    type: linear
+    models:
+      type: road
+    structure:
+      axes: [ y, x ]
+      blueprint:
+        - "====="
+        - ""
+        - ""
+        - ""
+        - ""
+        - ""
+      with:
+        "=": wool:white
+        "-": wool:black
+      zOffset: 1
+  roads-pass2:
+    after:
+      - renderer:roads-pass1
+    type: linear
+    models:
+      type: road
+    structure:
+      axes: [ z, y, x ]
+      blueprint:
+      - - "....."
+        - "....."
+        - "....."
+        - "....."
+        - "....."
+        - "....."
+      - - "....."
+        - "....."
+        - "....."
+        - "....."
+        - "....."
+        - "....."
+      - - ""
+        - "-----"
+        - "-----"
+        - "-----"
+        - "-----"
+        - "==---"
+      with:
+        "=": wool:white
+        "-": wool:black
+        ".": air
+      zOffset: 1
 verticalScale: 1.0
 horizontalScale: 1.0
 area:
   center:
-    latitude: 48.845
-    longitude: 2.425
-  angle: 0
+# I love Saint Mandé
+#    latitude: 48.84593
+#    longitude: 2.42372
+# Echangeur de Bagnolet
+    latitude: 48.866
+    longitude: 2.414
+# Viaduc de Millau
+#    latitude: 44.085636190025575
+#    longitude: 3.0216182867051864
+# St Lazarre - Place de l'Europe
+#    latitude: 48.8790816561616
+#    longitude: 2.323464685493046
+# Rail Porn à Villeneuve
+#    latitude: 48.75693562069861
+#    longitude: 2.436901192048874
+# Culs de sac à Boulouris
+#    latitude: 43.42136382963531
+#    longitude: 6.793996874139488
+# Pont Martrou à Rochefort, avec un glitch à une extrémité
+#    latitude: 45.91722146731518
+#    longitude: -0.9670081885337489
   extentX: 1000
   extentY: 1000
 crs: EPSG:2154
