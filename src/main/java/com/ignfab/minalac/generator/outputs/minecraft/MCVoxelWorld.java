@@ -143,7 +143,7 @@ public class MCVoxelWorld extends VoxelWorld {
                     gameRules.putString("disableRaids", "false");
                     gameRules.putString("doDaylightCycle", "true");
                     gameRules.putString("doEntityDrops", "true");
-                    gameRules.putString("doFireTick", "true");
+                    gameRules.putString("doFireTick", "false"); // Toggled to avoid accidents!
                     gameRules.putString("doImmediateRespawn", "false");
                     gameRules.putString("doInsomnia", "true");
                     gameRules.putString("doLimitedCrafting", "false");

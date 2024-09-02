@@ -29,6 +29,7 @@ import com.ignfab.minalac.generator.parameters.renderers.BuildingRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.GroundRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.HeightmapRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.LevelingRendererParams;
+import com.ignfab.minalac.generator.parameters.renderers.RoadRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.VectorRendererParams;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
@@ -76,6 +77,7 @@ public final class SampleImplementation {
         parser.registerParams("vector", VectorRendererParams.class);
         parser.registerParams("leveling", LevelingRendererParams.class);
         parser.registerParams("building", BuildingRendererParams.class);
+        parser.registerParams("road", RoadRendererParams.class);
 
         parser.registerParams("wfs", WFSProviderParams.class);
         parser.registerParams("gpkg", GeoPackageProviderParams.class);

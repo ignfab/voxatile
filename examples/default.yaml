@@ -32,6 +32,14 @@ sources:
         metadata: height
         value: 5
         as: integer
+  road:
+    modelType: road
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:troncon_de_route
+    processor:
+      type: geoToolsVector
 renderers:
   altitude:
     after:
@@ -80,6 +88,16 @@ renderers:
     roof: default:cobble
     wall: default:stone
     window: default:glass
+  road:
+    after:
+      - source:road
+      - renderer:ground
+    type: road
+    models:
+      type: road
+    heightmap: ground
+    large: true
+    place: default:obsidian
 verticalScale: 1.0
 horizontalScale: 1.0
 area:

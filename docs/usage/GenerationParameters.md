@@ -300,6 +300,24 @@ Fields:
 #### Required model metadata
 - `height`: Height of building to render (must be a positive integer)
 
+### Road renderer
+
+```yaml
+type: road
+models:
+  type: road
+heightmap: ground
+large: true
+place: default:obsidian
+```
+
+Fields:
+- `type`: Must be the value `road`.
+- `models`: the [models](#model-selections) to render
+- `heightmap`: the name of the ground heightmap to use. It must exist.
+- `large`: whether to make a large road or small path
+- `place`: what to place along the road
+
 ## Model selections
 
 A model selection describes characteristics that models must match to be processed.
