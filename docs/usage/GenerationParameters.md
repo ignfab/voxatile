@@ -241,3 +241,20 @@ Fields:
 - `type`: Must be the value `heightmap`
 - `modelType`: the type of models to render
 - `heightmap`: the name of the heightmap to use. It must exist.
+
+### Road renderer
+
+```yaml
+type: road
+modelType: road
+heightmap: ground
+large: true
+voxel: CONCRETE
+```
+
+Fields:
+- `type`: Must be the value `road`.
+- `modelType`: the type of models to render
+- `heightmap`: the name of the ground heightmap to use. It must exist.
+- `large`: whether to make a large road or small path
+- `voxel`: the semantic type of the voxel used

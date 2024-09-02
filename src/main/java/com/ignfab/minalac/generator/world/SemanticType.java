@@ -42,5 +42,10 @@ public enum SemanticType {
      * Represent a brick voxel.
      * Can be used to represent a brick-built wall.
      */
-    BRICK
+    BRICK,
+    /**
+     * Represent a concrete voxel.
+     * Can be used to represent a road.
+     */
+    CONCRETE
 }
