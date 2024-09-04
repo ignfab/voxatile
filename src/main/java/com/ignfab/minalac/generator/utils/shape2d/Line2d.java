@@ -1,9 +1,12 @@
 package com.ignfab.minalac.generator.utils.shape2d;
 
+import java.util.Collections;
+
 import com.ignfab.minalac.generator.utils.shape2d.iterator.Line2dIterator;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.voxelization.IndexedVoxel2d;
+import com.ignfab.minalac.generator.voxelization.LineVoxel2d;
+import com.ignfab.minalac.generator.voxelization.Voxel2d;
 
 /**
  * Represents a 2d line segment in the voxel world.
@@ -19,7 +22,7 @@ import com.ignfab.minalac.generator.voxelization.IndexedVoxel2d;
  *
  * @see #maxIndex() tMax
  */
-public class Line2d implements Iterable<IndexedVoxel2d> {
+public class Line2d implements Shape2d {
     private final WorldCoords2d start;
     private final WorldCoords2d end;
 
@@ -115,18 +118,6 @@ public class Line2d implements Iterable<IndexedVoxel2d> {
     }
 
     /**
-     * Returns an iterator over the voxels of this line.
-     * Each voxel will be indexed by its position in the line,
-     * with an index between {@code 0} and {@link #maxIndex()}.
-     *
-     * @return a new {@link Line2dIterator} on this line.
-     */
-    @Override
-    public Line2dIterator iterator() {
-        return new Line2dIterator(this);
-    }
-
-    /**
      * Computes all intersecting positions at a given Y-coordinate.
      * If line is rather horizontal than vertical, intersection concerns several voxels.
      * This is used for polygon filling. It could be used for line drawing if we would
@@ -192,5 +183,15 @@ public class Line2d implements Iterable<IndexedVoxel2d> {
     @Override
     public String toString() {
         return "Line2d{start=%s, end=%s}".formatted(start, end);
+    }
+
+    @Override
+    public Iterable<LineVoxel2d> borderVoxels() {
+        return () -> new Line2dIterator(this);
+    }
+
+    @Override
+    public Iterable<Voxel2d> insideVoxels() {
+        return () -> Collections.emptyIterator();
     }
 }

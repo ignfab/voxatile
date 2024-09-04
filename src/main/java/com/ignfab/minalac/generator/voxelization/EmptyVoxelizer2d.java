@@ -31,7 +31,7 @@ public class EmptyVoxelizer2d implements Voxelizer2d {
      * @return an empty iterable.
      */
     @Override
-    public Iterable<IndexedVoxel2d> borders() {
+    public Iterable<LineVoxel2d> borders() {
         return Collections::emptyIterator;
     }
 

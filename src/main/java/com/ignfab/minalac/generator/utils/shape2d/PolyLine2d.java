@@ -1,14 +1,15 @@
 package com.ignfab.minalac.generator.utils.shape2d;
 
 import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
+import com.ignfab.minalac.generator.utils.iterator.RemapIterator;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.voxelization.IndexedVoxel2d;
+import com.ignfab.minalac.generator.voxelization.LineVoxel2d;
+import com.ignfab.minalac.generator.voxelization.Voxel2d;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @param lines the lines in this polyline.
  */
-public record PolyLine2d(List<Line2d> lines) implements Iterable<IndexedVoxel2d> {
+public record PolyLine2d(List<Line2d> lines) implements Shape2d {
     /**
      * Computes the bounding box of this polyline.
      * This is the smallest box containing all the lines.
@@ -36,17 +37,6 @@ public record PolyLine2d(List<Line2d> lines) implements Iterable<IndexedVoxel2d>
         for (int i = 0; i < lines.size(); i++)
             ends[i] = lines.get(i).end();
         return new WorldBBox2d(line.start(), ends);
-    }
-
-    /**
-     * Returns an iterator over all voxels in all lines in this polyline.
-     *
-     * @return a new iterator on this polyline.
-     * @see Line2d#iterator()
-     */
-    @Override
-    public Iterator<IndexedVoxel2d> iterator() {
-        return new MultiIterator<>(lines);
     }
 
     /**
@@ -74,5 +64,15 @@ public record PolyLine2d(List<Line2d> lines) implements Iterable<IndexedVoxel2d>
      */
     public static PolyLine2d fromPoints(WorldCoords2d... points) {
         return fromPoints(Arrays.asList(points));
+    }
+
+    @Override
+    public Iterable<LineVoxel2d> borderVoxels() {
+        return () -> new MultiIterator<>(new RemapIterator<>(lines, Shape2d::borderVoxels));
+    }
+
+    @Override
+    public Iterable<Voxel2d> insideVoxels() {
+        return () -> Collections.emptyIterator();
     }
 }

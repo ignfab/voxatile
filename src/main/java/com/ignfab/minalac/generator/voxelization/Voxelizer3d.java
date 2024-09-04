@@ -31,5 +31,5 @@ public interface Voxelizer3d extends Iterable<Voxel3d> {
      *
      * @return the border iterable of this object.
      */
-    Iterable<IndexedVoxel3d> borders();
+    Iterable<LineVoxel3d> borders();
 }

@@ -152,12 +152,12 @@ public class GeometryModel extends Model implements Voxelizable2d, Voxelizable3d
         @Override
         public void convertPoint(Point point) {
             Coordinate coordinate = point.getCoordinate();
-            voxelizer.addPoint(new Point2d(convertCoordinate(coordinate)));
+            voxelizer.addShape(new Point2d(convertCoordinate(coordinate)));
         }
 
         @Override
         public void convertLine(LineString line) {
-            voxelizer.addLine(convertPolyLine(line));
+            voxelizer.addShape(convertPolyLine(line));
         }
 
         @Override
@@ -166,7 +166,7 @@ public class GeometryModel extends Model implements Voxelizable2d, Voxelizable3d
             List<PolyLine2d> holes = new ArrayList<>(polygon.getNumInteriorRing());
             for (int n = 0; n < polygon.getNumInteriorRing(); n++)
                 holes.add(convertPolyLine(polygon.getInteriorRingN(n)));
-            voxelizer.addPolygon(new Polygon2d(shell, holes));
+            voxelizer.addShape(new Polygon2d(shell, holes));
         }
     }
 
@@ -190,12 +190,12 @@ public class GeometryModel extends Model implements Voxelizable2d, Voxelizable3d
 
         @Override
         public void convertPoint(Point point) {
-            voxelizer.addPoint(new Point3d(convertCoordinate(point.getCoordinate())));
+            voxelizer.addShape(new Point3d(convertCoordinate(point.getCoordinate())));
         }
 
         @Override
         public void convertLine(LineString line) {
-            voxelizer.addLine(convertPolyLine(line));
+            voxelizer.addShape(convertPolyLine(line));
         }
 
         @Override
@@ -204,7 +204,7 @@ public class GeometryModel extends Model implements Voxelizable2d, Voxelizable3d
             List<PolyLine3d> holes = new ArrayList<>(polygon.getNumInteriorRing());
             for (int n = 0; n < polygon.getNumInteriorRing(); n++)
                 holes.add(convertPolyLine(polygon.getInteriorRingN(n)));
-            voxelizer.addPolygon(new Polygon3d(shell, holes));
+            voxelizer.addShape(new Polygon3d(shell, holes));
         }
     }
 }

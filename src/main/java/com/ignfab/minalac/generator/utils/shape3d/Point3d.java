@@ -2,15 +2,16 @@ package com.ignfab.minalac.generator.utils.shape3d;
 
 import com.ignfab.minalac.generator.utils.iterator.SingletonIterator;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.voxelization.IndexedVoxel3d;
+import com.ignfab.minalac.generator.voxelization.LineVoxel3d;
+import com.ignfab.minalac.generator.voxelization.Voxel3d;
 
-import java.util.Iterator;
+import java.util.Collections;
 
 /**
  * Represents a 3d point in the voxel world.
  * It stores position in milli-voxel precision.
  */
-public class Point3d implements Iterable<IndexedVoxel3d> {
+public class Point3d implements Shape3d {
     private final WorldCoords3d coords;
 
     /**
@@ -22,15 +23,13 @@ public class Point3d implements Iterable<IndexedVoxel3d> {
         this.coords = coords;
     }
 
-    /**
-     * Returns an iterator returning a single voxel for this point.
-     * The index in the voxel will always be {@code 0},
-     * and is present only for compatibility purpose.
-     *
-     * @return an iterator for this point.
-     */
     @Override
-    public Iterator<IndexedVoxel3d> iterator() {
-        return new SingletonIterator<>(new IndexedVoxel3d.Impl(coords, 0));
+    public Iterable<LineVoxel3d> borderVoxels() {
+        return () -> new SingletonIterator<>(new LineVoxel3d(coords, null, 0));
+    }
+
+    @Override
+    public Iterable<Voxel3d> insideVoxels() {
+        return () -> Collections.emptyIterator();
     }
 }
