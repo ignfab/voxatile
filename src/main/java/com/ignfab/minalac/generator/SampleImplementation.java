@@ -12,8 +12,8 @@ import com.ignfab.minalac.generator.renderers.VectorRenderer;
 import com.ignfab.minalac.generator.utils.execution.Scheduler;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
+import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.voxelization.Voxel3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.SemanticType;
 import com.ignfab.minalac.generator.world.VoxelType;
@@ -174,11 +174,10 @@ public final class SampleImplementation {
         VoxelType stoneVT = world.getFactory().createVoxelType(SemanticType.STONE);
         VoxelType dirtVT = world.getFactory().createVoxelType(SemanticType.DIRT);
 
-        for (Voxel3d voxel : map.voxelize3d(map.bbox().to3d(-32_000, 64_000))) {
-            WorldCoords3d coords = voxel.coords();
+        for (WorldCoords2d coords : map.bbox()) {
             int x = coords.x();
             int y = coords.y();
-            int z = coords.z();
+            int z = map.get(coords);
             grassVT.place(x, y, z);
             dirtVT.place(x, y, (z - 1));
             dirtVT.place(x, y, (z - 2));
