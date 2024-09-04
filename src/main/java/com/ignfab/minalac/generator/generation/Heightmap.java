@@ -1,21 +1,15 @@
 package com.ignfab.minalac.generator.generation;
 
-import com.ignfab.minalac.generator.models.Voxelizable3d;
-import com.ignfab.minalac.generator.utils.iterator.RemapIterator;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldSize2d;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.voxelization.SimpleVoxelizer3d;
-import com.ignfab.minalac.generator.voxelization.Voxel3d;
-import com.ignfab.minalac.generator.voxelization.Voxelizer3d;
 
 import java.util.Arrays;
 
 /**
  * A 2d heightmap in voxel world units.
  */
-public class Heightmap implements Voxelizable3d {
+public class Heightmap  {
     /**
      * The bounding box of the heightmap.
      */
@@ -121,19 +115,5 @@ public class Heightmap implements Voxelizable3d {
      */
     public void set(WorldCoords2d coords, int height) {
         set(coords.x(), coords.y(), height);
-    }
-
-    /**
-     * Returns a voxelizer for this heightmap.
-     * The voxelizer will iterate over all (x, y, height) coordinates
-     * of this heightmap that are also contained in the given bounding box.
-     *
-     * @param bbox the limits for this voxelization.
-     * @return a {@link Voxelizer3d} iterating over all elements of the heightmap.
-     */
-    @Override
-    public Voxelizer3d voxelize3d(WorldBBox3d bbox) {
-        WorldBBox2d intersection = this.bbox.intersection(bbox.to2d());
-        return new SimpleVoxelizer3d(() -> new RemapIterator<>(intersection, coords -> new Voxel3d.Impl(coords.to3d(get(coords)))), bbox);
     }
 }
