@@ -47,16 +47,6 @@ public class Polygon2d implements Shape2d {
     }
 
     /**
-     * Returns the bounding box of this polygon.
-     * This is the smallest box containing all the lines.
-     *
-     * @return the bounding box of this polygon.
-     */
-    public WorldBBox2d bbox() {
-        return bbox;
-    }
-
-    /**
      * Lists intersections of this polygon at a given y.
      * Very useful for voxelization purpose.
      * <p>
@@ -90,6 +80,11 @@ public class Polygon2d implements Shape2d {
             shell.lines(),
             () -> new MultiIterator<>(new RemapIterator<>(holes, PolyLine2d::lines))
         );
+    }
+
+    @Override
+    public WorldBBox2d bbox() {
+        return bbox;
     }
 
     @Override

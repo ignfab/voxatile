@@ -17,26 +17,34 @@ import java.util.List;
  * It consists of a list of lines where the end
  * of one must be the start of the next one.
  * There is no distinction between a closed and an opened polyline.
- *
- * @param lines the lines in this polyline.
  */
-public record PolyLine3d(List<Line3d> lines) implements Shape3d {
+public class PolyLine3d implements Shape3d {
+    private final List<Line3d> lines;
+    private final WorldBBox3d bbox;
+
     /**
-     * Computes the bounding box of this polyline.
-     * This is the smallest box containing all the lines.
+     * Creates a {@code PolyLine3d}.
      *
-     * @return the bounding box of this polyline.
+     * @param lines the lines in this polyline.
      */
-    public WorldBBox3d bbox() {
+
+    public PolyLine3d(List<Line3d> lines) {
+        this.lines = lines;
+
+        // Compute bouning box of all the lines
         if (lines.isEmpty())
-            return WorldBBox3d.EMPTY;
-        Line3d line = lines.get(0);
-        if (lines.size() == 1)
-            return new WorldBBox3d(line.start(), line.end());
-        WorldCoords3d[] ends = new WorldCoords3d[lines.size()];
-        for (int i = 0; i < lines.size(); i++)
-            ends[i] = lines.get(i).end();
-        return new WorldBBox3d(line.start(), ends);
+            bbox = WorldBBox3d.EMPTY;
+        else {
+            Line3d line = lines.get(0);
+            if (lines.size() == 1)
+                bbox = line.bbox();
+            else {
+                WorldCoords3d[] ends = new WorldCoords3d[lines.size()];
+                for (int i = 0; i < lines.size(); i++)
+                    ends[i] = lines.get(i).end();
+                bbox = new WorldBBox3d(line.start(), ends);
+            }
+        }
     }
 
     /**
@@ -64,6 +72,20 @@ public record PolyLine3d(List<Line3d> lines) implements Shape3d {
      */
     public static PolyLine3d fromPoints(WorldCoords3d... points) {
         return fromPoints(Arrays.asList(points));
+    }
+
+    /**
+     * Returns list of lines constituing this polyline.
+     *
+     * @return list of lines
+     */
+    public List<Line3d> lines() {
+        return lines;
+    };
+
+    @Override
+    public WorldBBox3d bbox() {
+        return bbox;
     }
 
     @Override

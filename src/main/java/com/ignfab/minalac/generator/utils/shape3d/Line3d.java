@@ -74,15 +74,6 @@ public class Line3d implements Shape3d {
     }
 
     /**
-     * Returns line bounding box.
-     *
-     * @return line bounding box.
-     */
-    public WorldBBox3d bbox() {
-        return bbox;
-    }
-
-    /**
      * Returns the start of the line.
      *
      * @return the start of the line.
@@ -199,7 +190,13 @@ public class Line3d implements Shape3d {
         return "Line3d{start=%s, end=%s}".formatted(start, end);
     }
 
-        @Override
+    @Override
+    public WorldBBox3d bbox() {
+        return bbox;
+    }
+
+
+    @Override
     public Iterable<LineVoxel3d> borderVoxels() {
         return () -> new Line3dIterator(this);
     }

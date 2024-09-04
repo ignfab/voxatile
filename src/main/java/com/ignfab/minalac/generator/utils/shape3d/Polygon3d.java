@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-
 /**
  * Represents a 3d polygon with holes in the voxel world.
  * It consists of an outer shell (polyline) and inside holes (collection of polyline).

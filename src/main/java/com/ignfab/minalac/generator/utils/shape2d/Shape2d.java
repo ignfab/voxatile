@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.utils.shape2d;
 
 import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.voxelization.LineVoxel2d;
 import com.ignfab.minalac.generator.voxelization.Voxel2d;
 
@@ -8,6 +9,14 @@ import com.ignfab.minalac.generator.voxelization.Voxel2d;
  * Interface for voxel shapes in 2 dimensions.
  */
 public interface Shape2d {
+
+    /**
+     * Returns shape bounding box.
+     *
+     * @return bounding box.
+     */
+    WorldBBox2d bbox();
+
     /**
      * Returns an iterator over all voxels in this shape.
      *

@@ -67,15 +67,6 @@ public class Line2d implements Shape2d {
     }
 
     /**
-     * Returns line bounding box.
-     *
-     * @return line bounding box.
-     */
-    public WorldBBox2d bbox() {
-        return bbox;
-    }
-
-    /**
      * Returns the start of the line.
      *
      * @return the start of the line.
@@ -178,6 +169,11 @@ public class Line2d implements Shape2d {
         public int compareTo(Intersection other) {
             return start - other.start;
         }
+    }
+
+    @Override
+    public WorldBBox2d bbox() {
+        return bbox;
     }
 
     @Override
