@@ -115,6 +115,36 @@ public class WorldBBox3dTest {
     }
 
     @Test
+    @DisplayName("Test interects() method")
+    public void testIntersects() {
+        WorldBBox3d box;
+
+        box = new WorldBBox3d(-2, 3, -1, 5, 7, 6);
+
+        // Various non intersecting boxes
+        assertFalse(box.intersects(new WorldBBox3d(3, -2, 5, 3, 3, 3)));
+        assertFalse(box.intersects(new WorldBBox3d(-2, -2, -1, 3, 3, 3)));
+        assertFalse(box.intersects(new WorldBBox3d(3, 3, -1, 3, 3, 3)));
+        assertFalse(box.intersects(new WorldBBox3d(3, -2, 3, 3, 3, 3)));
+
+        // Various intersecting boxes
+        box = new WorldBBox3d(-2, -2, -2, 5, 5, 5);
+        assertTrue(box.intersects(new WorldBBox3d(-3, -3, -3, 4, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(0, -3, -3, 4, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(-3, 0, -3, 4, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(0, 0, -3, 4, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(-3, -3, 0, 4, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(0, -3, 0, 4, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(-3, 0, 0, 4, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(0, 0, 0, 4, 4, 4)));
+
+        // One voxel intersections
+        box = new WorldBBox3d(1, 2, 3, 2, 3, 4);
+        assertTrue(box.intersects(new WorldBBox3d(0, 0, 0, 2, 3, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(2, 4, 6, 3, 2, 4)));
+    }
+
+    @Test
     @DisplayName("Test intersection() method")
     public void testIntersection() {
         WorldBBox3d box;

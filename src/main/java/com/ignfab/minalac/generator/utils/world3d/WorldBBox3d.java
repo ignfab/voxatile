@@ -53,6 +53,22 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
     }
 
     /**
+     * Tells if bounding box intersects another bounind box.
+     *
+     * @param box Other bounding box to test intersection with
+     *
+     * @return True if there is an intersection
+     */
+    public boolean intersects(WorldBBox3d box) {
+        return !(min.x() > box.getMaxX()
+            || max.x() < box.getMinX()
+            || min.y() > box.getMaxY()
+            || max.y() < box.getMinY()
+            || min.z() > box.getMaxZ()
+            || max.z() < box.getMinZ());
+    }
+
+    /**
      * Creates a new {@link WorldBBox3d} containing all given coordinates.
      *
      * @param first a first mandatory coordinate that should be in resulting box

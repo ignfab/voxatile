@@ -126,6 +126,31 @@ public class WorldBBox2dTest {
     }
 
     @Test
+    @DisplayName("Test interects() method")
+    public void testIntersects() {
+        WorldBBox2d box;
+
+        box = new WorldBBox2d(-2, 3, 5, 7);
+
+        // Various non intersecting boxes
+        assertFalse(box.intersects(new WorldBBox2d(3, -2, 3, 3)));
+        assertFalse(box.intersects(new WorldBBox2d(-2, -2, 3, 3)));
+        assertFalse(box.intersects(new WorldBBox2d(3, 3, 3, 3)));
+
+        // Various intersecting boxes
+        box = new WorldBBox2d(-2, -2, 5, 5);
+        assertTrue(box.intersects(new WorldBBox2d(-3, -3, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox2d(0, -3, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox2d(-3, 0, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox2d(0, 0, 4, 4)));
+
+        // One voxel intersections
+        box = new WorldBBox2d(1, 2, 2, 3);
+        assertTrue(box.intersects(new WorldBBox2d(0, 0, 2, 3)));
+        assertTrue(box.intersects(new WorldBBox2d(2, 4, 3, 2)));
+    }
+
+    @Test
     @DisplayName("Test intersection() method")
     public void testIntersection() {
         WorldBBox2d box;
