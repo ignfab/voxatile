@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 public class WorldBBox3dTest {
     @Test
     @DisplayName("Test constructor taking origin and size as integers")
@@ -115,6 +118,36 @@ public class WorldBBox3dTest {
     }
 
     @Test
+    @DisplayName("Test interects() method")
+    public void testIntersects() {
+        WorldBBox3d box;
+
+        box = new WorldBBox3d(-2, 3, -1, 5, 7, 6);
+
+        // Various non intersecting boxes
+        assertFalse(box.intersects(new WorldBBox3d(3, -2, 5, 3, 3, 3)));
+        assertFalse(box.intersects(new WorldBBox3d(-2, -2, -1, 3, 3, 3)));
+        assertFalse(box.intersects(new WorldBBox3d(3, 3, -1, 3, 3, 3)));
+        assertFalse(box.intersects(new WorldBBox3d(3, -2, 3, 3, 3, 3)));
+
+        // Various intersecting boxes
+        box = new WorldBBox3d(-2, -2, -2, 5, 5, 5);
+        assertTrue(box.intersects(new WorldBBox3d(-3, -3, -3, 4, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(0, -3, -3, 4, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(-3, 0, -3, 4, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(0, 0, -3, 4, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(-3, -3, 0, 4, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(0, -3, 0, 4, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(-3, 0, 0, 4, 4, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(0, 0, 0, 4, 4, 4)));
+
+        // One voxel intersections
+        box = new WorldBBox3d(1, 2, 3, 2, 3, 4);
+        assertTrue(box.intersects(new WorldBBox3d(0, 0, 0, 2, 3, 4)));
+        assertTrue(box.intersects(new WorldBBox3d(2, 4, 6, 3, 2, 4)));
+    }
+
+    @Test
     @DisplayName("Test intersection() method")
     public void testIntersection() {
         WorldBBox3d box;
@@ -143,6 +176,60 @@ public class WorldBBox3dTest {
         assertEquals(new WorldBBox3d(0, -2, 0, 3, 3, 3), box.intersection(new WorldBBox3d(0, -3, 0, 4, 4, 4)));
         assertEquals(new WorldBBox3d(-2, 0, 0, 3, 3, 3), box.intersection(new WorldBBox3d(-3, 0, 0, 4, 4, 4)));
         assertEquals(new WorldBBox3d(0, 0, 0, 3, 3, 3), box.intersection(new WorldBBox3d(0, 0, 0, 4, 4, 4)));
+    }
+
+    @Test
+    @DisplayName("Test surrounding() method")
+    public void testSurrounding() {
+
+        WorldBBox3d box;
+
+        // Empty collection
+        box = assertDoesNotThrow(() -> {
+            return WorldBBox3d.surrounding(Collections.emptyList());
+        });
+
+        assertTrue(box.isEmpty());
+
+        // Single Bounded collection
+        box = assertDoesNotThrow(() -> {
+            return WorldBBox3d.surrounding(Arrays.asList(new WorldBBox3d[] {
+                new WorldBBox3d(1, 2, 3, 4, 5, 6)
+            }));
+        });
+
+        assertEquals(new WorldBBox3d(1, 2, 3, 4, 5, 6), box);
+
+        // Multiple Bounded collection
+        box = assertDoesNotThrow(() -> {
+            return WorldBBox3d.surrounding(Arrays.asList(new WorldBBox3d[] {
+                new WorldBBox3d(1, 2, 3, 4, 5, 6),
+                new WorldBBox3d(-1, -2, -3, 1, 2, 3)
+            }));
+        });
+
+        assertEquals(new WorldBBox3d(-1, -2, -3, 6, 9, 12), box);
+
+        // Empty boxes
+        box = assertDoesNotThrow(() -> {
+            return WorldBBox3d.surrounding(Arrays.asList(new WorldBBox3d[] {
+                new WorldBBox3d(-10, -8, -6, 5, 4, 2),
+                WorldBBox3d.EMPTY
+            }));
+        });
+
+        assertEquals(new WorldBBox3d(-10, -8, -6, 5, 4, 2), box);
+
+        // Empty boxes only
+        box = assertDoesNotThrow(() -> {
+            return WorldBBox3d.surrounding(Arrays.asList(new WorldBBox3d[] {
+                WorldBBox3d.EMPTY,
+                WorldBBox3d.EMPTY,
+                WorldBBox3d.EMPTY
+            }));
+        });
+
+        assertTrue(box.isEmpty());
     }
 }
 
