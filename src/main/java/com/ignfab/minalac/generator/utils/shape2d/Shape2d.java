@@ -1,0 +1,33 @@
+package com.ignfab.minalac.generator.utils.shape2d;
+
+import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
+import com.ignfab.minalac.generator.voxelization.LineVoxel2d;
+import com.ignfab.minalac.generator.voxelization.Voxel2d;
+
+/**
+ * Interface for voxel shapes in 2 dimensions.
+ */
+public interface Shape2d {
+    /**
+     * Returns an iterator over all voxels in this shape.
+     *
+     * @return the global iterator of this shape.
+     */
+    default Iterable<Voxel2d> allVoxels() {
+        return () -> MultiIterator.concat(borderVoxels(), insideVoxels());
+    }
+
+    /**
+     * Returns an iterable over border voxels in this shape.
+     *
+     * @return the border iterable of this shape.
+     */
+    Iterable<LineVoxel2d> borderVoxels();
+
+    /**
+     * Returns an iterable over inside voxels in this shape.
+     *
+     * @return the inside iterable of this shape.
+     */
+    Iterable<Voxel2d> insideVoxels();
+}

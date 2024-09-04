@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.utils.shape3d.iterator;
 
 import com.ignfab.minalac.generator.utils.shape3d.Line3d;
-import com.ignfab.minalac.generator.voxelization.IndexedVoxel3d;
+import com.ignfab.minalac.generator.voxelization.LineVoxel3d;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
  *
  * @see Line3d
  */
-public class Line3dIterator implements Iterator<IndexedVoxel3d> {
+public class Line3dIterator implements Iterator<LineVoxel3d> {
     private final Line3d line;
     private int t = 0;
 
@@ -30,10 +30,10 @@ public class Line3dIterator implements Iterator<IndexedVoxel3d> {
     }
 
     @Override
-    public IndexedVoxel3d next() {
+    public LineVoxel3d next() {
         if (t > line.maxIndex())
             throw new NoSuchElementException();
-        IndexedVoxel3d coords = new IndexedVoxel3d.Impl(line.atIndex(t), t);
+        LineVoxel3d coords = new LineVoxel3d(line.atIndex(t), line, t);
         t++;
         return coords;
     }

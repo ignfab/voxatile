@@ -1,9 +1,12 @@
 package com.ignfab.minalac.generator.utils.shape3d;
 
+import java.util.Collections;
+
 import com.ignfab.minalac.generator.utils.shape3d.iterator.Line3dIterator;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.voxelization.IndexedVoxel3d;
+import com.ignfab.minalac.generator.voxelization.LineVoxel3d;
+import com.ignfab.minalac.generator.voxelization.Voxel3d;
 
 /**
  * Represents a 3d line segment in the voxel world.
@@ -21,7 +24,7 @@ import com.ignfab.minalac.generator.voxelization.IndexedVoxel3d;
  *
  * @see #maxIndex() tMax
  */
-public class Line3d implements Iterable<IndexedVoxel3d> {
+public class Line3d implements Shape3d {
     private final WorldCoords3d start;
     private final WorldCoords3d end;
 
@@ -123,18 +126,6 @@ public class Line3d implements Iterable<IndexedVoxel3d> {
     }
 
     /**
-     * Returns an iterator over the voxels of this line.
-     * Each voxel will be indexed by its position in the line,
-     * with an index between {@code 0} and {@link #maxIndex()}.
-     *
-     * @return a new {@link Line3dIterator} on this line.
-     */
-    @Override
-    public Line3dIterator iterator() {
-        return new Line3dIterator(this);
-    }
-
-    /**
      * Computes all intersecting positions at a given Y-coordinate.
      * If line is rather horizontal than vertical, intersection concerns several voxels.
      * This is used for polygon filling. It could be used for line drawing if we would
@@ -206,5 +197,15 @@ public class Line3d implements Iterable<IndexedVoxel3d> {
     @Override
     public String toString() {
         return "Line3d{start=%s, end=%s}".formatted(start, end);
+    }
+
+        @Override
+    public Iterable<LineVoxel3d> borderVoxels() {
+        return () -> new Line3dIterator(this);
+    }
+
+    @Override
+    public Iterable<Voxel3d> insideVoxels() {
+        return () -> Collections.emptyIterator();
     }
 }

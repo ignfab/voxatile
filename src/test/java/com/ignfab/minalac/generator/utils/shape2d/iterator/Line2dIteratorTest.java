@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.utils.shape2d.Line2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.voxelization.IndexedVoxel2d;
+import com.ignfab.minalac.generator.voxelization.LineVoxel2d;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,7 +21,7 @@ public class Line2dIteratorTest {
         int indexCount = 6;
         boolean[] used = new boolean[indexCount];
 
-        for (IndexedVoxel2d voxel : line) {
+        for (LineVoxel2d voxel : line.borderVoxels()) {
             assertFalse(used[voxel.index()], "Same index twice: " + voxel.index());
             used[voxel.index()] = true;
             indexCount--;

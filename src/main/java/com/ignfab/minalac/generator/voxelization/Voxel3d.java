@@ -5,7 +5,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 /**
  * A 3d voxel is a {@link WorldCoords3d} that can have additional information.
  *
- * @see IndexedVoxel3d
+ * @see LineVoxel3d
  */
 public interface Voxel3d {
     /**

@@ -4,6 +4,7 @@ import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
 import com.ignfab.minalac.generator.utils.iterator.RemapIterator;
 import com.ignfab.minalac.generator.utils.shape3d.iterator.Polygon3dIterator;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.voxelization.LineVoxel3d;
 import com.ignfab.minalac.generator.voxelization.Voxel3d;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.List;
  * Both shell and all holes must be closed polyline,
  * and all holes must be contained inside the shell.
  */
-public class Polygon3d implements Iterable<Voxel3d> {
+public class Polygon3d implements Shape3d {
     private final PolyLine3d shell;
     private final Collection<PolyLine3d> holes;
     private final WorldBBox3d bbox;
@@ -46,25 +47,6 @@ public class Polygon3d implements Iterable<Voxel3d> {
     }
 
     /**
-     * Returns a new iterable over voxels on the edge of this polygon.
-     *
-     * @return the border iterable of this polygon.
-     */
-    public Iterable<Line3d> borders() {
-        return () -> MultiIterator.concat(shell.lines(), () -> new MultiIterator<>(new RemapIterator<>(holes, PolyLine3d::lines)));
-    }
-
-    /**
-     * Returns a new iterator over voxels inside this polygon.
-     *
-     * @return a new {@link Polygon3dIterator} on this polygon.
-     */
-    @Override
-    public Polygon3dIterator iterator() {
-        return new Polygon3dIterator(this, false);
-    }
-
-    /**
      * Lists intersections of this polygon at a given y.
      * Very useful for voxelization purpose.
      * <p>
@@ -79,12 +61,39 @@ public class Polygon3d implements Iterable<Voxel3d> {
             return Collections.emptyList();
 
         List<Line3d.Intersection> intersections = new ArrayList<>();
-        for (Line3d line : borders()) {
+        for (Line3d line : lines()) {
             Line3d.Intersection inter = line.intersection(y);
             if (inter != null)
                 intersections.add(inter);
         }
 
         return intersections;
+    }
+
+    /**
+     * Returns a new iterable over voxels on the edge of this polygon.
+     *
+     * @return the border iterable of this polygon.
+     */
+    public Iterable<Line3d> lines() {
+        return () -> MultiIterator.concat(
+            shell.lines(),
+            () -> new MultiIterator<>(new RemapIterator<>(holes, PolyLine3d::lines))
+        );
+    }
+
+    @Override
+    public Iterable<LineVoxel3d> borderVoxels() {
+        return () -> new MultiIterator<>(new RemapIterator<>(lines(), Shape3d::borderVoxels));
+    }
+
+    @Override
+    public Iterable<Voxel3d> insideVoxels() {
+        return () -> new Polygon3dIterator(this, false);
+    }
+
+    @Override
+    public Iterable<Voxel3d> allVoxels() {
+        return () -> new Polygon3dIterator(this, true);
     }
 }

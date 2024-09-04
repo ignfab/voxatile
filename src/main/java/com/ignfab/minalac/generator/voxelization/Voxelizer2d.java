@@ -31,7 +31,7 @@ public interface Voxelizer2d extends Iterable<Voxel2d> {
      *
      * @return the border iterable of this object.
      */
-    Iterable<IndexedVoxel2d> borders();
+    Iterable<LineVoxel2d> borders();
 
     /**
      * Returns an iterable over voxels strictly inside this object

@@ -1,13 +1,15 @@
 package com.ignfab.minalac.generator.utils.shape3d;
 
 import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
+import com.ignfab.minalac.generator.utils.iterator.RemapIterator;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.voxelization.IndexedVoxel3d;
+import com.ignfab.minalac.generator.voxelization.LineVoxel3d;
+import com.ignfab.minalac.generator.voxelization.Voxel3d;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -18,7 +20,7 @@ import java.util.List;
  *
  * @param lines the lines in this polyline.
  */
-public record PolyLine3d(List<Line3d> lines) implements Iterable<IndexedVoxel3d> {
+public record PolyLine3d(List<Line3d> lines) implements Shape3d {
     /**
      * Computes the bounding box of this polyline.
      * This is the smallest box containing all the lines.
@@ -38,17 +40,6 @@ public record PolyLine3d(List<Line3d> lines) implements Iterable<IndexedVoxel3d>
     }
 
     /**
-     * Returns an iterator over all voxels in all lines in this polyline.
-     *
-     * @return a new iterator on this polyline.
-     * @see Line3d#iterator()
-     */
-    @Override
-    public Iterator<IndexedVoxel3d> iterator() {
-        return new MultiIterator<>(lines);
-    }
-
-    /**
      * Creates a new polyline connecting all points in the given list.
      *
      * @param points the points of the polyline.
@@ -64,4 +55,25 @@ public record PolyLine3d(List<Line3d> lines) implements Iterable<IndexedVoxel3d>
             lines.add(new Line3d(points.get(i - 1), points.get(i)));
         return new PolyLine3d(lines);
     }
+
+    /**
+     * Creates a new polyline connecting all the given points.
+     *
+     * @param points the points of the polyline.
+     * @return a new polyline.
+     */
+    public static PolyLine3d fromPoints(WorldCoords3d... points) {
+        return fromPoints(Arrays.asList(points));
+    }
+
+    @Override
+    public Iterable<LineVoxel3d> borderVoxels() {
+        return () -> new MultiIterator<>(new RemapIterator<>(lines, Shape3d::borderVoxels));
+    }
+
+    @Override
+    public Iterable<Voxel3d> insideVoxels() {
+        return () -> Collections.emptyIterator();
+    }
+
 }

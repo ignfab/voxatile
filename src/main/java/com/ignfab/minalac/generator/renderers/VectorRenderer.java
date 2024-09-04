@@ -5,7 +5,7 @@ import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.Voxelizable2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.voxelization.IndexedVoxel2d;
+import com.ignfab.minalac.generator.voxelization.LineVoxel2d;
 import com.ignfab.minalac.generator.voxelization.Voxel2d;
 import com.ignfab.minalac.generator.voxelization.Voxelizer2d;
 import com.ignfab.minalac.generator.world.VoxelType;
@@ -56,7 +56,7 @@ public class VectorRenderer {
                 WorldCoords2d c = voxel.coords();
                 inside.place(c.x(), c.y(), heightmap.get(c) + 1);
             }
-            for (IndexedVoxel2d voxel : voxelizer.borders()) {
+            for (LineVoxel2d voxel : voxelizer.borders()) {
                 WorldCoords2d c = voxel.coords();
                 edge.place(c.x(), c.y(), heightmap.get(c) + 1);
             }

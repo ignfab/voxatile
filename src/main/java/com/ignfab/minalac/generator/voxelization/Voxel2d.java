@@ -5,7 +5,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 /**
  * A 2d voxel is a {@link WorldCoords2d} that can have additional information.
  *
- * @see IndexedVoxel2d
+ * @see LineVoxel2d
  */
 public interface Voxel2d {
     /**

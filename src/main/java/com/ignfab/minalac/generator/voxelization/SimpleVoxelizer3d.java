@@ -59,7 +59,7 @@ public class SimpleVoxelizer3d implements Voxelizer3d {
      * @return an empty iterable.
      */
     @Override
-    public Iterable<IndexedVoxel3d> borders() {
+    public Iterable<LineVoxel3d> borders() {
         return Collections::emptyIterator;
     }
 }
