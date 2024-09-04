@@ -33,16 +33,16 @@ import java.util.List;
  * Model represented by a JTS Geometry.
  * It is voxelizable both in 2d and 3d.
  */
-public class GeometryModel extends Model implements Voxelizable2d, Voxelizable3d {
+public class JTSGeometryModel extends Model implements Voxelizable2d, Voxelizable3d {
     private final Geometry geom;
 
     /**
-     * Creates a new {@link GeometryModel}.
+     * Creates a new {@link JTSGeometryModel}.
      *
      * @param geom A JTS Geometry
      * @param converter Converter from geometry CRS to world coordinates
      */
-    public GeometryModel(Geometry geom, CoordsConverter converter) throws TransformException {
+    public JTSGeometryModel(Geometry geom, CoordsConverter converter) throws TransformException {
         super();
         // Until there is no need of it we don't keep original geometry.
         // Geometry is stored transformed into world coordinates
@@ -54,7 +54,7 @@ public class GeometryModel extends Model implements Voxelizable2d, Voxelizable3d
      */
     @Override
     public Voxelizer2d voxelize2d(WorldBBox2d bbox) {
-        if (computeGeometryBBox().intersection(bbox).isEmpty())
+        if (!computeGeometryBBox().intersects(bbox))
             return EmptyVoxelizer2d.INSTANCE;
         ShapesVoxelizer2d voxelizer = new ShapesVoxelizer2d(bbox);
         convert(geom, new GeometryConverter2d(voxelizer));
@@ -66,7 +66,7 @@ public class GeometryModel extends Model implements Voxelizable2d, Voxelizable3d
      */
     @Override
     public Voxelizer3d voxelize3d(WorldBBox3d bbox) {
-        if (computeGeometryBBox().intersection(bbox.to2d()).isEmpty())
+        if (!computeGeometryBBox().intersects(bbox.to2d()))
             return EmptyVoxelizer3d.INSTANCE;
         ShapesVoxelizer3d voxelizer = new ShapesVoxelizer3d(bbox);
         convert(geom, new GeometryConverter3d(voxelizer));
@@ -79,7 +79,7 @@ public class GeometryModel extends Model implements Voxelizable2d, Voxelizable3d
 
         return new WorldBBox2d(
             new WorldCoords2d((int) Math.floor(envelope.getMinX()), (int) Math.floor(envelope.getMinY())),
-            new WorldCoords2d((int) Math.floor(envelope.getMaxX()), (int) Math.floor(envelope.getMaxY()))
+            new WorldCoords2d((int) Math.ceil(envelope.getMaxX()), (int) Math.ceil(envelope.getMaxY()))
         );
     }
 

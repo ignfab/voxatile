@@ -4,7 +4,7 @@ import com.ignfab.minalac.generator.generation.CoordsConverter;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider;
-import com.ignfab.minalac.generator.models.GeometryModel;
+import com.ignfab.minalac.generator.models.JTSGeometryModel;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.parsing.ParamsParser;
 import com.ignfab.minalac.generator.parsing.ParseException;
@@ -152,7 +152,7 @@ public final class SampleImplementation {
         try (SimpleFeatureIterator iterator = provider.getFeatures().features()) {
             while (iterator.hasNext()) {
                 SimpleFeature feature = iterator.next();
-                GeometryModel model = new GeometryModel((Geometry) feature.getDefaultGeometry(), converter);
+                JTSGeometryModel model = new JTSGeometryModel((Geometry) feature.getDefaultGeometry(), converter);
                 Object height = feature.getAttribute("hauteur");
 
                 // TODO: Value 20 is a temporary value for building renderings.
