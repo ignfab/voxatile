@@ -235,6 +235,20 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
     }
 
     /**
+     * Tells if bounding box intersects another bounind box.
+     *
+     * @param box Other bounding box to test intersection with
+     *
+     * @return True if there is an intersection
+     */
+    public boolean intersects(WorldBBox2d box) {
+        return !(min.x() > box.getMaxX()
+            || max.x() < box.getMinX()
+            || min.y() > box.getMaxY()
+            || max.y() < box.getMinY());
+    }
+
+    /**
      * Returns intersection with another bounind box.
      *
      * @param box Other bounding box to intersect with
