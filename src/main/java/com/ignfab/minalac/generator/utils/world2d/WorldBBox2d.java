@@ -3,6 +3,8 @@ package com.ignfab.minalac.generator.utils.world2d;
 import com.ignfab.minalac.generator.utils.world2d.iterator.WorldBBox2dIterator;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
+import java.util.Iterator;
+
 /**
  * The {@code WorldBBox2d} class represents a two-dimensional bounding box that surrounds an area on the surface (xy-plane) of the voxel world.
  * This BBOX is defined by a minimum point and a maximum point. These points are included in the bounding box.
@@ -10,10 +12,17 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
  *
  * @see WorldCoords2d
  */
-public class WorldBBox2d implements Iterable<WorldCoords2d> {
+public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
     private final WorldCoords2d min;
     private final WorldCoords2d max;
     private final WorldSize2d size;
+
+    /**
+     * A reusable instance of {@link WorldBBox2d} that is empty.
+     * The size of this bounding box is (0, 0) and its origin is (0, 0),
+     * meaning its maximum point is (-1, -1).
+     */
+    public static final WorldBBox2d EMPTY = new WorldBBox2d(0, 0, 0, 0);
 
     /**
      * Creates a new {@code WorldBBox2d} by providing a starting position and the desired size of the bounding box.
@@ -77,6 +86,42 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
     }
 
     /**
+     * Creates a new {@link WorldBBox2d} containing all bounded items.
+     *
+     * @param items iterable over bounded items to contain
+     * @return a bounding box containing all items
+     */
+    public static WorldBBox2d surrounding(Iterable<? extends Bounded2d> items) {
+        Iterator<? extends Bounded2d> iterator = items.iterator();
+
+        WorldBBox2d bbox = EMPTY;
+
+        while (iterator.hasNext() && bbox.isEmpty())
+            bbox = iterator.next().bbox();
+
+        if (!iterator.hasNext())
+            return bbox;
+
+        int minX = bbox.minX();
+        int minY = bbox.minY();
+        int maxX = bbox.maxX();
+        int maxY = bbox.maxY();
+
+        while (iterator.hasNext()) {
+            bbox = iterator.next().bbox();
+            if (bbox.isEmpty())
+                continue;
+
+            minX = Math.min(minX, bbox.minX());
+            minY = Math.min(minY, bbox.minY());
+            maxX = Math.max(maxX, bbox.maxX());
+            maxY = Math.max(maxY, bbox.maxY());
+        }
+
+        return new WorldBBox2d(minX, minY, maxX - minX + 1, maxY - minY + 1);
+    }
+
+    /**
      * Returns {@code true} if the given coordinates are in the bounding box.
      *
      * @param x the x-coordinate value.
@@ -84,14 +129,15 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
      * @return {@code true} if coordinates are in the bounding box.
      */
     public boolean contains(int x, int y) {
-        return min.x() <= x && x <= max.x() && min.y() <= y && y <= max.y();
+        return minX() <= x && x <= maxX()
+            && minY() <= y && y <= maxY();
     }
 
     /**
-     * Returns {@code true} if the given coordinates are in the bounding box.
+     * Returns {@code true} if the given position is in the bounding box.
      *
-     * @param coords the coordinates to be checked.
-     * @return {@code true} if coordinates are in the bounding box.
+     * @param coords the position to be checked.
+     * @return {@code true} if posiiton is in the bounding box.
      */
     public boolean contains(WorldCoords2d coords) {
         return contains(coords.x(), coords.y());
@@ -100,11 +146,40 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
     /**
      * Returns {@code true} if the given bbox is in this bounding box.
      *
-     * @param bbox the bbox to be checked.
+     * @param other the bbox to be checked.
      * @return {@code true} if the provided bbox is in this bounding box.
      */
-    public boolean contains(WorldBBox2d bbox) {
-        return contains(bbox.min()) && contains(bbox.max());
+    public boolean contains(Bounded2d other) {
+        return contains(other.bbox().min()) && contains(other.bbox().max());
+    }
+
+    /**
+     * Tells if bounding box intersects another bounind box.
+     *
+     * @param other Other bounding box to test intersection with
+     *
+     * @return True if there is an intersection
+     */
+    public boolean intersects(WorldBBox2d other) {
+        return minX() <= other.maxX()
+            && minY() <= other.maxY()
+            && maxX() >= other.minX()
+            && maxY() >= other.minY();
+    }
+
+    /**
+     * Returns intersection with another bounind box.
+     *
+     * @param other Other bounding box to intersect with
+     *
+     * @return A new bounding box representing the intersection (may be empty)
+     */
+    public WorldBBox2d intersection(WorldBBox2d other) {
+        int minX = Math.max(minX(), other.minX());
+        int minY = Math.max(minY(), other.minY());
+        int maxX = Math.min(maxX(), other.maxX());
+        int maxY = Math.min(maxY(), other.maxY());
+        return new WorldBBox2d(minX, minY, Math.max(0, maxX - minX + 1), Math.max(0, maxY - minY + 1));
     }
 
     /**
@@ -209,15 +284,6 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
         return new WorldBBox3d(this, originZ, sizeZ);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        WorldBBox2d that = (WorldBBox2d) o;
-        return min.equals(that.min) && max.equals(that.max);
-    }
-
     /**
      * Tells if box is empty.
      *
@@ -225,21 +291,6 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
      */
     public boolean isEmpty() {
         return size.x() == 0 || size.y() == 0;
-    }
-
-    /**
-     * Returns intersection with another bounind box.
-     *
-     * @param box Other bounding box to intersect with
-     *
-     * @return A new bounding box representing the intersection (may be empty)
-     */
-    public WorldBBox2d intersection(WorldBBox2d box) {
-        int minX = Math.max(min.x(), box.minX());
-        int minY = Math.max(min.y(), box.minY());
-        int maxX = Math.min(max.x(), box.maxX());
-        int maxY = Math.min(max.y(), box.maxY());
-        return new WorldBBox2d(minX, minY, Math.max(0, maxX - minX + 1), Math.max(0, maxY - minY + 1));
     }
 
     @Override
@@ -250,7 +301,21 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        WorldBBox2d that = (WorldBBox2d) o;
+        return min.equals(that.min) && max.equals(that.max);
+    }
+
+    @Override
     public String toString() {
         return "WorldBBox2d{min=%s, max=%s, size=%s}".formatted(min, max, size);
+    }
+
+    @Override
+    public WorldBBox2d bbox() {
+        return this;
     }
 }
