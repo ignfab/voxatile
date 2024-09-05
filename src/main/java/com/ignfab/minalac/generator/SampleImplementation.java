@@ -85,17 +85,17 @@ public final class SampleImplementation {
 
         // Downloads
         scheduler.schedule("heightmaps.ground", () -> {
-            log("heightmaps.ground", "Downloading height map");
+            log("Downloading height map");
             try {
                 fillGroundHeightmap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, groundHeightmap, generation.getVerticalScale());
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
-            log("heightmaps.ground", "Downloaded height map");
+            log("Downloaded height map");
         });
 
         scheduler.schedule("models.buildings", () -> {
-            log("models.buildings", "Downloading buildings");
+            log("Downloading buildings");
             try {
                 downloadVectorFeatures(
                     new WFS1_1_GML3_1_DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:batiment&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154&outputFormat=text%2Fxml%3B%20subtype%3Dgml%2F3.1.1"),
@@ -106,25 +106,25 @@ public final class SampleImplementation {
             } catch (TransformException | IOException | ParserConfigurationException | SAXException | FactoryException e) {
                 throw new RuntimeException(e);
             }
-            log("models.buildings", "Downloaded buildings");
+            log("Downloaded buildings");
         });
 
         // Rendering
         scheduler.schedule("renderers.ground", () -> {
-            log("renderers.ground", "Placing ground");
+            log("Placing ground");
             placeVoxelFromHeightmap(groundHeightmap, world);
-            log("renderers.ground", "Placed ground");
+            log("Placed ground");
         }, "heightmaps.ground");
 
         scheduler.schedule("renderers.buildings", () -> {
-            log("renderers.buildings", "Placing buildings");
+            log("Placing buildings");
             new VectorRenderer(
                 groundHeightmap,
                 store.getByType("building"),
                 world.getFactory().createVoxelType(SemanticType.COBBLE),
                 world.getFactory().createVoxelType(SemanticType.BRICK)
             ).render();
-            log("renderers.buildings", "Placed buildings");
+            log("Placed buildings");
         }, "heightmaps.ground", "models.buildings");
 
         scheduler.start();
@@ -146,8 +146,8 @@ public final class SampleImplementation {
         System.out.println("Execution time: " + (end - start) / 1000 + "s");
     }
 
-    private static void log(String prefix, String message) {
-        System.out.printf("[%s] (%s) %s%n", Thread.currentThread().getName(), prefix, message);
+    private static void log(String message) {
+        System.out.printf("[%s] %s%n", Thread.currentThread().getName(), message);
     }
 
     private static void downloadVectorFeatures(WFS1_1_GML3_1_DataProvider provider, CoordsConverter converter,

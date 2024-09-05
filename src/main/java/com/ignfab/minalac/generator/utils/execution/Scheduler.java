@@ -70,6 +70,8 @@ public class Scheduler {
         // The .execute() method asks for execution but real execution can be delayed if no thread is currently available
         executor.execute(() -> {
             try {
+                // Name current thread according to task id
+                Thread.currentThread().setName(task.getId());
                 task.setState(ScheduledTaskState.RUNNING);
                 task.run();
                 task.setState(ScheduledTaskState.FINISHED);
