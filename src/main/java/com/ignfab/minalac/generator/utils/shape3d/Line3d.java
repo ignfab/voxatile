@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.utils.shape3d;
 import java.util.Collections;
 
 import com.ignfab.minalac.generator.utils.shape3d.iterator.Line3dIterator;
+import com.ignfab.minalac.generator.utils.world3d.Bounded3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.voxelization.LineVoxel3d;
@@ -24,7 +25,7 @@ import com.ignfab.minalac.generator.voxelization.Voxel3d;
  *
  * @see #maxIndex() tMax
  */
-public class Line3d implements Shape3d {
+public class Line3d implements Bounded3d, Shape3d {
     private final WorldCoords3d start;
     private final WorldCoords3d end;
 

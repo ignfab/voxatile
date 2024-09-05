@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 public class WorldBBox2dTest {
     @Test
     @DisplayName("Test constructor taking origin and size as integers")
@@ -174,5 +177,59 @@ public class WorldBBox2dTest {
         assertEquals(new WorldBBox2d(0, -2, 3, 3), box.intersection(new WorldBBox2d(0, -3, 4, 4)));
         assertEquals(new WorldBBox2d(-2, 0, 3, 3), box.intersection(new WorldBBox2d(-3, 0, 4, 4)));
         assertEquals(new WorldBBox2d(0, 0, 3, 3), box.intersection(new WorldBBox2d(0, 0, 4, 4)));
+    }
+
+    @Test
+    @DisplayName("Test surrounding() method")
+    public void testSurrounding() {
+
+        WorldBBox2d box;
+
+        // Empty collection
+        box = assertDoesNotThrow(() -> {
+            return WorldBBox2d.surrounding(Collections.emptyList());
+        });
+
+        assertTrue(box.isEmpty());
+
+        // Single Bounded collection
+        box = assertDoesNotThrow(() -> {
+            return WorldBBox2d.surrounding(Arrays.asList(new WorldBBox2d[] {
+                new WorldBBox2d(1, 2, 3, 4)
+            }));
+        });
+
+        assertEquals(new WorldBBox2d(1, 2, 3, 4), box);
+
+        // Multiple Bounded collection
+        box = assertDoesNotThrow(() -> {
+            return WorldBBox2d.surrounding(Arrays.asList(new WorldBBox2d[] {
+                new WorldBBox2d(1, 2, 3, 4),
+                new WorldBBox2d(-1, -2, 3, 4)
+            }));
+        });
+
+        assertEquals(new WorldBBox2d(-1, -2, 5, 8), box);
+
+        // Empty boxes
+        box = assertDoesNotThrow(() -> {
+            return WorldBBox2d.surrounding(Arrays.asList(new WorldBBox2d[] {
+                new WorldBBox2d(-10, -8, 4, 2),
+                WorldBBox2d.EMPTY
+            }));
+        });
+
+        assertEquals(new WorldBBox2d(-10, -8, 4, 2), box);
+
+        // Empty only
+        box = assertDoesNotThrow(() -> {
+            return WorldBBox2d.surrounding(Arrays.asList(new WorldBBox2d[] {
+                WorldBBox2d.EMPTY,
+                WorldBBox2d.EMPTY,
+                WorldBBox2d.EMPTY
+            }));
+        });
+
+        assertTrue(box.isEmpty());
     }
 }

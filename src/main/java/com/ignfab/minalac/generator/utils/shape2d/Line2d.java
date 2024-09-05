@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.utils.shape2d;
 import java.util.Collections;
 
 import com.ignfab.minalac.generator.utils.shape2d.iterator.Line2dIterator;
+import com.ignfab.minalac.generator.utils.world2d.Bounded2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.LineVoxel2d;
@@ -22,7 +23,7 @@ import com.ignfab.minalac.generator.voxelization.Voxel2d;
  *
  * @see #maxIndex() tMax
  */
-public class Line2d implements Shape2d {
+public class Line2d implements Bounded2d, Shape2d {
     private final WorldCoords2d start;
     private final WorldCoords2d end;
 

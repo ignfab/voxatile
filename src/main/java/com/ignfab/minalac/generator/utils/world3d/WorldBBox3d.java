@@ -1,6 +1,9 @@
 package com.ignfab.minalac.generator.utils.world3d;
 
+import java.util.Iterator;
+
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+
 import com.ignfab.minalac.generator.utils.world3d.iterator.WorldBBox3dIterator;
 
 /**
@@ -10,7 +13,7 @@ import com.ignfab.minalac.generator.utils.world3d.iterator.WorldBBox3dIterator;
  *
  * @see WorldCoords3d
  */
-public class WorldBBox3d implements Iterable<WorldCoords3d> {
+public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
     private final WorldCoords3d min;
     private final WorldCoords3d max;
     private final WorldSize3d size;
@@ -105,6 +108,46 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      */
     public WorldBBox3d(WorldBBox2d bbox, int originZ, int sizeZ) {
         this(bbox.getMin().to3d(originZ), bbox.getSize().to3d(sizeZ));
+    }
+
+    /**
+     * Creates a new {@link WorldBBox2d} containing all bounded items.
+     *
+     * @param items iterable over bounded items to contain
+     * @return a bounding box containing all items
+     */
+    public static WorldBBox3d surrounding(Iterable<? extends Bounded3d> items) {
+        Iterator<? extends Bounded3d> iterator = items.iterator();
+
+        WorldBBox3d bbox = EMPTY;
+
+        while (iterator.hasNext() && bbox.isEmpty())
+            bbox = iterator.next().bbox();
+
+        if (!iterator.hasNext())
+            return bbox;
+
+        int minX = bbox.getMinX();
+        int minY = bbox.getMinY();
+        int minZ = bbox.getMinZ();
+        int maxX = bbox.getMaxX();
+        int maxY = bbox.getMaxY();
+        int maxZ = bbox.getMaxZ();
+
+        while (iterator.hasNext()) {
+            bbox = iterator.next().bbox();
+            if (bbox.isEmpty())
+                continue;
+
+            minX = Math.min(minX, bbox.getMinX());
+            minY = Math.min(minY, bbox.getMinY());
+            minZ = Math.min(minZ, bbox.getMinZ());
+            maxX = Math.max(maxX, bbox.getMaxX());
+            maxY = Math.max(maxY, bbox.getMaxY());
+            maxZ = Math.max(maxZ, bbox.getMaxZ());
+        }
+
+        return new WorldBBox3d(minX, minY, minZ, maxX - minX + 1, maxY - minY + 1, maxZ - minZ + 1);
     }
 
     /**
@@ -312,5 +355,10 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
     @Override
     public String toString() {
         return "WorldBBox3d{min=%s, max=%s, size=%s}".formatted(min, max, size);
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        return this;
     }
 }

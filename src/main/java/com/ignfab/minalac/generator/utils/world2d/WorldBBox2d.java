@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.utils.world2d;
 
+import java.util.Iterator;
+
 import com.ignfab.minalac.generator.utils.world2d.iterator.WorldBBox2dIterator;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
@@ -10,7 +12,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
  *
  * @see WorldCoords2d
  */
-public class WorldBBox2d implements Iterable<WorldCoords2d> {
+public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
     private final WorldCoords2d min;
     private final WorldCoords2d max;
     private final WorldSize2d size;
@@ -71,6 +73,43 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
         min = new WorldCoords2d(minX, minY);
         max = new WorldCoords2d(maxX, maxY);
         size = new WorldSize2d(maxX - minX + 1, maxY - minY + 1);
+    }
+
+    /**
+     * Creates a new {@link WorldBBox2d} containing all bounded items.
+     *
+     * @param items iterable over bounded items to contain
+     * @return a bounding box containing all items
+     */
+
+    public static WorldBBox2d surrounding(Iterable<? extends Bounded2d> items) {
+        Iterator<? extends Bounded2d> iterator = items.iterator();
+
+        WorldBBox2d bbox = EMPTY;
+
+        while (iterator.hasNext() && bbox.isEmpty())
+            bbox = iterator.next().bbox();
+
+        if (!iterator.hasNext())
+            return bbox;
+
+        int minX = bbox.getMinX();
+        int minY = bbox.getMinY();
+        int maxX = bbox.getMaxX();
+        int maxY = bbox.getMaxY();
+
+        while (iterator.hasNext()) {
+            bbox = iterator.next().bbox();
+            if (bbox.isEmpty())
+                continue;
+
+            minX = Math.min(minX, bbox.getMinX());
+            minY = Math.min(minY, bbox.getMinY());
+            maxX = Math.max(maxX, bbox.getMaxX());
+            maxY = Math.max(maxY, bbox.getMaxY());
+        }
+
+        return new WorldBBox2d(minX, minY, maxX - minX + 1, maxY - minY + 1);
     }
 
     /**
@@ -273,5 +312,10 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
     @Override
     public String toString() {
         return "WorldBBox2d{min=%s, max=%s, size=%s}".formatted(min, max, size);
+    }
+
+    @Override
+    public WorldBBox2d bbox() {
+        return this;
     }
 }

@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.utils.shape2d;
 
 import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
 import com.ignfab.minalac.generator.utils.iterator.RemapIterator;
+import com.ignfab.minalac.generator.utils.world2d.Bounded2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.LineVoxel2d;
@@ -14,33 +15,43 @@ import java.util.List;
 
 /**
  * Represents a 2d polyline in the voxel world.
- * It consists of a list of lines where the end
- * of one must be the start of the next one.
- * There is no distinction between a closed and an opened polyline.
- *
- * @param lines the lines in this polyline.
+ * It consists of a list of lines, not necessary joined and not necessary closed.
  */
-public record Polyline2d(List<Line2d> lines) implements Shape2d {
+public class Polyline2d implements Bounded2d, Shape2d {
+    private List<Line2d> lines;
+    private WorldBBox2d bbox;
+
     /**
-     * Computes the bounding box of this polyline.
-     * This is the smallest box containing all the lines.
+     * Creates a new polyline from a collection of lines.
      *
-     * @return the bounding box of this polyline.
+     * @param lines the lines in this polyline
+     */
+    public Polyline2d(List<Line2d> lines) {
+        this.lines = lines;
+        this.bbox = WorldBBox2d.surrounding(lines);
+    }
+
+    /**
+     * Returns the bounding box of the polyline.
+     *
+     * @return the bounding box
      */
     public WorldBBox2d bbox() {
-        if (lines.isEmpty())
-            return WorldBBox2d.EMPTY;
-        Line2d line = lines.get(0);
-        if (lines.size() == 1)
-            return new WorldBBox2d(line.start(), line.end());
-        WorldCoords2d[] ends = new WorldCoords2d[lines.size()];
-        for (int i = 0; i < lines.size(); i++)
-            ends[i] = lines.get(i).end();
-        return new WorldBBox2d(line.start(), ends);
+        return bbox;
+    }
+
+    /**
+     * Returns a list of lines constiuing the polyline.
+     *
+     * @return the list of lines
+     */
+    public List<Line2d> lines() {
+        return lines;
     }
 
     /**
      * Creates a new polyline connecting all points in the given list.
+     * Resulting polyline will consist in one continuous path.
      *
      * @param points the points of the polyline.
      * @return a new polyline.
@@ -58,6 +69,7 @@ public record Polyline2d(List<Line2d> lines) implements Shape2d {
 
     /**
      * Creates a new polyline connecting all the given points.
+     * Resulting polyline will consist in one continuous path.
      *
      * @param points the points of the polyline.
      * @return a new polyline.

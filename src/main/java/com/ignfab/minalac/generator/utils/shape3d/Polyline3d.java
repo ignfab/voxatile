@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.utils.shape3d;
 
 import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
 import com.ignfab.minalac.generator.utils.iterator.RemapIterator;
+import com.ignfab.minalac.generator.utils.world3d.Bounded3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.voxelization.LineVoxel3d;
@@ -14,29 +15,38 @@ import java.util.List;
 
 /**
  * Represents a 3d polyline in the voxel world.
- * It consists of a list of lines where the end
- * of one must be the start of the next one.
- * There is no distinction between a closed and an opened polyline.
- *
- * @param lines the lines in this polyline.
+ * It consists of a list of lines, not necessary joined and not necessary closed.
  */
-public record Polyline3d(List<Line3d> lines) implements Shape3d {
+public class Polyline3d implements Bounded3d, Shape3d {
+    private List<Line3d> lines;
+    private WorldBBox3d bbox;
+
     /**
-     * Computes the bounding box of this polyline.
-     * This is the smallest box containing all the lines.
+     * Creates a new polyline from a collection of lines.
      *
-     * @return the bounding box of this polyline.
+     * @param lines the lines in this polyline
+     */
+    public Polyline3d(List<Line3d> lines) {
+        this.lines = lines;
+        this.bbox = WorldBBox3d.surrounding(lines);
+    }
+
+    /**
+     * Returns the bounding box of the polyline.
+     *
+     * @return the bounding box
      */
     public WorldBBox3d bbox() {
-        if (lines.isEmpty())
-            return WorldBBox3d.EMPTY;
-        Line3d line = lines.get(0);
-        if (lines.size() == 1)
-            return new WorldBBox3d(line.start(), line.end());
-        WorldCoords3d[] ends = new WorldCoords3d[lines.size()];
-        for (int i = 0; i < lines.size(); i++)
-            ends[i] = lines.get(i).end();
-        return new WorldBBox3d(line.start(), ends);
+        return bbox;
+    }
+
+    /**
+     * Returns a list of lines constiuing the polyline.
+     *
+     * @return the list of lines
+     */
+    public List<Line3d> lines() {
+        return lines;
     }
 
     /**

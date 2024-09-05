@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.utils.shape3d;
 import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
 import com.ignfab.minalac.generator.utils.iterator.RemapIterator;
 import com.ignfab.minalac.generator.utils.shape3d.iterator.Polygon3dIterator;
+import com.ignfab.minalac.generator.utils.world3d.Bounded3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.LineVoxel3d;
 import com.ignfab.minalac.generator.voxelization.Voxel3d;
@@ -20,7 +21,7 @@ import java.util.List;
  * Both shell and all holes must be closed polyline,
  * and all holes must be contained inside the shell.
  */
-public class Polygon3d implements Shape3d {
+public class Polygon3d implements Bounded3d, Shape3d {
     private final Collection<Line3d> lines;
     private final WorldBBox3d bbox;
 
