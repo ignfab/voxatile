@@ -10,6 +10,7 @@ import com.ignfab.minalac.generator.voxelization.Voxel3d;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -20,8 +21,7 @@ import java.util.List;
  * and all holes must be contained inside the shell.
  */
 public class Polygon3d implements Shape3d {
-    private final PolyLine3d shell;
-    private final Collection<PolyLine3d> holes;
+    private final Collection<Line3d> lines;
     private final WorldBBox3d bbox;
 
     /**
@@ -31,9 +31,15 @@ public class Polygon3d implements Shape3d {
      * @param holes the collection of holes of the polygon.
      */
     public Polygon3d(PolyLine3d shell, Collection<PolyLine3d> holes) {
-        this.shell = shell;
-        this.holes = holes;
-        bbox = shell.bbox();
+        this.bbox = shell.bbox();
+
+        // We only need to know about lines (shell and holes are suposed to be closed)
+        this.lines = new LinkedList<Line3d>();
+        for (Line3d line : shell.lines())
+            this.lines.add(line);
+        for (PolyLine3d hole : holes)
+            for (Line3d line : hole.lines())
+                this.lines.add(line);
     }
 
     /**
@@ -61,10 +67,10 @@ public class Polygon3d implements Shape3d {
             return Collections.emptyList();
 
         List<Line3d.Intersection> intersections = new ArrayList<>();
-        for (Line3d line : lines()) {
-            Line3d.Intersection inter = line.intersection(y);
-            if (inter != null)
-                intersections.add(inter);
+        for (Line3d line : lines) {
+            Line3d.Intersection intersection = line.intersection(y);
+            if (intersection != null)
+                intersections.add(intersection);
         }
 
         return intersections;
@@ -76,15 +82,12 @@ public class Polygon3d implements Shape3d {
      * @return the border iterable of this polygon.
      */
     public Iterable<Line3d> lines() {
-        return () -> MultiIterator.concat(
-            shell.lines(),
-            () -> new MultiIterator<>(new RemapIterator<>(holes, PolyLine3d::lines))
-        );
+        return lines;
     }
 
     @Override
     public Iterable<LineVoxel3d> borderVoxels() {
-        return () -> new MultiIterator<>(new RemapIterator<>(lines(), Shape3d::borderVoxels));
+        return () -> new MultiIterator<>(new RemapIterator<>(lines, Shape3d::borderVoxels));
     }
 
     @Override

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -20,8 +21,7 @@ import java.util.List;
  * and all holes must be contained inside the shell.
  */
 public class Polygon2d implements Shape2d {
-    private final PolyLine2d shell;
-    private final Collection<PolyLine2d> holes;
+    private final Collection<Line2d> lines;
     private final WorldBBox2d bbox;
 
     /**
@@ -31,9 +31,15 @@ public class Polygon2d implements Shape2d {
      * @param holes the collection of holes of the polygon.
      */
     public Polygon2d(PolyLine2d shell, Collection<PolyLine2d> holes) {
-        this.shell = shell;
-        this.holes = holes;
-        bbox = shell.bbox();
+        this.bbox = shell.bbox();
+
+        // We only need to know about lines (shell and holes are suposed to be closed)
+        this.lines = new LinkedList<Line2d>();
+        for (Line2d line : shell.lines())
+            this.lines.add(line);
+        for (PolyLine2d hole : holes)
+            for (Line2d line : hole.lines())
+                this.lines.add(line);
     }
 
     /**
@@ -71,10 +77,10 @@ public class Polygon2d implements Shape2d {
             return Collections.emptyList();
 
         List<Line2d.Intersection> intersections = new ArrayList<>();
-        for (Line2d line : lines()) {
-            Line2d.Intersection inter = line.intersection(y);
-            if (inter != null)
-                intersections.add(inter);
+        for (Line2d line : lines) {
+            Line2d.Intersection intersection = line.intersection(y);
+            if (intersection != null)
+                intersections.add(intersection);
         }
 
         return intersections;
@@ -86,15 +92,12 @@ public class Polygon2d implements Shape2d {
      * @return the border iterable of this polygon.
      */
     public Iterable<Line2d> lines() {
-        return () -> MultiIterator.concat(
-            shell.lines(),
-            () -> new MultiIterator<>(new RemapIterator<>(holes, PolyLine2d::lines))
-        );
+        return lines;
     }
 
     @Override
     public Iterable<LineVoxel2d> borderVoxels() {
-        return () -> new MultiIterator<>(new RemapIterator<>(lines(), Shape2d::borderVoxels));
+        return () -> new MultiIterator<>(new RemapIterator<>(lines, Shape2d::borderVoxels));
     }
 
     @Override
