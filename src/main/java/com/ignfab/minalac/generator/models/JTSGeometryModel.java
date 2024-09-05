@@ -2,11 +2,11 @@ package com.ignfab.minalac.generator.models;
 
 import com.ignfab.minalac.generator.generation.CoordsConverter;
 import com.ignfab.minalac.generator.utils.shape2d.Point2d;
-import com.ignfab.minalac.generator.utils.shape2d.PolyLine2d;
+import com.ignfab.minalac.generator.utils.shape2d.Polyline2d;
 import com.ignfab.minalac.generator.utils.shape2d.Polygon2d;
 import com.ignfab.minalac.generator.utils.shape2d.ShapesVoxelizer2d;
 import com.ignfab.minalac.generator.utils.shape3d.Point3d;
-import com.ignfab.minalac.generator.utils.shape3d.PolyLine3d;
+import com.ignfab.minalac.generator.utils.shape3d.Polyline3d;
 import com.ignfab.minalac.generator.utils.shape3d.Polygon3d;
 import com.ignfab.minalac.generator.utils.shape3d.ShapesVoxelizer3d;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
@@ -141,12 +141,12 @@ public class JTSGeometryModel extends Model implements Voxelizable2d, Voxelizabl
             return new WorldCoords2d((int) Math.round(coordinate.x), (int) Math.round(coordinate.y));
         }
 
-        private PolyLine2d convertPolyLine(LineString line) {
+        private Polyline2d convertPolyLine(LineString line) {
             Coordinate[] coordinates = line.getCoordinates();
             List<WorldCoords2d> coords = new ArrayList<>(coordinates.length);
             for (Coordinate coordinate : coordinates)
                 coords.add(convertCoordinate(coordinate));
-            return PolyLine2d.fromPoints(coords);
+            return Polyline2d.fromPoints(coords);
         }
 
         @Override
@@ -162,8 +162,8 @@ public class JTSGeometryModel extends Model implements Voxelizable2d, Voxelizabl
 
         @Override
         public void convertPolygon(Polygon polygon) {
-            PolyLine2d shell = convertPolyLine(polygon.getExteriorRing());
-            List<PolyLine2d> holes = new ArrayList<>(polygon.getNumInteriorRing());
+            Polyline2d shell = convertPolyLine(polygon.getExteriorRing());
+            List<Polyline2d> holes = new ArrayList<>(polygon.getNumInteriorRing());
             for (int n = 0; n < polygon.getNumInteriorRing(); n++)
                 holes.add(convertPolyLine(polygon.getInteriorRingN(n)));
             voxelizer.addShape(new Polygon2d(shell, holes));
@@ -180,12 +180,12 @@ public class JTSGeometryModel extends Model implements Voxelizable2d, Voxelizabl
             return new WorldCoords3d((int) Math.round(coordinate.x), (int) Math.round(coordinate.y), (int) Math.round(coordinate.z));
         }
 
-        private PolyLine3d convertPolyLine(LineString line) {
+        private Polyline3d convertPolyLine(LineString line) {
             Coordinate[] coordinates = line.getCoordinates();
             List<WorldCoords3d> coords = new ArrayList<>(coordinates.length);
             for (Coordinate coordinate : coordinates)
                 coords.add(convertCoordinate(coordinate));
-            return PolyLine3d.fromPoints(coords);
+            return Polyline3d.fromPoints(coords);
         }
 
         @Override
@@ -200,8 +200,8 @@ public class JTSGeometryModel extends Model implements Voxelizable2d, Voxelizabl
 
         @Override
         public void convertPolygon(Polygon polygon) {
-            PolyLine3d shell = convertPolyLine(polygon.getExteriorRing());
-            List<PolyLine3d> holes = new ArrayList<>(polygon.getNumInteriorRing());
+            Polyline3d shell = convertPolyLine(polygon.getExteriorRing());
+            List<Polyline3d> holes = new ArrayList<>(polygon.getNumInteriorRing());
             for (int n = 0; n < polygon.getNumInteriorRing(); n++)
                 holes.add(convertPolyLine(polygon.getInteriorRingN(n)));
             voxelizer.addShape(new Polygon3d(shell, holes));

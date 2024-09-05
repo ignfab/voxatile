@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @param lines the lines in this polyline.
  */
-public record PolyLine3d(List<Line3d> lines) implements Shape3d {
+public record Polyline3d(List<Line3d> lines) implements Shape3d {
     /**
      * Computes the bounding box of this polyline.
      * This is the smallest box containing all the lines.
@@ -45,15 +45,15 @@ public record PolyLine3d(List<Line3d> lines) implements Shape3d {
      * @param points the points of the polyline.
      * @return a new polyline.
      */
-    public static PolyLine3d fromPoints(List<WorldCoords3d> points) {
+    public static Polyline3d fromPoints(List<WorldCoords3d> points) {
         if (points.size() < 2)
-            return new PolyLine3d(Collections.emptyList());
+            return new Polyline3d(Collections.emptyList());
         if (points.size() == 2)
-            return new PolyLine3d(Collections.singletonList(new Line3d(points.get(0), points.get(1))));
+            return new Polyline3d(Collections.singletonList(new Line3d(points.get(0), points.get(1))));
         List<Line3d> lines = new ArrayList<>();
         for (int i = 1; i < points.size(); i++)
             lines.add(new Line3d(points.get(i - 1), points.get(i)));
-        return new PolyLine3d(lines);
+        return new Polyline3d(lines);
     }
 
     /**
@@ -62,7 +62,7 @@ public record PolyLine3d(List<Line3d> lines) implements Shape3d {
      * @param points the points of the polyline.
      * @return a new polyline.
      */
-    public static PolyLine3d fromPoints(WorldCoords3d... points) {
+    public static Polyline3d fromPoints(WorldCoords3d... points) {
         return fromPoints(Arrays.asList(points));
     }
 

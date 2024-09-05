@@ -30,14 +30,14 @@ public class Polygon3d implements Shape3d {
      * @param shell the outer shell of the polygon.
      * @param holes the collection of holes of the polygon.
      */
-    public Polygon3d(PolyLine3d shell, Collection<PolyLine3d> holes) {
+    public Polygon3d(Polyline3d shell, Collection<Polyline3d> holes) {
         this.bbox = shell.bbox();
 
         // We only need to know about lines (shell and holes are suposed to be closed)
         this.lines = new LinkedList<Line3d>();
         for (Line3d line : shell.lines())
             this.lines.add(line);
-        for (PolyLine3d hole : holes)
+        for (Polyline3d hole : holes)
             for (Line3d line : hole.lines())
                 this.lines.add(line);
     }

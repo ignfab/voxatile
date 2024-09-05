@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @param lines the lines in this polyline.
  */
-public record PolyLine2d(List<Line2d> lines) implements Shape2d {
+public record Polyline2d(List<Line2d> lines) implements Shape2d {
     /**
      * Computes the bounding box of this polyline.
      * This is the smallest box containing all the lines.
@@ -45,15 +45,15 @@ public record PolyLine2d(List<Line2d> lines) implements Shape2d {
      * @param points the points of the polyline.
      * @return a new polyline.
      */
-     public static PolyLine2d fromPoints(List<WorldCoords2d> points) {
+     public static Polyline2d fromPoints(List<WorldCoords2d> points) {
         if (points.size() < 2)
-            return new PolyLine2d(Collections.emptyList());
+            return new Polyline2d(Collections.emptyList());
         if (points.size() == 2)
-            return new PolyLine2d(Collections.singletonList(new Line2d(points.get(0), points.get(1))));
+            return new Polyline2d(Collections.singletonList(new Line2d(points.get(0), points.get(1))));
         List<Line2d> lines = new ArrayList<>();
         for (int i = 1; i < points.size(); i++)
             lines.add(new Line2d(points.get(i - 1), points.get(i)));
-        return new PolyLine2d(lines);
+        return new Polyline2d(lines);
     }
 
     /**
@@ -62,7 +62,7 @@ public record PolyLine2d(List<Line2d> lines) implements Shape2d {
      * @param points the points of the polyline.
      * @return a new polyline.
      */
-    public static PolyLine2d fromPoints(WorldCoords2d... points) {
+    public static Polyline2d fromPoints(WorldCoords2d... points) {
         return fromPoints(Arrays.asList(points));
     }
 

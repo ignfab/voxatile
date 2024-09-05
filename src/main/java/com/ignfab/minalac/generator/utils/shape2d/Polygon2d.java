@@ -30,14 +30,14 @@ public class Polygon2d implements Shape2d {
      * @param shell the outer shell of the polygon.
      * @param holes the collection of holes of the polygon.
      */
-    public Polygon2d(PolyLine2d shell, Collection<PolyLine2d> holes) {
+    public Polygon2d(Polyline2d shell, Collection<Polyline2d> holes) {
         this.bbox = shell.bbox();
 
         // We only need to know about lines (shell and holes are suposed to be closed)
         this.lines = new LinkedList<Line2d>();
         for (Line2d line : shell.lines())
             this.lines.add(line);
-        for (PolyLine2d hole : holes)
+        for (Polyline2d hole : holes)
             for (Line2d line : hole.lines())
                 this.lines.add(line);
     }
@@ -48,7 +48,7 @@ public class Polygon2d implements Shape2d {
      * @param shell the outer shell of the polygon.
      * @param holes the holes of the polygon.
      */
-    public Polygon2d(PolyLine2d shell, PolyLine2d... holes) {
+    public Polygon2d(Polyline2d shell, Polyline2d... holes) {
         this(shell, Arrays.asList(holes));
     }
 

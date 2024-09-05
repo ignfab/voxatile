@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.utils.shape2d.iterator;
 
-import com.ignfab.minalac.generator.utils.shape2d.PolyLine2d;
+import com.ignfab.minalac.generator.utils.shape2d.Polyline2d;
 import com.ignfab.minalac.generator.utils.shape2d.Polygon2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.Voxel2d;
@@ -62,7 +62,7 @@ public class Polygon2dIteratorTest {
             "     "); // 4
         //   01234
 
-        Polygon2d polygon = new Polygon2d(PolyLine2d.fromPoints(
+        Polygon2d polygon = new Polygon2d(Polyline2d.fromPoints(
             new WorldCoords2d(1, 1),
             new WorldCoords2d(3, 1),
             new WorldCoords2d(3, 3),
@@ -92,7 +92,7 @@ public class Polygon2dIteratorTest {
 
         Polygon2d polygon = new Polygon2d(
             // Shell
-            PolyLine2d.fromPoints(
+            Polyline2d.fromPoints(
                 new WorldCoords2d(0, 0),
                 new WorldCoords2d(8, 0),
                 new WorldCoords2d(8, 7),
@@ -100,14 +100,14 @@ public class Polygon2dIteratorTest {
                 new WorldCoords2d(0, 0)
             ),
             // Holes
-            PolyLine2d.fromPoints(
+            Polyline2d.fromPoints(
                 new WorldCoords2d(1, 2),
                 new WorldCoords2d(4, 2),
                 new WorldCoords2d(4, 4),
                 new WorldCoords2d(1, 4),
                 new WorldCoords2d(1, 2)
             ),
-            PolyLine2d.fromPoints(
+            Polyline2d.fromPoints(
                 new WorldCoords2d(5, 5),
                 new WorldCoords2d(5, 7),
                 new WorldCoords2d(7, 7),
@@ -146,7 +146,7 @@ public class Polygon2dIteratorTest {
 
         // Actually, this geometry has four different lines types,
         // flat, less than 45°, 45° and more than 45°, in four orientations.
-        Polygon2d polygon = new Polygon2d(PolyLine2d.fromPoints(
+        Polygon2d polygon = new Polygon2d(Polyline2d.fromPoints(
             new WorldCoords2d(0, 0),
             new WorldCoords2d(4, 0),
             new WorldCoords2d(6, 5),
