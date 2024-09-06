@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ModelStoreTest {
-    class TestModel extends Model {}
+    static class TestModel extends Model {}
 
     @Test
     void testAddByType() {
