@@ -73,24 +73,24 @@ public class TestGeneration {
     }
 
     @Test
-    public void testAddHeightMap() {
-        HeightMap heightMap = new HeightMap(0, 0, 5, 5, 20);
+    public void testAddHeightmap() {
+        Heightmap heightmap = new Heightmap(0, 0, 5, 5, 20);
 
-        assertDoesNotThrow(() -> generation.addHeightMap("ground", heightMap));
-        assertDoesNotThrow(() -> generation.addHeightMap("second-ground", heightMap));
-        assertThrows(IllegalArgumentException.class, () -> generation.addHeightMap("ground", heightMap), "Should not be able to add a heightmap with an existing name");
-        assertThrows(IllegalArgumentException.class, () -> generation.addHeightMap(null, heightMap), "Should not be able to add a heightmap with a null name");
-        assertEquals(heightMap, generation.getHeightMap("ground"));
+        assertDoesNotThrow(() -> generation.addHeightmap("ground", heightmap));
+        assertDoesNotThrow(() -> generation.addHeightmap("second-ground", heightmap));
+        assertThrows(IllegalArgumentException.class, () -> generation.addHeightmap("ground", heightmap), "Should not be able to add a heightmap with an existing name");
+        assertThrows(IllegalArgumentException.class, () -> generation.addHeightmap(null, heightmap), "Should not be able to add a heightmap with a null name");
+        assertEquals(heightmap, generation.getHeightmap("ground"));
     }
 
     @Test
-    public void testGetHeightMap() {
-        HeightMap heightMap = new HeightMap(0, 0, 5, 5, 20);
-        generation.addHeightMap("ground", heightMap);
+    public void testGetHeightmap() {
+        Heightmap heightmap = new Heightmap(0, 0, 5, 5, 20);
+        generation.addHeightmap("ground", heightmap);
 
-        HeightMap retreivedHeightMap = assertDoesNotThrow(() -> generation.getHeightMap("ground"));
-        assertEquals(heightMap, retreivedHeightMap);
-        assertEquals(heightMap, generation.getHeightMap("ground"));
-        assertThrows(NoSuchElementException.class, () -> generation.getHeightMap("foo"));
+        Heightmap retreivedHeightmap = assertDoesNotThrow(() -> generation.getHeightmap("ground"));
+        assertEquals(heightmap, retreivedHeightmap);
+        assertEquals(heightmap, generation.getHeightmap("ground"));
+        assertThrows(NoSuchElementException.class, () -> generation.getHeightmap("foo"));
     }
 }
