@@ -57,6 +57,21 @@ public class MTVoxelWorld extends VoxelWorld {
         return factory;
     }
 
+    // Retrieves or creates the mapblock corresponding to given voxel position.
+    private Block getOrCreateBlock(int x, int y, int z) {
+        Integer pos = getPosValue(getBlockPosition(x), getBlockPosition(y), getBlockPosition(z));
+        Block block = blocks.get(pos);
+        if (block == null)
+            synchronized (blocks) {
+                block = blocks.get(pos);
+                if (block == null) {
+                    block = new Block();
+                    blocks.put(pos, block);
+                }
+            }
+        return block;
+    }
+
     /**
      * Places the voxel into this world at the specified coordinates.
      * The specified coordinates must be in the coordinate system used by Minetest.
@@ -70,14 +85,11 @@ public class MTVoxelWorld extends VoxelWorld {
         // (In-Game coords to world coords) XZY => XYZ
         if (!limits().contains(x, z, y)) return;
 
-        int pos = getPosValue(getBlockPosition(x), getBlockPosition(y), getBlockPosition(z));
-        Block block = blocks.get(pos);
-
-        if (block == null) {
-            block = new Block();
-        }
-        block.set(getNodeRelativePosition(x), getNodeRelativePosition(y), getNodeRelativePosition(z), voxel);
-        this.blocks.put(pos, block);
+        getOrCreateBlock(x, y, z).set(
+            getNodeRelativePosition(x),
+            getNodeRelativePosition(y),
+            getNodeRelativePosition(z),
+            voxel);
     }
 
     /**
