@@ -4,7 +4,7 @@ import com.ignfab.minalac.generator.models.GeometryModel;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.generation.CoordsConverter;
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.HeightMap;
+import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider;
 import com.ignfab.minalac.generator.parsing.ParamsParser;
 import com.ignfab.minalac.generator.parsing.ParseException;
@@ -78,7 +78,7 @@ public final class SampleImplementation {
 
         // Various data stores
         ModelStore store = new ModelStore();
-        HeightMap groundHeightMap = generation.getHeightMap("ground");
+        Heightmap groundHeightmap = generation.getHeightmap("ground");
         VoxelWorld world = parser.createVoxelWorld();
 
         Scheduler scheduler = new Scheduler();
@@ -87,7 +87,7 @@ public final class SampleImplementation {
         scheduler.schedule("heightmaps.ground", () -> {
             log("heightmaps.ground", "Downloading height map");
             try {
-                fillGroundHeightMap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, groundHeightMap, generation.getVerticalScale());
+                fillGroundHeightmap("https://data.geopf.fr/wms-r/wms?LAYERS=RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES=&CRS=" + crsName + "&" + bboxURL, groundHeightmap, generation.getVerticalScale());
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
@@ -102,7 +102,7 @@ public final class SampleImplementation {
                     generation.makeCoordsConverter(crs),  // This is supposed to be the layer CRS (actually the same for this demo)
                     "building",
                     store,
-                    groundHeightMap.bbox());
+                    groundHeightmap.bbox());
             } catch (TransformException | IOException | ParserConfigurationException | SAXException | FactoryException e) {
                 throw new RuntimeException(e);
             }
@@ -112,14 +112,14 @@ public final class SampleImplementation {
         // Rendering
         scheduler.schedule("renderers.ground", () -> {
             log("renderers.ground", "Placing ground");
-            placeVoxelFromHeightMap(groundHeightMap, world);
+            placeVoxelFromHeightmap(groundHeightmap, world);
             log("renderers.ground", "Placed ground");
         }, "heightmaps.ground");
 
         scheduler.schedule("renderers.buildings", () -> {
             log("renderers.buildings", "Placing buildings");
             new VectorRenderer(
-                groundHeightMap,
+                groundHeightmap,
                 store.getByType("building"),
                 world.getFactory().createVoxelType(SemanticType.COBBLE),
                 world.getFactory().createVoxelType(SemanticType.BRICK)
@@ -136,7 +136,7 @@ public final class SampleImplementation {
 
         System.out.println("Saving world");
         VoxelWorldMetadata metadata = world.getMetadata();
-        metadata.setSpawn(new WorldCoords3d(0, 0, groundHeightMap.get(0, 0) + 1));
+        metadata.setSpawn(new WorldCoords3d(0, 0, groundHeightmap.get(0, 0) + 1));
         metadata.setWorldName("Minalac");
         save(cli.getOutputPath().toFile(), world);
 
@@ -173,7 +173,7 @@ public final class SampleImplementation {
         }
     }
 
-    private static void placeVoxelFromHeightMap(HeightMap map, VoxelWorld world) {
+    private static void placeVoxelFromHeightmap(Heightmap map, VoxelWorld world) {
         VoxelType grassVT = world.getFactory().createVoxelType(SemanticType.GRASS);
         VoxelType stoneVT = world.getFactory().createVoxelType(SemanticType.STONE);
         VoxelType dirtVT = world.getFactory().createVoxelType(SemanticType.DIRT);
@@ -192,9 +192,9 @@ public final class SampleImplementation {
         }
     }
 
-    private static void fillGroundHeightMap(String partialUrl, HeightMap heightMap, double verticalScale) throws MalformedURLException {
-        int width = heightMap.bbox().getSizeX();
-        int height = heightMap.bbox().getSizeY();
+    private static void fillGroundHeightmap(String partialUrl, Heightmap heightmap, double verticalScale) throws MalformedURLException {
+        int width = heightmap.bbox().getSizeX();
+        int height = heightmap.bbox().getSizeY();
         URL url = new URL(partialUrl + "&WIDTH=" + width + "&HEIGHT=" + height);
 
         byte[] data;
@@ -212,14 +212,14 @@ public final class SampleImplementation {
 
         float[] mntArray = byteArrayToFloatArray(data);
 
-        int xMin = heightMap.bbox().getMinX();
-        int yMin = heightMap.bbox().getMinY();
+        int xMin = heightmap.bbox().getMinX();
+        int yMin = heightmap.bbox().getMinY();
 
         int index = 0;
 
         for (int y = height - 1; y >= 0; y--) { // In raster, Y axis is downwards
             for (int x = 0; x < width; x++) {
-                heightMap.set(x + xMin, y + yMin, (int) (mntArray[index] / verticalScale));
+                heightmap.set(x + xMin, y + yMin, (int) (mntArray[index] / verticalScale));
                 index++;
             }
         }

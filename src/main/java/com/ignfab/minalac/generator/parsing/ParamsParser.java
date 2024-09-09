@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.HeightMap;
+import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -96,9 +96,9 @@ public class ParamsParser {
             rawParams.verticalScale
         );
 
-        if (rawParams.heightMaps != null)
-            for (RawParams.HeightMapParams heightMapParams : rawParams.heightMaps)
-                generation.addHeightMap(heightMapParams.name, new HeightMap(generation.getWorldBBox2d(), heightMapParams.defaultValue));
+        if (rawParams.heightmaps != null)
+            for (RawParams.HeightmapParams heightmapParams : rawParams.heightmaps)
+                generation.addHeightmap(heightmapParams.name, new Heightmap(generation.getWorldBBox2d(), heightmapParams.defaultValue));
 
         return generation;
     }

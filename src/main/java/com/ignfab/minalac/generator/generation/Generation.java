@@ -37,7 +37,7 @@ public class Generation {
     // TODO: use a 3d bbox when its implemented:
     private final WorldBBox2d worldBBox;
 
-    private final Map<String, HeightMap> heightMaps = new HashMap<>();
+    private final Map<String, Heightmap> heightmaps = new HashMap<>();
 
     /**
      * Constructs a new generation context.
@@ -136,30 +136,30 @@ public class Generation {
     }
 
     /**
-     * Registers a new {@link HeightMap} with the given name.
+     * Registers a new {@link Heightmap} with the given name.
      * Name must be unique, case-sensitive.
      *
      * @param name      the name of the heightmap which will be used to identify it
-     * @param heightMap the heightmap to be added
+     * @param heightmap the heightmap to be added
      * @throws IllegalArgumentException if the specified name is already registered or if the name is null
      */
-    public void addHeightMap(String name, HeightMap heightMap) throws IllegalArgumentException {
-        if (name == null || heightMaps.containsKey(name))
+    public void addHeightmap(String name, Heightmap heightmap) throws IllegalArgumentException {
+        if (name == null || heightmaps.containsKey(name))
             throw new IllegalArgumentException("Illegal name for heightmap, duplicate or null name : " + name);
-        heightMaps.put(name, heightMap);
+        heightmaps.put(name, heightmap);
     }
 
     /**
-     * Returns the {@link HeightMap} associated to the given name.
+     * Returns the {@link Heightmap} associated to the given name.
      *
      * @param name the name of the heightmap
      * @return the associated heightmap
      * @throws NoSuchElementException if there is not a heightmap associated with the specified name
      */
-    public HeightMap getHeightMap(String name) throws NoSuchElementException {
-        HeightMap heightMap = heightMaps.get(name);
-        if (heightMap == null)
-            throw new NoSuchElementException("This heightMap does not exist : " + name);
-        return heightMap;
+    public Heightmap getHeightmap(String name) throws NoSuchElementException {
+        Heightmap heightmap = heightmaps.get(name);
+        if (heightmap == null)
+            throw new NoSuchElementException("This heightmap does not exist : " + name);
+        return heightmap;
     }
 }

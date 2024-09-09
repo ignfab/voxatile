@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.renderers;
 
-import com.ignfab.minalac.generator.generation.HeightMap;
+import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.models.GeometryModel;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.Rasterizable;
@@ -15,7 +15,7 @@ import com.ignfab.minalac.generator.world.VoxelTypeIgnore;
  */
 public class VectorRenderer {
 
-    private HeightMap heightMap;
+    private Heightmap heightmap;
     private Iterable<Model> models;
 
     // This may evolve in something more elaborated, like edge and inside voxel patterns,
@@ -27,13 +27,13 @@ public class VectorRenderer {
     /**
      * Creates a new VectorRenderer.
      *
-     * @param heightMap Height map of the ground (on which features will be placed)
+     * @param heightmap Height map of the ground (on which features will be placed)
      * @param models Models to be rendered (only Rasterizable ones will be)
      * @param inside Voxel type to draw inside geometries
      * @param edge Voxel type to draw on edges of geometries (including points and lines)
      */
-    public VectorRenderer(HeightMap heightMap, Iterable<Model> models, VoxelType inside, VoxelType edge) {
-        this.heightMap = heightMap;
+    public VectorRenderer(Heightmap heightmap, Iterable<Model> models, VoxelType inside, VoxelType edge) {
+        this.heightmap = heightmap;
         this.models = models;
         this.inside = inside;
         this.edge = edge;
@@ -56,19 +56,19 @@ public class VectorRenderer {
                 continue;
             }
 
-            // Iterate over chunk and draw shape on map at heightMap altitude
+            // Iterate over chunk and draw shape on map at heightmap altitude
             for (Chunk2dElement element : chunk) {
                 WorldCoords2d c = element.getCoords();
                 // TODO: Make Iterator able to intersect with another box
                 // TODO: Have a world bbox rather
                 // TODO: Would be much better to intersect feature and word bbox rather.
-                if (heightMap.bbox().contains(c)) {
+                if (heightmap.bbox().contains(c)) {
                     VoxelType vt = switch (element.getValue()) {
                         case GeometryModel.INSIDE -> inside;
                         case GeometryModel.BORDER -> edge;
                         default -> IGNORE; // Should never get there
                     };
-                    vt.place(c.x(), c.y(), heightMap.get(c) + 1);
+                    vt.place(c.x(), c.y(), heightmap.get(c) + 1);
                 }
             }
         }
