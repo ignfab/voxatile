@@ -128,6 +128,7 @@
     <!-- See https://checkstyle.org/config_imports.html -->
     <module name="AvoidStarImport">
       <property name="excludes" value="org.junit.jupiter.api.Assertions"/>
+      <property name="excludes" value="com.ignfab.minalac.generator.utils.iterator.IteratorTester"/>
     </module>
     <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
     <module name="RedundantImport"/>
