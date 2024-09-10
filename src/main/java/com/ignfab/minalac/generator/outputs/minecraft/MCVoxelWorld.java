@@ -98,10 +98,10 @@ public class MCVoxelWorld extends VoxelWorld {
             {
                 data.putBoolean("allowCommands", true);
                 WorldBBox3d bbox = limits();
-                WorldSize3d size = limits().getSize();
+                WorldSize3d size = limits().size();
                 double minSize = Math.max(size.x(), size.y());
-                data.putDouble("BorderCenterX", (bbox.getMinX() + bbox.getMaxX()) / 2d);
-                data.putDouble("BorderCenterZ", (bbox.getMinY() + bbox.getMaxY()) / 2d); // Y => Z
+                data.putDouble("BorderCenterX", (bbox.minX() + bbox.maxX()) / 2d);
+                data.putDouble("BorderCenterZ", (bbox.minY() + bbox.maxY()) / 2d); // Y => Z
                 data.putDouble("BorderDamagePerBlock", 0.2);
                 data.putDouble("BorderSafeZone", 5);
                 data.putDouble("BorderSize", minSize);
@@ -298,7 +298,7 @@ public class MCVoxelWorld extends VoxelWorld {
                         pos.addDouble(metadata.getSpawn().x() + 0.5);
                         // TODO Replace by a better constraint management mechanism
                         // pos.addDouble(metadata.getSpawn().z());
-                        pos.addDouble(Math.min(Math.max(limits().getMinZ(), metadata.getSpawn().z()), limits().getMaxZ()));
+                        pos.addDouble(Math.min(Math.max(limits().minZ(), metadata.getSpawn().z()), limits().maxZ()));
                         pos.addDouble(metadata.getSpawn().y() + 0.5);
                     }
                     player.put("Pos", pos);
@@ -364,7 +364,7 @@ public class MCVoxelWorld extends VoxelWorld {
                 data.putInt("SpawnX", metadata.getSpawn().x());
                 // TODO Replace by a better constraint management mechanism
                 // data.putInt("SpawnY", metadata.getSpawn().z());
-                data.putInt("SpawnY", Math.min(Math.max(limits().getMinZ(), metadata.getSpawn().z()), limits().getMaxZ()));
+                data.putInt("SpawnY", Math.min(Math.max(limits().minZ(), metadata.getSpawn().z()), limits().maxZ()));
                 data.putInt("SpawnZ", metadata.getSpawn().y());
 
                 data.putBoolean("thundering", false);

@@ -12,9 +12,9 @@ public class WorldBBox2dTest {
     public void testConstructorOriginSizeInt() {
         // Instantiating a new bounding box
         WorldBBox2d box = assertDoesNotThrow(() -> new WorldBBox2d(1, 2, 3, 4));
-        assertEquals(new WorldCoords2d(1, 2), box.getMin());
-        assertEquals(new WorldCoords2d(3, 5), box.getMax());
-        assertEquals(new WorldSize2d(3, 4), box.getSize());
+        assertEquals(new WorldCoords2d(1, 2), box.min());
+        assertEquals(new WorldCoords2d(3, 5), box.max());
+        assertEquals(new WorldSize2d(3, 4), box.size());
 
         // Instantiating a 0 sized bounding box
         assertDoesNotThrow(() -> new WorldBBox2d(0, 0, 0, 0));
@@ -30,9 +30,9 @@ public class WorldBBox2dTest {
         box = assertDoesNotThrow(() -> new WorldBBox2d(
             new WorldCoords2d(2, 3)
         ));
-        assertEquals(new WorldCoords2d(2, 3), box.getMin());
-        assertEquals(new WorldCoords2d(2, 3), box.getMax());
-        assertEquals(new WorldSize2d(1, 1), box.getSize());
+        assertEquals(new WorldCoords2d(2, 3), box.min());
+        assertEquals(new WorldCoords2d(2, 3), box.max());
+        assertEquals(new WorldSize2d(1, 1), box.size());
 
         box = assertDoesNotThrow(() -> new WorldBBox2d(
             new WorldCoords2d(1, -2),
@@ -40,9 +40,9 @@ public class WorldBBox2dTest {
             new WorldCoords2d(-5, 0)
         ));
 
-        assertEquals(new WorldCoords2d(-5, -2), box.getMin());
-        assertEquals(new WorldCoords2d(1, 3), box.getMax());
-        assertEquals(new WorldSize2d(7, 6), box.getSize());
+        assertEquals(new WorldCoords2d(-5, -2), box.min());
+        assertEquals(new WorldCoords2d(1, 3), box.max());
+        assertEquals(new WorldSize2d(7, 6), box.size());
     }
 
     @Test

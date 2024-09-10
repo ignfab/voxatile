@@ -193,8 +193,8 @@ public final class SampleImplementation {
     }
 
     private static void fillGroundHeightmap(String partialUrl, Heightmap heightmap, double verticalScale) throws MalformedURLException {
-        int width = heightmap.bbox().getSizeX();
-        int height = heightmap.bbox().getSizeY();
+        int width = heightmap.bbox().sizeX();
+        int height = heightmap.bbox().sizeY();
         URL url = new URL(partialUrl + "&WIDTH=" + width + "&HEIGHT=" + height);
 
         byte[] data;
@@ -212,8 +212,8 @@ public final class SampleImplementation {
 
         float[] mntArray = byteArrayToFloatArray(data);
 
-        int xMin = heightmap.bbox().getMinX();
-        int yMin = heightmap.bbox().getMinY();
+        int xMin = heightmap.bbox().minX();
+        int yMin = heightmap.bbox().minY();
 
         int index = 0;
 

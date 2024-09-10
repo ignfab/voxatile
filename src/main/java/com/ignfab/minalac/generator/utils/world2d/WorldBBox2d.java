@@ -73,7 +73,7 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
      * @param bbox an existing {@link WorldBBox3d} object
      */
     public WorldBBox2d(WorldBBox3d bbox) {
-        this(bbox.getMin().to2d(), bbox.getSize().to2d());
+        this(bbox.min().to2d(), bbox.size().to2d());
     }
 
     /**
@@ -104,7 +104,7 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
      * @return {@code true} if the provided bbox is in this bounding box.
      */
     public boolean contains(WorldBBox2d bbox) {
-        return contains(bbox.getMin()) && contains(bbox.getMax());
+        return contains(bbox.min()) && contains(bbox.max());
     }
 
     /**
@@ -112,7 +112,7 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
      *
      * @return the size of the bounding box as a {@code WorldSize2d}.
      */
-    public WorldSize2d getSize() {
+    public WorldSize2d size() {
         return size;
     }
 
@@ -121,7 +121,7 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
      *
      * @return the bounding box size along the x-axis.
      */
-    public int getSizeX() {
+    public int sizeX() {
         return size.x();
     }
 
@@ -130,7 +130,7 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
      *
      * @return the bounding box size along the y-axis.
      */
-    public int getSizeY() {
+    public int sizeY() {
         return size.y();
     }
 
@@ -139,7 +139,7 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
      *
      * @return the {@code WorldCoords2d} of the minimum point.
      */
-    public WorldCoords2d getMin() {
+    public WorldCoords2d min() {
         return min;
     }
 
@@ -148,7 +148,7 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
      *
      * @return the x-coordinate of the minimum point.
      */
-    public int getMinX() {
+    public int minX() {
         return min.x();
     }
 
@@ -157,7 +157,7 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
      *
      * @return the y-coordinate of the minimum point.
      */
-    public int getMinY() {
+    public int minY() {
         return min.y();
     }
 
@@ -166,7 +166,7 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
      *
      * @return the {@code WorldCoords2d} of the maximum point.
      */
-    public WorldCoords2d getMax() {
+    public WorldCoords2d max() {
         return max;
     }
 
@@ -175,7 +175,7 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
      *
      * @return the x-coordinate of the maximum point.
      */
-    public int getMaxX() {
+    public int maxX() {
         return max.x();
     }
 
@@ -184,7 +184,7 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
      *
      * @return the y-coordinate of the maximum point.
      */
-    public int getMaxY() {
+    public int maxY() {
         return max.y();
     }
 
@@ -235,10 +235,10 @@ public class WorldBBox2d implements Iterable<WorldCoords2d> {
      * @return A new bounding box representing the intersection (may be empty)
      */
     public WorldBBox2d intersection(WorldBBox2d box) {
-        int minX = Math.max(min.x(), box.getMinX());
-        int minY = Math.max(min.y(), box.getMinY());
-        int maxX = Math.min(max.x(), box.getMaxX());
-        int maxY = Math.min(max.y(), box.getMaxY());
+        int minX = Math.max(min.x(), box.minX());
+        int minY = Math.max(min.y(), box.minY());
+        int maxX = Math.min(max.x(), box.maxX());
+        int maxY = Math.min(max.y(), box.maxY());
         return new WorldBBox2d(minX, minY, Math.max(0, maxX - minX + 1), Math.max(0, maxY - minY + 1));
     }
 

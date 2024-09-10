@@ -34,7 +34,7 @@ public class BufferedImageChunk implements IterableChunk2d, WritableChunk2d {
         // TYPE_BYTE_GRAY color model is the closest to what we need for now (store a few different values).
         // To get rid of this hack, we should have a look on how to develop a specific
         // color model to store integers (I guess this could be lot of useless work).
-        image = new BufferedImage(bbox.getSize().x(), bbox.getSize().y(), BufferedImage.TYPE_BYTE_GRAY);
+        image = new BufferedImage(bbox.sizeX(), bbox.sizeY(), BufferedImage.TYPE_BYTE_GRAY);
         Arrays.fill(((DataBufferByte) image.getRaster().getDataBuffer()).getData(), (byte) 0);
     }
 
@@ -52,7 +52,7 @@ public class BufferedImageChunk implements IterableChunk2d, WritableChunk2d {
     @Override
     public int get(int x, int y) {
         if (!bbox.contains(x, y)) throw new IndexOutOfBoundsException();
-        return image.getRaster().getSample(x - bbox.getMin().x(), y - bbox.getMin().y(), 0);
+        return image.getRaster().getSample(x - bbox.minX(), y - bbox.minY(), 0);
     }
 
     /**
@@ -69,7 +69,7 @@ public class BufferedImageChunk implements IterableChunk2d, WritableChunk2d {
     @Override
     public void set(int x, int y, int value) {
         if (!bbox.contains(x, y)) throw new IndexOutOfBoundsException();
-        image.getRaster().setSample(x - bbox.getMin().x(), y - bbox.getMin().y(), 0, value);
+        image.getRaster().setSample(x - bbox.minX(), y - bbox.minY(), 0, value);
     }
 
     /**

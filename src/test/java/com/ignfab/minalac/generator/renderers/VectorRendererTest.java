@@ -132,7 +132,7 @@ class VectorRendererTest {
     @DisplayName("Test rendering of a chunk larger than world horizontal limits")
     public void testRenderHorizontalOverflow() {
         // Prepare a larger model bbox
-        WorldBBox2d modelBbox = new WorldBBox2d(bbox.getMinX() - 1, bbox.getMinY() - 1, bbox.getSizeX() + 2, bbox.getSizeY() + 2);
+        WorldBBox2d modelBbox = new WorldBBox2d(bbox.minX() - 1, bbox.minY() - 1, bbox.sizeX() + 2, bbox.sizeY() + 2);
 
         models.add(new TestingRasterizableModel(new TestingIterableArrayChunk2d(modelBbox, GeometryModel.INSIDE)));
 

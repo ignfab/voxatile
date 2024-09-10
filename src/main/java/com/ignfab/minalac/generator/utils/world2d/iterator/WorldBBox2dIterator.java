@@ -25,18 +25,18 @@ public class WorldBBox2dIterator implements Iterator<WorldCoords2d> {
         if (bbox.isEmpty()) {
             hasNext = false;
         } else {
-            x = bbox.getMin().x();
-            y = bbox.getMin().y();
+            x = bbox.minX();
+            y = bbox.minY();
             hasNext = true;
         }
     }
 
     private void moveOn() {
         x++;
-        if (x > bbox.getMax().x()) {
-            x = bbox.getMin().x();
+        if (x > bbox.maxX()) {
+            x = bbox.minX();
             y++;
-            if (y > bbox.getMax().y())
+            if (y > bbox.maxY())
                 hasNext = false;
         }
     }

@@ -81,7 +81,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      * @param sizeZ the size along the z-axis
      */
     public WorldBBox3d(WorldBBox2d bbox, int originZ, int sizeZ) {
-        this(bbox.getMin().to3d(originZ), bbox.getSize().to3d(sizeZ));
+        this(bbox.min().to3d(originZ), bbox.size().to3d(sizeZ));
     }
 
     /**
@@ -113,7 +113,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      * @return {@code true} if the provided bbox is in this bounding box.
      */
     public boolean contains(WorldBBox3d bbox) {
-        return contains(bbox.getMin()) && contains(bbox.getMax());
+        return contains(bbox.min()) && contains(bbox.max());
     }
 
     /**
@@ -121,7 +121,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      *
      * @return the size of the bounding box as a {@link WorldSize3d}.
      */
-    public WorldSize3d getSize() {
+    public WorldSize3d size() {
         return size;
     }
 
@@ -130,7 +130,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      *
      * @return the bounding box size along the x-axis.
      */
-    public int getSizeX() {
+    public int sizeX() {
         return size.x();
     }
 
@@ -139,7 +139,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      *
      * @return the bounding box size along the y-axis.
      */
-    public int getSizeY() {
+    public int sizeY() {
         return size.y();
     }
 
@@ -148,7 +148,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      *
      * @return the bounding box size along the z-axis.
      */
-    public int getSizeZ() {
+    public int sizeZ() {
         return size.z();
     }
 
@@ -157,7 +157,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      *
      * @return the {@link WorldCoords3d} of the minimum point.
      */
-    public WorldCoords3d getMin() {
+    public WorldCoords3d min() {
         return min;
     }
 
@@ -166,7 +166,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      *
      * @return the x-coordinate of the minimum point.
      */
-    public int getMinX() {
+    public int minX() {
         return min.x();
     }
 
@@ -175,7 +175,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      *
      * @return the y-coordinate of the minimum point.
      */
-    public int getMinY() {
+    public int minY() {
         return min.y();
     }
 
@@ -184,7 +184,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      *
      * @return the z-coordinate of the minimum point.
      */
-    public int getMinZ() {
+    public int minZ() {
         return min.z();
     }
 
@@ -193,7 +193,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      *
      * @return the {@link WorldCoords3d} of the maximum point.
      */
-    public WorldCoords3d getMax() {
+    public WorldCoords3d max() {
         return max;
     }
 
@@ -202,7 +202,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      *
      * @return the x-coordinate of the maximum point.
      */
-    public int getMaxX() {
+    public int maxX() {
         return max.x();
     }
 
@@ -211,7 +211,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      *
      * @return the y-coordinate of the maximum point.
      */
-    public int getMaxY() {
+    public int maxY() {
         return max.y();
     }
 
@@ -220,7 +220,7 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      *
      * @return the z-coordinate of the maximum point.
      */
-    public int getMaxZ() {
+    public int maxZ() {
         return max.z();
     }
 
@@ -270,12 +270,12 @@ public class WorldBBox3d implements Iterable<WorldCoords3d> {
      * @return A new bounding box representing the intersection (may be empty)
      */
     public WorldBBox3d intersection(WorldBBox3d box) {
-        int minX = Math.max(min.x(), box.getMinX());
-        int minY = Math.max(min.y(), box.getMinY());
-        int minZ = Math.max(min.z(), box.getMinZ());
-        int maxX = Math.min(max.x(), box.getMaxX());
-        int maxY = Math.min(max.y(), box.getMaxY());
-        int maxZ = Math.min(max.z(), box.getMaxZ());
+        int minX = Math.max(min.x(), box.minX());
+        int minY = Math.max(min.y(), box.minY());
+        int minZ = Math.max(min.z(), box.minZ());
+        int maxX = Math.min(max.x(), box.maxX());
+        int maxY = Math.min(max.y(), box.maxY());
+        int maxZ = Math.min(max.z(), box.maxZ());
         return new WorldBBox3d(minX, minY, minZ, Math.max(0, maxX - minX + 1), Math.max(0, maxY - minY + 1), Math.max(0, maxZ - minZ + 1));
     }
 

@@ -46,10 +46,10 @@ public class TestGeneration {
         Generation generation = new Generation(crs2154, 601000.0, 6341000.0, 501, 501, 2.0, 3.0);
 
         WorldBBox2d box = generation.getWorldBBox2d();
-        assertEquals(-250, box.getMinX());
-        assertEquals(-250, box.getMinY());
-        assertEquals(250, box.getMaxX());
-        assertEquals(250, box.getMaxY());
+        assertEquals(-250, box.minX());
+        assertEquals(-250, box.minY());
+        assertEquals(250, box.maxX());
+        assertEquals(250, box.maxY());
 
         // We should have an envelope +/- 500 around center (250 voxel * 2.0 meters/voxels = 500m)
         Envelope envelope = generation.getEnvelopeForCRS(crs2154);

@@ -248,8 +248,8 @@ public class ParamsParserTest {
         Generation generation = assertDoesNotThrow(() -> new ParamsParser(WORKING_JSON).createGeneration());
 
         assertNotNull(generation);
-        assertEquals(500, generation.getWorldBBox2d().getSize().x());
-        assertEquals(2500, generation.getWorldBBox2d().getSize().y());
+        assertEquals(500, generation.getWorldBBox2d().sizeX());
+        assertEquals(2500, generation.getWorldBBox2d().sizeY());
         assertEquals(3.0, generation.getVerticalScale(), 0.001);
 
         Heightmap ground = assertDoesNotThrow(() -> generation.getHeightmap("ground"));
@@ -263,7 +263,7 @@ public class ParamsParserTest {
     public void testCreateVoxelWorld() {
         VoxelWorld world = assertDoesNotThrow(() -> new ParamsParser(WORKING_JSON).createVoxelWorld());
         assertNotNull(world);
-        assertEquals(500, world.limits().getSizeX());
-        assertEquals(2500, world.limits().getSizeY());
+        assertEquals(500, world.limits().sizeX());
+        assertEquals(2500, world.limits().sizeY());
     }
 }
