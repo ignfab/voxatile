@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.utils.world3d;
 
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+import com.ignfab.minalac.generator.voxelization.Voxel3d;
 
 /**
  * The {@code WorldCoords3d} class represents a component in the voxel world.
@@ -11,7 +12,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
  * @param y The y-component value
  * @param z The z-component value
  */
-public record WorldCoords3d(int x, int y, int z) {
+public record WorldCoords3d(int x, int y, int z) implements Voxel3d {
     /**
      * Create a new {@link WorldCoords3d} from an existing {@link WorldCoords2d} and an additional {@code z} value.
      *
@@ -68,5 +69,10 @@ public record WorldCoords3d(int x, int y, int z) {
      */
     public static WorldCoords3d ceil(double x, double y, double z) {
         return new WorldCoords3d((int) Math.ceil(x), (int) Math.ceil(y), (int) Math.ceil(z));
+    }
+
+    @Override
+    public WorldCoords3d coords() {
+        return this;
     }
 }

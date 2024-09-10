@@ -15,28 +15,28 @@ public class BoundedIterator2dTest {
     @Test
     void test() {
         List<Voxel2d> list = Arrays.asList(
-            new Voxel2d.Impl(new WorldCoords2d(2, 3)),
-            new Voxel2d.Impl(new WorldCoords2d(0, 1)),
-            new Voxel2d.Impl(new WorldCoords2d(6, 7)),
-            new Voxel2d.Impl(new WorldCoords2d(4, 5)),
-            new Voxel2d.Impl(new WorldCoords2d(8, 9))
+            new WorldCoords2d(2, 3),
+            new WorldCoords2d(0, 1),
+            new WorldCoords2d(6, 7),
+            new WorldCoords2d(4, 5),
+            new WorldCoords2d(8, 9)
         );
         IteratorTester.assertBrowsesAllOnce(
             Arrays.asList(
-                new Voxel2d.Impl(new WorldCoords2d(4, 5)),
-                new Voxel2d.Impl(new WorldCoords2d(6, 7))
+                new WorldCoords2d(4, 5),
+                new WorldCoords2d(6, 7)
             ),
-            new BoundedIterator2d<Voxel2d>(list.iterator(), new WorldBBox2d(2, 4, 5, 4))
+            new BoundedIterator2d<>(list.iterator(), new WorldBBox2d(2, 4, 5, 4))
         );
 
         IteratorTester.assertBrowsesAllOnce(
             Collections.emptyList(),
-            new BoundedIterator2d<Voxel2d>(list.iterator(), new WorldBBox2d(-2, -4, 1, 3))
+            new BoundedIterator2d<>(list.iterator(), new WorldBBox2d(-2, -4, 1, 3))
         );
 
         IteratorTester.assertBrowsesAllOnce(
             Collections.emptyList(),
-            new BoundedIterator2d<Voxel2d>(list.iterator(), WorldBBox2d.EMPTY)
+            new BoundedIterator2d<>(list.iterator(), WorldBBox2d.EMPTY)
         );
     }
 }

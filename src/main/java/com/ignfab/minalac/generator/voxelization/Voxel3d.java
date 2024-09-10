@@ -14,11 +14,4 @@ public interface Voxel3d {
      * @return the voxel coordinate.
      */
     WorldCoords3d coords();
-
-    /**
-     * Default implementation with only coordinate.
-     *
-     * @param coords the voxel coordinate.
-     */
-    record Impl(WorldCoords3d coords) implements Voxel3d {}
 }

@@ -50,7 +50,7 @@ public class Polygon2dIteratorTest {
 
             for (WorldCoords2d position : bbox)
                 if (values.indexOf(content[index(position)]) >= 0)
-                    voxels.add(new Voxel2d.Impl(position));
+                    voxels.add(position);
 
             return voxels;
         }
@@ -130,7 +130,7 @@ public class Polygon2dIteratorTest {
     @DisplayName("Test empty polygon")
     public void testEmpty() {
         Polygon2d polygon = new Polygon2d(Polyline2d.fromPoints(new WorldCoords2d(1, 2), new WorldCoords2d(1, 2), new WorldCoords2d(1, 2)));
-        IteratorTester.assertBrowsesAllOnce(Collections.singleton(new Voxel2d.Impl(new WorldCoords2d(1, 2))), new Polygon2dIterator(polygon, true));
+        IteratorTester.assertBrowsesAllOnce(Collections.singleton(new WorldCoords2d(1, 2)), new Polygon2dIterator(polygon, true));
         IteratorTester.assertBrowsesAllOnce(Collections.emptyList(), new Polygon2dIterator(polygon, false));
     }
 

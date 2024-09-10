@@ -7,13 +7,14 @@ import java.util.function.Predicate;
 /**
  * A composite iterator filtering items from another iterator.
  *
- * @param <T> the type of items to iterate on
+ * @param <T> the type of items returned by resulting iterator
+ * @param <U> the type of items returned by original iterator (may be more specific)
  */
-public class FilterIterator<T> implements Iterator<T> {
-    private final Iterator<T> iterator;
-    private final Predicate<T> filter;
+public class FilterIterator<T, U extends T> implements Iterator<T> {
+    private final Iterator<U> iterator;
+    private final Predicate<U> filter;
 
-    private T current;
+    private U current;
 
     /**
      * Creates a new iterator skipping items according to a condition function.
@@ -21,7 +22,7 @@ public class FilterIterator<T> implements Iterator<T> {
      * @param iterable the iterable to get items from
      * @param filter the condition predicate returning true when item should be kept
      */
-    public FilterIterator(Iterable<T> iterable, Predicate<T> filter) {
+    public FilterIterator(Iterable<U> iterable, Predicate<U> filter) {
         this(iterable.iterator(), filter);
     }
 
@@ -31,7 +32,7 @@ public class FilterIterator<T> implements Iterator<T> {
      * @param iterator the iterator to get elements from
      * @param filter the condition predicate returning true when item should be kept
      */
-    public FilterIterator(Iterator<T> iterator, Predicate<T> filter) {
+    public FilterIterator(Iterator<U> iterator, Predicate<U> filter) {
         this.iterator = iterator;
         this.filter = filter;
         moveOn();

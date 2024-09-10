@@ -45,11 +45,7 @@ public class TestingVoxelizable2dBoxModel extends Model implements Voxelizable2d
 
         @Override
         public Iterator<Voxel2d> iterator() {
-            return new BoundedIterator2d<>(
-                new RemapIterator<WorldCoords2d, Voxel2d>(
-                    box.iterator(),
-                    Voxel2d.Impl::new),
-                limits);
+            return new BoundedIterator2d<>(box.iterator(), limits);
         };
 
         public Iterable<Voxel2d> inside() {
@@ -60,11 +56,8 @@ public class TestingVoxelizable2dBoxModel extends Model implements Voxelizable2d
                 new WorldCoords2d(box.minX() + 1, box.minY() + 1),
                 new WorldCoords2d(box.maxX() - 1, box.maxY() - 1)
             );
-            return () -> new BoundedIterator2d<>(
-                new RemapIterator<WorldCoords2d, Voxel2d>(
-                    inner.iterator(),
-                    Voxel2d.Impl::new),
-                limits);
+
+            return () -> new BoundedIterator2d<>(inner.iterator(), limits);
         }
 
         public Iterable<LineVoxel2d> borders() {

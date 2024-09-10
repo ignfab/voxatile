@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.utils.world2d;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.voxelization.Voxel2d;
 
 /**
  * The {@code WorldCoords2d} class represents a component on the surface (xy-plane) in the voxel world.
@@ -10,7 +11,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
  * @param x The x-component value
  * @param y The y-component value
  */
-public record WorldCoords2d(int x, int y) {
+public record WorldCoords2d(int x, int y) implements Voxel2d {
     /**
      * Create a new {@link WorldCoords2d} from an existing {@link WorldCoords3d}, dropping its {@code z} value.
      *
@@ -67,5 +68,10 @@ public record WorldCoords2d(int x, int y) {
      */
     public static WorldCoords2d ceil(double x, double y) {
         return new WorldCoords2d((int) Math.ceil(x), (int) Math.ceil(y));
+    }
+
+    @Override
+    public WorldCoords2d coords() {
+        return this;
     }
 }

@@ -217,7 +217,7 @@ public class Polygon2dIterator implements Iterator<Voxel2d> {
         if (!hasNext())
             throw new NoSuchElementException();
 
-        Voxel2d element = new Voxel2d.Impl(new WorldCoords2d(x, y));
+        Voxel2d element = new WorldCoords2d(x, y);
         moveOn();
         return element;
     }

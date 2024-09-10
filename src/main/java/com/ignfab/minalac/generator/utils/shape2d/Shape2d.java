@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.utils.shape2d;
 
+import java.util.Collections;
+
 import com.ignfab.minalac.generator.utils.iterator.MultiIterator;
 import com.ignfab.minalac.generator.voxelization.LineVoxel2d;
 import com.ignfab.minalac.generator.voxelization.Voxel2d;
@@ -22,12 +24,16 @@ public interface Shape2d {
      *
      * @return the border iterable of this shape.
      */
-    Iterable<LineVoxel2d> borderVoxels();
+    default Iterable<LineVoxel2d> borderVoxels() {
+        return Collections::emptyIterator;
+    }
 
     /**
      * Returns an iterable over inside voxels in this shape.
      *
      * @return the inside iterable of this shape.
      */
-    Iterable<Voxel2d> insideVoxels();
+    default Iterable<Voxel2d> insideVoxels() {
+        return Collections::emptyIterator;
+    };
 }

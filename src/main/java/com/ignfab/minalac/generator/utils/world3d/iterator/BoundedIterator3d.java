@@ -9,16 +9,17 @@ import java.util.Iterator;
 /**
  * A composite iterator filtering the 3d voxels using a provided bounding box.
  *
- * @param <T> the type of voxels returned by the iterator.
+ * @param <T> the type of voxels returned by resulting iterator
+ * @param <U> the type of voxels returned by original iterator (may be more specific)
  */
-public class BoundedIterator3d<T extends Voxel3d> extends FilterIterator<T> {
+public class BoundedIterator3d<T extends Voxel3d, U extends T> extends FilterIterator<T, U> {
     /**
      * Create a new iterator bounded by a box.
      *
      * @param iterator iterator to bound
      * @param bbox bounding box
      */
-    public BoundedIterator3d(Iterator<T> iterator, WorldBBox3d bbox) {
+    public BoundedIterator3d(Iterator<U> iterator, WorldBBox3d bbox) {
         super(iterator, voxel -> bbox.contains(voxel.coords()));
     }
 }

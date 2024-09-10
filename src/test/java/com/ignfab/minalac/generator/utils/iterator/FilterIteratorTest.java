@@ -12,24 +12,24 @@ public class FilterIteratorTest {
     void testIterator() {
         IteratorTester.assertBrowsesAllOnce(
             Arrays.asList(new Integer[] { 1, 3, 5, 7, 9 }),
-            new FilterIterator<Integer>(
+            new FilterIterator<>(
                 Arrays.asList(new Integer[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }),
                 item -> item % 2 != 0)
         );
 
         IteratorTester.assertBrowsesAllOnce(
             Arrays.asList(new Integer[] { 0, 2, 4, 6, 8, 10 }),
-            new FilterIterator<Integer>(
+            new FilterIterator<>(
                 Arrays.asList(new Integer[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }).iterator(),
                 item -> item % 2 == 0)
         );
 
-        assertFalse(new FilterIterator<String>(
+        assertFalse(new FilterIterator<>(
                 Arrays.asList(new String[] { "a", "b", "c" }),
                 item -> false).hasNext()
         );
 
-        assertFalse(new FilterIterator<String>(
+        assertFalse(new FilterIterator<>(
             Collections.emptyIterator(),
             item -> true).hasNext()
         );
