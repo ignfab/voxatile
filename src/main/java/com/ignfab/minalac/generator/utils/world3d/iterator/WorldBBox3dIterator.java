@@ -26,22 +26,22 @@ public class WorldBBox3dIterator implements Iterator<WorldCoords3d> {
         if (bbox.isEmpty()) {
             hasNext = false;
         } else {
-            x = bbox.getMin().x();
-            y = bbox.getMin().y();
-            z = bbox.getMin().z();
+            x = bbox.minX();
+            y = bbox.minY();
+            z = bbox.minZ();
             hasNext = true;
         }
     }
 
     private void moveOn() {
         x++;
-        if (x > bbox.getMax().x()) {
-            x = bbox.getMin().x();
+        if (x > bbox.maxX()) {
+            x = bbox.minX();
             y++;
-            if (y > bbox.getMax().y()) {
-                y = bbox.getMin().y();
+            if (y > bbox.maxY()) {
+                y = bbox.minY();
                 z++;
-                if (z > bbox.getMax().z())
+                if (z > bbox.maxZ())
                     hasNext = false;
             }
         }

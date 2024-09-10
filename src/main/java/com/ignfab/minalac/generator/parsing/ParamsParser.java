@@ -114,10 +114,10 @@ public class ParamsParser {
         world.setLimits(new WorldBBox3d(
             -rawParams.area.extendX / 2,
             -rawParams.area.extendY / 2,
-            maximumLimits.getMinZ(),
+            maximumLimits.minZ(),
             rawParams.area.extendX,
             rawParams.area.extendY,
-            maximumLimits.getSizeZ()
+            maximumLimits.sizeZ()
         ));
         return world;
     }

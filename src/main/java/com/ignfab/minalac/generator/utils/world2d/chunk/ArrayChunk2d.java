@@ -28,7 +28,7 @@ public class ArrayChunk2d implements ReadableChunk2d, WritableChunk2d {
      */
     public ArrayChunk2d(WorldBBox2d bbox, int defaultValue) {
         this.bbox = bbox;
-        values = new int[bbox.getSize().x() * bbox.getSize().y()];
+        values = new int[bbox.sizeX() * bbox.sizeY()];
         if (defaultValue != 0)
             Arrays.fill(values, defaultValue);
     }
@@ -61,7 +61,7 @@ public class ArrayChunk2d implements ReadableChunk2d, WritableChunk2d {
     private int index(int x, int y) {
         if (!bbox.contains(x, y))
             throw new IndexOutOfBoundsException(String.format("%s: Index out of range at (x=%d, y=%d)", getClass().getSimpleName(), x, y));
-        return (x - bbox.getMin().x()) * bbox.getSize().y() + (y - bbox.getMin().y());
+        return (x - bbox.minX()) * bbox.size().y() + (y - bbox.minY());
     }
 
     @Override

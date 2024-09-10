@@ -93,11 +93,11 @@ public class Generation {
         MathTransform crsTransform = CRS.findMathTransform(this.crs, crs);
 
         Coordinate[] corners = {
-            new Coordinate(worldBBox.getMinX(), worldBBox.getMinY()),
-            new Coordinate(worldBBox.getMaxX(), worldBBox.getMinY()),
-            new Coordinate(worldBBox.getMaxX(), worldBBox.getMaxY()),
-            new Coordinate(worldBBox.getMinX(), worldBBox.getMaxY()),
-            new Coordinate(worldBBox.getMinX(), worldBBox.getMinY())
+            new Coordinate(worldBBox.minX(), worldBBox.minY()),
+            new Coordinate(worldBBox.maxX(), worldBBox.minY()),
+            new Coordinate(worldBBox.maxX(), worldBBox.maxY()),
+            new Coordinate(worldBBox.minX(), worldBBox.maxY()),
+            new Coordinate(worldBBox.minX(), worldBBox.minY())
         };
 
         Geometry geom = voxelToCrs.transform(new GeometryFactory().createLinearRing(corners));

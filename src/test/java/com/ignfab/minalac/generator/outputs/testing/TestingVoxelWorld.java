@@ -35,7 +35,7 @@ public class TestingVoxelWorld extends VoxelWorld {
         super(null);
         factory = new TestingVoxelTypeFactory(this);
         maxLimits = bbox;
-        voxels = new String[bbox.getSize().volume()];
+        voxels = new String[bbox.size().volume()];
         setLimits(bbox);
     }
 
@@ -54,9 +54,9 @@ public class TestingVoxelWorld extends VoxelWorld {
 
     // This method should not be called with out of bounds coordinate
     private int index(int x, int y, int z) {
-        return x - limits().getMinX() + limits().getSizeX()
-            * (y - limits().getMinY() + limits().getSizeY()
-            * (z - limits().getMinZ()));
+        return x - limits().minX() + limits().sizeX()
+            * (y - limits().minY() + limits().sizeY()
+            * (z - limits().minZ()));
     }
 
     protected void set(int x, int y, int z, TestingVoxelType voxelType) {

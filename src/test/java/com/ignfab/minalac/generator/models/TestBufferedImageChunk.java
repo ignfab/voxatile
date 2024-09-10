@@ -31,13 +31,13 @@ public class TestBufferedImageChunk {
 
         // Set a different value on each chunk cell
         v = 0;
-        for (int y = bbox.getMin().y(); y <= bbox.getMax().y(); y++)
-            for (int x = bbox.getMin().x(); x <= bbox.getMax().x(); x++)
+        for (int y = bbox.minY(); y <= bbox.maxY(); y++)
+            for (int x = bbox.minX(); x <= bbox.maxX(); x++)
                 chunk.set(x, y, v++);
 
         v = 0;
-        for (int y = bbox.getMin().y(); y <= bbox.getMax().y(); y++)
-            for (int x = bbox.getMin().x(); x <= bbox.getMax().x(); x++)
+        for (int y = bbox.minY(); y <= bbox.maxY(); y++)
+            for (int x = bbox.minX(); x <= bbox.maxX(); x++)
                 assertEquals(chunk.get(x, y), v++, "(%d, %d)".formatted(x, y));
     }
 

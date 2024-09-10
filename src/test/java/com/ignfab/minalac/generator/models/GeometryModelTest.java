@@ -26,10 +26,10 @@ public class GeometryModelTest {
         GeometryModel model = new GeometryModel(FACTORY.createPoint(new Coordinate(10.0, -20.0)), CONVERTER, LARGEBOX);
         ReadableChunk2d chunk = model.getChunk();
 
-        assertEquals(chunk.bbox().getSize().x(),  1, "x-size");
-        assertEquals(chunk.bbox().getSize().y(),  1, "y-size");
-        assertEquals(chunk.bbox().getMin().x(),  10, "x-min");
-        assertEquals(chunk.bbox().getMin().y(), -20, "y-min");
+        assertEquals(chunk.bbox().sizeX(),  1, "x-size");
+        assertEquals(chunk.bbox().sizeY(),  1, "y-size");
+        assertEquals(chunk.bbox().minX(),  10, "x-min");
+        assertEquals(chunk.bbox().minY(), -20, "y-min");
     }
 
     @Test
@@ -49,10 +49,10 @@ public class GeometryModelTest {
         // B B B B
 
         // Bbox check
-        assertEquals(chunk.bbox().getSize().x(), 4, "x-size");
-        assertEquals(chunk.bbox().getSize().y(), 3, "y-size");
-        assertEquals(chunk.bbox().getMin().x(), -1, "x-min");
-        assertEquals(chunk.bbox().getMin().y(), -1, "y-min");
+        assertEquals(chunk.bbox().sizeX(), 4, "x-size");
+        assertEquals(chunk.bbox().sizeY(), 3, "y-size");
+        assertEquals(chunk.bbox().minX(), -1, "x-min");
+        assertEquals(chunk.bbox().minY(), -1, "y-min");
 
         // Pixel check
         assertEquals(chunk.get(-1, -1), GeometryModel.BORDER,  "(-1, -1)");
@@ -88,10 +88,10 @@ public class GeometryModelTest {
         // 0 0 0 0 1
 
         // Bbox check
-        assertEquals(chunk.bbox().getSize().x(), 5, "x-size");
-        assertEquals(chunk.bbox().getSize().y(), 5, "y-size");
-        assertEquals(chunk.bbox().getMin().x(), -2, "x-min");
-        assertEquals(chunk.bbox().getMin().y(), -2, "y-min");
+        assertEquals(chunk.bbox().sizeX(), 5, "x-size");
+        assertEquals(chunk.bbox().sizeY(), 5, "y-size");
+        assertEquals(chunk.bbox().minX(), -2, "x-min");
+        assertEquals(chunk.bbox().minY(), -2, "y-min");
 
         // Pixel check
         assertEquals(chunk.get(-2, -2), GeometryModel.BORDER,  "(-2,-2)");
@@ -156,10 +156,10 @@ public class GeometryModelTest {
         // 1 1 1 1 1
 
         // Bbox check
-        assertEquals(chunk.bbox().getSize().x(), 5, "x-size");
-        assertEquals(chunk.bbox().getSize().y(), 5, "y-size");
-        assertEquals(chunk.bbox().getMin().x(), -2, "x-min");
-        assertEquals(chunk.bbox().getMin().y(), -2, "y-min");
+        assertEquals(chunk.bbox().sizeX(), 5, "x-size");
+        assertEquals(chunk.bbox().sizeY(), 5, "y-size");
+        assertEquals(chunk.bbox().minX(), -2, "x-min");
+        assertEquals(chunk.bbox().minY(), -2, "y-min");
 
         // Pixel check
         assertEquals(chunk.get(-2, -2), GeometryModel.BORDER,  "(-2,-2)");
@@ -221,10 +221,10 @@ public class GeometryModelTest {
         //  -5           X
 
         // Bbox check
-        assertEquals( 3, chunk.bbox().getSize().x(), "x-size"); // Intersection only
-        assertEquals( 4, chunk.bbox().getSize().y(), "y-size");
-        assertEquals(-3, chunk.bbox().getMin().x(),  "x-min");
-        assertEquals(-3, chunk.bbox().getMin().y(),  "y-min");
+        assertEquals( 3, chunk.bbox().sizeX(), "x-size"); // Intersection only
+        assertEquals( 4, chunk.bbox().sizeY(), "y-size");
+        assertEquals(-3, chunk.bbox().minX(),  "x-min");
+        assertEquals(-3, chunk.bbox().minY(),  "y-min");
 
         // Pixel check
         assertEquals(GeometryModel.OUTSIDE, chunk.get(-3,  0), "(-3, 0)");

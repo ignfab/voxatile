@@ -12,9 +12,9 @@ public class WorldBBox3dTest {
     public void testConstructorOriginSizeInt() {
         // Instantiating a new bounding box
         WorldBBox3d box = assertDoesNotThrow(() -> new WorldBBox3d(1, 2, 3, 4, 5, 6));
-        assertEquals(new WorldCoords3d(1, 2, 3), box.getMin());
-        assertEquals(new WorldCoords3d(4, 6, 8), box.getMax());
-        assertEquals(new WorldSize3d(4, 5, 6), box.getSize());
+        assertEquals(new WorldCoords3d(1, 2, 3), box.min());
+        assertEquals(new WorldCoords3d(4, 6, 8), box.max());
+        assertEquals(new WorldSize3d(4, 5, 6), box.size());
 
         // Instantiating a 0 sized bounding box
         assertDoesNotThrow(() -> new WorldBBox3d(0, 0, 0, 0, 0, 0));
@@ -30,9 +30,9 @@ public class WorldBBox3dTest {
         box = assertDoesNotThrow(() -> new WorldBBox3d(
             new WorldCoords3d(1, 2, 3)
         ));
-        assertEquals(new WorldCoords3d(1, 2, 3), box.getMin());
-        assertEquals(new WorldCoords3d(1, 2, 3), box.getMax());
-        assertEquals(new WorldSize3d(1, 1, 1), box.getSize());
+        assertEquals(new WorldCoords3d(1, 2, 3), box.min());
+        assertEquals(new WorldCoords3d(1, 2, 3), box.max());
+        assertEquals(new WorldSize3d(1, 1, 1), box.size());
 
         box = assertDoesNotThrow(() -> new WorldBBox3d(
             new WorldCoords3d(1, -2, 3),
@@ -40,9 +40,9 @@ public class WorldBBox3dTest {
             new WorldCoords3d(-6, 0, 0)
         ));
 
-        assertEquals(new WorldCoords3d(-6, -2, -5), box.getMin());
-        assertEquals(new WorldCoords3d(1, 4, 3), box.getMax());
-        assertEquals(new WorldSize3d(8, 7, 9), box.getSize());
+        assertEquals(new WorldCoords3d(-6, -2, -5), box.min());
+        assertEquals(new WorldCoords3d(1, 4, 3), box.max());
+        assertEquals(new WorldSize3d(8, 7, 9), box.size());
     }
 
     @Test
