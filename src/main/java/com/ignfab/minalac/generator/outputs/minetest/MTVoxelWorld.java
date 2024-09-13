@@ -59,7 +59,10 @@ public class MTVoxelWorld extends VoxelWorld {
 
     // Retrieves or creates the mapblock corresponding to given voxel position.
     private Block getOrCreateBlock(int x, int y, int z) {
-        Integer pos = getPosValue(getBlockPosition(x), getBlockPosition(y), getBlockPosition(z));
+        // See position hashing algorithm on world format documentation
+        // https://github.com/minetest/minetest/blob/master/doc/world_format.md#position-hashing
+        Integer pos = z * 16777216 + y * 4096 + x;
+
         Block block = blocks.get(pos);
         if (block == null)
             synchronized (blocks) {
@@ -85,11 +88,7 @@ public class MTVoxelWorld extends VoxelWorld {
         // (In-Game coords to world coords) XZY => XYZ
         if (!limits().contains(x, z, y)) return;
 
-        getOrCreateBlock(x, y, z).set(
-            getNodeRelativePosition(x),
-            getNodeRelativePosition(y),
-            getNodeRelativePosition(z),
-            voxel);
+        getOrCreateBlock(x >> 4, y >> 4, z >> 4).set(x & 0x0f, y & 0x0f, z & 0x0f, voxel);
     }
 
     /**
@@ -133,22 +132,5 @@ public class MTVoxelWorld extends VoxelWorld {
         } catch (IOException e) {
             throw new MapWriteException(e);
         }
-    }
-
-    // See position hashing algorithm on world format documentation
-    // https://github.com/minetest/minetest/blob/master/doc/world_format.md#position-hashing
-    private int getPosValue(int x, int y, int z) {
-        return z * 16777216 + y * 4096 + x;
-    }
-
-    private int getNodeRelativePosition(int p) {
-        p = p % 16;
-        return p < 0 ? p + 16 : p;
-    }
-
-    // See getContainerPos(s16 p, s16 d)
-    // https://github.com/minetest/minetest/blob/master/src/util/numeric.h#L45
-    private int getBlockPosition(int p) {
-        return (p >= 0 ? p : p - 16 + 1) / 16;
     }
 }
