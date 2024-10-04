@@ -14,6 +14,7 @@ import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcesso
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataCopyPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataDefaultPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataParsePostProcessorParams;
+import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
 import com.ignfab.minalac.generator.parameters.renderers.GroundRendererParams;
@@ -27,7 +28,6 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
-
 import org.geotools.api.referencing.FactoryException;
 
 import java.io.File;
@@ -76,6 +76,7 @@ public final class SampleImplementation {
         parser.registerParams("building", BuildingRendererParams.class);
 
         parser.registerParams("wfs", WFSProviderParams.class);
+        parser.registerParams("gpkg", GeoPackageProviderParams.class);
         parser.registerParams("wmsFloat", WMSFloatBilProviderParams.class);
 
         parser.registerParams("floatMatrix", FloatMatrixProcessorParams.class);
