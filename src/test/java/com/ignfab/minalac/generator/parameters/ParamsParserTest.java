@@ -1,13 +1,9 @@
 package com.ignfab.minalac.generator.parameters;
 
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.parameters.renderers.RendererParams;
-import com.ignfab.minalac.generator.renderers.Renderer;
+import com.ignfab.minalac.generator.parameters.renderers.TestingRendererParams;
+
 import org.junit.jupiter.api.Test;
 
-import java.beans.ConstructorProperties;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -189,7 +185,7 @@ public class ParamsParserTest {
         ), "Type field is missing");
 
         ParamsParser parser = new ParamsParser();
-        parser.registerRenderer("customIdentifier", TestingRendererParams.class);
+        parser.registerParams("customIdentifier", TestingRendererParams.class);
 
         GenerationParams genParams = assertDoesNotThrow(() -> parser.parse("""
             renderers:
@@ -216,36 +212,5 @@ public class ParamsParserTest {
             """
             + MINIMAL_YAML
         ), "Wrong type field value");
-    }
-
-    /**
-     * A RendererParams class for testing purposes.
-     */
-    @SuppressWarnings("checkstyle:VisibilityModifier")
-    public static class TestingRendererParams extends RendererParams {
-        /**
-         * A required field.
-         */
-        public String requiredField;
-        /**
-         * An optional field.
-         */
-        @JsonSetter(nulls = Nulls.SKIP)
-        public String optionalField = "defaultOptionalValue";
-
-        /**
-         * Constructor used to ensure that the required fields are present during deserialization.
-         *
-         * @param requiredField the required field.
-         */
-        @ConstructorProperties({"requiredField"})
-        public TestingRendererParams(String requiredField) {
-            this.requiredField = requiredField;
-        }
-
-        @Override
-        public Renderer create(Generation generation) {
-            throw new UnsupportedOperationException("This class is only for testing deserialization mechanisms");
-        }
     }
 }

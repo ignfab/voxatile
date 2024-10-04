@@ -10,7 +10,6 @@ import java.beans.ConstructorProperties;
 /**
  * Concrete class of {@link RendererParams} representing the parameters of a {@link HeightmapRenderer}.
  */
-// Since attributes are purposely kept public for this class the checkstyle for visibility is disabled.
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class HeightmapRendererParams extends RendererParams {
     /**

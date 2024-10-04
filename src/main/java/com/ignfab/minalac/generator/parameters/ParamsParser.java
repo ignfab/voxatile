@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.ignfab.minalac.generator.parameters.renderers.RendererParams;
-
 
 /**
  * A Json/Yaml parser able to decode parameters into a {@code Generation} object.
@@ -48,13 +46,13 @@ public class ParamsParser {
     }
 
     /**
-     * Registers a new {@link com.ignfab.minalac.generator.parameters.renderers.RendererParams}.
+     * Registers a new {@link PolymorphicParams}.
      *
      * @param name the name used to associate the class during deserialization
-     * @param clazz The concrete class extending {@code RendererParams}
-     * @param <T> The type of the {@code RendererParams} subclass
+     * @param clazz The concrete class extending {@code PolymorphicParams}
+     * @param <T> The type of the {@code PolymorphicParams} subclass
      */
-    public <T extends RendererParams> void registerRenderer(String name, Class<T> clazz) {
+    public <T extends PolymorphicParams> void registerParams(String name, Class<T> clazz) {
         mapper.registerSubtypes(new NamedType(clazz, name));
     }
 }

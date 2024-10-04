@@ -36,6 +36,9 @@ public class ScheduledTask {
     public ScheduledTask(String id, Runnable task, Collection<String> conditions) {
         this.id = id;
         this.task = task;
+        if (conditions == null)
+            conditions = Collections.emptyList();
+
         // Synchronized collections are thread-safe equivalent of regular collections
         // This is important to ensure no problem occurs if two required tasks finishes at the same time
         this.conditions = Collections.synchronizedSet(new HashSet<>(conditions));
@@ -55,7 +58,9 @@ public class ScheduledTask {
      * This method will return when the runnable returns.
      */
     public void run() {
+        System.out.printf("[%s] %s%n", Thread.currentThread().getName(), "Starting " + id);
         task.run();
+        System.out.printf("[%s] %s%n", Thread.currentThread().getName(), id + " finished");
     }
 
     /**

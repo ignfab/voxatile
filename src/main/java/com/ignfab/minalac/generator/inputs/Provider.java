@@ -5,6 +5,8 @@ import com.ignfab.minalac.generator.exceptions.RetryableException;
 
 import java.io.Closeable;
 
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+
 /**
  * A provider is responsible for acquiring data.
  * <p>
@@ -20,6 +22,13 @@ import java.io.Closeable;
  * @param <T> The type of provided elements
  */
 public interface Provider<T> {
+    /**
+     * Returns the coordinate reference system of provided data.
+     *
+     * @return CRS of provided data
+     */
+    CoordinateReferenceSystem crs();
+
     /**
      * Returns the type of provided elements.
      *

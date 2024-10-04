@@ -2,8 +2,10 @@ package com.ignfab.minalac.generator.parameters;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.Heightmap;
-import com.ignfab.minalac.generator.parameters.renderers.VectorRendererParams;
-import com.ignfab.minalac.generator.world.SemanticType;
+import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
+import com.ignfab.minalac.generator.parameters.providers.TestingProviderParams;
+import com.ignfab.minalac.generator.parameters.renderers.TestingRendererParams;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -107,12 +109,11 @@ public class GenerationParamsTest {
         params.crs = "EPSG:5643";
         params.heightmaps.put("ground", new HeightmapParams("0"));
         params.heightmaps.put("altitude", new HeightmapParams("minimal"));
-        params.renderers.put("building", new VectorRendererParams(
-            "building",
-            "ground",
-            SemanticType.COBBLE,
-            SemanticType.STONE)
-        );
+        params.renderers.put("renderer1", new TestingRendererParams("value1"));
+        params.renderers.put("renderer2", new TestingRendererParams("value2"));
+        params.sources.put("source1", new DataSourceParams("models1", new TestingProviderParams("value3"), new TestingProcessorParams("value4")));
+        params.sources.put("source2", new DataSourceParams("models2", new TestingProviderParams("value5"), new TestingProcessorParams("value6")));
+
         Generation generation = params.create();
 
         assertNotNull(generation);
@@ -125,7 +126,5 @@ public class GenerationParamsTest {
 
         Heightmap altitude = assertDoesNotThrow(() -> generation.heightmaps().get("altitude"));
         assertEquals(Integer.MIN_VALUE, altitude.get(0, 0));
-
-        assertDoesNotThrow(() -> generation.renderers().get("building"));
     }
 }
