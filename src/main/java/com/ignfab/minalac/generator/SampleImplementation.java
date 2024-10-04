@@ -7,6 +7,7 @@ import com.ignfab.minalac.generator.parameters.ParseException;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataCopyPostProcessorParams;
+import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
 import com.ignfab.minalac.generator.parameters.renderers.GroundRendererParams;
@@ -56,6 +57,7 @@ public final class SampleImplementation {
         parser.registerParams("vector", VectorRendererParams.class);
 
         parser.registerParams("wfs", WFSProviderParams.class);
+        parser.registerParams("gpkg", GeoPackageProviderParams.class);
         parser.registerParams("wmsFloat", WMSFloatBilProviderParams.class);
 
         parser.registerParams("floatMatrix", FloatMatrixProcessorParams.class);
