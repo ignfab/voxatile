@@ -82,6 +82,11 @@
             <artifactId>gt-referencing</artifactId>
             <version>${geotools.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-geopkg</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
         <!--
             Required to identify coordinates reference systems
             Example error: No code "EPSG:4326" from authority "EPSG"
@@ -232,6 +237,21 @@
                                 <exclude>modeling32.png</exclude>
                                 <exclude>plugin.xml</exclude>
                                 <exclude>plugin.properties</exclude>
+                            </excludes>
+                        </filter>
+                        <!-- Removes JAI-EXT registry files overlapping with each-other -->
+                        <filter>
+                            <artifact>*:jt-*</artifact>
+                            <excludes>
+                                <exclude>META-INF/registryFile.jai*</exclude>
+                            </excludes>
+                        </filter>
+                        <!-- Removes some files of jt-scale2 that are already provided by jt-scale -->
+                        <filter>
+                            <artifact>it.geosolutions.jaiext.scale2:jt-scale2</artifact>
+                            <excludes>
+                                <exclude>it/geosolutions/jaiext/scale/JaiI18N.class</exclude>
+                                <exclude>it/geosolutions/jaiext/resources/image/it.geosolutions.jaiext.scale.properties</exclude>
                             </excludes>
                         </filter>
                     </filters>

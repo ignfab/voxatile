@@ -114,6 +114,18 @@ A provider capable of fetching vector data from a [Web Feature Service](https://
 
 **Suitable processors**: `geoToolsVector`
 
+### GeoPackage
+A provider capable of reading vector data from a [GeoPackage](https://en.wikipedia.org/wiki/GeoPackage) file.
+
+**Type**: `gpkg`
+
+**Extra parameters**:
+- `filePath` (required): Path of the GPKG file (absolute, or relative to execution context)
+- `typeName` (required): Name of feature type to read
+- `crsOverride` (optional, default none): CRS to use when reading data. By default, the CRS is read from the GeoPackage itself. You should only use this parameter if the CRS is invalid or missing from the file. This **DOES NOT** reproject data!
+
+**Suitable processors**: `geoToolsVector`
+
 ### Web Map Service with floating point values
 A provider capable of fetching **float** data from a [Web Map Service](https://en.wikipedia.org/wiki/Web_Map_Service) source. Source must be able to provide `x-bil` format.
 
@@ -138,7 +150,7 @@ This processor is able to take vector features and turn them into models, using 
 
 **Extra parameters**: None
 
-**Suitable providers**: `wfs`
+**Suitable providers**: `wfs`, `gpkg`
 
 ### Float matrix vector processor
 
