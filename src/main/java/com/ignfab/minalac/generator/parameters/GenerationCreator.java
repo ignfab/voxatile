@@ -1,9 +1,11 @@
 package com.ignfab.minalac.generator.parameters;
 
+import com.ignfab.minalac.generator.generation.DataSource;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.utils.random.Seed;
+import com.ignfab.minalac.generator.renderers.Renderer;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import org.geotools.api.geometry.Position;
 import org.geotools.api.referencing.FactoryException;
@@ -71,10 +73,23 @@ public final class GenerationCreator {
             )
         );
 
+        // Data Sources scheduling
+        params.sources.forEach((name, dataSourceParams) -> {
+            DataSource dataSource = dataSourceParams.create(generation);
+            generation.scheduler().schedule(
+                "source:" + name,
+                dataSource::fetch,
+                dataSourceParams.after
+            );
+        });
+
+        // Renderers scheduling
         params.renderers.forEach((name, rendererParams) -> {
-            generation.renderers().add(
-                name,
-                rendererParams.create(generation)
+            Renderer renderer = rendererParams.create(generation);
+            generation.scheduler().schedule(
+                "renderer:" + name,
+                () -> renderer.render(generation.world().limits()),
+                rendererParams.after
             );
         });
 

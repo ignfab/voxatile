@@ -2,25 +2,26 @@ package com.ignfab.minalac.generator.generation;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.models.ModelStore;
-import com.ignfab.minalac.generator.renderers.Renderer;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
+import com.ignfab.minalac.generator.utils.execution.Scheduler;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.utils.random.Seed;
+
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.util.AffineTransformation;
 
 /**
  * This {@code Generation} class contains information about the ongoing generation
- * such as the voxel world, the renderers or the heightmaps.
+ * such as the voxel world, the scheduler or the heightmaps.
  */
 public class Generation {
     // Main generation seed for random number generation
@@ -39,7 +40,8 @@ public class Generation {
     private final VoxelWorld world;
     private final ModelStore models = new ModelStore();
     private final Store<Heightmap> heightmaps = new Store<>();
-    private final Store<Renderer> renderers = new Store<>();
+
+    private final Scheduler scheduler = new Scheduler();
 
     /**
      * Constructs a new generation context.
@@ -124,11 +126,11 @@ public class Generation {
     }
 
     /**
-     * Returns the {@link Store} for the renderers.
-     * @return the renderers.
+     * Returns the generation scheduler.
+     * @return the scheduler.
      */
-    public Store<Renderer> renderers() {
-        return renderers;
+    public Scheduler scheduler() {
+        return scheduler;
     }
 
     /**
@@ -136,9 +138,9 @@ public class Generation {
      * in a given CRS.
      *
      * @param crs Coordinate reference system to get envelope for.
-     * @return Envelope covering generated world in CRS.
+     * @return ReferencedEnvelope covering generated world in CRS.
      */
-    public Envelope getEnvelopeForCRS(CoordinateReferenceSystem crs) throws FactoryException, TransformException {
+    public ReferencedEnvelope getEnvelopeForCRS(CoordinateReferenceSystem crs) throws FactoryException, TransformException {
         WorldToMapConverter converter = makeCoordsConverter(crs).inverse();
 
         Geometry geom = new GeometryFactory().createLinearRing(new Coordinate[] {
@@ -149,7 +151,7 @@ public class Generation {
             new Coordinate(world.limits().minX(), world.limits().minY())
         });
 
-        return converter.convert(geom).getEnvelopeInternal();
+        return new ReferencedEnvelope(converter.convert(geom).getEnvelopeInternal(), crs);
     }
 
     /**
@@ -181,4 +183,14 @@ public class Generation {
     public Seed seed() {
         return seed;
     }
+
+    /**
+     * Returns target CRS.
+     *
+     * @return CRS used for world rendering
+     */
+    public CoordinateReferenceSystem crs() {
+        return crs;
+    }
+
 }

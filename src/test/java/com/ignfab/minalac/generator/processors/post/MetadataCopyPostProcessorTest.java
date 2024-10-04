@@ -1,6 +1,8 @@
 package com.ignfab.minalac.generator.processors.post;
 
 import com.ignfab.minalac.generator.models.Model;
+import com.ignfab.minalac.generator.models.TestingModel;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

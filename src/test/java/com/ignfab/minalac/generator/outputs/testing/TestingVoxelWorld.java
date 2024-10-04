@@ -37,12 +37,18 @@ public class TestingVoxelWorld extends VoxelWorld {
         factory = new TestingVoxelTypeFactory(this);
         maxLimits = bbox;
         voxels = new String[bbox.size().volume()];
-        setLimits(bbox);
+        super.setLimits(bbox);
     }
 
     @Override
     public WorldBBox3d maxLimits() {
         return maxLimits;
+    }
+
+    // Avoid "Limits already set" when performing deserialization tests
+    // and get rid of .setLimits in rendering tests
+    @Override
+    public void setLimits(WorldBBox3d bbox) {
     }
 
     @Override

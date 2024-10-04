@@ -1,11 +1,12 @@
-package com.ignfab.minalac.generator.processors.post;
-
-import com.ignfab.minalac.generator.models.Model;
+package com.ignfab.minalac.generator.models;
 
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * A testing model with only metadata and assertions.
+ */
 public class TestingModel extends Model {
     public TestingModel() {}
 

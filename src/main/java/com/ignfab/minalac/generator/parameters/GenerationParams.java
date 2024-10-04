@@ -74,6 +74,17 @@ public class GenerationParams {
     public Map<String, HeightmapParams> heightmaps = new LinkedHashMap<>();
 
     /**
+     * The map of sources used during the generation.
+     * This field is optional.
+     */
+    @JsonSetter(
+        nulls = Nulls.SKIP,
+        // To prevent null values on required field of an element of the map.
+        contentNulls = Nulls.FAIL
+    )
+    public Map<String, DataSourceParams> sources = new LinkedHashMap<>();
+
+    /**
      * The map of renderers used during the generation.
      * This field is optional.
      */

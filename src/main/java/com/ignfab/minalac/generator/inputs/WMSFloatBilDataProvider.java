@@ -3,14 +3,13 @@ package com.ignfab.minalac.generator.inputs;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Iterator;
 
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
-import org.locationtech.jts.geom.Envelope;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
@@ -20,22 +19,26 @@ import com.ignfab.minalac.generator.utils.iterator.Iterators;
  * Data provider for Web Map Service (raster data).
  */
 public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatrix2d> {
+    private static final String SERVICE = "WMS";
+    private static final String VERSION = "1.3.0";
+
     private final String baseURL;
-    private final CoordinateReferenceSystem crs;
-    private final Envelope envelope;
+    private final String layer;
+    private final ReferencedEnvelope envelope;
+
     private final int width;
     private final int height;
 
     /**
      * Creates a new {@code WMSDataProvider}.
      *
-     * @param baseURL base URL of the service (should include {@code service=} parameter but no other)
-     * @param crs Coordinate reference system to be used for data downloading and processing
-     * @param envelope Limit of area to fetch
+     * @param baseURL base URL of the service
+     * @param layer name of the WMS layer to query
+     * @param envelope limit of area to fetch
      */
-    public WMSFloatBilDataProvider(String baseURL, CoordinateReferenceSystem crs, Envelope envelope) {
+    public WMSFloatBilDataProvider(String baseURL, String layer, ReferencedEnvelope envelope) {
         this.baseURL = baseURL;
-        this.crs = crs;
+        this.layer = layer;
         this.envelope = envelope;
 
         // Let's say we want heightmap with 1 map unit precision.
@@ -53,32 +56,46 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
 
     @Override
     public Provider.Result<FloatGeographicDataMatrix2d> provide() throws GenerationFailedException, RetryableException {
-        int size = 4 * width * height;
+        String srsname = CRS.toSRS(envelope.getCoordinateReferenceSystem());
+        if (srsname == null)
+            throw new GenerationFailedException("Could not retrieve SRS name for layer");
+
+        URLBuilder url = new URLBuilder(baseURL);
+        url.addQueryParameter("SERVICE", SERVICE);
+        url.addQueryParameter("VERSION", VERSION);
+        url.addQueryParameter("REQUEST", "GetMap");
+        url.addQueryParameter("LAYERS", layer);
+        url.addQueryParameter("FORMAT", "image/x-bil;bits=32");
+        url.addQueryParameter("STYLES", "");
+        url.addQueryParameter("CRS", srsname);
+        url.addQueryParameter("BBOX", envelope.getMinX() + "," + envelope.getMinY() + "," + envelope.getMaxX() + "," + envelope.getMaxY());
+        url.addQueryParameter("WIDTH", width);
+        url.addQueryParameter("HEIGHT", height);
 
         InputStream inputStream;
         try {
-            inputStream = new URL(baseURL
-                + "&FORMAT=image/x-bil;bits=32&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&STYLES="
-                + "&CRS=" + CRS.toSRS(crs) // TODO: Check we have a SRS!
-                + "&BBOX=" + envelope.getMinX() + "," + envelope.getMinY() + "," + envelope.getMaxX() + "," + envelope.getMaxY()
-                + "&WIDTH=" + width +  "&HEIGHT=" + height
-                ).openStream();
+            inputStream = url.toURL().openStream();
         } catch (MalformedURLException e) {
-            throw new GenerationFailedException("Shouldn't have happened", e);
+            throw new GenerationFailedException("Invalid URL for layer", e);
         } catch (IOException e) {
             throw new RetryableException("Error opening connection", e);
         }
 
-        byte[] data = new byte[size];
-
+        int size = 4 * width * height;
         int total = 0;
-        int read;
+
+        byte[] data = new byte[size];
         try {
+            int read;
             while (0 < (read = inputStream.read(data, total, size - total)))
                 total = total + read;
         } catch (IOException e) {
             throw new RetryableException("Error fetching data", e);
         }
+
+        try {
+            inputStream.close();
+        } catch (IOException ignored) {}
 
         if (total != size)
             throw new RetryableException("Incomplete data read from stream");
@@ -92,6 +109,7 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
             envelope.getHeight() / height);
 
         ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer().get(result.data());
+
         return new Result(result);
     }
 
@@ -108,6 +126,11 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
 
         @Override
         public void close() throws IOException {}
+    }
+
+    @Override
+    public CoordinateReferenceSystem crs() {
+        return envelope.getCoordinateReferenceSystem();
     }
 
 }
