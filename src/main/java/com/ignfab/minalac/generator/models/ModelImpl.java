@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.models;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Models are objects that can be rendered.
@@ -12,6 +13,11 @@ public abstract class ModelImpl implements Model {
      * Model metadata.
      */
     private final Map<String, Object> metadata = new HashMap<>();
+
+    @Override
+    public Set<String> listMetadata() {
+        return metadata.keySet();
+    }
 
     @Override
     public boolean hasMetadata(String name) {

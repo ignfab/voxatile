@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.models;
 
+import java.util.Set;
+
 import com.ignfab.minalac.generator.utils.random.Salting;
 
 /**
@@ -7,6 +9,13 @@ import com.ignfab.minalac.generator.utils.random.Salting;
  * They optionally can have some metadata attached to them.
  */
 public interface Model extends Salting {
+    /**
+     * Returns all the metadata names on this model.
+     *
+     * @return all metadata names
+     */
+    Set<String> listMetadata();
+
     /**
      * Tells if a metadata exists.
      *
