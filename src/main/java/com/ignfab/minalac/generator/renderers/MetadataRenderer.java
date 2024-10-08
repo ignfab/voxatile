@@ -2,7 +2,7 @@ package com.ignfab.minalac.generator.renderers;
 
 import com.ignfab.minalac.generator.generation.ReadableHeightmap;
 import com.ignfab.minalac.generator.models.Model;
-import com.ignfab.minalac.generator.models.selection.ModelSelection;
+import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -21,6 +21,11 @@ public class MetadataRenderer extends ModelRenderer {
     private final ReadableHeightmap heightmap;
     private final VoxelTypeFactory factory;
     private final List<String> metadataNames;
+
+    /**
+     * Special value to render all metadata.
+     */
+    public static final List<String> ALL_METADATA = Collections.emptyList();
 
     /**
      * Creates a new {@code MetadataRenderer}.
@@ -59,7 +64,8 @@ public class MetadataRenderer extends ModelRenderer {
         xMean /= n;
         yMean /= n;
         StringBuilder s = new StringBuilder();
-        for (String name : metadataNames)
+        Collection<String> names = metadataNames.isEmpty() ? model.listMetadata() : metadataNames;
+        for (String name : names)
             if (model.hasMetadata(name))
                 s.append(name).append(": ").append((Object) model.getMetadata(name)).append('\n');
         factory.createText(s.toString(), MultilineTextEntityVerticalAnchor.BOTTOM)

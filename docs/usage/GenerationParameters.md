@@ -272,4 +272,4 @@ metadataNames:
 Fields:
 - `type`: Must be the value `metadata`
 - `modelType`: the type of models to render metadata
-- `metadataNames`: the list of names of metadata to render for each model
+- `metadataNames`: the optional list of names of metadata to render for each model. If absent, all metadata found on the model will be rendered.

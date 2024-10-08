@@ -1,9 +1,10 @@
 package com.ignfab.minalac.generator.models;
 
+import com.ignfab.minalac.generator.utils.random.Salting;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import com.ignfab.minalac.generator.utils.random.Salting;
+import java.util.Set;
 
 /**
  * This {@code class} is intended to evolve. Models are objects that can be
@@ -26,6 +27,15 @@ public abstract class Model implements Salting {
      * See docs/development/RandomNumbers.md for more detailed information.
      */
     public abstract String salt();
+
+    /**
+     * Returns all the metadata names on this model.
+     *
+     * @return all metadata names
+     */
+    public Set<String> listMetadata() {
+        return metadata.keySet();
+    }
 
     /**
      * Tells if a metadata exists.
