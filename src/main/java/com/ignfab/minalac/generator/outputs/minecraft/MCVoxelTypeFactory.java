@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.outputs.minecraft;
 
+import com.ignfab.minalac.generator.world.MultilineTextEntityVerticalAnchor;
 import com.ignfab.minalac.generator.world.SemanticType;
 import com.ignfab.minalac.generator.world.VoxelTypeFactory;
 
@@ -38,5 +39,14 @@ public class MCVoxelTypeFactory implements VoxelTypeFactory {
             case BRICK -> "minecraft:stone_bricks";
             case CONCRETE -> "minecraft:black_wool";
         });
+    }
+
+    @Override
+    public MCTextEntityType createText(String text, MultilineTextEntityVerticalAnchor anchor) {
+        String[] lines = text.split("\n");
+        if (lines.length == 1)
+            return new MCTextEntityType(world, text);
+        else
+            return new MCMultilineTextEntityType(world, anchor, lines);
     }
 }

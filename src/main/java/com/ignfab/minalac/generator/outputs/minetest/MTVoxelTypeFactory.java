@@ -1,6 +1,9 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
+import com.ignfab.minalac.generator.outputs.minetest.mod.FloatingTextsLuaMod;
 import com.ignfab.minalac.generator.outputs.minetest.voxelType.MTSimpleVoxelType;
+import com.ignfab.minalac.generator.world.EntityType;
+import com.ignfab.minalac.generator.world.MultilineTextEntityVerticalAnchor;
 import com.ignfab.minalac.generator.world.SemanticType;
 import com.ignfab.minalac.generator.world.VoxelType;
 import com.ignfab.minalac.generator.world.VoxelTypeFactory;
@@ -10,6 +13,7 @@ import com.ignfab.minalac.generator.world.VoxelTypeFactory;
  */
 public class MTVoxelTypeFactory implements VoxelTypeFactory {
     private final MTVoxelWorld world;
+    private final FloatingTextsLuaMod texts = new FloatingTextsLuaMod();
 
     /**
      * Constructs a new {@code MTVoxelTypeFactory}.
@@ -19,6 +23,7 @@ public class MTVoxelTypeFactory implements VoxelTypeFactory {
      */
     public MTVoxelTypeFactory(MTVoxelWorld world) {
         this.world = world;
+        world.registerMod("texts", texts);
     }
 
     /**
@@ -41,5 +46,10 @@ public class MTVoxelTypeFactory implements VoxelTypeFactory {
             case CONCRETE -> new MTSimpleVoxelType(this.world, "default:obsidian");
             default -> new MTSimpleVoxelType(this.world, "air");
         };
+    }
+
+    @Override
+    public EntityType createText(String text, MultilineTextEntityVerticalAnchor anchor) {
+        return new MTTextEntityType(texts, text);
     }
 }

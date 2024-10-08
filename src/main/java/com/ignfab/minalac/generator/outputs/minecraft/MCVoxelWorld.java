@@ -10,7 +10,6 @@ import net.querz.mca.Chunk;
 import net.querz.mca.MCAUtil;
 import net.querz.nbt.io.NBTUtil;
 import net.querz.nbt.tag.CompoundTag;
-import net.querz.nbt.tag.DoubleTag;
 import net.querz.nbt.tag.FloatTag;
 import net.querz.nbt.tag.IntTag;
 import net.querz.nbt.tag.ListTag;
@@ -278,13 +277,7 @@ public class MCVoxelWorld extends VoxelWorld {
 
                     player.putBoolean("Invulnerable", false);
 
-                    ListTag<DoubleTag> motion = new ListTag<>(DoubleTag.class);
-                    {
-                        motion.addDouble(0);
-                        motion.addDouble(0);
-                        motion.addDouble(0);
-                    }
-                    player.put("Motion", motion);
+                    player.put("Motion", MCUtils.nbtPos(0, 0, 0));
 
                     player.putBoolean("OnGround", false);
 
@@ -292,16 +285,14 @@ public class MCVoxelWorld extends VoxelWorld {
 
                     player.putInt("PortalCooldown", 0);
 
-                    ListTag<DoubleTag> pos = new ListTag<>(DoubleTag.class);
-                    {
-                        // X/Y/Z => X/Z/-Y
-                        pos.addDouble(metadata.getSpawn().x() + 0.5);
+                    // X/Y/Z => X/Z/-Y
+                    player.put("Pos", MCUtils.nbtPos(
+                        metadata.getSpawn().x() + 0.5,
                         // TODO Replace by a better constraint management mechanism
-                        // pos.addDouble(metadata.getSpawn().z());
-                        pos.addDouble(Math.min(Math.max(limits().minZ(), metadata.getSpawn().z()), limits().maxZ()));
-                        pos.addDouble(-(metadata.getSpawn().y() + 0.5));
-                    }
-                    player.put("Pos", pos);
+                        // metadata.getSpawn().z(),
+                        Math.min(Math.max(limits().minZ(), metadata.getSpawn().z()), limits().maxZ()),
+                        -(metadata.getSpawn().y() + 0.5)
+                    ));
 
                     player.putInt("previousPlayerGameType", -1);
 
@@ -494,6 +485,21 @@ public class MCVoxelWorld extends VoxelWorld {
             chunk.setTileEntities(blockEntities);
         }
         blockEntities.add(block);
+    }
+
+    // In-Game coords
+    /* package-private */ void addEntity(double x, double y, double z, CompoundTag block)  {
+        int blockX = (int) Math.floor(x);
+        int blockY = (int) Math.floor(y);
+        int blockZ = (int) Math.floor(z);
+        if (isOutOfLimits(blockX, blockY, blockZ)) return;
+        Chunk chunk = getOrCreateRegion(blockX, blockZ).getOrCreateChunk(MCAUtil.blockToChunk(blockX), MCAUtil.blockToChunk(blockZ));
+        ListTag<CompoundTag> entities = chunk.getEntities();
+        if (entities == null) {
+            entities = new ListTag<>(CompoundTag.class);
+            chunk.setEntities(entities);
+        }
+        entities.add(block);
     }
 
     // In-Game coords

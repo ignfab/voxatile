@@ -9,11 +9,7 @@ import java.util.Map;
  * {@code MCVoxelType} class provides the necessary structure and mechanism in order to implement {@link VoxelType} for Minecraft.
  * A voxel in Minecraft, known as block, consists of two parameters: type and state properties.
  */
-public class MCVoxelType implements VoxelType {
-    /**
-     * The Minecraft World object.
-     */
-    protected final MCVoxelWorld world;
+public class MCVoxelType extends MCObject implements VoxelType {
     /**
      * The block type string.
      * @see <a href="https://minecraft.wiki/w/Block">List of block types (Minecraft Wiki)</a>
@@ -42,7 +38,7 @@ public class MCVoxelType implements VoxelType {
      * @param properties the block state properties
      */
     public MCVoxelType(MCVoxelWorld world, String type, Map<String, String> properties) {
-        this.world = world;
+        super(world);
         this.type = type;
         this.properties = properties;
     }
