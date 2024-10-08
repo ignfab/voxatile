@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * A 2d heightmap in voxel world units.
  */
-public class Heightmap {
+public class Heightmap implements ReadableHeightmap {
     /**
      * The bounding box of the heightmap.
      */
@@ -62,36 +62,14 @@ public class Heightmap {
         return (x - bbox.minX()) * bbox.sizeY() + (y - bbox.minY());
     }
 
-    /**
-     * Returns the bounding box of the heightmap.
-     *
-     * @return the {@link WorldBBox2d} associated to the heightmap.
-     */
+    @Override
     public WorldBBox2d bbox() {
         return bbox;
     }
 
-    /**
-     * Returns the height at a specified position.
-     *
-     * @param x the x-coordinate of the position
-     * @param y the y-coordinate of the position
-     * @return the {@code int} height at specified position
-     * @throws IndexOutOfBoundsException if position is outside the heightmap.
-     */
+    @Override
     public int get(int x, int y) {
         return values[index(x, y)];
-    }
-
-    /**
-     * Returns the height at a specified position.
-     *
-     * @param position the position
-     * @return the {@code int} height at specified position
-     * @throws IndexOutOfBoundsException if position is outside the heightmap.
-     */
-    public int get(WorldCoords2d position) {
-        return get(position.x(), position.y());
     }
 
     /**
