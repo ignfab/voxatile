@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.world;
 
+import com.ignfab.minalac.generator.generation.Heightmap;
+import com.ignfab.minalac.generator.generation.ReadableHeightmap;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 import java.io.File;
@@ -19,10 +21,12 @@ public abstract class VoxelWorld {
      * The metadata of the world.
      */
     protected final VoxelWorldMetadata metadata;
+    private Heightmap highestVoxels;
 
     protected VoxelWorld(VoxelWorldMetadata metadata) {
         limits = new WorldBBox3d(0, 0, 0, 0, 0, 0);
         this.metadata = metadata;
+        highestVoxels = new Heightmap(limits.to2d(), 0); // Default value is meaningless in an empty heightmap
     }
 
     /**
@@ -39,6 +43,7 @@ public abstract class VoxelWorld {
         if (!this.limits.isEmpty())
             throw new IllegalStateException("The limits have already been set");
         this.limits = limits;
+        highestVoxels = new Heightmap(limits.to2d(), Integer.MIN_VALUE);
     }
 
     /**
@@ -71,6 +76,21 @@ public abstract class VoxelWorld {
      */
     public VoxelWorldMetadata getMetadata() {
         return metadata;
+    }
+
+    /**
+     * Returns an {@link ReadableHeightmap heightmap} storing
+     * the height of the highest voxels placed in the world.
+     * @return the highest voxels heightmap
+     */
+    public ReadableHeightmap highestVoxels() {
+        return highestVoxels;
+    }
+
+    protected void updateHighestVoxel(int x, int y, int z) {
+        int highest = highestVoxels.get(x, y);
+        if (z > highest)
+            highestVoxels.set(x, y, z);
     }
 
     // TODO: There is an inconsistency between the two implementations. When the folder does not exist MTVoxelWorld creates it whereas MCVoxelWorld throws a MapWriteException.
