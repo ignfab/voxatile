@@ -79,6 +79,7 @@ public class MTVoxelWorld extends VoxelWorld {
         if (!limits().contains(x, z, y)) return;
 
         getOrCreateBlock(x >> 4, y >> 4, z >> 4).set(x & 0x0f, y & 0x0f, z & 0x0f, voxel);
+        updateHighestVoxel(x, z, y); // XZY => XYZ
     }
 
     /**

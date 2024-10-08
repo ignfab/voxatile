@@ -471,6 +471,7 @@ public class MCVoxelWorld extends VoxelWorld {
 
         if (isOutOfLimits(blockX, blockY, blockZ)) return;
         getOrCreateRegion(blockX, blockZ).file().setBlockStateAt(blockX, blockY, blockZ, block, false);
+        updateHighestVoxel(blockX, -blockZ, blockY); // X/Z/-Y => X/Y/Z
     }
 
     // In-Game coords
@@ -483,6 +484,7 @@ public class MCVoxelWorld extends VoxelWorld {
             chunk.setTileEntities(blockEntities);
         }
         blockEntities.add(block);
+        updateHighestVoxel(blockX, -blockZ, blockY); // X/Z/-Y => X/Y/Z
     }
 
     // In-Game coords
