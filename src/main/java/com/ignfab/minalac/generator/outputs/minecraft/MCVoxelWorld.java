@@ -294,12 +294,12 @@ public class MCVoxelWorld extends VoxelWorld {
 
                     ListTag<DoubleTag> pos = new ListTag<>(DoubleTag.class);
                     {
-                        // XYZ => XZY
+                        // X/Y/Z => X/Z/-Y
                         pos.addDouble(metadata.getSpawn().x() + 0.5);
                         // TODO Replace by a better constraint management mechanism
                         // pos.addDouble(metadata.getSpawn().z());
                         pos.addDouble(Math.min(Math.max(limits().minZ(), metadata.getSpawn().z()), limits().maxZ()));
-                        pos.addDouble(metadata.getSpawn().y() + 0.5);
+                        pos.addDouble(-metadata.getSpawn().y() + 0.5);
                     }
                     player.put("Pos", pos);
 
@@ -360,12 +360,12 @@ public class MCVoxelWorld extends VoxelWorld {
 
                 data.putLong("SizeOnDisk", 0); // Unused
 
-                // XYZ => XZY
+                // X/Y/Z => X/Z/-Y
                 data.putInt("SpawnX", metadata.getSpawn().x());
                 // TODO Replace by a better constraint management mechanism
                 // data.putInt("SpawnY", metadata.getSpawn().z());
                 data.putInt("SpawnY", Math.min(Math.max(limits().minZ(), metadata.getSpawn().z()), limits().maxZ()));
-                data.putInt("SpawnZ", metadata.getSpawn().y());
+                data.putInt("SpawnZ", -metadata.getSpawn().y());
 
                 data.putBoolean("thundering", false);
                 data.putInt("thunderTime", 0x7FFFFFFF);
@@ -509,7 +509,7 @@ public class MCVoxelWorld extends VoxelWorld {
 
     // In-Game coords
     /* package-private */ boolean isOutOfLimits(int blockX, int blockY, int blockZ) {
-        // (In-Game coords to world coords) XZY => XYZ
-        return !limits().contains(blockX, blockZ, blockY);
+        // (In-Game coords to world coords) X/Z/-Y => X/Y/Z
+        return !limits().contains(blockX, -blockZ, blockY);
     }
 }

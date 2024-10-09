@@ -42,11 +42,11 @@ public abstract class MCBlockEntityVoxelType extends MCVoxelType {
         CompoundTag block = new CompoundTag();
         block.putString("id", type);
         block.putBoolean("keepPacked", false);
-        // XYZ => XZY
+        // X/Y/Z => X/Z/-Y
         block.putInt("x", x);
         block.putInt("y", z);
-        block.putInt("z", y);
+        block.putInt("z", -y);
         serialize(block);
-        world.addBlockEntity(x, z, y, block); // XYZ => XZY
+        world.addBlockEntity(x, z, -y, block); // X/Y/Z => X/Z/-Y
     }
 }
