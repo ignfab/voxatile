@@ -258,3 +258,18 @@ Fields:
 - `heightmap`: the name of the ground heightmap to use. It must exist.
 - `large`: whether to make a large road or small path
 - `voxel`: the semantic type of the voxel used
+
+### Metadata renderer
+
+```yaml
+type: metadata
+modelType: building
+metadataNames:
+  - id
+  - height
+```
+
+Fields:
+- `type`: Must be the value `metadata`
+- `modelType`: the type of models to render metadata
+- `metadataNames`: the list of names of metadata to render for each model

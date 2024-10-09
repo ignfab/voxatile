@@ -13,6 +13,7 @@ import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
 import com.ignfab.minalac.generator.parameters.renderers.GroundRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.HeightmapRendererParams;
+import com.ignfab.minalac.generator.parameters.renderers.MetadataRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.RoadRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.VectorRendererParams;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
@@ -58,6 +59,7 @@ public final class SampleImplementation {
         parser.registerParams("ground", GroundRendererParams.class);
         parser.registerParams("vector", VectorRendererParams.class);
         parser.registerParams("road", RoadRendererParams.class);
+        parser.registerParams("metadata", MetadataRendererParams.class);
 
         parser.registerParams("wfs", WFSProviderParams.class);
         parser.registerParams("gpkg", GeoPackageProviderParams.class);
