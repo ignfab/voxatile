@@ -472,7 +472,14 @@ public class MCVoxelWorld extends VoxelWorld {
     }
 
     // In-Game coords
-    /* package-private */ void setBlockState(int blockX, int blockY, int blockZ, CompoundTag block) {
+    /* package-private */ synchronized void setBlockState(int blockX, int blockY, int blockZ, CompoundTag block) {
+        // This method is synchronized as a workaround because the Querz library is not thread-safe.
+        // This is a performance-killer!
+        // The only part that really needs synchronization is inside nbt.querz.mca.Section:
+        // During a palette update (adjustBlockStateBits), it should block, until operation
+        // is complete, any other thread trying to add a block to the palette (addToPalette,
+        // after the check for existing block inside palette).
+
         if (isOutOfLimits(blockX, blockY, blockZ)) return;
         getOrCreateRegion(blockX, blockZ).file().setBlockStateAt(blockX, blockY, blockZ, block, false);
     }
