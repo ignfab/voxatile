@@ -167,6 +167,73 @@ public final class SampleImplementation {
             log("Downloaded buildings");
         });
 
+        // TODO: un bete copier coller, a voir si je peux pas simplifier ce gros code avec le code d'au dessus
+        scheduler.schedule("models.natures", () -> {
+            log("Downloading natures");
+            MapToWorldConverter converter; // This is supposed to be the layer CRS (actually the same for this demo)
+            try {
+                converter = generation.makeCoordsConverter(crs);
+            } catch (FactoryException e) {
+                throw new RuntimeException(e);
+            }
+            retrieveDataAndFillModelStore(generation.models(), "natures",
+                new WFS1_1_GML3_1_DataProvider("https://data.geopf.fr/wfs/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=BDTOPO_V3:zone_de_vegetation&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::2154&" + bboxURL + ",urn:ogc:def:crs:EPSG::2154&outputFormat=text%2Fxml%3B%20subtype%3Dgml%2F3.1.1"),
+                new GeoToolsVectorProcessor(converter),
+                new MetadataCopyPostProcessor("nature", "nature", false, false),
+                new MetadataParsePostProcessor<>(
+                    "nature",
+                    String.class,
+                    obj -> {
+                        if (obj instanceof String string)
+                            return string;
+                        return null;
+                    },
+                    MetadataParsePostProcessor.ParsingFailurePolicy.REMOVE_METADATA,
+                    false,
+                    false
+                ),
+                // TODO Transform into something like "MetadataDefaultPostProcessor"
+                new PostProcessor<>() {
+                    @Override
+                    public Class<? super Model> acceptedModelType() {
+                        return Model.class;
+                    }
+
+                    @Override
+                    public Class<? extends Model> processedModelType(Class<? extends Model> inputModelType) {
+                        return inputModelType;
+                    }
+
+                    @Override
+                    public Model process(Model model) {
+                        // TODO: voir ce que je peux faire s'il y a pas de metadonnée nature (probablement rien)
+                        return model;
+                    }
+                },
+                // TODO Remove once the value is really used (currently useful to simulate value usage and failure in case of incorrect value)
+                new PostProcessor<>() {
+                    @Override
+                    public Class<? super Model> acceptedModelType() {
+                        return Model.class;
+                    }
+
+                    @Override
+                    public Class<? extends Model> processedModelType(Class<? extends Model> inputModelType) {
+                        return inputModelType;
+                    }
+
+                    @Override
+                    public Model process(Model model) throws GenerationFailedException {
+                        Object nature = model.getMetadata("nature");
+                        if (!(nature instanceof String))
+                            throw new GenerationFailedException("Illegal nature value: " + (nature == null ? "null" : (nature + " (" + nature.getClass() + ")")));
+                        return model;
+                    }
+                }
+            );
+            log("Downloaded natures");
+        });
+
         // Rendering
 
         SimpleVoxelPattern soilPattern = new SimpleVoxelPattern();
@@ -203,6 +270,8 @@ public final class SampleImplementation {
         } finally {
             scheduler.shutdown();
         }
+
+        System.out.println(generation.models().getByType("natures"));
 
         System.out.println("Saving world");
         VoxelWorldMetadata metadata = generation.world().getMetadata();
