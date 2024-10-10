@@ -12,9 +12,13 @@ Task of type `fetchData` fetches data from geographic data source, processes it,
   * [`shapefile` (Shapefile)](#shapefile-shapefile)
   * [`wmsFloat` (Web Map Service with floating point values)](#wmsfloat-web-map-service-with-floating-point-values)
   * [`geotiff` (GeoTiff)](#geotiff-geotiff)
+  * [`las` (Point cloud from LAS/LAZ file)](#las-point-cloud-from-laslaz-file)
+  * [`lasTiled` (Point clouds from multiple tiled LAS/LAZ files)](#lastiled-point-clouds-from-multiple-tiled-laslaz-files)
 * [Processors](#processors)
   * [`geoToolsVector` (GeoTools vector processor)](#geotoolsvector-geotools-vector-processor)
   * [`floatMatrix` (Float matrix processor)](#floatmatrix-float-matrix-processor)
+  * [`lasPoints` (Individual LAS points processor)](#laspoints-individual-las-points-processor)
+  * [`lasMerged` (Merged LAS points processor)](#lasmerged-merged-las-points-processor)
 
 See also [post-processing](PostProcessing.md) documentation.
 
@@ -103,6 +107,28 @@ Provider of type `geotiff` reads **float** (for now) raster data from a [GeoTiff
 
 **Suitable processors**: `floatMatrix`
 
+### `las` (Point cloud from LAS/LAZ file)
+A provider capable of reading points from a [LAS/LAZ](https://en.wikipedia.org/wiki/LAS_file_format) file.
+
+**Extra parameters**:
+- `filePath` (required): Path of the LAS/LAZ file (absolute, or relative to execution context)
+- `crsOverride` (optional, default none): CRS to use when reading data. By default, the CRS is read from the LAS/LAZ file itself. You should only use this parameter if the CRS is invalid or missing from the file. This **DOES NOT** reproject data!
+
+**Suitable processors**: `lasPoints`, `lasMerged`
+
+### `lasTiled` (Point clouds from multiple tiled LAS/LAZ files)
+A provider capable of reading points from multiple tiled [LAS/LAZ](https://en.wikipedia.org/wiki/LAS_file_format) file.
+
+**Extra parameters**:
+- `tilesPath` (required): Path of the LAS/LAZ tiles directory (absolute, or relative to execution context)
+- `tilesFilenameTemplate` (required): [Template](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Formatter.html#syntax) to get the filename of one tile from its `(x, y)` coordinates. This will be formatted using the `x` and `y` coordinate of the tile as arguments. Example: `tile_%d_%d.laz`
+- `tileSize` (required): Size of tiles
+- `tileOffsetX` (optional): X-offset of tiles (defaults to 0)
+- `tileOffsetY` (optional): Y-offset of tiles (defaults to 0)
+- `crsOverride` (optional, default none): CRS to use when reading data. By default, the CRS is read from any LAS/LAZ file found. You should only use this parameter if the CRS is invalid or missing from the files. This **DOES NOT** reproject data!
+
+**Suitable processors**: `lasPoints`, `lasMerged`
+
 ## Processors
 
 A processor converts data from a provider into models. Processor type is identified by `type` field.
@@ -120,3 +146,19 @@ Processor of type `floatMatrix` translates a float data matrix to a model.
 **Extra parameters**: None
 
 **Suitable providers**: `wmsFloat`, `geotiff`
+
+### `lasPoints` (Individual LAS points processor)
+
+Processor converting a LAS point to a model. Classification and optional color is included as metadata.
+
+**Extra parameters**: None
+
+**Suitable providers**: `las`, `lasTiled`
+
+### `lasMerged` (Merged LAS points processor)
+
+Processor merging LAS points into a small number of models (at least one per class). Optional color of individual point is lost. At most one point per voxel is kept. Useful when dealing with a **huge** amount of points.
+
+**Extra parameters**: None
+
+**Suitable providers**: `las`, `lasTiled`
