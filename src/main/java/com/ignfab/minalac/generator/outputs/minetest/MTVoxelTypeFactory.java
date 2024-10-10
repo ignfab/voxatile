@@ -44,6 +44,7 @@ public class MTVoxelTypeFactory implements VoxelTypeFactory {
             case BRICK -> new MTSimpleVoxelType(this.world, "default:stonebrick");
             case WATER -> new MTSimpleVoxelType(this.world, "default:water_source");
             case CONCRETE -> new MTSimpleVoxelType(this.world, "default:obsidian");
+            case VEGETATION -> new MTSimpleVoxelType(this.world, "default:leaves");
             default -> new MTSimpleVoxelType(this.world, "air");
         };
     }

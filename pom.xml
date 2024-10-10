@@ -135,6 +135,12 @@
             <artifactId>commons-cli</artifactId>
             <version>1.8.0</version>
         </dependency>
+        <!-- LiDAR data manipulation -->
+        <dependency>
+            <groupId>com.github.mreutegg</groupId>
+            <artifactId>laszip4j</artifactId>
+            <version>0.19</version>
+        </dependency>
 
         <!--
         TEST DEPENDENCIES

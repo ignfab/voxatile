@@ -47,5 +47,6 @@ public enum SemanticType {
      * Represent a concrete voxel.
      * Can be used to represent a road.
      */
-    CONCRETE
+    CONCRETE,
+    VEGETATION
 }

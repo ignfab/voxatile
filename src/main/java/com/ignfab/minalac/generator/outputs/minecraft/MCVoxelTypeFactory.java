@@ -38,6 +38,10 @@ public class MCVoxelTypeFactory implements VoxelTypeFactory {
             case COBBLE -> "minecraft:cobblestone";
             case BRICK -> "minecraft:stone_bricks";
             case CONCRETE -> "minecraft:black_wool";
+            case VEGETATION -> "minecraft:oak_leaves";
+        }, switch (semanticType) {
+            case VEGETATION -> Map.of("persistent", "true");
+            default -> null;
         });
     }
 

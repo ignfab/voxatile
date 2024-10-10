@@ -6,11 +6,16 @@ import com.ignfab.minalac.generator.parameters.ParamsParser;
 import com.ignfab.minalac.generator.parameters.ParseException;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.LASPointProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.LASPointSingleModelProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataCopyPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParams;
+import com.ignfab.minalac.generator.parameters.providers.LASProviderParams;
+import com.ignfab.minalac.generator.parameters.providers.LASTiledProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
+import com.ignfab.minalac.generator.parameters.renderers.ClassifiedRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.GroundRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.HeightmapRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.MetadataRendererParams;
@@ -22,7 +27,6 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
-
 import org.geotools.api.referencing.FactoryException;
 
 import java.io.File;
@@ -60,14 +64,19 @@ public final class SampleImplementation {
         parser.registerParams("vector", VectorRendererParams.class);
         parser.registerParams("road", RoadRendererParams.class);
         parser.registerParams("metadata", MetadataRendererParams.class);
+        parser.registerParams("classified", ClassifiedRendererParams.class);
 
         parser.registerParams("wfs", WFSProviderParams.class);
         parser.registerParams("gpkg", GeoPackageProviderParams.class);
         parser.registerParams("shapefile", ShapefileProviderParams.class);
         parser.registerParams("wmsFloat", WMSFloatBilProviderParams.class);
+        parser.registerParams("las", LASProviderParams.class);
+        parser.registerParams("lasTiled", LASTiledProviderParams.class);
 
         parser.registerParams("floatMatrix", FloatMatrixProcessorParams.class);
         parser.registerParams("geoToolsVector", GeoToolsVectorProcessorParams.class);
+        parser.registerParams("lasPoints", LASPointProcessorParams.class);
+        parser.registerParams("lasMerged", LASPointSingleModelProcessorParams.class);
 
         parser.registerParams("copy", MetadataCopyPostProcessorParams.class);
 
