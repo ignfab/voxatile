@@ -12,6 +12,12 @@ renderers:
     heightmap: ground
     inside: COBBLE
     edge: STONE
+  nature:
+    type: nature
+    modelType: natures
+    heightmap: ground
+    leaf: LEAF
+    wood: WOOD
 verticalScale: 1.0
 horizontalScale: 1.0
 area:

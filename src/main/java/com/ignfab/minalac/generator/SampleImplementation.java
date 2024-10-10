@@ -13,6 +13,7 @@ import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.parameters.ParamsParser;
 import com.ignfab.minalac.generator.parameters.ParseException;
 import com.ignfab.minalac.generator.parameters.renderers.HeightmapRendererParams;
+import com.ignfab.minalac.generator.parameters.renderers.NatureRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.VectorRendererParams;
 import com.ignfab.minalac.generator.processors.FloatMatrixProcessor;
 import com.ignfab.minalac.generator.processors.GeoToolsVectorProcessor;
@@ -70,6 +71,7 @@ public final class SampleImplementation {
         // If those name values are modified, update the documentation accordingly
         parser.registerRenderer("vector", VectorRendererParams.class);
         parser.registerRenderer("heightmap", HeightmapRendererParams.class);
+        parser.registerRenderer("nature", NatureRendererParams.class);
         Generation generation = parser.parse(cli.readParameters()).create();
 
         System.out.println("Creation of the map.");
@@ -262,6 +264,13 @@ public final class SampleImplementation {
             generation.renderers().get("building").render(generation.world().limits());
             log("Placed buildings");
         }, "renderers.heightmap", "models.buildings");
+
+        scheduler.schedule("renderers.natures", () -> {
+            log("Placing natures");
+            generation.renderers().get("nature").render(generation.world().limits());
+            log("Placed natures");
+        }, "renderers.heightmap", "models.natures", "renderers.ground");
+
         // Get work done!
 
         scheduler.start();
@@ -270,8 +279,6 @@ public final class SampleImplementation {
         } finally {
             scheduler.shutdown();
         }
-
-        System.out.println(generation.models().getByType("natures"));
 
         System.out.println("Saving world");
         VoxelWorldMetadata metadata = generation.world().getMetadata();

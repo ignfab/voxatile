@@ -36,6 +36,8 @@ public class MCVoxelTypeFactory implements VoxelTypeFactory {
             case DIRT -> "minecraft:dirt";
             case COBBLE -> "minecraft:cobblestone";
             case BRICK -> "minecraft:stone_bricks";
+            case LEAF -> "minecraft:oak_leaves";
+            case WOOD -> "minecraft:oak_wood";
         });
     }
 }
