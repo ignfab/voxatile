@@ -19,6 +19,7 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
+import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.utils.coordinates.EnvelopeProvider;
@@ -96,9 +97,14 @@ public abstract class GeoToolsDataStoreProvider implements Provider<SimpleFeatur
 
     private record FeaturesResult(CoordinateReferenceSystem crs, FeatureReader<SimpleFeatureType, SimpleFeature> reader, DataStore store) implements Result<SimpleFeature> {
         @Override
-        public void close() throws IOException {
-            reader.close();
-            store.dispose();
+        public void close() throws IgnorableException {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                throw new IgnorableException(e);
+            } finally {
+                store.dispose();
+            }
         }
 
         @Override

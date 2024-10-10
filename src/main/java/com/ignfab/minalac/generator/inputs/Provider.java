@@ -1,10 +1,13 @@
 package com.ignfab.minalac.generator.inputs;
 
-import java.io.Closeable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
+import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
 
 /**
@@ -54,7 +57,7 @@ public interface Provider<T> {
      *
      * @param <T> The type of wrapped elements
      */
-    interface Result<T> extends Closeable {
+    interface Result<T> extends AutoCloseable {
         /**
          * Returns the coordinate reference system of resulting data.
          *
@@ -82,5 +85,86 @@ public interface Provider<T> {
          * @throws java.util.NoSuchElementException if no more result available.
          */
         T next() throws GenerationFailedException, RetryableException;
+
+        @Override
+        void close() throws IgnorableException;
+    }
+
+    class SimpleResult<T> implements Result<T> {
+        private final CoordinateReferenceSystem crs;
+        private final Iterator<T> iterator;
+        private final List<? extends AutoCloseable> close;
+
+        public SimpleResult(CoordinateReferenceSystem crs, Iterator<T> iterator, AutoCloseable... close) {
+            this(crs, iterator, List.of(close));
+        }
+
+        public SimpleResult(CoordinateReferenceSystem crs, Iterator<T> iterator, List<? extends AutoCloseable> close) {
+            this.crs = crs;
+            this.iterator = iterator;
+            this.close = close;
+        }
+
+        @Override
+        public CoordinateReferenceSystem crs() {
+            return crs;
+        }
+
+        @Override
+        public boolean hasNext() throws GenerationFailedException, RetryableException {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public T next() throws GenerationFailedException, RetryableException {
+            return iterator.next();
+        }
+
+        @Override
+        public void close() throws IgnorableException {
+            IgnorableException exception = null;
+            for (AutoCloseable closeable : close) {
+                try {
+                    closeable.close();
+                } catch (Exception e) {
+                    if (exception == null)
+                        exception = e instanceof IgnorableException e2 ? e2 : new IgnorableException(e);
+                    else
+                        exception.addSuppressed(e);
+                }
+            }
+            if (exception != null)
+                throw exception;
+        }
+    }
+
+    class MultiResult<T> extends SimpleResult<T> {
+        private final Iterator<? extends Result<? extends T>> results;
+        private Result<? extends T> current;
+
+        public MultiResult(CoordinateReferenceSystem crs, List<? extends Result<? extends T>> results) throws GenerationFailedException, RetryableException {
+            super(crs, null, results);
+            this.results = results.iterator();
+            moveOn();
+        }
+
+        private void moveOn() throws GenerationFailedException, RetryableException {
+            while ((current == null || !current.hasNext()) && results.hasNext())
+                current = results.next();
+        }
+
+        @Override
+        public boolean hasNext() throws GenerationFailedException, RetryableException {
+            return current != null && current.hasNext();
+        }
+
+        @Override
+        public T next() throws GenerationFailedException, RetryableException {
+            if (current == null || !current.hasNext())
+                throw new NoSuchElementException();
+            T element = current.next();
+            moveOn();
+            return element;
+        }
     }
 }

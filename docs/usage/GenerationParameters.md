@@ -149,6 +149,32 @@ A provider capable of fetching **float** data from a [Web Map Service](https://e
 
 **Suitable processors**: `floatMatrix`
 
+### Point cloud from LAS/LAZ file
+A provider capable of reading points from a [LAS/LAZ](https://en.wikipedia.org/wiki/LAS_file_format) file.
+
+**Type**: `las`
+
+**Extra parameters**:
+- `filePath` (required): Path of the LAS/LAZ file (absolute, or relative to execution context)
+- `crs` (required): CRS of points inside file
+
+**Suitable processors**: `lasPoints`, `lasMerged`
+
+### Point cloud from multiple tiled LAS/LAZ files
+A provider capable of reading points from multiple tiled [LAS/LAZ](https://en.wikipedia.org/wiki/LAS_file_format) file.
+
+**Type**: `lasTiled`
+
+**Extra parameters**:
+- `tilesPath` (required): Path of the LAS/LAZ tiles directory (absolute, or relative to execution context)
+- `tilesFilenameTemplate` (required): [Template](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Formatter.html#syntax) to get the filename of one tile from its `(x, y)` coordinates. This will be formatted using the `x` and `y` coordinate of the tile as arguments. Example: `tile_%d_%d.laz`
+- `tileSize` (required): Size of tiles
+- `tileOffsetX` (optional): X-offset of tiles (defaults to 0)
+- `tileOffsetY` (optional): Y-offset of tiles (defaults to 0)
+- `crs` (required): CRS of points inside files
+
+**Suitable processors**: `lasPoints`, `lasMerged`
+
 ## Processor parameters
 
 A processor converts data from a provider into models. Processor type is identified by `type` field.
@@ -172,6 +198,26 @@ Processor translating a float data matrix to a model.
 **Extra parameters**: None
 
 **Suitable providers**: `wmsFloat`
+
+### Individual LAS points processor
+
+Processor converting a LAS point to a model. Classification and optional color is included as metadata.
+
+**type**: `lasPoints`
+
+**Extra parameters**: None
+
+**Suitable providers**: `las`, `lasTiled`
+
+### Merged LAS points processor
+
+Processor merging LAS points into a small number of models. Classification and optional color of individual point is lost. At most one point per voxel is kept. Useful when dealing with a **huge** amount of unclassified points.
+
+**type**: `lasMerged`
+
+**Extra parameters**: None
+
+**Suitable providers**: `las`, `lasTiled`
 
 ## Post processor parameters
 
@@ -317,6 +363,25 @@ Fields:
 - `heightmap`: the name of the ground heightmap to use. It must exist.
 - `large`: whether to make a large road or small path
 - `place`: what to place along the road
+
+### Classified renderer
+
+```yaml
+type: classified
+models:
+  type: lidar
+classes:
+  1: default:stonebrick
+  2: default:cobble
+  3: default:leaves
+default: default:stone
+```
+
+Fields:
+- `type`: Must be the value `classified`
+- `models`: the models to render
+- `classes`: the placeable to use for each class
+- `default`: the optional placeable to use when no class matches (defaults to no voxel)
 
 ## Model selections
 
