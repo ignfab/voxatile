@@ -22,6 +22,8 @@ import com.ignfab.minalac.generator.parameters.placeables.voxels.MCVoxelParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelParams;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.LASPointMergedModelProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.LASPointProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.ConditionalPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.DiscardPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.IdentityPostProcessorParams;
@@ -34,6 +36,8 @@ import com.ignfab.minalac.generator.parameters.processors.post.MetadataTruncateP
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataValueMappingPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.GeoTiffProviderParams;
+import com.ignfab.minalac.generator.parameters.providers.LASProviderParams;
+import com.ignfab.minalac.generator.parameters.providers.LASTiledProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
@@ -113,9 +117,13 @@ public final class MinalacGenerator {
         parser.registerParams("shapefile", ShapefileProviderParams.class);
         parser.registerParams("wmsFloat", WMSFloatBilProviderParams.class);
         parser.registerParams("geotiff", GeoTiffProviderParams.class);
+        parser.registerParams("las", LASProviderParams.class);
+        parser.registerParams("lasTiled", LASTiledProviderParams.class);
 
         parser.registerParams("floatMatrix", FloatMatrixProcessorParams.class);
         parser.registerParams("geoToolsVector", GeoToolsVectorProcessorParams.class);
+        parser.registerParams("lasPoints", LASPointProcessorParams.class);
+        parser.registerParams("lasMerged", LASPointMergedModelProcessorParams.class);
 
         parser.registerParams("identity", IdentityPostProcessorParams.class);
         parser.registerParams("discard", DiscardPostProcessorParams.class);
