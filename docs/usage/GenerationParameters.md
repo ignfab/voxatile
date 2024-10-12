@@ -149,6 +149,18 @@ A provider capable of fetching **float** data from a [Web Map Service](https://e
 
 **Suitable processors**: `floatMatrix`
 
+### Web Map Service with color values (commonly known as "image")
+A provider capable of fetching image from a [Web Map Service](https://en.wikipedia.org/wiki/Web_Map_Service) source. Source must be able to provide `jpeg` format.
+
+**Type**: `wmsImage`
+
+**Extra parameters**:
+- `url` (required): Base URL, including protocol and path, excluding request arguments (example: `https://data.geopf.fr/wms-r/wms`)
+- `layer` (required): Name of layer to fetch
+- `crs` (optional): Wanted CRS for this layer (defaults to target CRS)
+
+**Suitable processors**: `intMatrix`
+
 ### Point cloud from LAS/LAZ file
 A provider capable of reading points from a [LAS/LAZ](https://en.wikipedia.org/wiki/LAS_file_format) file.
 
@@ -198,6 +210,16 @@ Processor translating a float data matrix to a model.
 **Extra parameters**: None
 
 **Suitable providers**: `wmsFloat`
+
+### Integer matrix vector processor
+
+Processor translating an integer data matrix (image) to a model.
+
+**type**: `intMatrix`
+
+**Extra parameters**: None
+
+**Suitable providers**: `wmsImage`
 
 ### Individual LAS points processor
 
