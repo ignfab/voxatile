@@ -48,5 +48,23 @@ public enum SemanticType {
      * Can be used to represent a road.
      */
     CONCRETE,
-    VEGETATION
+    VEGETATION,
+
+    // COLORS
+    WHITE,
+    ORANGE,
+    MAGENTA,
+    LIGHT_BLUE,
+    YELLOW,
+    LIME,
+    PINK,
+    GRAY,
+    LIGHT_GRAY,
+    CYAN,
+    PURPLE,
+    BLUE,
+    BROWN,
+    GREEN,
+    RED,
+    BLACK
 }

@@ -14,6 +14,11 @@ public interface VoxelTypeFactory {
     // TODO : implementation of a method that takes into account advanced voxel creation
     // VoxelType createVoxelType(SemanticType semanticType, parameters);
 
+    default VoxelType createColor(int rgb) {
+        // TODO Remove default throwing implementation
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Creates a new {@link EntityType} representing a floating text.
      * The text may be multiline, using the {@code \n} line separator.
