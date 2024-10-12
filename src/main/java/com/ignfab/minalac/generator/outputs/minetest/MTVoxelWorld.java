@@ -1,11 +1,13 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
+import com.ignfab.minalac.generator.outputs.minetest.mod.LuaMod;
+import com.ignfab.minalac.generator.outputs.minetest.mod.SimpleLuaMod;
+import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelTypeFactory;
 import com.ignfab.minalac.generator.world.VoxelWorld;
-import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
 import java.io.File;
@@ -21,6 +23,7 @@ import java.util.Map;
 public class MTVoxelWorld extends VoxelWorld {
     private final VoxelTypeFactory factory;
     private final HashMap<Integer, Block> blocks;
+    private final Map<String, LuaMod> mods = new HashMap<>();
     // See MAX_MAP_GENERATION_LIMIT constant on Minetest
     // https://github.com/minetest/minetest/blob/master/src/constants.h#L69
     private static final WorldBBox3d MAX_LIMIT = new WorldBBox3d(
@@ -108,8 +111,13 @@ public class MTVoxelWorld extends VoxelWorld {
                 mapgen_limit = 31000
                 mg_name = singlenode
                 [end_of_params]""");
-        createFile(new File(destination, "worldmods/ign_spawn/init.lua"), """
-                minetest.setting_set("static_spawnpoint", "%d, %d, %d")""".formatted(metadata.getSpawn().x(), metadata.getSpawn().z(), metadata.getSpawn().y())); // XYZ => XZY
+
+        String setSpawn = "minetest.setting_set(\"static_spawnpoint\", \"%d, %d, %d\")".formatted(metadata.getSpawn().x(), metadata.getSpawn().z(), metadata.getSpawn().y()); // XYZ => XZY
+        registerMod("minalac_spawn", new SimpleLuaMod(setSpawn));
+
+        File modsFolder = new File(destination, "worldmods");
+        for (Map.Entry<String, LuaMod> entry : mods.entrySet())
+            entry.getValue().save(new File(modsFolder, entry.getKey()));
 
         SQLiteMapWriter database = new SQLiteMapWriter(destination);
         for (Map.Entry<Integer, Block> entry : blocks.entrySet()) {
@@ -117,7 +125,13 @@ public class MTVoxelWorld extends VoxelWorld {
         }
     }
 
-    private void createFile(File file, String content) throws MapWriteException {
+    /* package-private */ void registerMod(String name, LuaMod mod) {
+        if (mods.containsKey(name))
+            throw new IllegalArgumentException("Lua Mod '" + name + "' already exists");
+        mods.put(name, mod);
+    }
+
+    public static void createFile(File file, String content) throws MapWriteException {
         file.getParentFile().mkdirs();
         try {
             file.createNewFile();
