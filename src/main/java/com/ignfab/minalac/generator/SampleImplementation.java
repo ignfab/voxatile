@@ -11,6 +11,8 @@ import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderPara
 import com.ignfab.minalac.generator.parameters.renderers.GroundRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.HeightmapRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.VectorRendererParams;
+import com.ignfab.minalac.generator.parameters.renderers.WaterHeightmapRendererParams;
+import com.ignfab.minalac.generator.parameters.renderers.WaterRendererParams;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
@@ -58,6 +60,9 @@ public final class SampleImplementation {
 
         parser.registerParams("floatMatrix", FloatMatrixProcessorParams.class);
         parser.registerParams("geoToolsVector", GeoToolsVectorProcessorParams.class);
+
+        parser.registerParams("waterDepth", WaterHeightmapRendererParams.class);
+        parser.registerParams("water", WaterRendererParams.class);
 
         Generation generation = parser.parse(cli.readParameters()).create();
 

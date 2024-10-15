@@ -79,7 +79,7 @@ public class Heightmap {
      * @return the {@code int} height at specified position
      * @throws IndexOutOfBoundsException if position is outside the heightmap.
      */
-    public int get(int x, int y) {
+    public synchronized int get(int x, int y) {
         return values[index(x, y)];
     }
 
@@ -90,7 +90,7 @@ public class Heightmap {
      * @return the {@code int} height at specified position
      * @throws IndexOutOfBoundsException if position is outside the heightmap.
      */
-    public int get(WorldCoords2d position) {
+    public synchronized int get(WorldCoords2d position) {
         return get(position.x(), position.y());
     }
 
@@ -102,7 +102,7 @@ public class Heightmap {
      * @param height the height to set at specified position
      * @throws IndexOutOfBoundsException if position is outside the heightmap.
      */
-    public void set(int x, int y, int height) {
+    public synchronized void set(int x, int y, int height) {
         values[index(x, y)] = height;
     }
 
@@ -113,7 +113,33 @@ public class Heightmap {
      * @param height the height to set at specified position
      * @throws IndexOutOfBoundsException if position is outside the heightmap.
      */
-    public void set(WorldCoords2d position, int height) {
+    public synchronized void set(WorldCoords2d position, int height) {
         set(position.x(), position.y(), height);
+    }
+
+    /**
+     * Returns a copy of this {@code Heightmap} padded with the specified size.
+     * It creates a new instance and increase its size by the given padding on all edges.
+     * The value of the extra elements are set to zero.
+     *
+     * @param paddingSize the size of the padding to add on each side of the heightmap.
+     * @return the padded heightmap
+     */
+    public Heightmap copy(int paddingSize) {
+        if (paddingSize < 0)
+            throw new IllegalArgumentException("Padding size must be positive");
+        Heightmap paddedHeightmap = new Heightmap(
+            bbox.minX() - paddingSize,
+            bbox.minY() - paddingSize,
+            bbox.sizeX() + 2 * paddingSize,
+            bbox.sizeY() + 2 * paddingSize,
+            0
+        );
+
+        for (int x = bbox.minX(); x <= bbox.maxX(); x++)
+            for (int y = bbox.minY(); y <= bbox.maxY(); y++)
+                paddedHeightmap.set(x, y, values[index(x, y)]);
+
+        return paddedHeightmap;
     }
 }

@@ -91,4 +91,73 @@ public class HeightmapTest {
         assertThrows(IndexOutOfBoundsException.class, () -> heightmap.set(25, 25, 0));
         assertThrows(IndexOutOfBoundsException.class, () -> heightmap.get(25, 25));
     }
+
+    @Test
+    public void testCopy() throws NoSuchFieldException, IllegalAccessException {
+        Heightmap heightmap = new Heightmap(-1, -2, 3, 2, 0);
+        setValuesField(heightmap, TEST_VALUES);
+        /*
+        +--------y-->
+        |  1  2 -1
+        |  3  4  0
+        |  5  6  1
+        x -2 -1
+        |
+        v
+        */
+
+        // Copy without padding
+
+        Heightmap copyWithoutPadding = heightmap.copy(0);
+        for (int x = -1; x <= 1; x++)
+            for (int y = -2; y <= -1; y++)
+                assertEquals(heightmap.get(x, y), copyWithoutPadding.get(x, y));
+        assertEquals(3, copyWithoutPadding.bbox().sizeX());
+        assertEquals(2, copyWithoutPadding.bbox().sizeY());
+        assertNotSame(heightmap, copyWithoutPadding);
+
+        // Copy with padding of 1
+
+        Heightmap copyWithOnePadding = heightmap.copy(1);
+        for (int x = -1; x <= 1; x++)
+            for (int y = -2; y <= -1; y++)
+                assertEquals(heightmap.get(x, y), copyWithOnePadding.get(x, y));
+
+        // Padding filled with 0
+        for (int y = -3; y <= 0; y++) {
+            assertEquals(0, copyWithOnePadding.get(-2, y));
+            assertEquals(0, copyWithOnePadding.get(2, y));
+        }
+        for (int x = -2; x <= 2; x++) {
+            assertEquals(0, copyWithOnePadding.get(x, -3));
+            assertEquals(0, copyWithOnePadding.get(x, 0));
+        }
+        assertEquals(5, copyWithOnePadding.bbox().sizeX());
+        assertEquals(4, copyWithOnePadding.bbox().sizeY());
+        assertNotSame(heightmap, copyWithOnePadding);
+
+        // Copy with padding of 2
+
+        Heightmap copyWithTwoPadding = heightmap.copy(2);
+        for (int x = -1; x <= 1; x++)
+            for (int y = -2; y <= -1; y++)
+                assertEquals(heightmap.get(x, y), copyWithTwoPadding.get(x, y));
+
+        // Padding filled with 0
+        for (int y = -4; y <= 1; y++) {
+            assertEquals(0, copyWithTwoPadding.get(-3, y));
+            assertEquals(0, copyWithTwoPadding.get(-2, y));
+            assertEquals(0, copyWithTwoPadding.get(2, y));
+            assertEquals(0, copyWithTwoPadding.get(3, y));
+        }
+        for (int x = -3; x <= 3; x++) {
+            assertEquals(0, copyWithTwoPadding.get(x, -4));
+            assertEquals(0, copyWithTwoPadding.get(x, -3));
+            assertEquals(0, copyWithTwoPadding.get(x, 0));
+            assertEquals(0, copyWithTwoPadding.get(x, 1));
+        }
+        assertEquals(7, copyWithTwoPadding.bbox().sizeX());
+        assertEquals(6, copyWithTwoPadding.bbox().sizeY());
+        assertNotSame(heightmap, copyWithTwoPadding);
+    }
 }

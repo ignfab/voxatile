@@ -20,6 +20,7 @@ public class TestingVoxelTypeFactory implements VoxelTypeFactory {
             case COBBLE -> new TestingVoxelType(this.world, "cobble");
             case BRICK  -> new TestingVoxelType(this.world, "brick");
             case WATER  -> new TestingVoxelType(this.world, "water");
+            case GLASS -> new TestingVoxelType(this.world, "glass");
             default     -> new TestingVoxelType(this.world, "air");
         };
     }
