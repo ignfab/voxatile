@@ -123,6 +123,17 @@ A provider capable of reading vector data from a [GeoPackage](https://en.wikiped
 
 **Suitable processors**: `geoToolsVector`
 
+### Shapefile
+A provider capable of reading vector data from a [Shapefile](https://en.wikipedia.org/wiki/Shapefile).
+
+**Type**: `shapefile`
+
+**Extra parameters**:
+- `filePath` (required): Path of the Shapefile (absolute, or relative to execution context)
+- `crs` (optional): Wanted CRS for these features (defaults to target CRS)
+
+**Suitable processors**: `geoToolsVector`
+
 ### Web Map Service with floating point values
 A provider capable of fetching **float** data from a [Web Map Service](https://en.wikipedia.org/wiki/Web_Map_Service) source. Source must be able to provide `x-bil` format.
 
@@ -147,7 +158,7 @@ This processor is able to take vector features and turn them into models, using 
 
 **Extra parameters**: None
 
-**Suitable providers**: `wfs`, `gpkg`
+**Suitable providers**: `wfs`, `gpkg`, `shapefile`
 
 ### Float matrix vector processor
 
