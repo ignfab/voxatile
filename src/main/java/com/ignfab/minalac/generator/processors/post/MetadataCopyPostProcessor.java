@@ -8,7 +8,7 @@ import com.ignfab.minalac.generator.models.Model;
  * This operation can be seen as renaming a metadata, with
  * the side effect of leaving the original one in place.
  * <p>
- * The model same model object is returned after post-processing.
+ * The same model object is returned after post-processing.
  */
 public class MetadataCopyPostProcessor extends PostProcessor.Generic {
     private final String from;
