@@ -11,6 +11,8 @@ Each post-processor has a field `type` which is used to identify it.
   * [Metadata copy](#metadata-copy)
   * [Metadata default](#metadata-default)
   * [Metadata parse](#metadata-parse)
+* [Geometry post-processors](#geometry-post-processors)
+  * [Geometry buffer](#geometry-buffer)
 
 ## Accepted and processed model types
 
@@ -95,3 +97,21 @@ Post-processor parsing a metadata value in-place.
 | `removeMetadata` | The metadata is removed.                   |
 | `ignore`         | Failure is ignored, nothing is done.       |
 | `error`          | An error occurs, and the generation stops. |
+
+## Geometry post-processors
+
+These post-processors can be applied to models resulting from the [`geoToolsVector` processor](GenerationParameters.md#geotools-vector-processor), and they only modifies the model, without changing its type.
+
+**Accepted model type**: Result of `geoToolsVector` processor
+
+**Processed model type**: Same as input
+
+### Geometry buffer
+
+Post-processor that applies a buffer around the geometry of the model.
+
+**Type**: `geometryBuffer`
+
+**Extra parameters**:
+- `buffer` (required): the signed distance of the buffer to apply, can be negative.
+- `discardEmptyResults` (optional, default `no`): `yes` to discard models resulting in an empty geometry, `no` to keep them. This can happen with a negative `buffer` value, when the original geometry was smaller than that value.

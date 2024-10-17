@@ -31,7 +31,7 @@ import com.ignfab.minalac.generator.voxelization.shape3d.ShapesVoxelizer3d;
  * It is voxelizable both in 2d and 3d.
  */
 public class JTSGeometryModel extends ModelImpl implements ShapesVoxelizable2d, ShapesVoxelizable3d {
-    private final Geometry geom;
+    private Geometry geom;
 
     /**
      * Creates a new {@link JTSGeometryModel}.
@@ -44,6 +44,33 @@ public class JTSGeometryModel extends ModelImpl implements ShapesVoxelizable2d, 
         // Until there is no need of it we don't keep original geometry.
         // Geometry is stored transformed into world coordinates
         this.geom = converter.convert(geom);
+    }
+
+    /**
+     * Gets the model's geometry.
+     * The returned object is a direct reference and any modification
+     * will be reflected in the model, until another geometry is set.
+     * <p>
+     * Note: The current geometry is different from the one used in the
+     * constructor, because it was converted using the given converter.
+     * @return The current geometry
+     * @see #setGeometry(Geometry)
+     */
+    public Geometry getGeometry() {
+        return geom;
+    }
+
+    /**
+     * Sets the model's geometry.
+     * This will overwrite the current geometry of the model, and therefore
+     * the new geometry should probably be computed from the current one.
+     * <p>
+     * Note: The new geometry won't be converted again like the one used in
+     * the constructor. It must be in the world's coordinate system.
+     * @param geom The new geometry
+     */
+    public void setGeometry(Geometry geom) {
+        this.geom = geom;
     }
 
     @Override
