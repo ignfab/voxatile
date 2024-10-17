@@ -31,7 +31,7 @@ import java.util.List;
  * It is voxelizable both in 2d and 3d.
  */
 public class JTSGeometryModel extends Model implements ShapesVoxelizable2d, ShapesVoxelizable3d {
-    private final Geometry geom;
+    private Geometry geom;
 
     /**
      * Creates a new {@link JTSGeometryModel}.
@@ -55,6 +55,14 @@ public class JTSGeometryModel extends Model implements ShapesVoxelizable2d, Shap
 
         // This should ensure enough uniqueness
         return p.getX() + "/" + p.getY();
+    }
+
+    public Geometry getGeometry() {
+        return geom;
+    }
+
+    public void setGeometry(Geometry geom) {
+        this.geom = geom;
     }
 
     /**
