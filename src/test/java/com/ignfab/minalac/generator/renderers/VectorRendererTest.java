@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.renderers;
 
 import com.ignfab.minalac.generator.generation.Heightmap;
-import com.ignfab.minalac.generator.models.ModelSelection;
+import com.ignfab.minalac.generator.models.selection.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;

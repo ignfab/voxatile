@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.parameters.renderers;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.models.ModelSelection;
+import com.ignfab.minalac.generator.models.selection.ModelSelection;
 import com.ignfab.minalac.generator.renderers.MetadataRenderer;
 import com.ignfab.minalac.generator.renderers.Renderer;
 

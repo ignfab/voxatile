@@ -2,7 +2,7 @@ package com.ignfab.minalac.generator.renderers;
 
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.models.Model;
-import com.ignfab.minalac.generator.models.ModelSelection;
+import com.ignfab.minalac.generator.models.selection.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;

@@ -1,11 +1,14 @@
-package com.ignfab.minalac.generator.models;
+package com.ignfab.minalac.generator.models.selection;
+
+import com.ignfab.minalac.generator.models.Model;
+import com.ignfab.minalac.generator.models.ModelStore;
 
 import java.util.Iterator;
 
 /**
  * This class selects the models in the {@link ModelStore} matching a specified type.
  */
-public class ModelSelection implements Iterable<Model> {
+public class ModelSelection implements ModelFilter {
     private final ModelStore store;
     private final String type;
 

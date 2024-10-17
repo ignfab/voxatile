@@ -2,8 +2,8 @@ package com.ignfab.minalac.generator.renderers;
 
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.models.Model;
-import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable3d;
+import com.ignfab.minalac.generator.models.selection.ModelFilter;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
@@ -25,7 +25,7 @@ public class RoadRenderer extends ModelRenderer {
      * @param heightmap Heightmap of the ground (on which features will be placed)
      * @param voxelPattern Pattern to place along the road
      */
-    public RoadRenderer(ModelSelection models, Heightmap heightmap, VoxelPattern voxelPattern) {
+    public RoadRenderer(ModelFilter models, Heightmap heightmap, VoxelPattern voxelPattern) {
         super(models);
         this.heightmap = heightmap;
         this.voxelPattern = voxelPattern;

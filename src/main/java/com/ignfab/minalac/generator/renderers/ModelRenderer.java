@@ -1,16 +1,16 @@
 package com.ignfab.minalac.generator.renderers;
 
 import com.ignfab.minalac.generator.models.Model;
-import com.ignfab.minalac.generator.models.ModelSelection;
+import com.ignfab.minalac.generator.models.selection.ModelFilter;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * The abstract {@code ModelRenderer} class represents a type of {@link Renderer} that renders a selection of models.
  */
 public abstract class ModelRenderer implements Renderer {
-    private final ModelSelection selection;
+    private final ModelFilter selection;
 
-    protected ModelRenderer(ModelSelection selection) {
+    protected ModelRenderer(ModelFilter selection) {
         this.selection = selection;
     }
 

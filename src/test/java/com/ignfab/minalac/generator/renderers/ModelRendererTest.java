@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.renderers;
 
 import com.ignfab.minalac.generator.models.Model;
-import com.ignfab.minalac.generator.models.ModelSelection;
+import com.ignfab.minalac.generator.models.selection.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import org.junit.jupiter.api.Test;

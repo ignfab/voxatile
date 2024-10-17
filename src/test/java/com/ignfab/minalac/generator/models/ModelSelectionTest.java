@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.models;
 
+import com.ignfab.minalac.generator.models.selection.ModelSelection;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
