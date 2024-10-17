@@ -15,6 +15,7 @@ import com.ignfab.minalac.generator.parameters.processors.post.MetadataCopyPostP
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataDefaultPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataParsePostProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParams;
+import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
 import com.ignfab.minalac.generator.parameters.renderers.GroundRendererParams;
@@ -77,6 +78,7 @@ public final class SampleImplementation {
 
         parser.registerParams("wfs", WFSProviderParams.class);
         parser.registerParams("gpkg", GeoPackageProviderParams.class);
+        parser.registerParams("shapefile", ShapefileProviderParams.class);
         parser.registerParams("wmsFloat", WMSFloatBilProviderParams.class);
 
         parser.registerParams("floatMatrix", FloatMatrixProcessorParams.class);
