@@ -31,7 +31,7 @@ import com.ignfab.minalac.generator.voxelization.shape3d.ShapesVoxelizer3d;
  * It is voxelizable both in 2d and 3d.
  */
 public class JTSGeometryModel extends ModelImpl implements ShapesVoxelizable2d, ShapesVoxelizable3d {
-    private final Geometry geom;
+    private Geometry geom;
 
     /**
      * Creates a new {@link JTSGeometryModel}.
@@ -55,6 +55,14 @@ public class JTSGeometryModel extends ModelImpl implements ShapesVoxelizable2d, 
 
         // This should ensure enough uniqueness
         return p.getX() + "/" + p.getY();
+    }
+
+    public Geometry getGeometry() {
+        return geom;
+    }
+
+    public void setGeometry(Geometry geom) {
+        this.geom = geom;
     }
 
     /**
