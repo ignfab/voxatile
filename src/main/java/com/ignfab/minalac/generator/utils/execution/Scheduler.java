@@ -160,4 +160,18 @@ public class Scheduler {
         if (error != null)
             throw error;
     }
+
+    /**
+     * Returns a copy of tasks to run on this scheduler.
+     * The returned list is a shallow copy and won't be modified.
+     * However, the state and conditions of tasks may change.
+     *
+     * @return the scheduled tasks at the time of the call
+     */
+    public List<ScheduledTask> getTasks() {
+        // The synchronized block prevents ConcurrentModificationException
+        synchronized (tasks) {
+            return new ArrayList<>(tasks);
+        }
+    }
 }

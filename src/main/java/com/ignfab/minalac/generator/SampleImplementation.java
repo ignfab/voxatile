@@ -19,16 +19,20 @@ import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderPara
 import com.ignfab.minalac.generator.parameters.renderers.GroundRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.HeightmapRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.VectorRendererParams;
+import com.ignfab.minalac.generator.utils.execution.ScheduledTask;
+import com.ignfab.minalac.generator.utils.execution.Scheduler;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
+import com.ignfab.minalac.generator.utils.graph.GraphWriter;
+import com.ignfab.minalac.generator.utils.graph.MermaidGraphWriter;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
-
 import org.geotools.api.referencing.FactoryException;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -79,6 +83,15 @@ public final class SampleImplementation {
         Generation generation = parser.parse(cli.readParameters()).create();
 
         System.out.println("Creation of the map.");
+
+        try {
+            GraphWriter graph = new MermaidGraphWriter(new File("scheduler-graph.mermaid"));
+            //GraphWriter graph = new DOTGraphWriter(new File("scheduler-graph.dot"));
+            generateWorkGraph(generation.scheduler(), graph);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         generation.scheduler().start();
 
         try {
@@ -121,5 +134,16 @@ public final class SampleImplementation {
             if (!file.delete())
                 throw new MapWriteException("Failed to delete " + file);
         }
+    }
+
+    private static void generateWorkGraph(Scheduler scheduler, GraphWriter graph) {
+        graph.begin(true, "Scheduler");
+        for (ScheduledTask task : scheduler.getTasks()) {
+            String id = task.getId();
+            graph.addNode(id, id);
+            for (String condition : task.getConditions())
+                graph.addEdge(condition, id, true);
+        }
+        graph.end(true);
     }
 }
