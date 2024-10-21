@@ -1,0 +1,407 @@
+heightmaps:
+  ground:
+    default: 0
+  water:
+    default: 0
+
+forEachTile:
+
+  fetchAltitude:
+    type: fetchData
+    modelType: altitude
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    processor:
+      type: floatMatrix
+
+  fetchBuildings:
+    type: fetchData
+    modelType: buildings
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:batiment
+      maxFeaturesPerQuery: 500
+    processor:
+      type: geoToolsVector
+    postProcessing:
+      - type: copy
+        metadata: hauteur
+        to: height
+      - type: parse
+        metadata: height
+        as: decimal
+        ifMissing: ignore
+        ifNotParsable: removeMetadata
+      - type: truncate
+        metadata: height
+        method: round
+        ifMissing: ignore
+      - type: default
+        metadata: height
+        value: 5
+        as: integer
+
+  fetchVegetation:
+    type: fetchData
+    modelType: vegetation
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:zone_de_vegetation
+    processor:
+      type: geoToolsVector
+
+  fetchWater:
+    type: fetchData
+    modelType: water
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:surface_hydrographique
+    processor:
+      type: geoToolsVector
+
+  fetchRoads:
+    type: fetchData
+    modelType: road
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:troncon_de_route
+    processor:
+      type: geoToolsVector
+
+  setAltitude:
+    after: fetchAltitude
+    type: populateHeightmap
+    models:
+      type: altitude
+    heightmap: ground
+
+  setSpawn:
+    after: setAltitude
+    type: setSpawn
+    heightmap:
+      sum: [ground, 1]
+    x: 0
+    y: 0
+
+  flattenWater:
+    after:
+      - fetchWater
+      - setAltitude
+    type: copyHeightmap
+    models:
+      type: water
+    from:
+      localMin: ground
+      range: 9
+    to: ground
+
+  renderGround:
+    after:
+      - setAltitude
+      - flattenWater
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - put: *voxel-grass
+          at: [0, 0, 0]
+        - put: *voxel-dirt
+          at: [0, 0, -3..-1]
+        - put: *voxel-stone
+          at: [0, 0, -20..-4]
+
+  computeBuildingsAltitude:
+    after:
+      - fetchBuildings
+      - renderGround
+    type: computeHeightmapStats
+    models:
+      type: buildings
+    heightmap: ground
+    compute:
+      minimum: minimum-ground-altitude
+      maximum: ground-floor-altitude
+
+  flattenGroundBuildings:
+    after:
+      - computeBuildingsAltitude
+    type: fillBetweenHeightmapAndValue
+    models:
+      type: buildings
+    heightmap: ground
+    altitudeValue: ground-floor-altitude
+    placeAbove: *voxel-empty
+    placeBelow: *voxel-building-ground
+
+  renderBuildings:
+    after: flattenGroundBuildings
+    type: renderBuildings
+    models:
+      type: buildings-disabled
+      filter:
+        metadata: height
+        greaterThan: 0
+    roof: *voxel-cobble
+    wall: *voxel-stone
+    window: *voxel-glass
+
+  renderForest:
+    after:
+      - renderGround
+      - fetchVegetation
+    type: renderSurfaces
+    models:
+      type: vegetation-disabled
+      filter:
+        metadata: nature
+        in:
+          - "Bois"
+          - "Forêt fermée de conifères"
+          - "Forêt fermée de feuillus"
+          - "Forêt fermée mixte"
+          - "Forêt ouverte"
+          - "Zone arborée"
+    heightmap: ground
+    place:
+      - pattern:
+          seed: forest-grass
+          chance: 0.1
+          place:
+            structure:
+              - at: [0, 0, 1]
+                put: *forest-grass
+      - *voxel-forest-ground
+      - pattern:
+          seed: forest-tree1
+          chance: 0.01
+          place: *forest-tree1
+      - pattern:
+          seed: tree2
+          chance: 0.003
+          place: *forest-tree2
+
+  populateWaterPresence:
+    after: fetchWater
+    type: copyHeightmap
+    models:
+      type: water
+    from: 1
+    to: water
+
+  computeWaterDepth:
+    after: populateWaterPresence
+    type: copyHeightmap
+    models:
+      type: water
+    from:
+      remap:
+        manhattan: water
+        maximumDistance: 12
+        targetValue: 0
+      mapping:
+        0: 0
+        1: 1
+        2: 8
+        3..3: 10
+        4..6: 11
+        7..12: 12
+    to: water
+
+  renderWater:
+    after:
+      - renderGround
+      - computeWaterDepth
+      # Vegetation and water vector data overlap in certain areas. (Because of vegetation representing canopy)
+      # The dependency and air voxel below should be removed when cropping is implemented on vector data.
+      - renderForest
+    type: renderHeightmap
+    minimum:
+      sum:
+        - ground
+        - 1
+        - product: [ -1, water ]
+    maximum: ground
+    place:
+      structure:
+        - put: *voxel-water
+          at: [ 0, 0, 0 ]
+        # This a dirt fix to remove vegetation on water
+        - put: *voxel-air
+          at: [ 0, 0, 1..12 ]
+
+  path:
+    after:
+      - fetchRoads
+      - renderGround
+      - renderForest
+    type: renderLines
+    models:
+      type: road
+      filter:
+        metadata: nature
+        in: [ "Chemin", "Sentier", "Roue empierrée" ]
+    structure:
+      - put: *path
+        at: [ 0, -1..1, 0]
+      - put: *voxel-air
+        at: [ 0, -1..1, 1..2 ]
+
+  renderBridges:
+    after: path
+    type: renderLines
+    models:
+      type: road
+      filter:
+        metadata: nature
+        in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
+    renderOnlyWhenAbove:
+      sum:
+        - ground
+        - 1
+    structure:
+      # Half bridge structure (sectional view)
+      axes: [ z, y ]
+      blueprint:
+        - "     ▒▒"
+        - "▒▒▒▒▒▒▒"
+      with:
+        "▒": *voxel-stone
+      zOffset: -1
+
+  renderRoadsPass1:
+    after: renderBridges
+    type: renderLines
+    models:
+      type: road
+      filter:
+        metadata: nature
+        in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
+    structure:
+      # Road border lines and air to clean eventual voxels (sectional view)
+      axes: [ z, y ]
+      blueprint:
+        - "·····"
+        - "·····"
+        - "····█"
+      with:
+        "█": *road-paint
+        "·": *voxel-air
+
+  renderRoadsPass2:
+    after: renderRoadsPass1
+    type: renderLines
+    models:
+      type: road
+      filter:
+        metadata: nature
+        in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
+    structure:
+      # Road central line and tar (view from above)
+      axes: [ x, y ]
+      blueprint:
+        - "█░░░"
+        - "█░░░"
+        - "█░░░"
+        - "░░░░"
+        - "░░░░"
+      with:
+        "█": *road-paint
+        "░": *road-tar
+
+  fetchBatiCity:
+    type: fetchData
+    modelType: building-city
+    provider:
+      type: cityjson
+      filePath: data/bati.city.json
+    processor:
+      type: cityjsonBuilding
+
+  renderBati3dGround:
+    after:
+      - fetchBatiCity
+      - renderGround
+    type: renderBuildings3d
+    models:
+      type: building-city
+    surfaceType: ground
+    place: *voxel-cobble
+
+  renderBati3dWalls:
+    after:
+      - renderBati3dGround
+    type: renderBuildings3d
+    models:
+      type: building-city
+    surfaceType: wall
+    place: *default-wall
+
+  renderBati3dRoofs:
+    after:
+      - renderBati3dWalls
+    type: renderBuildings3d
+    models:
+      type: building-city
+    surfaceType: roof
+    place: *default-roof
+
+  fetchTrees:
+    type: fetchData
+    modelType: trees
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: trees
+    processor:
+      type: geoToolsVector
+
+  fetchLidar:
+    type: fetchData
+    modelType: lidarhd
+    provider:
+      type: lasTiled
+      tilesPath: data/lidar
+      tilesFilenameTemplate: LHD_FXX_%04d_%04d_PTS_O_LAMB93_IGN69.copc.laz
+      tileSize: 1000
+      tileOffsetY: 1000
+    processor:
+      type: lasMerged
+
+  renderVegetation:
+    after: fetchLidar
+    type: renderVoxels
+    models:
+      type: lidarhd
+      filter:
+        metadata: classification
+        in: [ 3, 4, 5 ]
+        as: integer
+    place: default:leaves
+
+  findHighestLeaves:
+    after:
+      - fetchTrees
+      - renderVegetation
+    type: findVoxels
+    models:
+      type: trees
+    only: default:leaves
+    find:
+      highest: highest-leaves
+
+  renderTrunks:
+    after: findHighestLeaves
+    type: fillBetweenHeightmapAndValue
+    models:
+      type: trees
+    heightmap: ground
+    altitudeValue:
+      sum: [highest-leaves, -1]
+    placeBelow: default:tree
+

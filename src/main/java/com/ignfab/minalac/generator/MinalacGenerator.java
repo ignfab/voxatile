@@ -20,6 +20,7 @@ import com.ignfab.minalac.generator.parameters.ParamsParser;
 import com.ignfab.minalac.generator.parameters.ParseException;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.MCVoxelParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelParams;
+import com.ignfab.minalac.generator.parameters.processors.CityJSONBuildingProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.LASPointMergedModelProcessorParams;
@@ -34,6 +35,7 @@ import com.ignfab.minalac.generator.parameters.processors.post.MetadataExplodePo
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataParsePostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataTruncatePostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataValueMappingPostProcessorParams;
+import com.ignfab.minalac.generator.parameters.providers.CityJSONProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.GeoTiffProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.LASProviderParams;
@@ -47,6 +49,7 @@ import com.ignfab.minalac.generator.parameters.tasks.FillBetweenHeightmapAndValu
 import com.ignfab.minalac.generator.parameters.tasks.FindVoxelsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.HeightmapStatsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.PopulateHeightmapTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.RenderBuildings3dTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderLinesTaskParams;
@@ -113,6 +116,7 @@ public final class MinalacGenerator {
         parser.registerParams("setSpawn", SetSpawnTaskParams.class);
         parser.registerParams("renderVoxels", RenderVoxelsTaskParams.class);
         parser.registerParams("findVoxels", FindVoxelsTaskParams.class);
+        parser.registerParams("renderBuildings3d", RenderBuildings3dTaskParams.class);
 
         parser.registerParams("wfs", WFSProviderParams.class);
         parser.registerParams("gpkg", GeoPackageProviderParams.class);
@@ -121,11 +125,13 @@ public final class MinalacGenerator {
         parser.registerParams("geotiff", GeoTiffProviderParams.class);
         parser.registerParams("las", LASProviderParams.class);
         parser.registerParams("lasTiled", LASTiledProviderParams.class);
+        parser.registerParams("cityjson", CityJSONProviderParams.class);
 
         parser.registerParams("floatMatrix", FloatMatrixProcessorParams.class);
         parser.registerParams("geoToolsVector", GeoToolsVectorProcessorParams.class);
         parser.registerParams("lasPoints", LASPointProcessorParams.class);
         parser.registerParams("lasMerged", LASPointMergedModelProcessorParams.class);
+        parser.registerParams("cityjsonBuilding", CityJSONBuildingProcessorParams.class);
 
         parser.registerParams("identity", IdentityPostProcessorParams.class);
         parser.registerParams("discard", DiscardPostProcessorParams.class);

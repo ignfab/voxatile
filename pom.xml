@@ -162,6 +162,12 @@
             <artifactId>laszip4j</artifactId>
             <version>0.21</version>
         </dependency>
+        <!-- CityGML data manipulation (with CityJSON format support) -->
+        <dependency>
+            <groupId>org.citygml4j</groupId>
+            <artifactId>citygml4j-cityjson</artifactId>
+            <version>3.2.5</version>
+        </dependency>
 
         <!--
         TEST DEPENDENCIES

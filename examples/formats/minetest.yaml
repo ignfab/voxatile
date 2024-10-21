@@ -11,6 +11,8 @@ references:
   - &road-paint wool:white
   - &road-tar wool:black
   - &path default:dirt_with_coniferous_litter
+  - &default-wall default:sandstonebrick
+  - &default-roof default:stone_block
   - &forest-grass default:junglegrass
   - &forest-tree1
     structure:

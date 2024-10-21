@@ -48,6 +48,19 @@ public record Vector2d(double x, double y) {
     }
 
     /**
+     * Returns normalized vector. If vector is zero, zero vector is returned.
+     *
+     * @return normalized vector
+     */
+    // TODO: TESTS
+    public Vector2d normalized() {
+        if (isZero())
+            return ZERO;
+        double length = length();
+        return new Vector2d(x / length, y / length);
+    }
+
+    /**
      * Returns a new vector resulting from addition of a vector to this vector.
      *
      * @param vector vector to add
@@ -99,6 +112,43 @@ public record Vector2d(double x, double y) {
     }
 
     /**
+     * Computes scalar product of this vector with another vector as 2 coordinates.
+     * @param x x-coordinate of vector to compute product with
+     * @param y y-coordinate of vector to compute product with
+     *
+     * @return scalar product
+     */
+    // TODO: TESTS
+    public double dot(double x, double y) {
+        return this.x * x + this.y * y;
+    }
+
+    /**
+     * Computes scalar product of this vector with another vector.
+     * @param vector vector to compute product with
+     *
+     * @return scalar product
+     */
+    // TODO: TESTS
+    public double dot(Vector2d vector) {
+        return dot(vector.x, vector.y);
+    }
+
+    /**
+     * Computes product of this vector with another vector.
+     * @param vector vector to compute product with
+     *
+     * @return vector product
+     */
+    // TODO: TESTS
+    public Vector2d cross(Vector2d vector) {
+        return new Vector2d(
+            y * vector.x - x * vector.y,
+            x * vector.y - y * vector.x
+        );
+    }
+
+    /**
      * Creates a {@link Vector3d} from this vector by adding given z-axis component.
      *
      * @param z z-axis component to add
@@ -126,16 +176,6 @@ public record Vector2d(double x, double y) {
      */
     public double determinant(Vector2d vector) {
         return x * vector.y - y * vector.x;
-    }
-
-    /**
-     * Computes scalar product of this vector with another vector.
-     * @param vector vector to compute determinant with
-     *
-     * @return scalar product
-     */
-    public double scalarProduct(Vector2d vector) {
-        return x * vector.x + y * vector.y;
     }
 
     @Override
