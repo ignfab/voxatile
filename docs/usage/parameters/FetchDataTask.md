@@ -14,11 +14,17 @@ Task of type `fetchData` fetches data from geographic data source, processes it,
   * [`geotiff` (GeoTiff)](#geotiff-geotiff)
   * [`las` (Point cloud from LAS/LAZ file)](#las-point-cloud-from-laslaz-file)
   * [`lasTiled` (Point clouds from multiple tiled LAS/LAZ files)](#lastiled-point-clouds-from-multiple-tiled-laslaz-files)
+  * [`cityjson` (CityJSON)](#cityjson-cityjson)
 * [Processors](#processors)
   * [`geoToolsVector` (GeoTools vector processor)](#geotoolsvector-geotools-vector-processor)
   * [`floatMatrix` (Float matrix processor)](#floatmatrix-float-matrix-processor)
   * [`lasPoints` (Individual LAS points processor)](#laspoints-individual-las-points-processor)
   * [`lasMerged` (Merged LAS points processor)](#lasmerged-merged-las-points-processor)
+  * [`cityjson` (CityJSON)](#cityjson-cityjson)
+* [Processors](#processors)
+  * [`geoToolsVector` (GeoTools vector processor)](#geotoolsvector-geotools-vector-processor)
+  * [`floatMatrix` (Float matrix processor)](#floatmatrix-float-matrix-processor)
+  * [`cityjsonBuilding` (CityJSON building processor)](#cityjsonbuilding-cityjson-building-processor)
 
 See also [post-processing](PostProcessing.md) documentation.
 
@@ -129,6 +135,16 @@ A provider capable of reading points from multiple tiled [LAS/LAZ](https://en.wi
 
 **Suitable processors**: `lasPoints`, `lasMerged`
 
+### `cityjson` (CityJSON)
+
+A provider capable of reading JSON-encoded data from a [CityGML](https://en.wikipedia.org/wiki/CityGML) file.
+
+**Extra parameters**:
+- `filePath` (required): Path of the CityJSON file (absolute, or relative to execution context)
+- `overrideCrs` (optional, default none): Cordinate Reference System to use when reading data. By default, the CRS is read from the file itself. You should only use this parameter if the CRS is invalid or missing from the file. This **DOES NOT** reproject data!
+
+**Suitable processors**: `cityjsonBuilding`
+
 ## Processors
 
 A processor converts data from a provider into models. Processor type is identified by `type` field.
@@ -162,3 +178,12 @@ Processor merging LAS points into a small number of models (at least one per cla
 **Extra parameters**: None
 
 **Suitable providers**: `las`, `lasTiled`
+
+### `cityjsonBuilding` (CityJSON building processor)
+
+Processor converting city object into a city building model. Other types of city objects are dropped.
+
+**Extra parameters**: None
+
+**Suitable providers**: `cityjson`
+

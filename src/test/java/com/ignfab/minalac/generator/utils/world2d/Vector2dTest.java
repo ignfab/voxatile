@@ -90,9 +90,9 @@ public class Vector2dTest {
     @Test
     public void testScalarProduct() {
         Vector2d v = new Vector2d(2.0, 3.0);
-        assertEquals(v.length() * v.length(), v.scalarProduct(v), EPSILON);
-        assertEquals(0.0, v.scalarProduct(v.normal()), EPSILON);
-        assertEquals(0.0, v.scalarProduct(Vector2d.ZERO), EPSILON);
+        assertEquals(v.length() * v.length(), v.dot(v), EPSILON);
+        assertEquals(0.0, v.dot(v.normal()), EPSILON);
+        assertEquals(0.0, v.dot(Vector2d.ZERO), EPSILON);
     }
 
     @Test

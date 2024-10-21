@@ -50,6 +50,19 @@ public record Vector3d(double x, double y, double z) {
     }
 
     /**
+     * Returns normalized vector. If vector is zero, zero vector is returned.
+     *
+     * @return normalized vector
+     */
+    // TODO: TESTS
+    public Vector3d normalized() {
+        if (isZero())
+            return ZERO;
+        double length = length();
+        return new Vector3d(x / length, y / length, z / length);
+    }
+
+    /**
      * Returns a new vector resulting from addition of a vector to this vector.
      *
      * @param vector vector to add
@@ -98,6 +111,45 @@ public record Vector3d(double x, double y, double z) {
      */
     public WorldCoords3d round() {
         return WorldCoords3d.round(x, y, z);
+    }
+
+    /**
+     * Computes scalar product of this vector with another vector as 3 coordinates.
+     * @param x x-coordinate of vector to compute product with
+     * @param y y-coordinate of vector to compute product with
+     * @param z z-coordinate of vector to compute product with
+     *
+     * @return scalar product
+     */
+    // TODO: TESTS
+    public double dot(double x, double y, double z) {
+        return this.x * x + this.y * y + this.z * z;
+    }
+
+    /**
+     * Computes scalar product of this vector with another vector.
+     * @param vector vector to compute product with
+     *
+     * @return scalar product
+     */
+    // TODO: TESTS
+    public double dot(Vector3d vector) {
+        return dot(vector.x, vector.y, vector.z);
+    }
+
+    /**
+     * Computes product of this vector with another vector.
+     * @param vector vector to compute product with
+     *
+     * @return vector product
+     */
+    // TODO: TESTS
+    public Vector3d cross(Vector3d vector) {
+        return new Vector3d(
+            y * vector.z - z * vector.y,
+            z * vector.x - x * vector.z,
+            x * vector.y - y * vector.x
+        );
     }
 
     /**

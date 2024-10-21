@@ -11,6 +11,8 @@ references:
   - &road-paint minecraft:white_concrete
   - &road-tar minecraft:black_concrete
   - &path minecraft:dirt_path
+  - &default-roof minecraft:stone
+  - &default-wall minecraft:stone
   - &forest-grass minecraft:fern
   - &forest-tree1
     structure:

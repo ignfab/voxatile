@@ -1,0 +1,10 @@
+# Highway jam at Porte de Bagnolet
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 48.8659
+    longitude: 2.35531
+  extentX: 1000
+  extentY: 1000
+  angle: -21
