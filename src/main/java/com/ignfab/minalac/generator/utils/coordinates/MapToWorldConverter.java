@@ -92,4 +92,8 @@ public class MapToWorldConverter {
     public Geometry convert(Geometry geom) throws TransformException {
         return converter.convert(geom);
     }
+
+    public MapCoordinates convertRaw(MapCoordinates coords) throws TransformException {
+        return converter.convert(coords);
+    }
 }

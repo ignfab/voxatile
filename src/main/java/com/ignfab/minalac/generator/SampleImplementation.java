@@ -4,12 +4,14 @@ import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.ParamsParser;
 import com.ignfab.minalac.generator.parameters.ParseException;
+import com.ignfab.minalac.generator.parameters.processors.CityJSONBuildingProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.IntegerMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.LASPointProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.LASPointSingleModelProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataCopyPostProcessorParams;
+import com.ignfab.minalac.generator.parameters.providers.CityJSONProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.LASProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.LASTiledProviderParams;
@@ -75,12 +77,14 @@ public final class SampleImplementation {
         parser.registerParams("wmsImage", WMSImageProviderParams.class);
         parser.registerParams("las", LASProviderParams.class);
         parser.registerParams("lasTiled", LASTiledProviderParams.class);
+        parser.registerParams("cityjson", CityJSONProviderParams.class);
 
         parser.registerParams("floatMatrix", FloatMatrixProcessorParams.class);
         parser.registerParams("intMatrix", IntegerMatrixProcessorParams.class);
         parser.registerParams("geoToolsVector", GeoToolsVectorProcessorParams.class);
         parser.registerParams("lasPoints", LASPointProcessorParams.class);
         parser.registerParams("lasMerged", LASPointSingleModelProcessorParams.class);
+        parser.registerParams("cityjsonBuilding", CityJSONBuildingProcessorParams.class);
 
         parser.registerParams("copy", MetadataCopyPostProcessorParams.class);
 

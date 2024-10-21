@@ -184,6 +184,17 @@ A provider capable of reading points from multiple tiled [LAS/LAZ](https://en.wi
 
 **Suitable processors**: `lasPoints`, `lasSingle`
 
+### CityJSON
+A provider capable of reading JSON-encoded data from a [CityGML](https://en.wikipedia.org/wiki/CityGML) file.
+
+**Type**: `cityjson`
+
+**Extra parameters**:
+- `filePath` (required): Path of the CityJSON file (absolute, or relative to execution context)
+- `crs` (optional): Wanted CRS for these objects (defaults to target CRS)
+
+**Suitable processors**: `cityjsonBuilding`
+
 ## Processor parameters
 
 A processor converts data from a provider into models. Processor type is identified by `type` field.
@@ -237,6 +248,16 @@ Processor merging LAS points into a single model. Classification and optional co
 **Extra parameters**: None
 
 **Suitable providers**: `las`, `lasTiled`
+
+### CityJSON building processor
+
+Processor converting city object into a city building model. Other types of city objects are dropped.
+
+**type**: `cityjsonBuilding`
+
+**Extra parameters**: None
+
+**Suitable providers**: `cityjson`
 
 ## Post processor parameters
 
