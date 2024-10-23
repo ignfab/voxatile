@@ -58,13 +58,6 @@ public abstract class VoxelWorld {
     public abstract WorldBBox3d maxLimits();
 
     /**
-     * Returns the factory for creating its corresponding {@link VoxelType}.
-     *
-     * @return the factory for creating voxels
-     */
-    public abstract VoxelTypeFactory getFactory();
-
-    /**
      * Returns the metadata of this {@code VoxelWorld}.
      *
      * @return the {@link VoxelWorldMetadata}

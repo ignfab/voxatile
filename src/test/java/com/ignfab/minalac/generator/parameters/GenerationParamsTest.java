@@ -2,6 +2,8 @@ package com.ignfab.minalac.generator.parameters;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.Heightmap;
+import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+import com.ignfab.minalac.generator.parameters.placeables.minetest.MTVoxelTypeParams;
 import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.TestingProviderParams;
 import com.ignfab.minalac.generator.parameters.renderers.TestingRendererParams;
@@ -20,7 +22,8 @@ public class GenerationParamsTest {
     void setUp() {
         GenerationParams.Area.LatitudeLongitude center = new GenerationParams.Area.LatitudeLongitude(5.8, 2.4);
         GenerationParams.Area area = new GenerationParams.Area(center, 500, 2500);
-        params = new GenerationParams(area, "minetest");
+        OutputFormat format = new OutputFormat(MTVoxelWorld::new, MTVoxelTypeParams.class, MTVoxelTypeParams::new);
+        params = new GenerationParams(area, format);
         params.heightmaps = new HashMap<>();
         params.renderers = new HashMap<>();
     }
@@ -93,12 +96,6 @@ public class GenerationParamsTest {
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params.area.extendY = -10;
-        assertThrows(IllegalArgumentException.class, params::validate);
-    }
-
-    @Test
-    public void testValidateFormat() {
-        params.format = "illegal";
         assertThrows(IllegalArgumentException.class, params::validate);
     }
 

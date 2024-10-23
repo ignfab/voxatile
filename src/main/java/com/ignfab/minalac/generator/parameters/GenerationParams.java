@@ -51,20 +51,19 @@ public class GenerationParams {
     public String crs;
 
     /**
-     * The format of the generated map.
-     * This field is required.
+     * The format of the generated map as (required).
+     * Format is one of registered formats using {@code ParamParser.registerFormat}.
      */
-    public String format;
+    // Warning: If moved, path as to be updated in ParamsParser.parse().
+    public OutputFormat format;
 
     /**
-     * The random number seed.
-     * This field is optional, default "".
+     * The random number seed (optional, default "").
      */
     public String seed;
 
     /**
-     * The map of heightmaps used during the generation.
-     * This field is optional.
+     * Heightmaps used during the generation, by name (optional).
      */
     @JsonSetter(
         nulls = Nulls.SKIP,
@@ -74,8 +73,7 @@ public class GenerationParams {
     public Map<String, HeightmapParams> heightmaps = new LinkedHashMap<>();
 
     /**
-     * The map of sources used during the generation.
-     * This field is optional.
+     * Sources used during the generation, by name (optional).
      */
     @JsonSetter(
         nulls = Nulls.SKIP,
@@ -85,15 +83,14 @@ public class GenerationParams {
     public Map<String, DataSourceParams> sources = new LinkedHashMap<>();
 
     /**
-     * The map of renderers used during the generation.
-     * This field is optional.
+     * Renderers used during the generation, by name (optional).
      */
     @JsonSetter(
         nulls = Nulls.SKIP,
         // To prevent null values on required field of an element of the map.
         contentNulls = Nulls.FAIL
     )
-    public Map<String, RendererParams> renderers = new LinkedHashMap<>();
+    Map<String, RendererParams> renderers = new LinkedHashMap<>();
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
@@ -102,7 +99,7 @@ public class GenerationParams {
      * @param format the format of the game.
      */
     @ConstructorProperties({"area", "format"})
-    public GenerationParams(Area area, String format) {
+    public GenerationParams(Area area, OutputFormat format) {
         this.area = area;
         this.format = format;
     }
@@ -126,8 +123,6 @@ public class GenerationParams {
             throw new IllegalArgumentException("The field extendX must be greater than 0");
         if (area.extendY <= 0)
             throw new IllegalArgumentException("The field extendY must be greater than 0");
-        if (!GenerationCreator.isFormatSupported(format))
-            throw new IllegalArgumentException("The provided format is not supported");
 
         for (HeightmapParams params : heightmaps.values())
             params.validate();

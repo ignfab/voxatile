@@ -23,7 +23,7 @@ public class TestingVoxelType implements VoxelType {
      * @param world World in which this voxel type will be placed
      * @param type A string for this voxel type (this value will be set in voxel world)
      */
-    protected TestingVoxelType(TestingVoxelWorld world, String type) {
+    public TestingVoxelType(TestingVoxelWorld world, String type) {
         this.world = world;
         this.type = type;
     }

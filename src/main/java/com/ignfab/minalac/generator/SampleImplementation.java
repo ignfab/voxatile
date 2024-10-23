@@ -2,8 +2,13 @@ package com.ignfab.minalac.generator;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
+import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+import com.ignfab.minalac.generator.parameters.OutputFormat;
 import com.ignfab.minalac.generator.parameters.ParamsParser;
 import com.ignfab.minalac.generator.parameters.ParseException;
+import com.ignfab.minalac.generator.parameters.placeables.minecraft.MCVoxelTypeParams;
+import com.ignfab.minalac.generator.parameters.placeables.minetest.MTVoxelTypeParams;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataCopyPostProcessorParams;
@@ -48,6 +53,10 @@ public final class SampleImplementation {
 
         // Generation parsing
         ParamsParser parser = new ParamsParser();
+
+        // Register game formats
+        parser.registerFormat("minecraft", new OutputFormat(MCVoxelWorld::new, MCVoxelTypeParams.class, MCVoxelTypeParams::new));
+        parser.registerFormat("minetest", new OutputFormat(MTVoxelWorld::new, MTVoxelTypeParams.class, MTVoxelTypeParams::new));
 
         // TODO: Static method that provides a ParamsParser with all default renderers
         // If those name values are modified, update the documentation accordingly

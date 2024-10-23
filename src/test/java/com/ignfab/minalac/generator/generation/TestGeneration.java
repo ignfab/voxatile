@@ -5,7 +5,6 @@ import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
-import com.ignfab.minalac.generator.world.VoxelTypeFactory;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
@@ -85,11 +84,6 @@ public class TestGeneration {
         @Override
         public WorldBBox3d maxLimits() {
             return new WorldBBox3d(-extendX / 2, -extendY / 2, 0, extendX, extendY, 1);
-        }
-
-        @Override
-        public VoxelTypeFactory getFactory() {
-            return null;
         }
 
         @Override

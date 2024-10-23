@@ -4,12 +4,12 @@ import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelType;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.SemanticType;
 import com.ignfab.minalac.generator.world.VoxelType;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -24,8 +24,8 @@ class VectorRendererTest {
     private WorldBBox3d bbox;
     private ModelStore store;
     private ModelSelection modelSelection;
-    private VoxelType cobble;
-    private VoxelType brick;
+    private VoxelType inside;
+    private VoxelType edge;
 
 
 
@@ -36,13 +36,13 @@ class VectorRendererTest {
         heightmap = new Heightmap(bbox.to2d(), -1);
         store = new ModelStore();
         modelSelection = new ModelSelection(store, "testing");
-        cobble = world.getFactory().createVoxelType(SemanticType.COBBLE);
-        brick = world.getFactory().createVoxelType(SemanticType.BRICK);
+        inside = new TestingVoxelType(world, "INSIDE");
+        edge = new TestingVoxelType(world, "EDGE");
     }
 
     @Test
     public void testConstructor() {
-        assertDoesNotThrow(() -> new VectorRenderer(modelSelection, heightmap, cobble, brick));
+        assertDoesNotThrow(() -> new VectorRenderer(modelSelection, heightmap, inside, edge));
     }
 
     @Test
@@ -55,11 +55,11 @@ class VectorRendererTest {
         // Add one model covering the whole map with INSIDE voxels
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(modelBbox));
 
-        new VectorRenderer(modelSelection, heightmap, cobble, brick).render(bbox);
+        new VectorRenderer(modelSelection, heightmap, inside, edge).render(bbox);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == 0 && modelBbox.contains(pos.to2d()))
-                world.assertVoxel("brick", pos);
+                world.assertVoxel("EDGE", pos);
             else
                 world.assertVoxelNull(pos);
         }
@@ -72,7 +72,7 @@ class VectorRendererTest {
         WorldBBox2d modelBbox = new WorldBBox2d(0, -1, 3, 4);
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(modelBbox));
 
-        new VectorRenderer(modelSelection, heightmap, cobble, brick).render(bbox);
+        new VectorRenderer(modelSelection, heightmap, inside, edge).render(bbox);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() != 0 || !modelBbox.contains(pos.to2d())) {
@@ -86,10 +86,10 @@ class VectorRendererTest {
                 || pos.y() == modelBbox.minY()
                 || pos.y() == modelBbox.maxY())
                 // Border
-                world.assertVoxel("brick", pos);
+                world.assertVoxel("EDGE", pos);
             else
                 // Inside
-                world.assertVoxel("cobble", pos);
+                world.assertVoxel("INSIDE", pos);
         }
     }
 
@@ -103,7 +103,7 @@ class VectorRendererTest {
         // Add one model covering the whole map
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(bbox.to2d()));
 
-        new VectorRenderer(modelSelection, heightmap, cobble, brick).render(bbox);
+        new VectorRenderer(modelSelection, heightmap, inside, edge).render(bbox);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == (pos.x() + pos.y()) / 2 + 1) // + 1 because vector renderer places voxels 1 pos above heightmap
@@ -125,7 +125,7 @@ class VectorRendererTest {
         // Add one model covering the whole map with BORDER voxels
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(bbox.to2d()));
 
-        new VectorRenderer(modelSelection, heightmap, cobble, brick).render(bbox);
+        new VectorRenderer(modelSelection, heightmap, inside, edge).render(bbox);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == pos.x() + pos.y() * 2 + 1)
@@ -142,11 +142,11 @@ class VectorRendererTest {
         WorldBBox2d modelBbox = new WorldBBox2d(bbox.minX() - 1, bbox.minY() - 1, bbox.sizeX() + 2, bbox.sizeY() + 2);
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(modelBbox));
 
-        new VectorRenderer(modelSelection, heightmap, cobble, brick).render(bbox);
+        new VectorRenderer(modelSelection, heightmap, inside, edge).render(bbox);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == 0)
-                world.assertVoxel("cobble", pos);
+                world.assertVoxel("INSIDE", pos);
             else
                 world.assertVoxelNull(pos);
         }

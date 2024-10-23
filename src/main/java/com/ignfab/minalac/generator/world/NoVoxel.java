@@ -1,0 +1,17 @@
+package com.ignfab.minalac.generator.world;
+
+/**
+ * A placeable placing nothing.
+ * Can be convenient to pass as a no-op voxel type to some operation.
+ */
+public class NoVoxel implements Placeable {
+    /**
+     * Does not place anything at x, y, z.
+     *
+     * @param x x-coordinate where to place nothing
+     * @param y y-coordinate where to place nothing
+     * @param z z-coordinate where to place nothing
+     */
+    @Override
+    public void place(int x, int y, int z) {}
+}
