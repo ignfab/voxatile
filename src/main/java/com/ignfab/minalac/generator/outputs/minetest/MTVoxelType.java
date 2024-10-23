@@ -7,7 +7,7 @@ import com.ignfab.minalac.generator.world.VoxelType;
  * A voxel in Minetest, known as node, consists of three parameters: type, param1, param2.
  * @see <a href="https://github.com/minetest/minetest/blob/master/src/mapnode.h#L138">Minetest's MapNode class</a> for more information about the node's parameters
  */
-public abstract class MTVoxelType implements VoxelType {
+public class MTVoxelType implements VoxelType {
     /**
      * The Minetest World object.
      */

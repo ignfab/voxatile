@@ -3,8 +3,10 @@ package com.ignfab.minalac.generator.parameters;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 /**
@@ -12,6 +14,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
  */
 public class ParamsParser {
     private final ObjectMapper mapper;
+    private final OutputFormat.Deserializer formatDeserializer = new OutputFormat.Deserializer();
 
     /**
      * Creates a new Parser.
@@ -32,8 +35,26 @@ public class ParamsParser {
      */
     public GenerationParams parse(String serialized) throws ParseException {
         GenerationParams params;
+        SimpleModule module;
+
+        // Custom deserializers
+        module = new SimpleModule();
+        module.addDeserializer(OutputFormat.class, formatDeserializer);
+        mapper.registerModule(module);
+
         try {
-            params = mapper.readValue(serialized, GenerationParams.class);
+            // Deserialize as generic tree
+            JsonNode node = mapper.readValue(serialized, JsonNode.class);
+
+            // Read output format information only
+            OutputFormat format = mapper.treeToValue(node.at("/format"), OutputFormat.class);
+
+            // Register format specific deserializer
+            format.registerPlaceableDeserializer(mapper);
+
+            // Deserialize the whole parameter object
+            params = mapper.treeToValue(node, GenerationParams.class);
+
         } catch (JsonProcessingException e) {
             throw new ParseException(e);
         }
@@ -55,4 +76,15 @@ public class ParamsParser {
     public <T extends PolymorphicParams> void registerParams(String name, Class<T> clazz) {
         mapper.registerSubtypes(new NamedType(clazz, name));
     }
+
+    /**
+     * Registers a new {@code OutputFormat}.
+     *
+     * @param name Name of the format to register (will be used for deserialization)
+     * @param format Output format to register
+     */
+    public void registerFormat(String name, OutputFormat format) {
+        formatDeserializer.registerFormat(name, format);
+    }
+
 }

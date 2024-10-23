@@ -2,9 +2,9 @@ package com.ignfab.minalac.generator.parameters.renderers;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.ModelSelection;
+import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.renderers.Renderer;
 import com.ignfab.minalac.generator.renderers.VectorRenderer;
-import com.ignfab.minalac.generator.world.SemanticType;
 
 import java.beans.ConstructorProperties;
 
@@ -15,37 +15,32 @@ import java.beans.ConstructorProperties;
 @SuppressWarnings("checkstyle:VisibilityModifier")
 public class VectorRendererParams extends RendererParams {
     /**
-     * The type of models to render.
-     * This field is required during deserialization.
+     * The type of models to render (required).
      */
     public String modelType;
     /**
-     * The name of the ground heightmap to use.
-     * This field is required during deserialization.
+     * The name of the ground heightmap to use (required).
      */
     public String heightmap;
-    // TODO: SemanticType should be replaced when placeable interface along its deserialization is implemented
     /**
-     * The semantic type of voxel used to render the inside of the geometry of the models.
-     * This field is required during deserialization.
+     * What to place inside shapes (required).
      */
-    public SemanticType inside;
+    public PlaceableParams inside;
     /**
-     * The semantic type of voxel used to render the outside of the geometry of the models.
-     * This field is required during deserialization.
+     * What to place on shapes edges (required).
      */
-    public SemanticType edge;
+    public PlaceableParams edge;
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
      * @param modelType the type of models to render.
      * @param heightmap the name of the ground heightmap to use.
-     * @param inside the voxel used for the inside
-     * @param edge the voxel used for the edges
+     * @param inside what to place on inside shapes
+     * @param edge what to place on shapes edges
      */
     @ConstructorProperties({"modelType", "heightmap", "inside", "edge"})
-    public VectorRendererParams(String modelType, String heightmap, SemanticType inside, SemanticType edge) {
+    public VectorRendererParams(String modelType, String heightmap, PlaceableParams inside, PlaceableParams edge) {
         this.modelType = modelType;
         this.heightmap = heightmap;
         this.inside = inside;
@@ -56,6 +51,8 @@ public class VectorRendererParams extends RendererParams {
      * {@inheritDoc}
      */
     public void validate() throws IllegalArgumentException {
+        inside.validate();
+        edge.validate();
         if (modelType.isEmpty())
             throw new IllegalArgumentException("The field modelType cannot be empty");
         if (heightmap.isEmpty())
@@ -70,8 +67,8 @@ public class VectorRendererParams extends RendererParams {
         return new VectorRenderer(
             new ModelSelection(generation.models(), modelType),
             generation.heightmaps().get(heightmap),
-            generation.world().getFactory().createVoxelType(inside),
-            generation.world().getFactory().createVoxelType(edge)
+            inside.create(generation.world()),
+            edge.create(generation.world())
         );
     }
 }

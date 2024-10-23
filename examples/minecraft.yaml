@@ -34,10 +34,15 @@ renderers:
       - renderer:altitude
     type: ground
     heightmap: ground
-    voxels:
-      GRASS: 1
-      DIRT: 3
-      STONE: 10
+    place:
+      type: stack
+      layers:
+        - material: minecraft:grass_block
+          height: 1
+        - material: minecraft:dirt
+          height: 3
+        - material: minecraft:stone
+          height: 10
   building:
     after:
       - renderer:altitude
@@ -45,8 +50,8 @@ renderers:
     type: vector
     modelType: building
     heightmap: ground
-    inside: COBBLE
-    edge: STONE
+    inside: minecraft:cobblestone
+    edge: minecraft:stone
 verticalScale: 1.0
 horizontalScale: 1.0
 area:

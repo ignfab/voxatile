@@ -3,7 +3,6 @@ package com.ignfab.minalac.generator.outputs.minetest;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
-import com.ignfab.minalac.generator.world.VoxelTypeFactory;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
@@ -19,7 +18,6 @@ import java.util.Map;
  * Implementation of {@link VoxelWorld} that creates a playable world specifically for Minetest.
  */
 public class MTVoxelWorld extends VoxelWorld {
-    private final VoxelTypeFactory factory;
     private final HashMap<Integer, Block> blocks;
     // See MAX_MAP_GENERATION_LIMIT constant on Minetest
     // https://github.com/minetest/minetest/blob/master/src/constants.h#L69
@@ -34,7 +32,6 @@ public class MTVoxelWorld extends VoxelWorld {
      */
     public MTVoxelWorld() {
         super(new VoxelWorldMetadata());
-        factory = new MTVoxelTypeFactory(this);
         blocks = new HashMap<>();
     }
 
@@ -45,16 +42,6 @@ public class MTVoxelWorld extends VoxelWorld {
     @Override
     public WorldBBox3d maxLimits() {
         return MAX_LIMIT;
-    }
-
-    /**
-     * Returns the factory for creating {@link MTVoxelType}.
-     *
-     * @return the factory for creating voxels
-     */
-    @Override
-    public VoxelTypeFactory getFactory() {
-        return factory;
     }
 
     // Retrieves or creates the mapblock corresponding to given voxel position.

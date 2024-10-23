@@ -2,11 +2,9 @@ package com.ignfab.minalac.generator.parameters;
 
 import com.ignfab.minalac.generator.generation.DataSource;
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
-import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.renderers.Renderer;
-import com.ignfab.minalac.generator.world.VoxelWorld;
+
 import org.geotools.api.geometry.Position;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
@@ -16,20 +14,12 @@ import org.geotools.geometry.Position2D;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 
-import java.util.Map;
-import java.util.function.Supplier;
-
 /**
  * This class is used to create a new {@link Generation} from {@link GenerationParams} parameters.
  */
 public final class GenerationCreator {
 
     private GenerationCreator() {}
-
-    private static final Map<String, Supplier<VoxelWorld>> FORMATS = Map.of(
-        "minecraft", MCVoxelWorld::new,
-        "minetest", MTVoxelWorld::new
-    );
 
     /**
      * Creates a new {@code Generation} from the specified parameters.
@@ -54,7 +44,7 @@ public final class GenerationCreator {
         }
 
         Generation generation = new Generation(
-            FORMATS.get(params.format).get(),
+            params.format.createWorld(),
             new Seed(params.seed),
             targetCrs,
             center[0],
@@ -94,9 +84,5 @@ public final class GenerationCreator {
         });
 
         return generation;
-    }
-
-    static boolean isFormatSupported(String format) {
-        return FORMATS.containsKey(format);
     }
 }

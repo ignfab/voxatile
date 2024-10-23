@@ -167,7 +167,6 @@ A post-processor copying a metadata into another.
 
 Each renderer has a field `type` which is used to identify it.
 
-
 ### Ground renderer
 
 This renderer places a column of voxels under a heightmap.
@@ -176,18 +175,15 @@ This renderer places a column of voxels under a heightmap.
 
 **Extra parameters**:
 - `heightmap`: Name of the heightmap to use
-- `voxels`: Voxels to place as a pair of semantic type and thickness.
+- `place`: [Placeable](#placeables) to place at each heightmap voxel.
 
 Example:
 ```yaml
 type: ground
 heightmap: altitude
-voxels:
-  GRASS: 1
-  DIRT: 3
-  STONE: 10
+place: default:grass
 ```
-This will put a grass voxel at heightmap altitude, three dirt voxels underneath and then ten stone voxels (fourteen voxels in total under the heightmap's level).
+This will put a grass voxel at heightmap altitude. For better rendering, place voxel structure instead of a single voxel.
 
 ### Vector renderer
 
@@ -195,16 +191,16 @@ This will put a grass voxel at heightmap altitude, three dirt voxels underneath 
 type: vector
 modelType: building
 heightmap: ground
-inside: COBBLE
-edge: STONE
+inside: default:coble
+edge: default:stone
 ```
 
 Fields:
 - `type`: Must be the value `vector`.
 - `modelType`: the type of models to render
 - `heightmap`: the name of the ground heightmap to use. It must exist.
-- `inside`: the semantic type of the voxel used for the inside
-- `edge`: the semantic type of the voxel used for the edges
+- `inside`: [Placeable](#placeables) to place on each inside voxel
+- `edge`: [Placeable](#placeables) to place on each edge voxel
 
 ### Heightmap renderer
 
@@ -218,3 +214,97 @@ Fields:
 - `type`: Must be the value `heightmap`
 - `modelType`: the type of models to render
 - `heightmap`: the name of the heightmap to use. It must exist.
+
+## Placeables
+
+A placeable is something that can be placed in voxel world at a given position: a voxel, a structure or a pattern.
+
+### Voxels
+
+Voxel descriptions depend on chosen game format. In both Minecraft and Minetest, voxels are mainly defined by a string (block type or node type). They may have some extra optional parameters (like metadata).
+
+When a string is given as value for a placeable field, it is interpreted as block type for Minecraft and node type for Minetest. All other parameters are set to default (see Minecraft and Minetest sections below). Other future formats may accept or not this shortcut.
+
+Example of a simple voxel value for `place` field:
+```yaml
+place: default:stone # Stone node in Minetest
+```
+
+When parameters others than block/node type has to be provided, voxel description must be an object with fields. These fields depends on the game format.
+
+#### Minecraft voxel description
+
+Example of a Minecraft voxel description for `place` field:
+
+```yaml
+place:
+  block: oak_leaves
+  properties:
+    persistent: true
+```
+
+Fields:
+  - `block`: Block name in Minecraft (required)
+  - `properties`: Block properties (optional, default none)
+    - _`<property name>`_: Property value (refer to [Minecraft Wiki](https://minecraft.wiki/w/Block_states) for more information)
+
+#### Minetest voxel description
+
+Example of a Minetest voxel description for `place` field:
+
+```yaml
+place:
+  node: stairs:stair_stone
+  param2: 2
+```
+
+Fields:
+  - `node`: Node type name in Minetest (required)
+  - `param1`: Node param1 (integer, optional, default `0`)
+  - `param2`: Node param2 (integer, optional, default `0`)
+
+`param1` and `param2` meaning depends on node type. Refer to Minetest documentation for more information.
+
+### Structures and patterns
+
+Placeable may be structure or patterns. In that case, a `type` field indicates what structure or pattern to use.
+
+This example shows usage of a `mystruct` structure as placeable:
+```yaml
+place:
+  type: mystruct
+  ... (extra fields for mystruct)
+```
+
+Note that `voxel` type corresponds to Minecraft/Minetest voxel description (see above).
+
+See corresponding structure or pattern for extra fields.
+
+#### Stack
+
+**Type**: `stack`
+
+Places a stack of placeable below or over the reference position. Stack is made of several different placeables repeated a given number of times.
+
+Example of a stack structure as value to `place` field:
+```yaml
+place:
+  type: stack
+  direction: downwards
+  layers:
+    - material: default:dirt_with_grass
+    - material: default:dirt
+      height: 3
+    - material: default:stone
+      height: 10
+```
+
+Fields:
+  - `direction`: `upwards` or `downwards` (optional, default `upwards`)
+  - `layers`: A list of layers
+    - _List item_:
+      - `material`: A placeable, usualy a voxel (required)
+      - `height`: How many times to repeat that placeable (optional, default `1`)
+
+An upwards stack starts at reference position and stacks placeable upwards. A downards stack proceeds same but downwards.
+

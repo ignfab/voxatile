@@ -9,7 +9,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LineVoxel2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
-import com.ignfab.minalac.generator.world.VoxelType;
+import com.ignfab.minalac.generator.world.Placeable;
 
 /**
  * A basic example of vector renderer intended to evolve.
@@ -17,20 +17,19 @@ import com.ignfab.minalac.generator.world.VoxelType;
 public class VectorRenderer extends ModelRenderer {
     private final Heightmap heightmap;
 
-    // This may evolve in something more elaborated, like edge and inside voxel patterns,
-    // or even closures (one for inside, one for edge and another for init)
-    private final VoxelType inside;
-    private final VoxelType edge;
+    // What to place inside and on edges of geometries
+    private final Placeable inside;
+    private final Placeable edge;
 
     /**
      * Creates a new VectorRenderer.
      *
      * @param selection the model selection containing the wanted models to render (only ShapesVoxelizable2d ones will be)
      * @param heightmap Heightmap of the ground (on which features will be placed)
-     * @param inside Voxel type to draw inside geometries
-     * @param edge Voxel type to draw on edges of geometries (including points and lines)
+     * @param inside What to place inside geometries
+     * @param edge What to place on geometries edges
      */
-    public VectorRenderer(ModelSelection selection, Heightmap heightmap, VoxelType inside, VoxelType edge) {
+    public VectorRenderer(ModelSelection selection, Heightmap heightmap, Placeable inside, Placeable edge) {
         super(selection);
         this.heightmap = heightmap;
         this.inside = inside;

@@ -34,10 +34,17 @@ renderers:
       - renderer:altitude
     type: ground
     heightmap: ground
-    voxels:
-      GRASS: 1
-      DIRT: 3
-      STONE: 10
+    place:
+      type: stack
+      direction: downwards
+      layers:
+        - material: default:dirt_with_grass
+        - material:
+            type: voxel
+            node: default:dirt
+          height: 3
+        - material: default:stone
+          height: 10
   building:
     after:
       - renderer:altitude
@@ -45,8 +52,8 @@ renderers:
     type: vector
     modelType: building
     heightmap: ground
-    inside: COBBLE
-    edge: STONE
+    inside: default:cobble
+    edge: default:stone
 verticalScale: 1.0
 horizontalScale: 1.0
 area:
