@@ -4,7 +4,6 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 
-import com.ignfab.minalac.generator.world.VoxelTypeFactory;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
 import java.io.File;
@@ -20,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * as output world.
  */
 public class TestingVoxelWorld extends VoxelWorld {
-    private VoxelTypeFactory factory;
     private WorldBBox3d maxLimits;
     private String[] voxels;
 
@@ -34,7 +32,6 @@ public class TestingVoxelWorld extends VoxelWorld {
      */
     public TestingVoxelWorld(WorldBBox3d bbox) {
         super(null);
-        factory = new TestingVoxelTypeFactory(this);
         maxLimits = bbox;
         voxels = new String[bbox.size().volume()];
         super.setLimits(bbox);
@@ -49,11 +46,6 @@ public class TestingVoxelWorld extends VoxelWorld {
     // and get rid of .setLimits in rendering tests
     @Override
     public void setLimits(WorldBBox3d bbox) {
-    }
-
-    @Override
-    public VoxelTypeFactory getFactory() {
-        return this.factory;
     }
 
     @Override

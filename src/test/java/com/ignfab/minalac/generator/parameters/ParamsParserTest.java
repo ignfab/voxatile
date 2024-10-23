@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.parameters;
 
+import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+import com.ignfab.minalac.generator.parameters.placeables.minetest.MTVoxelTypeParams;
 import com.ignfab.minalac.generator.parameters.renderers.TestingRendererParams;
 
 import org.junit.jupiter.api.Test;
@@ -19,9 +21,15 @@ public class ParamsParserTest {
         format: minetest
         """;
 
+    private ParamsParser newParser() {
+        ParamsParser parser = new ParamsParser();
+        parser.registerFormat("minetest", new OutputFormat(MTVoxelWorld::new, MTVoxelTypeParams.class, MTVoxelTypeParams::new));
+        return parser;
+    }
+
     @Test
     public void testParseFormat() {
-        assertDoesNotThrow(() -> new ParamsParser().parse("""
+        assertDoesNotThrow(() -> newParser().parse("""
             {
               "area": {
                 "center": {
@@ -36,12 +44,12 @@ public class ParamsParserTest {
             """
         ), "Should be able to parse JSON format");
 
-        assertDoesNotThrow(() -> new ParamsParser().parse(MINIMAL_YAML), "Should be able to parse YAML format");
+        assertDoesNotThrow(() -> newParser().parse(MINIMAL_YAML), "Should be able to parse YAML format");
     }
 
     @Test
     public void testParseWithoutOptionalFields() {
-        GenerationParams params = assertDoesNotThrow(() -> new ParamsParser().parse(MINIMAL_YAML));
+        GenerationParams params = assertDoesNotThrow(() -> newParser().parse(MINIMAL_YAML));
 
         // Checks if the configuration for default values was properly done, should equal to default values
         assertEquals(1.0, params.verticalScale);
@@ -53,7 +61,7 @@ public class ParamsParserTest {
     @Test
     public void testParseWithOptionalFields() {
         // optional renderers field deserialization is tested on testRegisterRenderer()
-        GenerationParams params = assertDoesNotThrow(() -> new ParamsParser().parse("""
+        GenerationParams params = assertDoesNotThrow(() -> newParser().parse("""
             verticalScale: 2.5
             horizontalScale: 5.2
             heightmaps:
@@ -71,9 +79,9 @@ public class ParamsParserTest {
 
     @Test
     public void testParseMissingRequiredField() {
-        assertThrows(ParseException.class, () -> new ParamsParser().parse("format: minetest"), "Absence of the area field should throw an exception");
+        assertThrows(ParseException.class, () -> newParser().parse("format: minetest"), "Absence of the area field should throw an exception");
 
-        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+        assertThrows(ParseException.class, () -> newParser().parse("""
             area:
               center:
                 longitude: 2.4
@@ -83,7 +91,7 @@ public class ParamsParserTest {
             """
         ), "Absence of the latitude field should throw an exception");
 
-        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+        assertThrows(ParseException.class, () -> newParser().parse("""
             area:
               center:
                 latitude: 5.8
@@ -93,7 +101,7 @@ public class ParamsParserTest {
             """
         ), "Absence of the longitude field should throw an exception");
 
-        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+        assertThrows(ParseException.class, () -> newParser().parse("""
             area:
               center:
                 latitude: 5.8
@@ -103,7 +111,7 @@ public class ParamsParserTest {
             """
         ), "Absence of the extendX field should throw an exception");
 
-        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+        assertThrows(ParseException.class, () -> newParser().parse("""
             area:
               center:
                 latitude: 5.8
@@ -113,7 +121,7 @@ public class ParamsParserTest {
             """
         ), "Absence of the extendY field should throw an exception");
 
-        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+        assertThrows(ParseException.class, () -> newParser().parse("""
             area:
               center:
                 latitude: 5.8
@@ -128,7 +136,7 @@ public class ParamsParserTest {
     public void testParseHeightmaps() {
         // By default, jackson doesn't check the existence of duplicates keys: last occurrence takes precedence.
         // Checks if configuration was properly done so an exception is thrown.
-        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+        assertThrows(ParseException.class, () -> newParser().parse("""
             heightmaps:
               ground:
                 default: -9
@@ -139,15 +147,15 @@ public class ParamsParserTest {
         ), "Presence of duplicate keys should throw an exception");
 
         // Testing explicit and implicit empty heightmaps
-        GenerationParams paramsExplicit = assertDoesNotThrow(() -> new ParamsParser().parse(MINIMAL_YAML + "heightmaps: {}"), "Explicit empty heightmaps should not throw an exception");
+        GenerationParams paramsExplicit = assertDoesNotThrow(() -> newParser().parse(MINIMAL_YAML + "heightmaps: {}"), "Explicit empty heightmaps should not throw an exception");
         assertEquals(Collections.emptyMap(), paramsExplicit.heightmaps, "Explicit empty heightmaps should result in a empty map");
         // `heightmaps:` is by default deserialized as null
-        GenerationParams paramsImplicit = assertDoesNotThrow(() -> new ParamsParser().parse(MINIMAL_YAML + "heightmaps:"), "Implicit empty heightmaps should not throw an exception");
+        GenerationParams paramsImplicit = assertDoesNotThrow(() -> newParser().parse(MINIMAL_YAML + "heightmaps:"), "Implicit empty heightmaps should not throw an exception");
         assertEquals(Collections.emptyMap(), paramsImplicit.heightmaps, "Implicit empty heightmaps should result in a empty map");
 
         // By default, jackson sets null values for empty elements.
         // Checks if configuration was properly done, so an exception is thrown.
-        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+        assertThrows(ParseException.class, () -> newParser().parse("""
             heightmaps:
               altitude:
                 default: -9
@@ -157,7 +165,7 @@ public class ParamsParserTest {
         ), "Empty ground heightmap should throw an exception");
 
         // To ensure that an illegal value for the default is caught and thrown as a ParseException when deserialized
-        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+        assertThrows(ParseException.class, () -> newParser().parse("""
             heightmaps:
               altitude:
                 default: illegal
@@ -169,14 +177,14 @@ public class ParamsParserTest {
     @Test
     public void testParseRenderers() {
         // Testing explicit and implicit empty renderers
-        GenerationParams paramsExplicit = assertDoesNotThrow(() -> new ParamsParser().parse(MINIMAL_YAML + "renderers: {}"), "Explicit empty renderers should not trigger exception");
+        GenerationParams paramsExplicit = assertDoesNotThrow(() -> newParser().parse(MINIMAL_YAML + "renderers: {}"), "Explicit empty renderers should not trigger exception");
         assertEquals(Collections.emptyMap(), paramsExplicit.renderers, "Explicit empty renderers should result in a empty map");
         // `renderers:` is by default deserialized as null
-        GenerationParams paramsImplicit = assertDoesNotThrow(() -> new ParamsParser().parse(MINIMAL_YAML + "renderers:"), "Implicit empty renderers should not trigger exception");
+        GenerationParams paramsImplicit = assertDoesNotThrow(() -> newParser().parse(MINIMAL_YAML + "renderers:"), "Implicit empty renderers should not trigger exception");
         assertEquals(Collections.emptyMap(), paramsImplicit.renderers, "Implicit empty renderers should result in a empty map");
 
         // There is a field `type` needed for resolving the concrete class.
-        assertThrows(ParseException.class, () -> new ParamsParser().parse("""
+        assertThrows(ParseException.class, () -> newParser().parse("""
             renderers:
               someRendererName:
                 someField: foo
@@ -184,7 +192,7 @@ public class ParamsParserTest {
             + MINIMAL_YAML
         ), "Type field is missing");
 
-        ParamsParser parser = new ParamsParser();
+        ParamsParser parser = newParser();
         parser.registerParams("customIdentifier", TestingRendererParams.class);
 
         GenerationParams genParams = assertDoesNotThrow(() -> parser.parse("""

@@ -1,7 +1,8 @@
 package com.ignfab.minalac.generator.parameters.renderers;
 
-import com.ignfab.minalac.generator.world.SemanticType;
 import org.junit.jupiter.api.Test;
+
+import com.ignfab.minalac.generator.parameters.placeables.minetest.MTVoxelTypeParams;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -9,13 +10,17 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class VectorRendererParamsTest {
     @Test
     public void testValidate() {
-        VectorRendererParams paramsWithoutType = new VectorRendererParams("", "ground", SemanticType.GRASS, SemanticType.BRICK);
+
+        MTVoxelTypeParams grass = new MTVoxelTypeParams("default:grass");
+        MTVoxelTypeParams brick = new MTVoxelTypeParams("default:stonebrick");
+
+        VectorRendererParams paramsWithoutType = new VectorRendererParams("", "ground", grass, brick);
         assertThrows(IllegalArgumentException.class, paramsWithoutType::validate);
 
-        VectorRendererParams paramsWithoutHeightmap = new VectorRendererParams("building", "", SemanticType.GRASS, SemanticType.BRICK);
+        VectorRendererParams paramsWithoutHeightmap = new VectorRendererParams("building", "", grass, brick);
         assertThrows(IllegalArgumentException.class, paramsWithoutHeightmap::validate);
 
-        VectorRendererParams params = new VectorRendererParams("building", "ground", SemanticType.GRASS, SemanticType.BRICK);
+        VectorRendererParams params = new VectorRendererParams("building", "ground", grass, brick);
         assertDoesNotThrow(params::validate);
     }
 }

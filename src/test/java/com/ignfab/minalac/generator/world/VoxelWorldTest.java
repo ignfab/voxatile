@@ -52,11 +52,6 @@ public class VoxelWorldTest {
         }
 
         @Override
-        public VoxelTypeFactory getFactory() {
-            return null;
-        }
-
-        @Override
         public void save(File destination) throws MapWriteException {}
     }
 }

@@ -27,7 +27,6 @@ import java.util.Random;
  * Implementation of {@link VoxelWorld} that creates a playable world specifically for Minecraft.
  */
 public class MCVoxelWorld extends VoxelWorld {
-    private final MCVoxelTypeFactory factory;
     private final Map<Integer, Region> regions;
     // Note: The two z-component values aren't strictly hard-limits.
     // We can extends from -2032 to 2031 but the client
@@ -44,7 +43,6 @@ public class MCVoxelWorld extends VoxelWorld {
      */
     public MCVoxelWorld() {
         super(new VoxelWorldMetadata());
-        factory = new MCVoxelTypeFactory(this);
         regions = new HashMap<>();
     }
 
@@ -54,16 +52,6 @@ public class MCVoxelWorld extends VoxelWorld {
     @Override
     public WorldBBox3d maxLimits() {
         return MAX_LIMIT;
-    }
-
-    /**
-     * Returns the factory for creating {@link MCVoxelType}.
-     *
-     * @return the factory for creating voxels
-     */
-    @Override
-    public MCVoxelTypeFactory getFactory() {
-        return factory;
     }
 
     /**
