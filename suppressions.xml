@@ -7,12 +7,5 @@
 <suppressions>
     <suppress checks="MissingJavadocMethod" files=".*[\\/]src[\\/]test[\\/]"/>
     <suppress checks="MissingJavadocType" files=".*[\\/]src[\\/]test[\\/]"/>
-
-    <!--
-    Disable WhitespaceAround check for empty block inside switch expression
-    See https://github.com/checkstyle/checkstyle/issues/9540 for more info
-    -->
-    <suppress-xpath checks="WhitespaceAround" query="//LITERAL_SWITCH//SLIST"/>
-    <suppress-xpath checks="WhitespaceAround" query="//LITERAL_SWITCH//RCURLY"/>
 </suppressions>
 
