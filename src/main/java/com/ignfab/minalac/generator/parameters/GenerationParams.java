@@ -131,6 +131,8 @@ public class GenerationParams {
 
         for (HeightmapParams params : heightmaps.values())
             params.validate();
+        for (DataSourceParams params : sources.values())
+            params.validate();
         for (RendererParams params : renderers.values())
             params.validate();
     }
