@@ -45,7 +45,7 @@ format: minetest
       - `default` (int or str): Default value for all heightmap cells (integer or one of `minimal`, `min`, `maximal` or `max`)
 - `sources`: Sources providing models to render
   - _`<name>`_: Unique name of the source
-    - `after` (optional list): List of [dependancies](#dependancies)
+    - `after` (optional list): List of [dependencies](#dependencies)
     - `modelType`: the type of models to create
     - `provider`: Definition of the data provider to use
         - `type`: Type of data provider
@@ -85,9 +85,9 @@ renderers:
     ...
 ```
 
-**BEWARE** : For now, `after` values are not checked. Generator will get stuck waiting in case of dependency loop or if a value refers to nonexistant source or renderer.
+**BEWARE** : For now, `after` values are not checked. Generator will get stuck waiting in case of dependency loop or if a value refers to nonexistent source or renderer.
 
-## Providers parameters
+## Provider parameters
 
 A provider fetches data from a source and provides it as-is to a processor. Provider type is identified by `type` field.
 
