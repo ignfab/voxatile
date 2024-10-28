@@ -22,6 +22,11 @@ sources:
       - type: copy
         metadata: hauteur
         to: height
+      - type: parse
+        metadata: height
+        as: integer
+        ifMissing: ignore
+        ifNotParsable: removeMetadata
 renderers:
   altitude:
     after:
