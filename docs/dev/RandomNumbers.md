@@ -45,7 +45,7 @@ renderers working on same models need to have different randomness.
 
 Every model representing a feature has to implement a `salt()` method returning
 a *salt* string unique enough to ensure its random stuff to be different from
-its neighboors.
+its neighbors.
 
 Example of a `Model` `salt()` method using coordinates as salt string:
 ```java
@@ -67,7 +67,7 @@ based salt.
 ### Renderers
 
 Whenever a renderer needs random number, its constructor should have a `Seed`
-parameter. The generation main `Seed` will be passed to this constructor and it
+parameter. The generation's main `Seed` will be passed to this constructor. It
 must be salted with rendered model before use.
 
 Example of a renderer using random numbers:
