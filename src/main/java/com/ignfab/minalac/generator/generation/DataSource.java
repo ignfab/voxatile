@@ -1,6 +1,8 @@
 package com.ignfab.minalac.generator.generation;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
@@ -19,7 +21,7 @@ public class DataSource {
     private final String modelType;
     private final Provider<?> provider;
     private final Processor<Object, ?> processor;
-    private final PostProcessor<Model, ?>[] postProcessors;
+    private final List<PostProcessor<Model, ?>> postProcessors;
 
     /**
      * Creates a new data source.
@@ -30,37 +32,35 @@ public class DataSource {
      * @param processor processor converting provided data to models
      * @param postProcessors eventual post-processor to run on created models
      */
-
     public DataSource(
         ModelStore modelStore,
         String modelType,
         Provider<?> provider,
         Processor<?, ? extends Model> processor,
-        PostProcessor<?, ?>[] postProcessors
+        List<PostProcessor<?, ?>> postProcessors
     ) {
         Class<? extends Model> modelClass = processor.modelType();
 
         if (!processor.acceptedType().isAssignableFrom(provider.providedType()))
             throw new IllegalArgumentException("Processor cannot treat provided type. Provided = %s, Accepted = %s".formatted(provider.providedType(), processor.acceptedType()));
 
+        this.postProcessors = new ArrayList<>();
         for (PostProcessor<?, ?> postProcessor : postProcessors) {
             if (!postProcessor.acceptedModelType().isAssignableFrom(modelClass))
                 throw new IllegalArgumentException("PostProcessor cannot treat model type. Current model type = %s, Accepted model type = %s".formatted(modelType, postProcessor.acceptedModelType()));
             @SuppressWarnings("unchecked") // The model type has been validated above
             PostProcessor<Model, ?> uncheckedPostProcessor = (PostProcessor<Model, ?>) postProcessor;
+            this.postProcessors.add(uncheckedPostProcessor);
             modelClass = uncheckedPostProcessor.processedModelType(modelClass);
         }
 
         @SuppressWarnings("unchecked")
         Processor<Object, ?> uncheckedProcessor = (Processor<Object, ?>) processor;
-        @SuppressWarnings("unchecked")
-        PostProcessor<Model, ?>[] uncheckedPostProcessors = (PostProcessor<Model, ?>[]) postProcessors;
 
         this.modelStore = modelStore;
         this.modelType = modelType;
         this.provider = provider;
         this.processor = uncheckedProcessor;
-        this.postProcessors = uncheckedPostProcessors;
     }
 
     /**

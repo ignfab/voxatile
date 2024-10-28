@@ -17,6 +17,7 @@ sources:
       features: BDTOPO_V3:batiment
     processor:
       type: geoToolsVector
+    postProcessors:
 renderers:
   building:
     after:
@@ -48,11 +49,15 @@ format: minetest
     - `after` (optional list): List of [dependencies](#dependencies)
     - `modelType`: the type of models to create
     - `provider`: Definition of the data provider to use
-        - `type`: Type of data provider
-        - Additional parameters specific to the given [type](#provider-parameters)
+      - `type`: Type of data provider
+      - Additional parameters specific to the given [type](#provider-parameters)
     - `processor`: Definition of the data processor to use
-        - `type`: Type of data processor
-        - Additional parameters specific to the given [type](#processor-parameters)
+      - `type`: Type of data processor
+      - Additional parameters specific to the given [type](#processor-parameters)
+    - `postProcessors`: Definition of post processors to use
+      - _List item_:
+        - `type`: Type of post processor
+        - Additional parameters specific to the given [type](#post-processor-parameters)
 - `renderers`: Renderers used to generate the map
   - _`<name>`_: Unique name of the renderer
     - `after` (list): List of [dependencies](#dependencies)
@@ -138,6 +143,12 @@ Processor translating a float data matrix to a model.
 **Extra parameters**: None
 
 **Suitable providers**: `wmsFloat`
+
+## Post processor parameters
+
+A post-processor alters models so they can comply with renderers requirements.
+
+<!-- Documentation of post-processor params here -->
 
 ## Renderer parameters
 

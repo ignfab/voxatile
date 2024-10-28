@@ -1,12 +1,16 @@
 package com.ignfab.minalac.generator.parameters;
 
 import java.beans.ConstructorProperties;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.generation.DataSource;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.post.PostProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.ProviderParams;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
@@ -20,6 +24,7 @@ public class DataSourceParams {
     /**
      * Type to give to provided models (required).
      */
+    @JsonSetter(nulls = Nulls.FAIL)
     public String modelType;
 
     /**
@@ -31,6 +36,12 @@ public class DataSourceParams {
      * Data processor (required).
      */
     public ProcessorParams processor;
+
+    /**
+     * Additional data-processing steps (optional).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public List<PostProcessorParams> postProcessors = new ArrayList<>();
 
     /**
      * Dependencies (optional).
@@ -52,6 +63,21 @@ public class DataSourceParams {
     }
 
     /**
+     * Checks if there are any blatantly invalid parameters.
+     *
+     * @throws IllegalArgumentException is any of the parameters is invalid.
+     */
+    public void validate() throws IllegalArgumentException {
+        if (modelType.isBlank())
+            throw new IllegalArgumentException("The 'modelType' field cannot be empty or contain only whitespace.");
+
+        provider.validate();
+        processor.validate();
+        for (PostProcessorParams params : postProcessors)
+            params.validate();
+    }
+
+    /**
      * Creates the corresponding {@code DataSource}.
      *
      * @param generation the generation context
@@ -60,13 +86,16 @@ public class DataSourceParams {
     public DataSource create(Generation generation) {
         Provider<?> provider = this.provider.create(generation);
         Processor<?, ?> processor = this.processor.create(generation, provider.crs());
+        List<PostProcessor<?, ?>> postProcessors = new ArrayList<>();
+        for (PostProcessorParams params : this.postProcessors)
+            postProcessors.add(params.create());
 
         return new DataSource(
             generation.models(),
             modelType,
             provider,
             processor,
-            new PostProcessor<?, ?>[]{});
-            //TODO: Manage postprocessors
+            postProcessors
+        );
     }
 }
