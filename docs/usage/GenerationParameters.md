@@ -163,6 +163,25 @@ A post-processor copying a metadata into another.
 - `abortIfMetadataIsAbsent` (optional, default `no`): `yes` to stop the copy if the metadata is missing, `no` to allow the copy to proceed even if the metadata is missing (in this case, the metadata value will be empty).
 - `keepExisting` (optional, default `no`): `no` to overwrite existing data, `yes` to keep existing metadata.
 
+### Metadata parse
+
+Post-processor parsing a metadata value in-place.
+
+**Type**: `parse`
+
+**Extra parameters**:
+- `metadata` (required): the name of the metadata to parse.
+- `as` (required): the type of parsed value: `integer`, `decimal`, `boolean`, `text`.
+- `ifMissing` (optional, default `error`): What to do when metadata is absent. See failure policies below.
+- `ifNotParsable` (optional, default `error`): What to do if data parsing fails. See failure policies below.
+
+| Failure policy | Explanation |
+| :--- | :--- |
+| `discardModel` | The model is discarded. |
+| `removeMetadata` | The metadata is removed. |
+| `ignore` | Failure is ignored, nothing is done. |
+| `error` | An error occurs, and the generation stops. |
+
 ## Renderer parameters
 
 Each renderer has a field `type` which is used to identify it.

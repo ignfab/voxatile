@@ -8,39 +8,37 @@ import java.util.function.Function;
 
 /**
  * Post-processor parsing a metadata value in-place.
+ *
  * @param <T> type of parsed value
  */
 public class MetadataParsePostProcessor<T> implements PostProcessor<Model, Model> {
     private final String name;
     private final Class<T> type;
     private final Function<Object, ? extends T> parser;
-    private final ParsingFailurePolicy failurePolicy;
-    private final boolean failWhenMissingMetadata;
-    private final boolean failWhenParserReturnNull;
+    private final ParsingFailurePolicy ifMissingMetadata;
+    private final ParsingFailurePolicy ifParserFails;
 
     /**
-     * Creates a new post-processor parsing {@code name} as a {@code type}.
-     * @param name the name of the metadata to parse
-     * @param type the type of parsed value
-     * @param parser the parsing function to use
-     * @param failurePolicy what to do in case of failure (e.g. exception in {@code parser})
-     * @param failWhenMissingMetadata whether the absence of metadata is a failure
-     * @param failWhenParserReturnNull whether {@code null} return value from {@code parser} is a failure
+     * Creates a new post-processor parsing metadata {@code name} as a {@code type}.
+     *
+     * @param name name of the metadata to parse
+     * @param type type of parsed value
+     * @param parser parsing function to use
+     * @param ifMissingMetadata policy to apply when the metadata is absent
+     * @param ifParserFails policy to apply when the {@code parser} return error
      */
     public MetadataParsePostProcessor(
         String name,
         Class<T> type,
         Function<Object, ? extends T> parser,
-        ParsingFailurePolicy failurePolicy,
-        boolean failWhenMissingMetadata,
-        boolean failWhenParserReturnNull
+        ParsingFailurePolicy ifMissingMetadata,
+        ParsingFailurePolicy ifParserFails
     ) {
         this.name = name;
         this.type = type;
         this.parser = parser;
-        this.failurePolicy = failurePolicy;
-        this.failWhenMissingMetadata = failWhenMissingMetadata;
-        this.failWhenParserReturnNull = failWhenParserReturnNull;
+        this.ifMissingMetadata = ifMissingMetadata;
+        this.ifParserFails = ifParserFails;
     }
 
     @Override
@@ -55,28 +53,28 @@ public class MetadataParsePostProcessor<T> implements PostProcessor<Model, Model
 
     @Override
     public Model process(Model model) throws GenerationFailedException, IgnorableException {
-        if (model.hasMetadata(name)) {
-            Object value = model.getMetadata(name);
-            if (type.isAssignableFrom(value.getClass()))
-                return model;
-            try {
-                T parsed = parser.apply(value);
-                if (parsed == null && failWhenParserReturnNull)
-                    throw new Exception("Parsing function returned null");
-                model.setMetadata(name, parsed);
-            } catch (Throwable e) {
-                switch (failurePolicy) {
-                    case IGNORE -> {}
-                    case REMOVE_METADATA -> model.setMetadata(name, null);
-                    case SKIP_MODEL -> throw new IgnorableException("Failed to parse metadata: " + name, e);
-                    case ERROR -> throw new GenerationFailedException("Failed to parse metadata: " + name, e);
+        if (!model.hasMetadata(name))
+            switch (ifMissingMetadata) {
+                case IGNORE, REMOVE_METADATA -> {
+                    return model;
                 }
-            }
-        } else if (failWhenMissingMetadata) {
-            switch (failurePolicy) {
-                case IGNORE, REMOVE_METADATA -> {}
-                case SKIP_MODEL -> throw new IgnorableException("Missing metadata: " + name);
+                case DISCARD_MODEL -> throw new IgnorableException("Missing metadata: " + name);
                 case ERROR -> throw new GenerationFailedException("Missing metadata: " + name);
+            }
+
+        Object value = model.getMetadata(name);
+        if (type.isInstance(value))
+            return model;
+
+        try {
+            T parsed = parser.apply(value);
+            model.setMetadata(name, parsed);
+        } catch (Throwable e) {
+            switch (ifParserFails) {
+                case IGNORE -> {}
+                case REMOVE_METADATA -> model.setMetadata(name, null);
+                case DISCARD_MODEL -> throw new IgnorableException("Failed to parse metadata: " + name, e);
+                case ERROR -> throw new GenerationFailedException("Failed to parse metadata: " + name, e);
             }
         }
         return model;
@@ -95,9 +93,9 @@ public class MetadataParsePostProcessor<T> implements PostProcessor<Model, Model
          */
         REMOVE_METADATA,
         /**
-         * Throws an {@link IgnorableException} to skip the model.
+         * Throws an {@link IgnorableException} to discard the model.
          */
-        SKIP_MODEL,
+        DISCARD_MODEL,
         /**
          * Throws an {@link GenerationFailedException} causing a fatal error.
          */

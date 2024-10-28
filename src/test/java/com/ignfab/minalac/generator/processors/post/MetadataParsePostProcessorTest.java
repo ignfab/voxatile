@@ -32,8 +32,7 @@ public class MetadataParsePostProcessorTest {
             Object.class,
             Function.identity(),
             MetadataParsePostProcessor.ParsingFailurePolicy.IGNORE,
-            false,
-            false
+            MetadataParsePostProcessor.ParsingFailurePolicy.IGNORE
         );
         assertTrue(postProcessor.acceptedModelType().isAssignableFrom(TestingModel.class), "post-processor accepts any model type");
         assertTrue(TestingModel.class.isAssignableFrom(postProcessor.processedModelType(TestingModel.class)), "post-processor produces same model type");
@@ -52,8 +51,7 @@ public class MetadataParsePostProcessorTest {
             Objects::toString,
             // Failure policy is irrelevant for this test as there is no failure
             MetadataParsePostProcessor.ParsingFailurePolicy.ERROR,
-            false,
-            false
+            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR
         ));
         processed.assertMetadata("int", "7");
         processed.assertMetadata("string", "value", "Unrelated metadata untouched");
@@ -68,8 +66,7 @@ public class MetadataParsePostProcessorTest {
                 throw new RuntimeException();
             },
             MetadataParsePostProcessor.ParsingFailurePolicy.ERROR,
-            false,
-            false
+            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR
         ).process(model));
     }
 
@@ -79,9 +76,8 @@ public class MetadataParsePostProcessorTest {
             "missing",
             String.class,
             Objects::toString,
-            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR,
-            false,
-            false
+            MetadataParsePostProcessor.ParsingFailurePolicy.IGNORE,
+            MetadataParsePostProcessor.ParsingFailurePolicy.IGNORE
         ));
         processed.assertMetadataAbsent("missing", "Metadata still absent");
     }
@@ -93,8 +89,7 @@ public class MetadataParsePostProcessorTest {
             String.class,
             Objects::toString,
             MetadataParsePostProcessor.ParsingFailurePolicy.ERROR,
-            true,
-            false
+            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR
         ).process(model));
     }
 
@@ -105,22 +100,9 @@ public class MetadataParsePostProcessorTest {
             String.class,
             obj -> null,
             MetadataParsePostProcessor.ParsingFailurePolicy.ERROR,
-            false,
-            false
+            MetadataParsePostProcessor.ParsingFailurePolicy.REMOVE_METADATA
         ));
         processed.assertMetadataAbsent("int", "Metadata removed");
-    }
-
-    @Test
-    public void testNullForbidden() {
-        assertThrows(GenerationFailedException.class, () -> new MetadataParsePostProcessor<>(
-            "int",
-            String.class,
-            obj -> null,
-            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR,
-            false,
-            true
-        ).process(model));
     }
 
     @Test
@@ -132,8 +114,7 @@ public class MetadataParsePostProcessorTest {
                 throw new RuntimeException();
             },
             MetadataParsePostProcessor.ParsingFailurePolicy.IGNORE,
-            false,
-            false
+            MetadataParsePostProcessor.ParsingFailurePolicy.IGNORE
         ));
         processed.assertMetadata("int", 7, "Original value kept");
     }
@@ -147,8 +128,7 @@ public class MetadataParsePostProcessorTest {
                 throw new RuntimeException();
             },
             MetadataParsePostProcessor.ParsingFailurePolicy.REMOVE_METADATA,
-            false,
-            false
+            MetadataParsePostProcessor.ParsingFailurePolicy.REMOVE_METADATA
         ));
         processed.assertMetadataAbsent("int", "Original value cleared");
     }
@@ -161,9 +141,8 @@ public class MetadataParsePostProcessorTest {
             obj -> {
                 throw new RuntimeException();
             },
-            MetadataParsePostProcessor.ParsingFailurePolicy.SKIP_MODEL,
-            false,
-            false
+            MetadataParsePostProcessor.ParsingFailurePolicy.DISCARD_MODEL,
+            MetadataParsePostProcessor.ParsingFailurePolicy.DISCARD_MODEL
         ).process(model));
     }
 
@@ -176,8 +155,7 @@ public class MetadataParsePostProcessorTest {
                 throw new RuntimeException();
             },
             MetadataParsePostProcessor.ParsingFailurePolicy.ERROR,
-            false,
-            false
+            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR
         ).process(model));
     }
 }
