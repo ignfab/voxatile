@@ -12,6 +12,7 @@ import com.ignfab.minalac.generator.parameters.placeables.minetest.MTVoxelTypePa
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataCopyPostProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.post.MetadataDefaultPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataParsePostProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
@@ -73,6 +74,7 @@ public final class SampleImplementation {
 
         parser.registerParams("copy", MetadataCopyPostProcessorParams.class);
         parser.registerParams("parse", MetadataParsePostProcessorParams.class);
+        parser.registerParams("default", MetadataDefaultPostProcessorParams.class);
 
         Generation generation = parser.parse(cli.readParameters()).create();
 
