@@ -27,6 +27,10 @@ sources:
         as: integer
         ifMissing: ignore
         ifNotParsable: removeMetadata
+      - type: default
+        metadata: height
+        value: 5
+        as: integer
 renderers:
   altitude:
     after:

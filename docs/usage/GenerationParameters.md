@@ -182,6 +182,17 @@ Post-processor parsing a metadata value in-place.
 | `ignore` | Failure is ignored, nothing is done. |
 | `error` | An error occurs, and the generation stops. |
 
+### Metadata default
+
+Post-processor that applies a default value for a specified metadata.
+
+**Type**: `default`
+
+**Extra parameters**
+- `metadata` (required): the name of the metadata.
+- `value` (required): the default value to use if the metadata is not present.
+- `as` (requires): the type to which the value should be converted:  `integer`, `decimal`, `boolean`, `text`
+
 ## Renderer parameters
 
 Each renderer has a field `type` which is used to identify it.
