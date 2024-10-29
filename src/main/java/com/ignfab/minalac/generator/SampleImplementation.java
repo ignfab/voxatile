@@ -19,7 +19,9 @@ import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSImageProviderParams;
+import com.ignfab.minalac.generator.parameters.renderers.Building3dRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.ClassifiedRendererParams;
+import com.ignfab.minalac.generator.parameters.renderers.ColoredGroundRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.GroundRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.HeightmapRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.MetadataRendererParams;
@@ -69,6 +71,8 @@ public final class SampleImplementation {
         parser.registerParams("road", RoadRendererParams.class);
         parser.registerParams("metadata", MetadataRendererParams.class);
         parser.registerParams("classified", ClassifiedRendererParams.class);
+        parser.registerParams("groundColored", ColoredGroundRendererParams.class);
+        parser.registerParams("building3d", Building3dRendererParams.class);
 
         parser.registerParams("wfs", WFSProviderParams.class);
         parser.registerParams("gpkg", GeoPackageProviderParams.class);

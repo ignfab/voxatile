@@ -48,6 +48,7 @@ public class MTVoxelTypeFactory implements VoxelTypeFactory {
             case WATER -> new MTSimpleVoxelType(this.world, "default:water_source");
             case CONCRETE -> new MTSimpleVoxelType(this.world, "default:obsidian");
             case VEGETATION -> new MTSimpleVoxelType(this.world, "default:leaves");
+            case PATH -> new MTSimpleVoxelType(this.world, "default:dry_dirt");
 
             case WHITE -> createColor(0xFFFFFF, false);
             case ORANGE -> createColor(0xFFA500, false);

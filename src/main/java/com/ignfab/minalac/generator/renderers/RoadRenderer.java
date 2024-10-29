@@ -40,11 +40,15 @@ public class RoadRenderer extends ModelRenderer {
         }
         ShapesVoxelizer3d voxelizer = voxelizable.voxelize3d(bbox);
 
+        boolean onGround = model.getMetadata("position_par_rapport_au_sol").equals("0");
+
         for (LineVoxel3d voxel : voxelizer.borders()) {
             WorldCoords3d c = voxel.coords();
             WorldCoords2d c2d = c.to2d();
-            if (heightmap.bbox().contains(c2d))
-                voxelPattern.place(c.x(), c.y(), Math.max(heightmap.get(c2d), c.z()));
+            if (heightmap.bbox().contains(c2d)) {
+                int z = onGround ? heightmap.get(c2d) : Math.max(heightmap.get(c2d), c.z());
+                voxelPattern.place(c.x(), c.y(), z);
+            }
         }
     }
 }

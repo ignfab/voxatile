@@ -1,0 +1,31 @@
+heightmaps:
+  ground:
+    default: 0
+verticalScale: 1.0
+horizontalScale: 1.0
+renderers:
+  heightmap-ground:
+    type: heightmap
+    modelType: mnt
+    heightmap: ground
+  building:
+    type: vector
+    modelType: building
+    heightmap: ground
+    inside: COBBLE
+    edge: STONE
+  building-metadata:
+    type: metadata
+    modelType: building
+area:
+  center:
+    # Mairie
+    latitude: 50.457398
+    longitude: 2.792343
+    # Terrils
+    #latitude: 50.44558
+    #longitude: 2.78259
+  extendX: 1000
+  extendY: 1000
+crs: EPSG:2154
+format: minetest

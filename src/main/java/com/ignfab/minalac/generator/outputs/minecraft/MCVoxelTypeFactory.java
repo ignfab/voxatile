@@ -64,6 +64,7 @@ public class MCVoxelTypeFactory implements VoxelTypeFactory {
             case BRICK -> "minecraft:stone_bricks";
             case CONCRETE -> "minecraft:black_wool";
             case VEGETATION -> "minecraft:oak_leaves";
+            case PATH -> "minecraft:coarse_dirt";
 
             // COLORS
             case WHITE -> "minecraft:white_concrete";

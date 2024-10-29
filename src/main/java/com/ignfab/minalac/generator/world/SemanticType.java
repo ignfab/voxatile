@@ -49,6 +49,7 @@ public enum SemanticType {
      */
     CONCRETE,
     VEGETATION,
+    PATH,
 
     // COLORS
     WHITE,
