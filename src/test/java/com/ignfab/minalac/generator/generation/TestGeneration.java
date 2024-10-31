@@ -40,16 +40,16 @@ public class TestGeneration {
 
     @Test
     public void testGeneration() throws FactoryException, TransformException {
-        VoxelWorld world = new EmptyVoxelWorld(501, 501);
+        VoxelWorld world = new EmptyVoxelWorld(500, 500);
         // 657_781, 6_860_729 (EPSG:2154) IGN Saint Mandé
-        Generation generation = new Generation(world, seed, crs2154, 657_781, 6_860_729, 501, 501, 2.0, 3.0);
+        Generation generation = new Generation(world, seed, crs2154, 657_781, 6_860_729, 500, 500, 2.0, 3.0);
 
         assertEquals(seed, generation.seed());
         WorldBBox3d box = generation.world().limits();
         assertEquals(-250, box.minX());
         assertEquals(-250, box.minY());
-        assertEquals(250, box.maxX());
-        assertEquals(250, box.maxY());
+        assertEquals(249, box.maxX());
+        assertEquals(249, box.maxY());
 
         // We should have an envelope +/- 500 around center (250 voxel * 2.0 meters/voxels = 500m)
         Envelope envelope = generation.getEnvelopeForCRS(crs2154);
