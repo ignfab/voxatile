@@ -13,6 +13,7 @@ import com.ignfab.minalac.generator.parameters.renderers.HeightmapRendererParams
 import com.ignfab.minalac.generator.parameters.renderers.VectorRendererParams;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
@@ -72,7 +73,10 @@ public final class SampleImplementation {
 
         System.out.println("Saving world");
         VoxelWorldMetadata metadata = generation.world().getMetadata();
-        metadata.setSpawn(new WorldCoords3d(0, 0, generation.heightmaps().get("ground").get(0, 0) + 1));
+        WorldBBox3d limits = generation.world().limits();
+        int spawnX = (limits.minX() + limits.maxX() + 1) / 2;
+        int spawnY = (limits.minY() + limits.maxY() + 1) / 2;
+        metadata.setSpawn(new WorldCoords3d(spawnX, spawnY, generation.heightmaps().get("ground").get(spawnX, spawnY) + 1));
         metadata.setWorldName("Minalac");
 
         File directory = cli.getOutputPath().toFile();
