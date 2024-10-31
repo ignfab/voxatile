@@ -59,6 +59,6 @@ public class MCVoxelType implements VoxelType {
             properties.forEach(state::putString);
             block.put("Properties", state);
         }
-        world.setBlockState(x, z, -y, block); // X/Y/Z => X/Z/-Y
+        world.setBlockState(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
     }
 }
