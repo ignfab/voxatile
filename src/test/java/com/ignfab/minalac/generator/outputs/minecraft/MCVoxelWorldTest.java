@@ -58,16 +58,16 @@ public class MCVoxelWorldTest {
         world.setLimits(new WorldBBox3d(new WorldCoords3d(-10, -20, 0), new WorldCoords3d(20, 30, 40)));
 
         // X/Y/Z => X/Z/-Y
-        assertFalse(world.isOutOfLimits(-10, 0, 20));
-        assertFalse(world.isOutOfLimits(20, 40, -30));
+        assertFalse(world.isOutOfLimits(-10, 0, 19));
+        assertFalse(world.isOutOfLimits(20, 40, -31));
 
-        assertFalse(world.isOutOfLimits(5, 5, -20));
+        assertFalse(world.isOutOfLimits(5, 5, -21));
 
-        assertTrue(world.isOutOfLimits(21, 40, -30));
-        assertTrue(world.isOutOfLimits(20, 41, -30));
-        assertTrue(world.isOutOfLimits(20, 40, -31));
-        assertTrue(world.isOutOfLimits(-11, 0, 20));
-        assertTrue(world.isOutOfLimits(-10, -1, 20));
-        assertTrue(world.isOutOfLimits(-10, 0, 21));
+        assertTrue(world.isOutOfLimits(21, 40, -31));
+        assertTrue(world.isOutOfLimits(20, 41, -31));
+        assertTrue(world.isOutOfLimits(20, 40, -32));
+        assertTrue(world.isOutOfLimits(-11, 0, 19));
+        assertTrue(world.isOutOfLimits(-10, -1, 19));
+        assertTrue(world.isOutOfLimits(-10, 0, 20));
     }
 }

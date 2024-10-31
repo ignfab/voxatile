@@ -26,7 +26,7 @@ public class MCVoxelTypeTest {
         air.place(3, -7, 64);
         CompoundTag expectedAir = new CompoundTag();
         expectedAir.putString("Name", "minecraft:air");
-        worldMock.assertBlockStateAt(3, 64, 7, expectedAir); // X/Y/Z => X/Z/-Y
+        worldMock.assertBlockStateAt(3, 64, 6, expectedAir); // X/Y/Z => X/Z/-Y
 
         MCVoxelType stairs = new MCVoxelType(worldMock, "minecraft:oak_stairs", Map.of(
             "facing", "north",
@@ -43,7 +43,7 @@ public class MCVoxelTypeTest {
         properties.putString("shape", "straight");
         properties.putString("waterlogged", "false");
         expectedStairs.put("Properties", properties);
-        worldMock.assertBlockStateAt(-43, 192, 0, expectedStairs); // X/Y/Z => X/Z/-Y
+        worldMock.assertBlockStateAt(-43, 192, -1, expectedStairs); // X/Y/Z => X/Z/-Y
     }
 
     private static final class WorldMock extends MCVoxelWorld {

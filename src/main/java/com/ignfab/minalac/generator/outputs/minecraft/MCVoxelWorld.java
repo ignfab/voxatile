@@ -100,8 +100,8 @@ public class MCVoxelWorld extends VoxelWorld {
                 WorldBBox3d bbox = limits();
                 WorldSize3d size = limits().size();
                 double minSize = Math.max(size.x(), size.y());
-                data.putDouble("BorderCenterX", (bbox.minX() + bbox.maxX()) / 2d);
-                data.putDouble("BorderCenterZ", (bbox.minY() + bbox.maxY()) / 2d); // Y => Z
+                data.putDouble("BorderCenterX", (bbox.minX() + bbox.maxX() + 1) / 2d);
+                data.putDouble("BorderCenterZ", -(bbox.minY() + bbox.maxY() + 1) / 2d); // X/Y/Z => X/Z/-Y
                 data.putDouble("BorderDamagePerBlock", 0.2);
                 data.putDouble("BorderSafeZone", 5);
                 data.putDouble("BorderSize", minSize);
@@ -299,7 +299,7 @@ public class MCVoxelWorld extends VoxelWorld {
                         // TODO Replace by a better constraint management mechanism
                         // pos.addDouble(metadata.getSpawn().z());
                         pos.addDouble(Math.min(Math.max(limits().minZ(), metadata.getSpawn().z()), limits().maxZ()));
-                        pos.addDouble(-metadata.getSpawn().y() + 0.5);
+                        pos.addDouble(-(metadata.getSpawn().y() + 0.5));
                     }
                     player.put("Pos", pos);
 
@@ -365,7 +365,7 @@ public class MCVoxelWorld extends VoxelWorld {
                 // TODO Replace by a better constraint management mechanism
                 // data.putInt("SpawnY", metadata.getSpawn().z());
                 data.putInt("SpawnY", Math.min(Math.max(limits().minZ(), metadata.getSpawn().z()), limits().maxZ()));
-                data.putInt("SpawnZ", -metadata.getSpawn().y());
+                data.putInt("SpawnZ", -metadata.getSpawn().y() - 1);
 
                 data.putBoolean("thundering", false);
                 data.putInt("thunderTime", 0x7FFFFFFF);
@@ -517,6 +517,6 @@ public class MCVoxelWorld extends VoxelWorld {
     // In-Game coords
     /* package-private */ boolean isOutOfLimits(int blockX, int blockY, int blockZ) {
         // (In-Game coords to world coords) X/Z/-Y => X/Y/Z
-        return !limits().contains(blockX, -blockZ, blockY);
+        return !limits().contains(blockX, -(blockZ + 1), blockY);
     }
 }
