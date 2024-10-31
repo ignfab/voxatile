@@ -143,12 +143,16 @@ public class Generation {
     public ReferencedEnvelope getEnvelopeForCRS(CoordinateReferenceSystem crs) throws FactoryException, TransformException {
         WorldToMapConverter converter = makeCoordsConverter(crs).inverse();
 
+        int minX = world.limits().minX();
+        int minY = world.limits().minY();
+        int maxX = world.limits().maxX() + 1;
+        int maxY = world.limits().maxY() + 1;
         Geometry geom = new GeometryFactory().createLinearRing(new Coordinate[] {
-            new Coordinate(world.limits().minX(), world.limits().minY()),
-            new Coordinate(world.limits().maxX(), world.limits().minY()),
-            new Coordinate(world.limits().maxX(), world.limits().maxY()),
-            new Coordinate(world.limits().minX(), world.limits().maxY()),
-            new Coordinate(world.limits().minX(), world.limits().minY())
+            new Coordinate(minX, minY),
+            new Coordinate(maxX, minY),
+            new Coordinate(maxX, maxY),
+            new Coordinate(minX, maxY),
+            new Coordinate(minX, minY)
         });
 
         return new ReferencedEnvelope(converter.convert(geom).getEnvelopeInternal(), crs);
