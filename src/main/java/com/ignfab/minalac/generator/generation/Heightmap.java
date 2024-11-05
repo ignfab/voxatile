@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * A 2d heightmap in voxel world units.
  */
-public class Heightmap {
+public class Heightmap implements ReadableHeightmap {
     /**
      * The bounding box of the heightmap.
      */
