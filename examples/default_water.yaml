@@ -20,12 +20,12 @@ sources:
       features: BDTOPO_V3:batiment
     processor:
       type: geoToolsVector
-  planEau:
+  surfaceEau:
     modelType: water
     provider:
       type: wfs
       url: https://data.geopf.fr/wfs/wfs
-      features: BDTOPO_V3:plan_d_eau
+      features: BDTOPO_V3:surface_hydrographique
     processor:
       type: geoToolsVector
 renderers:
@@ -55,7 +55,7 @@ renderers:
     edge: STONE
   waterDepth:
     after:
-      - source:planEau
+      - source:surfaceEau
     type: waterDepth
     modelType: water
     heightmap: water
@@ -72,8 +72,10 @@ verticalScale: 1.0
 horizontalScale: 1.0
 area:
   center:
-    latitude: 48.842
-    longitude: 2.420
+    latitude: 44.4523
+    longitude: 6.3935
+    #latitude: 48.842
+    #longitude: 2.420
   extendX: 1000
   extendY: 1000
 crs: EPSG:2154
