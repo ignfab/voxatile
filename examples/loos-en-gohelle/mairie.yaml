@@ -41,6 +41,18 @@ sources:
 #      - type: copy-metadata
 #        from: nature
 #        to: classification
+  agri:
+    modelType: field
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: RPG.LATEST:parcelles_graphiques
+    processor:
+      type: geoToolsVector
+#    postProcessors:
+#      - type: copy-metadata
+#        from: code_cultu
+#        to: classification
   lidarhd:
     modelType: lidarhd
     provider:
@@ -123,6 +135,15 @@ renderers:
     heightmap: ground
     large: true
     voxel: CONCRETE
+  agri:
+    after:
+      - source:agri
+      - renderer:ground
+    type: vector
+    modelType: field
+    heightmap: ground
+    inside: CROPS
+    edge: AIR
   vegetation:
     after:
       - source:lidarhd

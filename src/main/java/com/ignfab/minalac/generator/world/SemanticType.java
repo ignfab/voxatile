@@ -50,6 +50,7 @@ public enum SemanticType {
     CONCRETE,
     VEGETATION,
     PATH,
+    CROPS,
 
     // COLORS
     WHITE,

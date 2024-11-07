@@ -67,6 +67,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
 
         InputStream stream;
         try {
+            System.out.println(url.toURL());
             stream = url.toURL().openStream(); // TODO Replace with an HTTP requesting tool to allow unit testing and snapshots
         } catch (MalformedURLException e) {
             throw new GenerationFailedException("Invalid URL for layer", e);
@@ -85,7 +86,9 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
         }
 
         // Invalidate schema declaration because GML version 3.1 is not used in this schema (version is unspecified, defaulting to 3.2)
-        String string = new String(bytes).replace("http://BDTOPO_V3", "explicitly-invalid");
+        String string = new String(bytes)
+            .replace("http://BDTOPO_V3", "explicitly-invalid")
+            .replace("http://RPG.LATEST", "explicitly-invalid");
         InputStream replacedStream = new ByteArrayInputStream(string.getBytes());
 
         try {

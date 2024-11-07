@@ -65,6 +65,7 @@ public class MCVoxelTypeFactory implements VoxelTypeFactory {
             case CONCRETE -> "minecraft:black_wool";
             case VEGETATION -> "minecraft:oak_leaves";
             case PATH -> "minecraft:coarse_dirt";
+            case CROPS -> "minecraft:wheat";
 
             // COLORS
             case WHITE -> "minecraft:white_concrete";
@@ -85,6 +86,7 @@ public class MCVoxelTypeFactory implements VoxelTypeFactory {
             case BLACK -> "minecraft:black_concrete";
         }, switch (semanticType) {
             case VEGETATION -> Map.of("persistent", "true");
+            case CROPS -> Map.of("age", "7");
             default -> null;
         });
     }
