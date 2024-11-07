@@ -7,6 +7,7 @@ import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.iterator.Polygon2dIterator;
 
 /**
  * {@code WaterHeightmapRenderer} populates a heightmap in order to represent the depth of water sources.
@@ -39,7 +40,7 @@ public class WaterHeightmapRenderer extends ModelRenderer {
         ShapesVoxelizer2d voxelizer = voxelizable.voxelize2d(bbox.to2d());
 
         for (Positioned2d voxel : voxelizer) {
-            heightmap.set(voxel.coords(), depth);
+            heightmap.set(voxel.coords(), 1 + (int) Math.round(3 * Math.sqrt(((Polygon2dIterator.Positioned2dWithSDF) voxel).sdf())));
         }
     }
 }

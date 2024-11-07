@@ -1,6 +1,5 @@
 package com.ignfab.minalac.generator.renderers;
 
-import com.ignfab.minalac.generator.generation.HeightmapUtils;
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -35,14 +34,15 @@ public class WaterRenderer implements Renderer {
      */
     @Override
     public void render(WorldBBox3d bbox) {
-        HeightmapUtils.applyAverageFilter(waterHeightmap);
+        //HeightmapUtils.applyAverageFilter(waterHeightmap);
         for (WorldCoords2d c : waterHeightmap.bbox().intersection(bbox)) {
             int waterValue = waterHeightmap.get(c);
             if (waterValue > 0) {
                 for (int p = 1; p < waterValue; p++)
-                    water.place(c.x(), c.y(), groundHeightmap.get(c) - p);
+                    air.place(c.x(), c.y(), groundHeightmap.get(c) - p);
                 // Gap between water and ground surface
                 air.place(c.x(), c.y(), groundHeightmap.get(c));
+                water.place(c.x(), c.y(), groundHeightmap.get(c) - waterValue);
             }
         }
     }

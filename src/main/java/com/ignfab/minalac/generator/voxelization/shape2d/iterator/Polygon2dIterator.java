@@ -217,8 +217,41 @@ public class Polygon2dIterator implements Iterator<Positioned2d> {
         if (!hasNext())
             throw new NoSuchElementException();
 
-        Positioned2d element = new WorldCoords2d(x, y);
+        WorldCoords2d element = new WorldCoords2d(x, y);
         moveOn();
-        return element;
+        return new Positioned2dWithSDF(element, polygon);
+    }
+
+    public record Positioned2dWithSDF(WorldCoords2d coords, Polygon2d polygon) implements Positioned2d {
+        public double sdf() {
+            double d = Double.MAX_VALUE;
+            for (Line2d line : polygon.lines()) {
+                int ex = line.start().x() - line.end().x();
+                int ey = line.start().y() - line.end().y();
+                int wx = coords.x() - line.end().x();
+                int wy = coords.y() - line.end().y();
+                double tmp = Math.min(Math.max(0, (wx * ex + wy * ey) / (double) (ex * ex + ey * ey)), 1);
+                double bx = wx - ex * tmp;
+                double by = wy - ey * tmp;
+                d = Math.min(d, bx * bx + by * by);
+            }
+            return Math.sqrt(d);
+
+        /*float sdPolygon( in vec2[N] v, in vec2 p )
+        {
+            float d = dot(p-v[0],p-v[0]);
+            float s = 1.0;
+            for( int i=0, j=N-1; i<N; j=i, i++ )
+            {
+                vec2 e = v[j] - v[i];
+                vec2 w =    p - v[i];
+                vec2 b = w - e*clamp( dot(w,e)/dot(e,e), 0.0, 1.0 );
+                d = min( d, dot(b,b) );
+                bvec3 c = bvec3(p.y>=v[i].y,p.y<v[j].y,e.x*w.y>e.y*w.x);
+                if( all(c) || all(not(c)) ) s*=-1.0;
+            }
+            return s*sqrt(d);
+        }*/
+        }
     }
 }

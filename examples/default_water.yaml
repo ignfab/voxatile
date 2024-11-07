@@ -67,7 +67,7 @@ renderers:
     type: water
     groundHeightmap: ground
     waterHeightmap: water
-    waterVoxel: GLASS
+    waterVoxel: STONE
 verticalScale: 1.0
 horizontalScale: 1.0
 area:
