@@ -18,6 +18,9 @@ sources:
     processor:
       type: geoToolsVector
     postProcessors:
+      - type: copy
+        metadata: hauteur
+        to: height
 renderers:
   building:
     after:
@@ -148,7 +151,17 @@ Processor translating a float data matrix to a model.
 
 A post-processor alters models so they can comply with renderers requirements.
 
-<!-- Documentation of post-processor params here -->
+### Metadata copy
+
+A post-processor copying a metadata into another.
+
+**Type**: copy
+
+**Extra parameters**:
+- `metadata` (required, `text`): Name of the metadata to copy.
+- `to` (required, `text`): Name of destination metadata.
+- `abortIfMetadataIsAbsent` (optional, default `no`): `yes` to stop the copy if the metadata is missing, `no` to allow the copy to proceed even if the metadata is missing (in this case, the metadata value will be empty).
+- `keepExisting` (optional, default `no`): `no` to overwrite existing data, `yes` to keep existing metadata.
 
 ## Renderer parameters
 

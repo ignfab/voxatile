@@ -7,7 +7,7 @@ import com.ignfab.minalac.generator.parameters.PolymorphicParams;
 import com.ignfab.minalac.generator.processors.Processor;
 
 /**
- * Represents the parameters of a type of {@link Processor}.
+ * Parameters for {@link Processor}.
  */
 public abstract class ProcessorParams extends PolymorphicParams {
     /**
