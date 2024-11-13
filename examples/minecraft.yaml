@@ -18,6 +18,10 @@ sources:
       features: BDTOPO_V3:batiment
     processor:
       type: geoToolsVector
+    postProcessors:
+      - type: copy
+        metadata: hauteur
+        to: height
 renderers:
   altitude:
     after:
