@@ -34,7 +34,7 @@ public class Building3dRenderer extends ModelRenderer {
         }
         BuildingVoxelizer voxelizer = voxelizable.voxelize3d(bbox);
 
-        VoxelType roof = roofs.getOrDefault((String) model.getMetadata(/*"classification"*/"OGRLoader.usage_1"), defaultRoof);
+        VoxelType roof = roofs.getOrDefault((String) model.getMetadata("classification"), defaultRoof);
         for (Positioned3d p : voxelizer.surfaces(BuildingSurfaceType.GROUND))
             ground.place(p.coords().x(), p.coords().y(), p.coords().z());
         for (Positioned3d p : voxelizer.surfaces(BuildingSurfaceType.WALL))

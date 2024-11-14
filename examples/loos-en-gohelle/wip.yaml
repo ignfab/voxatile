@@ -26,11 +26,11 @@ sources:
 #    processor:
 #      type: geoToolsVector
 #    postProcessors:
-#      - type: copy-metadata
-#        from: HAUTEUR
+#      - type: copy
+#        metadata: HAUTEUR
 #        to: height
-#      - type: copyMetadata
-#        from: USAGE1
+#      - type: copy
+#        metadata: USAGE1
 #        to: classification
 #      - type: bufferGeometry
 #        buffer: 2
@@ -42,9 +42,9 @@ sources:
 #    processor:
 #      type: cityjsonBuilding
 #    postProcessors:
-#      - type: copy-metadata
-#        from: OGRLoader.usage_1
-#        to: height
+#      - type: copy
+#        metadata: OGRLoader.usage_1
+#        to: classification
   road:
     modelType: road
     provider:
@@ -53,10 +53,10 @@ sources:
       features: BDTOPO_V3:troncon_de_route
     processor:
       type: geoToolsVector
-#    postProcessors:
-#      - type: copy-metadata
-#        from: nature
-#        to: classification
+    postProcessors:
+      - type: copy
+        metadata: nature
+        to: classification
   lidarhd:
     modelType: lidarhd
     provider:
@@ -68,23 +68,23 @@ sources:
       crs: EPSG:2154
     processor:
       type: lasPoints
-  lidar-terrestre:
-    modelType: lidar-terrestre
-    provider:
-      type: lasTiled
-      tilesPath: data/LiDAR_terrestre
-      tilesFilenameTemplate: copc_LeG_%04d_%04d.laz
-      tileSize: 1000
-      crs: EPSG:2154
-    processor:
-      type: lasMerged
-  lidar-path:
-    modelType: lidar-path
-    provider:
-      type: shapefile
-      filePath: data/LiDAR_terrestre/trajet/23042024_9h14_L93.shp
-    processor:
-      type: geoToolsVector
+#  lidar-terrestre:
+#    modelType: lidar-terrestre
+#    provider:
+#      type: lasTiled
+#      tilesPath: data/LiDAR_terrestre
+#      tilesFilenameTemplate: copc_LeG_%04d_%04d.laz
+#      tileSize: 1000
+#      crs: EPSG:2154
+#    processor:
+#      type: lasMerged
+#  lidar-path:
+#    modelType: lidar-path
+#    provider:
+#      type: shapefile
+#      filePath: data/LiDAR_terrestre/trajet/23042024_9h14_L93.shp
+#    processor:
+#      type: geoToolsVector
 renderers:
   altitude:
     after:

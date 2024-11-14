@@ -1,0 +1,113 @@
+heightmaps:
+  ground:
+    default: 0
+  bati-mask:
+    default: 0
+  lidar-in:
+    default: min
+  lidar-out:
+    default: min
+sources:
+  mnt:
+    modelType: mnt
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    processor:
+      type: floatMatrix
+  bati:
+    modelType: building
+    provider:
+      type: shapefile
+      filePath: data/BDTOPO/BATIMENT.shp
+    processor:
+      type: geoToolsVector
+  lidarhd:
+    modelType: lidarhd
+    provider:
+      type: lasTiled
+      tilesPath: data/LIDARHD
+      tilesFilenameTemplate: copc_Semis_2023_%04d_%04d_LA93_IGN69.laz
+      tileSize: 1000
+      tileOffsetY: 1000
+      crs: EPSG:2154
+    processor:
+      type: lasPoints
+renderers:
+  altitude:
+    after:
+      - source:mnt
+    type: heightmap
+    modelType: mnt
+    heightmap: ground
+  ground:
+    after:
+      - renderer:altitude
+    type: ground
+    heightmap: ground
+    voxels:
+      GRASS: 1
+      DIRT: 3
+      STONE: 10
+  bati-mask:
+    after:
+      - source:bati
+    type: mask
+    modelType: building
+    heightmap: bati-mask
+    value: 1
+  in-or-out:
+    after:
+      - source:lidarhd
+      - renderer:bati-mask
+    type: heightmapClassify
+    modelType: lidarhd
+    classifications:
+      - 6
+    heightmap: bati-mask
+    classes:
+      0: 6.0
+      1: 6.1
+  lidar-in:
+    after:
+      - renderer:in-or-out
+    type: heightmapModel
+    modelType: lidarhd
+    classifications:
+      - 6.1
+    heightmap: lidar-in
+  lidar-out:
+    after:
+      - renderer:in-or-out
+    type: heightmapModel
+    modelType: lidarhd
+    classifications:
+      - 6.0
+    heightmap: lidar-out
+  bati-in:
+    after:
+      - renderer:ground
+      - renderer:lidar-in
+    type: ground
+    heightmap: lidar-in
+    voxels:
+      BLUE: 20
+  bati-out:
+    after:
+      - renderer:ground
+      - renderer:lidar-out
+    type: ground
+    heightmap: lidar-out
+    voxels:
+      RED: 20
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 50.457398
+    longitude: 2.792343
+  extendX: 1000
+  extendY: 1000
+crs: EPSG:2154
+format: minetest

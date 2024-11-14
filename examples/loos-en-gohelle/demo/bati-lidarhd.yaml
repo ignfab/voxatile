@@ -1,0 +1,66 @@
+heightmaps:
+  ground:
+    default: 0
+  lidar:
+    default: min
+sources:
+  mnt:
+    modelType: mnt
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    processor:
+      type: floatMatrix
+  lidarhd:
+    modelType: lidarhd
+    provider:
+      type: lasTiled
+      tilesPath: data/LIDARHD
+      tilesFilenameTemplate: copc_Semis_2023_%04d_%04d_LA93_IGN69.laz
+      tileSize: 1000
+      tileOffsetY: 1000
+      crs: EPSG:2154
+    processor:
+      type: lasPoints
+renderers:
+  altitude:
+    after:
+      - source:mnt
+    type: heightmap
+    modelType: mnt
+    heightmap: ground
+  ground:
+    after:
+      - renderer:altitude
+    type: ground
+    heightmap: ground
+    voxels:
+      GRASS: 1
+      DIRT: 3
+      STONE: 10
+  lidar:
+    after:
+      - source:lidarhd
+    type: heightmapModel
+    modelType: lidarhd
+    classifications:
+      - 6
+    heightmap: lidar
+  bati:
+    after:
+      - renderer:lidar
+    type: ground
+    heightmap: lidar
+    voxels:
+      STONE: 20
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 50.457398
+    longitude: 2.792343
+  extendX: 1000
+  extendY: 1000
+crs: EPSG:2154
+format: minetest

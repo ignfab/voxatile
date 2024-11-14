@@ -1,0 +1,54 @@
+heightmaps:
+  ground:
+    default: 0
+sources:
+  mnt:
+    modelType: mnt
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    processor:
+      type: floatMatrix
+  bati:
+    modelType: building
+    provider:
+      type: shapefile
+      filePath: data/BDTOPO/BATIMENT.shp
+    processor:
+      type: geoToolsVector
+renderers:
+  altitude:
+    after:
+      - source:mnt
+    type: heightmap
+    modelType: mnt
+    heightmap: ground
+  ground:
+    after:
+      - renderer:altitude
+    type: ground
+    heightmap: ground
+    voxels:
+      GRASS: 1
+      DIRT: 3
+      STONE: 10
+  building:
+    after:
+      - source:bati
+      - renderer:altitude
+    type: vector
+    modelType: building
+    heightmap: ground
+    inside: STONE
+    edge: STONE
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 50.457398
+    longitude: 2.792343
+  extendX: 1000
+  extendY: 1000
+crs: EPSG:2154
+format: minetest

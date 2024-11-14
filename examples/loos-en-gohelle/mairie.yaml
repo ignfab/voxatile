@@ -25,10 +25,10 @@ sources:
       filePath: data/CityJSON/Loos-en-Gohelle.json
     processor:
       type: cityjsonBuilding
-#    postProcessors:
-#      - type: copy-metadata
-#        from: OGRLoader.usage_1
-#        to: height
+    postProcessors:
+      - type: copy
+        metadata: OGRLoader.usage_1
+        to: classification
   road:
     modelType: road
     provider:
@@ -37,10 +37,10 @@ sources:
       features: BDTOPO_V3:troncon_de_route
     processor:
       type: geoToolsVector
-#    postProcessors:
-#      - type: copy-metadata
-#        from: nature
-#        to: classification
+    postProcessors:
+      - type: copy
+        metadata: nature
+        to: classification
   agri:
     modelType: field
     provider:
@@ -49,10 +49,10 @@ sources:
       features: RPG.LATEST:parcelles_graphiques
     processor:
       type: geoToolsVector
-#    postProcessors:
-#      - type: copy-metadata
-#        from: code_cultu
-#        to: classification
+    postProcessors:
+      - type: copy
+        metadata: code_cultu
+        to: classification
   lidarhd:
     modelType: lidarhd
     provider:

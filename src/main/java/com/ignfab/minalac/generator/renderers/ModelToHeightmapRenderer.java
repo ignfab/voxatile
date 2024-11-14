@@ -2,8 +2,8 @@ package com.ignfab.minalac.generator.renderers;
 
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.models.Model;
-import com.ignfab.minalac.generator.models.selection.ModelSelection;
 import com.ignfab.minalac.generator.models.Voxelizable3d;
+import com.ignfab.minalac.generator.models.selection.ModelFilter;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.Positioned3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -21,7 +21,7 @@ public class ModelToHeightmapRenderer extends ModelRenderer {
      * @param selection the model selection containing the wanted models to render (only {@code FloatMatrixModel} will be)
      * @param heightmap Heightmap where heights will be written
      */
-    public ModelToHeightmapRenderer(ModelSelection selection, Heightmap heightmap) {
+    public ModelToHeightmapRenderer(ModelFilter selection, Heightmap heightmap) {
         super(selection);
         this.heightmap = heightmap;
     }

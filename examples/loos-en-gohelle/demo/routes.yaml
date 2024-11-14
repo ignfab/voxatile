@@ -1,0 +1,89 @@
+heightmaps:
+  ground:
+    default: 0
+sources:
+  mnt:
+    modelType: mnt
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    processor:
+      type: floatMatrix
+  road:
+    modelType: road
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:troncon_de_route
+    processor:
+      type: geoToolsVector
+    postProcessors:
+      - type: copy
+        metadata: nature
+        to: classification
+renderers:
+  altitude:
+    after:
+      - source:mnt
+    type: heightmap
+    modelType: mnt
+    heightmap: ground
+  ground:
+    after:
+      - renderer:altitude
+    type: ground
+    heightmap: ground
+    voxels:
+      GRASS: 1
+      DIRT: 3
+      STONE: 10
+  road-dirt-path:
+    after:
+      - source:road
+      - renderer:ground
+    type: road
+    modelType: road
+    classifications:
+      - Chemin
+      - Escalier
+      - Sentier
+    heightmap: ground
+    voxel: PATH
+  road-stone-path:
+    after:
+      - source:road
+      - renderer:ground
+    type: road
+    modelType: road
+    classifications:
+      - Route empierrée
+    heightmap: ground
+    voxel: COBBLE
+  road-concrete:
+    after:
+      - source:road
+      - renderer:ground
+      - renderer:road-dirt-path
+      - renderer:road-stone-path
+    type: road
+    modelType: road
+    classifications:
+      - Bretelle
+      - Rond-point
+      - Route à 1 chaussée
+      - Route à 2 chaussées
+      - Type autoroutier
+    heightmap: ground
+    large: true
+    voxel: CONCRETE
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 50.457398
+    longitude: 2.792343
+  extendX: 1000
+  extendY: 1000
+crs: EPSG:2154
+format: minetest

@@ -21,10 +21,13 @@ import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderPara
 import com.ignfab.minalac.generator.parameters.providers.WMSImageProviderParams;
 import com.ignfab.minalac.generator.parameters.renderers.Building3dRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.ClassifiedRendererParams;
+import com.ignfab.minalac.generator.parameters.renderers.ClassifyFromHeightmapRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.ColoredGroundRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.GroundRendererParams;
+import com.ignfab.minalac.generator.parameters.renderers.HeightmapMaskRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.HeightmapRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.MetadataRendererParams;
+import com.ignfab.minalac.generator.parameters.renderers.ModelToHeightmapRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.RoadRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.VectorRendererParams;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
@@ -66,6 +69,9 @@ public final class SampleImplementation {
         // TODO: Static method that provides a ParamsParser with all default renderers
         // If those name values are modified, update the documentation accordingly
         parser.registerParams("heightmap", HeightmapRendererParams.class);
+        parser.registerParams("heightmapModel", ModelToHeightmapRendererParams.class);
+        parser.registerParams("heightmapClassify", ClassifyFromHeightmapRendererParams.class);
+        parser.registerParams("mask", HeightmapMaskRendererParams.class);
         parser.registerParams("ground", GroundRendererParams.class);
         parser.registerParams("vector", VectorRendererParams.class);
         parser.registerParams("road", RoadRendererParams.class);

@@ -79,9 +79,9 @@ public class RoadRendererParams extends RendererParams {
         ModelFilter models = new ModelSelection(generation.models(), modelType);
         if (classifications != null && !classifications.isEmpty()) {
             if (classifications.size() == 1)
-                models = new ModelMetadataSelection(models, /*"classification"*/"nature", classifications.get(0));
+                models = new ModelMetadataSelection(models, "classification", classifications.get(0));
             else
-                models = new ModelMetadataListSelection(models, /*"classification"*/"nature", classifications);
+                models = new ModelMetadataListSelection(models, "classification", classifications);
         }
         return new RoadRenderer(
             models,
