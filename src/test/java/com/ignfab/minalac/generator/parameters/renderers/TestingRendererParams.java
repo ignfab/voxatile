@@ -10,7 +10,6 @@ import com.ignfab.minalac.generator.renderers.Renderer;
 /**
  * A RendererParams class for testing purposes.
  */
-@SuppressWarnings("checkstyle:VisibilityModifier")
 public class TestingRendererParams extends RendererParams {
     /**
      * A required field.

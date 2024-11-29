@@ -8,8 +8,6 @@ import java.beans.ConstructorProperties;
 /**
  * Represents the parameters of a type of {@link Heightmap}.
  */
-// Since attributes are purposely kept public for this class the checkstyle for visibility is disabled.
-@SuppressWarnings("checkstyle:VisibilityModifier")
 public class HeightmapParams {
     /**
      * The default value for all heightmap cells.

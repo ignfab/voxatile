@@ -19,8 +19,6 @@ import java.util.Map;
  *
  * Refer to docs/usage/GenerationParameters.md for parameters format.
  */
-// Since attributes are purposely kept public for this class the checkstyle for visibility is disabled.
-@SuppressWarnings("checkstyle:VisibilityModifier")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GenerationParams {
     // For now :

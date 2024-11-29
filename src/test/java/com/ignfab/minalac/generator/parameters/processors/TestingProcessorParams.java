@@ -10,7 +10,6 @@ import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.TestingProcessor;
 
-@SuppressWarnings("checkstyle:VisibilityModifier")
 public class TestingProcessorParams extends ProcessorParams {
     /**
      * A required field.

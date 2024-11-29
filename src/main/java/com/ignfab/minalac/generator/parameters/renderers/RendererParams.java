@@ -9,7 +9,6 @@ import com.ignfab.minalac.generator.renderers.Renderer;
 /**
  * Represents the parameters of a type of {@link Renderer}.
  */
-@SuppressWarnings("checkstyle:VisibilityModifier")
 public abstract class RendererParams extends PolymorphicParams {
     /**
      * Dependencies (optional).

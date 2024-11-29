@@ -12,7 +12,6 @@ import com.ignfab.minalac.generator.renderers.Renderer;
  *
  * Until voxel structures are serializable, this perform a basic voxel structure creation
  */
-@SuppressWarnings("checkstyle:VisibilityModifier")
 public class GroundRendererParams extends RendererParams {
     /**
      * The name of the heightmap to use (required).

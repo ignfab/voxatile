@@ -18,8 +18,6 @@ import com.ignfab.minalac.generator.processors.post.PostProcessor;
 /**
  * Represents the parameters used for {@link DataSource} creation.
  */
-// Since attributes are purposely kept public for this class the checkstyle for visibility is disabled.
-@SuppressWarnings("checkstyle:VisibilityModifier")
 public class DataSourceParams {
     /**
      * Type to give to provided models (required).

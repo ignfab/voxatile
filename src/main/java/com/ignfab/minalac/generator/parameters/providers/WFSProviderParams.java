@@ -16,7 +16,6 @@ import com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider;
 /**
  * Parameters for WFS providers.
  */
-@SuppressWarnings("checkstyle:VisibilityModifier")
 public class WFSProviderParams extends ProviderParams {
     /**
      * Base URL for WFS queries (required).

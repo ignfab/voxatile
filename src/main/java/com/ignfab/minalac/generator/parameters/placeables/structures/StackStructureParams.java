@@ -17,7 +17,6 @@ import com.ignfab.minalac.generator.world.VoxelWorld;
 /**
  * A simple structure made out of stacked voxels.
  */
-@SuppressWarnings("VisibilityModifier")
 public class StackStructureParams extends CustomPlaceableParams {
     /**
      * List of layers constituting the structure.

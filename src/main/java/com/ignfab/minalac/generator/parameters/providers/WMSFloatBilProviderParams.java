@@ -16,7 +16,6 @@ import com.ignfab.minalac.generator.inputs.WMSFloatBilDataProvider;
 /**
  * Parameters for WMS float providers.
  */
-@SuppressWarnings("checkstyle:VisibilityModifier")
 public class WMSFloatBilProviderParams extends ProviderParams {
     /**
      * Base URL for WFS queries (required).
