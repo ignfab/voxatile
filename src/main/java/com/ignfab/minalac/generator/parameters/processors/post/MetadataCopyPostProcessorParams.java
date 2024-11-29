@@ -11,7 +11,6 @@ import com.ignfab.minalac.generator.processors.post.MetadataCopyPostProcessor;
 /**
  * Parameters for {@link MetadataCopyPostProcessor}.
  */
-@SuppressWarnings("checkstyle:VisibilityModifier")
 public class MetadataCopyPostProcessorParams extends PostProcessorParams {
     /**
      * Name of the metadata to copy (required).

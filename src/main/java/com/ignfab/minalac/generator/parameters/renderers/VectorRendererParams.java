@@ -11,8 +11,6 @@ import java.beans.ConstructorProperties;
 /**
  * Concrete class of {@link RendererParams} representing the parameters of a {@link VectorRenderer}.
  */
-// Since attributes are purposely kept public for this class the checkstyle for visibility is disabled.
-@SuppressWarnings("checkstyle:VisibilityModifier")
 public class VectorRendererParams extends RendererParams {
     /**
      * The type of models to render (required).

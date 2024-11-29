@@ -13,7 +13,6 @@ import com.ignfab.minalac.generator.world.VoxelWorld;
 /**
  * A voxel type parameters for simple Minetest voxel types with only node type name.
  */
-@SuppressWarnings("VisibilityModifier")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE) // Prevents default deserializer from requiring type when using "default" placeable param structure
 public class TestingVoxelTypeParams extends CustomPlaceableParams {
     /**

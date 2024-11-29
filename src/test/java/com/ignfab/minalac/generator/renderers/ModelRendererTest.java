@@ -45,9 +45,8 @@ public class ModelRendererTest {
         assertEquals(0, idleRenderer.modelsRendered.size());
     }
 
-    @SuppressWarnings("checkstyle:VisibilityModifier")
     private static class ModelRendererImpl extends ModelRenderer {
-        List<ModelImpl> modelsRendered = new ArrayList<>();
+        private final List<ModelImpl> modelsRendered = new ArrayList<>();
 
         ModelRendererImpl(ModelStore store, String modelType) {
             super(new ModelSelection(store, modelType));
@@ -60,9 +59,8 @@ public class ModelRendererTest {
         }
     }
 
-    @SuppressWarnings("checkstyle:VisibilityModifier")
     private static class ModelImpl extends Model {
-        public char type;
+        private final char type;
 
         ModelImpl(char type) {
             this.type = type;

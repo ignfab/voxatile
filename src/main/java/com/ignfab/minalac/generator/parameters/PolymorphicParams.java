@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 /**
  * Base class for all polymorphic parameters with validation.
  */
-@SuppressWarnings("checkstyle:VisibilityModifier")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 public class PolymorphicParams {
     /**

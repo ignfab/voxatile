@@ -8,7 +8,6 @@ import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.inputs.TestingProvider;
 
-@SuppressWarnings("checkstyle:VisibilityModifier")
 public class TestingProviderParams extends ProviderParams {
     /**
      * A required field.
