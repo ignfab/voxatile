@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.voxelization.shape3d;
 import com.ignfab.minalac.generator.utils.world3d.Bounded3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.voxelization.shape3d.iterator.Line3dConnectedIterator;
 import com.ignfab.minalac.generator.voxelization.shape3d.iterator.Line3dIterator;
 
 /**
@@ -126,4 +127,21 @@ public class Line3d implements Bounded3d, Shape3d {
     public Iterable<LineVoxel3d> borderVoxels() {
         return () -> new Line3dIterator(this);
     }
+
+
+    @Override
+    public Iterable<LineVoxel3d>connectedBorderVoxels() {
+        return () -> new Line3dConnectedIterator(this);
+    }
+
+    public double slopeX() {
+        return slopeX;
+    }
+    public double slopeY() {
+        return slopeY;
+    }
+    public double slopeZ() {
+        return slopeZ;
+    }
+
 }

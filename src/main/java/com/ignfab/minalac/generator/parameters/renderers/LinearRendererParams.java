@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.parameters.renderers;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
@@ -25,10 +27,26 @@ public class LinearRendererParams extends RendererParams {
      */
     public String heightmap;
 
+
     /**
      * What to place (required).
      */
     public PlaceableParams place;
+
+    /**
+     * Width (optional, default 1).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public int width = 1;
+
+    @JsonSetter(nulls = Nulls.SKIP)
+    public int verticalOffset = 0;
+
+    @JsonSetter(nulls = Nulls.SKIP)
+    public boolean onlyAboveHeightmap = false;
+
+    @JsonSetter(nulls = Nulls.SKIP)
+    public boolean alwaysAboveHeightmap = false;
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
@@ -38,17 +56,17 @@ public class LinearRendererParams extends RendererParams {
      * @param place what to place
      */
     @ConstructorProperties({"modelType", "heightmap", "place"})
-    public LinearRendererParams(String modelType, String heightmap, PlaceableParams place) {
+    public LinearRendererParams(String modelType, String heightmap) {
         this.modelType = modelType;
         this.heightmap = heightmap;
-        this.place = place;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
         if (heightmap.isEmpty())
-            throw new IllegalArgumentException("The field heightmap cannot be empty");
-        place.validate();
+            throw new IllegalArgumentException("Heightmap name cannot be empty");
+        if (width <= 0)
+            throw new IllegalArgumentException("Width must be a positive integer");
     }
 
     @Override
@@ -56,7 +74,11 @@ public class LinearRendererParams extends RendererParams {
         return new LinearRenderer(
             new ModelSelection(generation.models(), modelType),
             generation.heightmaps().get(heightmap),
-            place.create(generation.world())
+            place.create(generation.world()),
+            width,
+            verticalOffset,
+            onlyAboveHeightmap,
+            alwaysAboveHeightmap
         );
     }
 }

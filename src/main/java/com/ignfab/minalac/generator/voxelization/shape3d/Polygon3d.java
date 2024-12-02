@@ -55,6 +55,11 @@ public class Polygon3d implements Bounded3d, Shape3d {
     }
 
     @Override
+    public Iterable<LineVoxel3d> connectedBorderVoxels() {
+        return Iterables.unwrap(Iterables.remap(lines, Shape3d::connectedBorderVoxels));
+    }
+
+    @Override
     public Iterable<Positioned3d> insideVoxels() {
         throw new UnsupportedOperationException("Unimplemented method 'insideVoxels'");
     }

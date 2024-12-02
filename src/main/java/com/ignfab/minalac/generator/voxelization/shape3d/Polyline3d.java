@@ -73,4 +73,9 @@ public class Polyline3d implements Bounded3d, Shape3d {
     public Iterable<LineVoxel3d> borderVoxels() {
         return Iterables.unwrap(Iterables.remap(lines, Shape3d::borderVoxels));
     }
+
+    @Override
+    public Iterable<LineVoxel3d> connectedBorderVoxels() {
+        return Iterables.unwrap(Iterables.remap(lines, Shape3d::connectedBorderVoxels));
+    }
 }

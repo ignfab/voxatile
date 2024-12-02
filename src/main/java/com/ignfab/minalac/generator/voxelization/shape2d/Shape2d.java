@@ -27,6 +27,10 @@ public interface Shape2d {
         return Collections::emptyIterator;
     }
 
+    default Iterable<LineVoxel2d> connectedBorderVoxels() {
+        return Collections::emptyIterator;
+    }
+
     /**
      * Returns an iterable over inside voxels in this shape.
      *

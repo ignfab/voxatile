@@ -14,7 +14,7 @@ import java.util.List;
  * A voxelizer based on 3d shapes.
  */
 public class ShapesVoxelizer3d implements Voxelizer3d {
-    private final WorldBBox3d bbox;
+    public final WorldBBox3d bbox;
     private final List<Shape3d> shapes;
 
     /**
@@ -53,6 +53,10 @@ public class ShapesVoxelizer3d implements Voxelizer3d {
         return () -> bbox.crop(Iterables.unwrap(Iterables.remap(shapes, Shape3d::borderVoxels)));
     }
 
+    public Iterable<LineVoxel3d> connectedBorders() {
+        return () -> bbox.crop(Iterables.unwrap(Iterables.remap(shapes, Shape3d::connectedBorderVoxels)));
+    }
+
     /**
      * Returns an iterable over voxels inside shapes (excluding borders).
      *
@@ -83,6 +87,11 @@ public class ShapesVoxelizer3d implements Voxelizer3d {
 
         @Override
         public Iterable<LineVoxel3d> borders() {
+            return Collections::emptyIterator;
+        }
+
+        @Override
+        public Iterable<LineVoxel3d> connectedBorders() {
             return Collections::emptyIterator;
         }
 

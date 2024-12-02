@@ -61,19 +61,44 @@ renderers:
     modelType: building
     heightmap: ground
     inside: default:cobble
-    edge: default:stone
-  road:
+    edge: default:stonebrick
+  brigdes:
     after:
       - source:road
       - renderer:ground
     type: linear
     modelType: road
     heightmap: ground
-    place: default:obsidian
+    verticalOffset: -1
+    place:
+      type: stack
+      layers:
+        - material: default:stonebrick
+          height: 2
+        - material:
+            node: stairs:slab_stonebrick
+            param2: 0
+    width: 5
+    onlyAboveHeightmap: yes
+  roads:
+    after:
+      - renderer:brigdes
+    type: linear
+    modelType: road
+    heightmap: ground
+    place:
+      type: stack
+      layers:
+        - material: default:obsidian
+        - material: air
+    width: 4
+    alwaysAboveHeightmap: yes
 verticalScale: 1.0
 horizontalScale: 1.0
 area:
   center:
+#    latitude: 48.866
+#    longitude: 2.414
     latitude: 48.845
     longitude: 2.425
   extendX: 1000

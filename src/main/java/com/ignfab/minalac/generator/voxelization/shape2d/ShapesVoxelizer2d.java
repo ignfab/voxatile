@@ -53,6 +53,10 @@ public class ShapesVoxelizer2d implements Voxelizer2d {
         return () -> bbox.crop(Iterables.unwrap(Iterables.remap(shapes, Shape2d::borderVoxels)));
     }
 
+    public Iterable<LineVoxel2d> connectedBorders() {
+        return () -> bbox.crop(Iterables.unwrap(Iterables.remap(shapes, Shape2d::borderVoxels)));
+    }
+
     /**
      * Returns an iterable over voxels inside shapes (excluding borders).
      *
@@ -90,6 +94,11 @@ public class ShapesVoxelizer2d implements Voxelizer2d {
 
         @Override
         public Iterable<LineVoxel2d> borders() {
+            return Collections::emptyIterator;
+        }
+
+        @Override
+        public Iterable<LineVoxel2d> connectedBorders() {
             return Collections::emptyIterator;
         }
 
