@@ -50,7 +50,7 @@ public class Polygon3d implements Bounded3d, Shape3d {
     }
 
     @Override
-    public Iterable<LineVoxel3d> borderVoxels() {
+    public Iterable<LinearVoxel3d> borderVoxels() {
         return Iterables.unwrap(Iterables.remap(lines, Shape3d::borderVoxels));
     }
 

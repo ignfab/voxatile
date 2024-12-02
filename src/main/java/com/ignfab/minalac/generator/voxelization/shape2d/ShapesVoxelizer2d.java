@@ -49,7 +49,7 @@ public class ShapesVoxelizer2d implements Voxelizer2d {
      *
      * @return an iterable over border voxels
      */
-    public Iterable<LineVoxel2d> borders() {
+    public Iterable<LinearVoxel2d> borders() {
         return () -> bbox.crop(Iterables.unwrap(Iterables.remap(shapes, Shape2d::borderVoxels)));
     }
 
@@ -89,7 +89,7 @@ public class ShapesVoxelizer2d implements Voxelizer2d {
         }
 
         @Override
-        public Iterable<LineVoxel2d> borders() {
+        public Iterable<LinearVoxel2d> borders() {
             return Collections::emptyIterator;
         }
 

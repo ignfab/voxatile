@@ -215,6 +215,29 @@ Fields:
 - `modelType`: the type of models to render
 - `heightmap`: the name of the heightmap to use. It must exist.
 
+### Linear renderer
+
+A generic renderer for linear stuff like roads, rails, rivers.
+
+Placeable are placed symetrically all along the model axis (Position 0 being the axis, greater is further away from the axis).
+
+**Type**: linear
+
+**Extra parameters**:
+- `modelType`: the type of models to render (required).
+- `at`: Positions where to place stuff around the axis (optional, default 0).
+- `place`: [Placeable](#placeables) to place at each position (required).
+- `renderOnlyWhenAbove`: If given, renders only if a part of the model is above that heightmap (optional, default none, meaning "render anyway").
+
+Example:
+```yaml
+type: linear
+modelType: road
+at: 1..3
+place: default:cobble
+renderOnlyWhenAbove: ground
+```
+
 ## Placeables
 
 A placeable is something that can be placed in voxel world at a given position: a voxel, a structure or a pattern.
@@ -303,6 +326,7 @@ Example of a stack structure as value to `place` field:
 place:
   type: stack
   direction: downwards
+  offset: 1
   layers:
     - material: default:dirt_with_grass
     - material: default:dirt
@@ -313,10 +337,11 @@ place:
 
 Fields:
   - `direction`: `upwards` or `downwards` (optional, default `upwards`)
+  - `offset`: Vertical offset of starting point (optional, default `0`, positive is upwards).
   - `layers`: A list of layers
     - _List item_:
       - `material`: A placeable, usualy a voxel (required)
       - `height`: How many times to repeat that placeable (optional, default `1`)
 
-An upwards stack starts at reference position and stacks placeable upwards. A downards stack proceeds same but downwards.
+An upwards stack starts at reference position (with vertical offset) and stacks placeable upwards. A downards stack proceeds same but downwards.
 

@@ -7,7 +7,7 @@ import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.voxelization.shape2d.LineVoxel2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.LinearVoxel2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
 import com.ignfab.minalac.generator.world.Placeable;
 
@@ -50,7 +50,7 @@ public class VectorRenderer extends ModelRenderer {
             WorldCoords2d c = voxel.coords();
             inside.place(c.x(), c.y(), heightmap.get(c) + 1);
         }
-        for (LineVoxel2d voxel : voxelizer.borders()) {
+        for (LinearVoxel2d voxel : voxelizer.borders()) {
             WorldCoords2d c = voxel.coords();
             edge.place(c.x(), c.y(), heightmap.get(c) + 1);
         }

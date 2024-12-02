@@ -31,6 +31,12 @@ public class StackStructureParams extends CustomPlaceableParams {
     public Direction direction = Direction.UPWARDS;
 
     /**
+     * Vertical offset (optional, default 0, positive is upwards).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public int offset = 0;
+
+    /**
      * Creates a new {@code StackStructureParams} with required fields.
      *
      * @param layers List of layers
@@ -52,7 +58,7 @@ public class StackStructureParams extends CustomPlaceableParams {
             return NoVoxel.INSTANCE;
 
         SimpleVoxelStructure structure = new SimpleVoxelStructure();
-        int z = 0;
+        int z = offset;
         for (Layer layer : layers) {
             Placeable placeable = layer.material.create(world);
             int count = layer.height;

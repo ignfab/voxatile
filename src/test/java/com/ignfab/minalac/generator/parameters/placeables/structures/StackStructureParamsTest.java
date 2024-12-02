@@ -13,7 +13,7 @@ import com.ignfab.minalac.generator.world.Placeable;
 public class StackStructureParamsTest {
 
     @Test
-    void testDeserializeEmptyStack() {
+    void testDeserializeMinimal() {
         StackStructureParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(StackStructureParams.class,
             """
                 type: stack
@@ -21,7 +21,35 @@ public class StackStructureParamsTest {
             """));
 
         assertEquals(StackStructureParams.Direction.UPWARDS, params.direction);
+        assertEquals(0, params.offset);
         assertNull(params.layers);
+        assertDoesNotThrow(() -> params.create(new TestingVoxelWorld(new WorldBBox3d(0, 0, 0, 1, 1, 1))));
+    }
+
+    @Test
+    void testDeserializeMaximal() {
+        StackStructureParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(StackStructureParams.class,
+            """
+                type: stack
+                direction: upwards
+                offset: -1
+                layers:
+                  - material: a
+                  - material: b
+                    height: 2
+                  - material: c
+                    height: 3
+            """));
+
+        assertEquals(StackStructureParams.Direction.UPWARDS, params.direction);
+        assertEquals(-1, params.offset);
+        assertEquals(3, params.layers.size());
+        assertEquals(1, params.layers.get(0).height);
+        assertEquals("a", assertInstanceOf(TestingVoxelTypeParams.class, params.layers.get(0).material).name);
+        assertEquals(2, params.layers.get(1).height);
+        assertEquals("b", assertInstanceOf(TestingVoxelTypeParams.class, params.layers.get(1).material).name);
+        assertEquals(3, params.layers.get(2).height);
+        assertEquals("c", assertInstanceOf(TestingVoxelTypeParams.class, params.layers.get(2).material).name);
         assertDoesNotThrow(() -> params.create(new TestingVoxelWorld(new WorldBBox3d(0, 0, 0, 1, 1, 1))));
     }
 

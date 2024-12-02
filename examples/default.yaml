@@ -30,6 +30,14 @@ sources:
       features: BDTOPO_V3:troncon_de_route
     processor:
       type: geoToolsVector
+  railroad:
+    modelType: railroad
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:troncon_de_voie_ferree
+    processor:
+      type: geoToolsVector
 renderers:
   altitude:
     after:
@@ -47,12 +55,10 @@ renderers:
       direction: downwards
       layers:
         - material: default:dirt_with_grass
-        - material:
-            type: voxel
-            node: default:dirt
+        - material: default:dirt
           height: 3
         - material: default:stone
-          height: 10
+          height: 30
   building:
     after:
       - renderer:altitude
@@ -61,21 +67,94 @@ renderers:
     modelType: building
     heightmap: ground
     inside: default:cobble
-    edge: default:stone
-  road:
+    edge: default:stonebrick
+  bridges:
     after:
       - source:road
       - renderer:ground
     type: linear
     modelType: road
-    heightmap: ground
-    place: default:obsidian
+    renderOnlyWhenAbove: ground
+    at: 0..4
+    place:
+      type: stack
+      offset: -1
+      layers:
+        - material: default:stonebrick
+          height: 2
+        - material:
+            node: stairs:slab_stonebrick
+            param2: 0
+        - material: air
+          height: 1
+  roads:
+    after:
+      - source:road
+      - renderer:bridges
+    type: linear
+    modelType: road
+    at: 0..3
+    place:
+      type: stack
+      layers:
+        - material: default:obsidian
+        - material: air
+          height: 4
+  tunnel:
+    after:
+      - source:railroad
+      - renderer:ground
+    type: linear
+    modelType: railroad
+    at: 0..3
+    place:
+      type: stack
+      offset: 1
+      layers:
+        - material: air
+          height: 4
+  ballast:
+    after:
+      - source:railroad
+      - renderer:tunnel
+    type: linear
+    modelType: railroad
+    at: 0..3
+    place: default:gravel
+  rails:
+    after:
+      - source:railroad
+      - renderer:ballast
+    type: linear
+    modelType: railroad
+    at: 2
+    place:
+      type: stack
+      offset: 1
+      layers:
+        - material: carts:rail
 verticalScale: 1.0
 horizontalScale: 1.0
 area:
   center:
-    latitude: 48.845
-    longitude: 2.425
+# I love Saint Mandé
+#    latitude: 48.84593
+#    longitude: 2.42372
+# Echangeur de Bagnolet
+#    latitude: 48.866
+#    longitude: 2.414
+# Viaduc de Millau
+#    latitude: 44.085636190025575
+#    longitude: 3.0216182867051864
+# St Lazarre
+    latitude: 48.8790816561616
+    longitude: 2.323464685493046
+# Rail Porn à Villeneuve
+#    latitude: 48.75693562069861
+#    longitude: 2.436901192048874
+# Culs de sac à Boulouris
+#    latitude: 43.42136382963531
+#    longitude: 6.793996874139488
   extendX: 1000
   extendY: 1000
 crs: EPSG:2154
