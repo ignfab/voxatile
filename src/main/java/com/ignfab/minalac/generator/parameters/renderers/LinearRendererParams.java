@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
+import com.ignfab.minalac.generator.parameters.renderers.values.FixedValueParams;
+import com.ignfab.minalac.generator.parameters.renderers.values.ModelValueParams;
 import com.ignfab.minalac.generator.renderers.Renderer;
 import com.ignfab.minalac.generator.renderers.LinearRenderer;
 
@@ -37,7 +39,7 @@ public class LinearRendererParams extends RendererParams {
      * Width (optional, default 1).
      */
     @JsonSetter(nulls = Nulls.SKIP)
-    public int width = 1;
+    public ModelValueParams<Integer> width = new FixedValueParams<Integer>(1);
 
     @JsonSetter(nulls = Nulls.SKIP)
     public int verticalOffset = 0;
@@ -65,8 +67,6 @@ public class LinearRendererParams extends RendererParams {
     public void validate() throws IllegalArgumentException {
         if (heightmap.isEmpty())
             throw new IllegalArgumentException("Heightmap name cannot be empty");
-        if (width <= 0)
-            throw new IllegalArgumentException("Width must be a positive integer");
     }
 
     @Override
@@ -75,7 +75,7 @@ public class LinearRendererParams extends RendererParams {
             new ModelSelection(generation.models(), modelType),
             generation.heightmaps().get(heightmap),
             place.create(generation.world()),
-            width,
+            width.create(),
             verticalOffset,
             onlyAboveHeightmap,
             alwaysAboveHeightmap

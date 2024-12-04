@@ -91,7 +91,8 @@ renderers:
       layers:
         - material: default:obsidian
         - material: air
-    width: 4
+    width:
+      fromMetadata: importance
     alwaysAboveHeightmap: yes
 verticalScale: 1.0
 horizontalScale: 1.0

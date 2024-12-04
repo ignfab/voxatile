@@ -4,6 +4,7 @@ import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable3d;
+import com.ignfab.minalac.generator.renderers.values.ModelValue;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.voxelization.shape3d.Line3d;
@@ -17,7 +18,7 @@ public class LinearRenderer extends ModelRenderer {
     private final Heightmap heightmap;
 
     private Placeable placeable;
-    private int width;
+    private ModelValue<Integer> widthValue;
     private int verticalOffset;
     private boolean onlyIfAboveHeightmap;
     private boolean raiseAboveHeightmap;
@@ -37,7 +38,7 @@ public class LinearRenderer extends ModelRenderer {
         ModelSelection selection,
         Heightmap heightmap,
         Placeable placeable,
-        int width,
+        ModelValue<Integer> widthValue,
         int verticalOffset,
         boolean onlyIfAboveHeightmap,
         boolean raiseAboveHeightmap
@@ -45,7 +46,7 @@ public class LinearRenderer extends ModelRenderer {
         super(selection);
         this.heightmap = heightmap;
         this.placeable = placeable;
-        this.width = width;
+        this.widthValue = widthValue;
         this.verticalOffset = verticalOffset;
         this.onlyIfAboveHeightmap = onlyIfAboveHeightmap;
         this.raiseAboveHeightmap = raiseAboveHeightmap;
@@ -70,6 +71,9 @@ public class LinearRenderer extends ModelRenderer {
             System.err.println("Ignoring non voxelizable model. Type: " + model.getClass());
             return;
         }
+
+        // Model values
+        int width = widthValue.get(model);
 
         // Don't render if no part is clearly above heightmap
         if (onlyIfAboveHeightmap && ! isAboveHeightmap(voxelizable.voxelize3d(bbox).borders()))
