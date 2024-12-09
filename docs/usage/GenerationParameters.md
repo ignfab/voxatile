@@ -280,6 +280,18 @@ Note that `voxel` type corresponds to Minecraft/Minetest voxel description (see 
 
 See corresponding structure or pattern for extra fields.
 
+#### Nothing
+
+**Type**: `nothing`
+
+Places nothing. Conveniant when a material is required but you want to place nothing.
+
+Example using `nothing` in a `place` field:
+```yaml
+place:
+  type: nothing
+```
+
 #### Stack
 
 **Type**: `stack`

@@ -4,7 +4,17 @@ package com.ignfab.minalac.generator.world;
  * A placeable placing nothing.
  * Can be convenient to pass as a no-op voxel type to some operation.
  */
-public class NoVoxel implements Placeable {
+public final class NoVoxel implements Placeable {
+    /**
+     * NoVoxel singleton instance.
+     */
+    public static final NoVoxel INSTANCE = new NoVoxel();
+
+    /**
+     * NoVoxel private constructor (use INSTANCE instead).
+     */
+    private NoVoxel() {}
+
     /**
      * Does not place anything at x, y, z.
      *

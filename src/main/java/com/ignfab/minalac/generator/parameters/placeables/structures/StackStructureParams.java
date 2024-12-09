@@ -50,7 +50,7 @@ public class StackStructureParams extends CustomPlaceableParams {
     @Override
     public Placeable create(VoxelWorld world) {
         if (layers == null || layers.isEmpty())
-            return new NoVoxel();
+            return NoVoxel.INSTANCE;
 
         SimpleVoxelStructure structure = new SimpleVoxelStructure();
         int z = 0;
