@@ -42,16 +42,33 @@ public class Block {
         // Node location on arrays
         // https://github.com/minetest/minetest/blob/master/doc/world_format.md#node-data
         int i = z << 8 | y << 4 | x;
+        param0[i] = getOrCreateIdForType(voxel.getType());
         param1[i] = voxel.getParam1();
         param2[i] = voxel.getParam2();
+    }
 
-        if (idNameMapping.containsKey(voxel.getType())) {
-            param0[i] = idNameMapping.get(voxel.getType()).shortValue();
-        } else {
+    /**
+     * Gets or creates a new id for given type name.
+     * This ensure a threadsafe id creation.
+     *
+     * @param name type name
+     * @return identfier for the given type name
+     */
+    private short getOrCreateIdForType(String name) {
+        // Search first in case we already have that name (most likely)
+        if (idNameMapping.containsKey(name))
+            return idNameMapping.get(name).shortValue();
+
+        synchronized (idNameMapping) {
+            // Check again to be sure name has not been created since previous check
+            if (idNameMapping.containsKey(name))
+                return idNameMapping.get(name).shortValue();
+
+            // Create a new Id for that name
             int newId = nameIdMapping.size();
-            nameIdMapping.put(newId, voxel.getType());
-            idNameMapping.put(voxel.getType(), newId);
-            param0[i] = (short) newId;
+            nameIdMapping.put(newId, name);
+            idNameMapping.put(name, newId);
+            return (short) newId;
         }
     }
 
