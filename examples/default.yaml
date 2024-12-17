@@ -146,15 +146,18 @@ area:
 # Viaduc de Millau
 #    latitude: 44.085636190025575
 #    longitude: 3.0216182867051864
-# St Lazarre
-    latitude: 48.8790816561616
-    longitude: 2.323464685493046
+# St Lazarre - Place de l'Europe
+#    latitude: 48.8790816561616
+#    longitude: 2.323464685493046
 # Rail Porn à Villeneuve
 #    latitude: 48.75693562069861
 #    longitude: 2.436901192048874
 # Culs de sac à Boulouris
 #    latitude: 43.42136382963531
 #    longitude: 6.793996874139488
+# Pont Martrou à Rochefort, avec un glitch à une extrémité
+    latitude: 45.91722146731518
+    longitude: -0.9670081885337489
   extendX: 1000
   extendY: 1000
 crs: EPSG:2154

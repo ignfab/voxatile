@@ -37,7 +37,6 @@ public class LinearRendererParams extends RendererParams {
      * At (optional, default "0").
      */
     @JsonSetter(nulls = Nulls.SKIP)
-    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     IntegerIntervalsParams at = new IntegerIntervalsParams(0, 0);
 
     /**

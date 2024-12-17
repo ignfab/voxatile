@@ -27,7 +27,7 @@ public class StackStructureParamsTest {
     }
 
     @Test
-    void testDeserializeMaximal() {
+    void testDeserializeFull() {
         StackStructureParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(StackStructureParams.class,
             """
                 type: stack
@@ -55,12 +55,13 @@ public class StackStructureParamsTest {
 
     @Test
     void testDeserializeDownwardsStack() {
-        TestingVoxelWorld world = new TestingVoxelWorld(new WorldBBox3d(-1, -1, -4, 2, 2, 6));
+        TestingVoxelWorld world = new TestingVoxelWorld(new WorldBBox3d(-1, -1, -3, 2, 2, 6));
 
         StackStructureParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(StackStructureParams.class,
             """
                 type: stack
                 direction: downwards
+                offset: 1
                 layers:
                   - material: a
                   - material: b
@@ -79,12 +80,12 @@ public class StackStructureParamsTest {
         // We need to test deserialization result by placing structure
         // (we are not supposed to know how placeable is managed)
         placeable.place(0, 0, 0);
-        world.assertVoxelNull(0, 0, 1);
-        world.assertVoxel("a", 0, 0, 0);
+        world.assertVoxelNull(0, 0, 2);
+        world.assertVoxel("a", 0, 0, 1);
+        world.assertVoxel("b", 0, 0, 0);
         world.assertVoxel("b", 0, 0, -1);
         world.assertVoxel("b", 0, 0, -2);
-        world.assertVoxel("b", 0, 0, -3);
-        world.assertVoxelNull(0, 0, -4);
+        world.assertVoxelNull(0, 0, -3);
         for (WorldCoords3d pos : world.limits())
             if (pos.x() != 0 && pos.y() != 0)
                 world.assertVoxelNull(pos, "Voxel should be null at %s".formatted(pos));

@@ -75,22 +75,4 @@ public record WorldCoords3d(int x, int y, int z) implements Positioned3d {
     public WorldCoords3d coords() {
         return this;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        WorldCoords3d that = (WorldCoords3d) o;
-        return that.x() == x && that.y() == y && that.z() == z;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 31 * hash + x;
-        hash = 31 * hash + y;
-        hash = 31 * hash + z;
-        return hash;
-    }
 }

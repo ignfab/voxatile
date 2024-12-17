@@ -165,7 +165,7 @@ public class LinearRenderer extends ModelRenderer {
             // Draw a slice for each voxel.
             drawSlice(pos, normalized);
 
-            if (pos != nextPos) {
+            if (!pos.equals(nextPos)) {
                 // To keep voxel connected (and avoid moiré effects), we need to draw one more slice each time both x and y change
                 if (pos.x() != nextPos.x() && pos.y() != nextPos.y())
                     if (Math.abs(slope.x()) > Math.abs(slope.y()))
@@ -174,7 +174,7 @@ public class LinearRenderer extends ModelRenderer {
                         drawSlice(pos.x(), pos.y() + (int) Math.round(slope.y()), pos.z(), normalized);
             }
 
-            if (slope != voxel.nextSlope())
+            if (!slope.equals(voxel.nextSlope()))
                 // If orientation changes, we need to draw a join in gap.
                 drawJoin(pos, slope, voxel.nextSlope());
 
