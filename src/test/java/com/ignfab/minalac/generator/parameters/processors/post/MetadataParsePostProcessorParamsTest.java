@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.ignfab.minalac.generator.parameters.ValueParser;
 
 public class MetadataParsePostProcessorParamsTest {
     private static ObjectMapper mapper;
@@ -22,9 +23,8 @@ public class MetadataParsePostProcessorParamsTest {
 
     @Test
     public void testValidate() {
-        assertThrows(IllegalArgumentException.class, new MetadataParsePostProcessorParams("", "integer")::validate);
-        assertThrows(IllegalArgumentException.class, new MetadataParsePostProcessorParams("toto", "invalid")::validate);
-        assertDoesNotThrow(new MetadataParsePostProcessorParams("toto", "integer")::validate);
+        assertThrows(IllegalArgumentException.class, new MetadataParsePostProcessorParams("", ValueParser.INTEGER)::validate);
+        assertDoesNotThrow(new MetadataParsePostProcessorParams("toto", ValueParser.INTEGER)::validate);
     }
 
     @Test

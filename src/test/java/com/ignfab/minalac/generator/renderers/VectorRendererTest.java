@@ -35,7 +35,7 @@ class VectorRendererTest {
         world = new TestingVoxelWorld(bbox);
         heightmap = new Heightmap(bbox.to2d(), -1);
         store = new ModelStore();
-        modelSelection = new ModelSelection(store, "testing");
+        modelSelection = new ModelSelection(store, "testing", null);
         inside = new TestingVoxelType(world, "INSIDE");
         edge = new TestingVoxelType(world, "EDGE");
     }

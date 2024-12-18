@@ -5,7 +5,7 @@ import java.beans.ConstructorProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.models.Model;
-import com.ignfab.minalac.generator.parameters.processors.post.parsers.ValueParsers;
+import com.ignfab.minalac.generator.parameters.ValueParser;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
 import com.ignfab.minalac.generator.processors.post.MetadataDefaultPostProcessor;
 
@@ -29,7 +29,7 @@ public class MetadataDefaultPostProcessorParams extends PostProcessorParams {
      * Type to which the value should be converted (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public final String as;
+    public final ValueParser<?> as;
 
     /**
      * Constructor used to ensure that the required fields are present during
@@ -40,7 +40,7 @@ public class MetadataDefaultPostProcessorParams extends PostProcessorParams {
      * @param as type to which the value should be converted
      */
     @ConstructorProperties({ "metadata", "value", "as" })
-    public MetadataDefaultPostProcessorParams(String metadata, String value, String as) {
+    public MetadataDefaultPostProcessorParams(String metadata, String value, ValueParser<?> as) {
         this.metadata = metadata;
         this.value = value;
         this.as = as;
@@ -50,11 +50,10 @@ public class MetadataDefaultPostProcessorParams extends PostProcessorParams {
     public void validate() throws IllegalArgumentException {
         if (metadata.isBlank())
             throw new IllegalArgumentException("The 'metadata' field cannot be empty or contain only whitespace.");
-        ValueParsers.validate(as);
     }
 
     @Override
     public PostProcessor<Model, Model> create() {
-        return new MetadataDefaultPostProcessor(metadata, ValueParsers.get(as).parser().apply(value));
+        return new MetadataDefaultPostProcessor(metadata, as.parse(value));
     }
 }

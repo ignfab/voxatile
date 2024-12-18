@@ -6,11 +6,15 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * The abstract {@code ModelRenderer} class represents a type of {@link Renderer} that renders a selection of models.
+ *
+ * @param <M> Model type for this renderer.
  */
-public abstract class ModelRenderer implements Renderer {
+public abstract class ModelRenderer<M> implements Renderer {
+    private final Class<M> cls;
     private final ModelSelection selection;
 
-    protected ModelRenderer(ModelSelection selection) {
+    protected ModelRenderer(Class<M> cls, ModelSelection selection) {
+        this.cls = cls;
         this.selection = selection;
     }
 
@@ -19,9 +23,9 @@ public abstract class ModelRenderer implements Renderer {
      */
     @Override
     public void render(WorldBBox3d bbox) {
-        if (selection != null)
-            for (Model model : selection)
-                render(model, bbox);
+        for (Model model : selection)
+            if (cls.isInstance(model))
+                render(cls.cast(model), bbox);
     }
 
     /**
@@ -30,5 +34,5 @@ public abstract class ModelRenderer implements Renderer {
      * @param model the model to render
      * @param bbox the limits of the rendering area.
      */
-    protected abstract void render(Model model, WorldBBox3d bbox);
+    protected abstract void render(M model, WorldBBox3d bbox);
 }

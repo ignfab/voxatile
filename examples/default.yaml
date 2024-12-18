@@ -36,7 +36,8 @@ renderers:
     after:
       - source:mnt
     type: heightmap
-    modelType: mnt
+    models:
+      type: mnt
     heightmap: ground
   ground:
     after:
@@ -48,9 +49,7 @@ renderers:
       direction: downwards
       layers:
         - material: default:dirt_with_grass
-        - material:
-            type: voxel
-            node: default:dirt
+        - material: default:dirt
           height: 3
         - material: default:stone
           height: 10
@@ -59,7 +58,10 @@ renderers:
       - renderer:altitude
       - source:bati
     type: vector
-    modelType: building
+    models:
+      type: building
+      filter:
+        hasMetadata: height
     heightmap: ground
     inside: default:cobble
     edge: default:stone

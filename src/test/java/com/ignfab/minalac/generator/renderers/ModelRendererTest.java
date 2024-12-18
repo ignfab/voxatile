@@ -45,17 +45,16 @@ public class ModelRendererTest {
         assertEquals(0, idleRenderer.modelsRendered.size());
     }
 
-    private static class ModelRendererImpl extends ModelRenderer {
+    private static class ModelRendererImpl extends ModelRenderer<ModelImpl> {
         private final List<ModelImpl> modelsRendered = new ArrayList<>();
 
         ModelRendererImpl(ModelStore store, String modelType) {
-            super(new ModelSelection(store, modelType));
+            super(ModelImpl.class, new ModelSelection(store, modelType, null));
         }
 
         @Override
-        protected void render(Model model, WorldBBox3d bbox) {
-            ModelImpl modelImpl = (ModelImpl) model;
-            modelsRendered.add(modelImpl);
+        protected void render(ModelImpl model, WorldBBox3d bbox) {
+            modelsRendered.add(model);
         }
     }
 

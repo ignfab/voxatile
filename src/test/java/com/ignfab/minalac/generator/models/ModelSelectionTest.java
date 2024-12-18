@@ -2,8 +2,10 @@ package com.ignfab.minalac.generator.models;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.models.filters.ModelFilterHasMetadata;
+
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Map;
 
 import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.assertBrowsesAllOnce;
 import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.assertEmpty;
@@ -14,31 +16,24 @@ public class ModelSelectionTest {
     public void testIterator() {
         ModelStore store = new ModelStore();
 
-        Model modelA = new ModelImpl();
-        Model modelB = new ModelImpl();
-        Model model5 = new ModelImpl();
-        Model model2 = new ModelImpl();
+        Model modelA = new TestingModel(Map.of("a", 1));
+        Model modelB = new TestingModel(Map.of("b", 2));
+        Model modelC = new TestingModel();
 
-        store.add("letter", modelA);
-        store.add("digit", model5);
-        store.add("letter", modelB);
-        store.add("letter", modelA);
-        store.add("digit", model2);
+        store.add("X", modelA);
+        store.add("Y", modelA);
+        store.add("X", modelB);
+        store.add("X", modelA);
+        store.add("Y", modelC);
 
-        ModelSelection selection = new ModelSelection(store, "letter");
-        Iterator<Model> iterator = selection.iterator();
+        assertBrowsesAllOnce(Arrays.asList(modelA, modelA, modelB), new ModelSelection(store, "X", null).iterator());
 
-        assertBrowsesAllOnce(Arrays.asList(modelA, modelA, modelB), iterator);
+        assertBrowsesAllOnce(Arrays.asList(modelA, modelA), new ModelSelection(store, "X", new ModelFilterHasMetadata("a")).iterator());
 
-        assertEmpty(new ModelSelection(store, "special"));
-    }
+        assertBrowsesAllOnce(Arrays.asList(modelA, modelC), new ModelSelection(store, "Y", null).iterator());
 
-    private static class ModelImpl extends Model {
-        ModelImpl() {}
+        assertEmpty(new ModelSelection(store, "Y", new ModelFilterHasMetadata("b")));
 
-        @Override
-        public String salt() {
-            throw new UnsupportedOperationException("Unimplemented method 'salt'");
-        }
+        assertEmpty(new ModelSelection(store, "Z", null));
     }
 }

@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.parameters.renderers;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.models.ModelSelection;
+import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.renderers.Renderer;
 import com.ignfab.minalac.generator.renderers.VectorRenderer;
@@ -15,7 +15,7 @@ public class VectorRendererParams extends RendererParams {
     /**
      * The type of models to render (required).
      */
-    public String modelType;
+    public ModelSelectionParams models;
     /**
      * The name of the ground heightmap to use (required).
      */
@@ -32,38 +32,32 @@ public class VectorRendererParams extends RendererParams {
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
-     * @param modelType the type of models to render.
+     * @param models models selection to render.
      * @param heightmap the name of the ground heightmap to use.
      * @param inside what to place on inside shapes
      * @param edge what to place on shapes edges
      */
-    @ConstructorProperties({"modelType", "heightmap", "inside", "edge"})
-    public VectorRendererParams(String modelType, String heightmap, PlaceableParams inside, PlaceableParams edge) {
-        this.modelType = modelType;
+    @ConstructorProperties({"models", "heightmap", "inside", "edge"})
+    public VectorRendererParams(ModelSelectionParams models, String heightmap, PlaceableParams inside, PlaceableParams edge) {
+        this.models = models;
         this.heightmap = heightmap;
         this.inside = inside;
         this.edge = edge;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void validate() throws IllegalArgumentException {
-        inside.validate();
-        edge.validate();
-        if (modelType.isEmpty())
-            throw new IllegalArgumentException("The field modelType cannot be empty");
         if (heightmap.isEmpty())
             throw new IllegalArgumentException("The field heightmap cannot be empty");
+        inside.validate();
+        edge.validate();
+        models.validate();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Renderer create(Generation generation) {
         return new VectorRenderer(
-            new ModelSelection(generation.models(), modelType),
+            models.create(generation.models()),
             generation.heightmaps().get(heightmap),
             inside.create(generation.world()),
             edge.create(generation.world())
