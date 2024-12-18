@@ -36,7 +36,8 @@ renderers:
     after:
       - source:mnt
     type: heightmap
-    modelType: mnt
+    models:
+      type: mnt
     heightmap: ground
   ground:
     after:
@@ -45,9 +46,9 @@ renderers:
     heightmap: ground
     place:
       type: stack
+      direction: downwards
       layers:
         - material: minecraft:grass_block
-          height: 1
         - material: minecraft:dirt
           height: 3
         - material: minecraft:stone
@@ -57,7 +58,10 @@ renderers:
       - renderer:altitude
       - source:bati
     type: vector
-    modelType: building
+    models:
+      type: building
+      filter:
+        hasMetadata: height
     heightmap: ground
     inside: minecraft:cobblestone
     edge: minecraft:stone

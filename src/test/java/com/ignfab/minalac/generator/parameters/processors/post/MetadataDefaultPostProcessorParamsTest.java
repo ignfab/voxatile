@@ -5,21 +5,22 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.parameters.ValueParser;
+
 public class MetadataDefaultPostProcessorParamsTest {
     @Test
     public void testCreate() {
         MetadataDefaultPostProcessorParams params;
-        params = new MetadataDefaultPostProcessorParams("toto", "toto", "integer");
+        params = new MetadataDefaultPostProcessorParams("toto", "toto", ValueParser.INTEGER);
         assertThrows(NumberFormatException.class, params::create);
 
-        params = new MetadataDefaultPostProcessorParams("toto", "5", "integer");
+        params = new MetadataDefaultPostProcessorParams("toto", "5", ValueParser.INTEGER);
         assertDoesNotThrow(params::create);
     }
 
     @Test
     public void testValidate() {
-        assertThrows(IllegalArgumentException.class, new MetadataDefaultPostProcessorParams("", "5", "integer")::validate);
-        assertThrows(IllegalArgumentException.class, new MetadataDefaultPostProcessorParams("toto", "5", "invalid")::validate);
-        assertDoesNotThrow(new MetadataDefaultPostProcessorParams("toto", "5", "integer")::validate);
+        assertThrows(IllegalArgumentException.class, new MetadataDefaultPostProcessorParams("", "5", ValueParser.INTEGER)::validate);
+        assertDoesNotThrow(new MetadataDefaultPostProcessorParams("toto", "5", ValueParser.INTEGER)::validate);
     }
 }

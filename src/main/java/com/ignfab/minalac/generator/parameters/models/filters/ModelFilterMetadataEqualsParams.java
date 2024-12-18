@@ -1,0 +1,59 @@
+package com.ignfab.minalac.generator.parameters.models.filters;
+
+import java.beans.ConstructorProperties;
+import java.util.Collections;
+import java.util.function.Predicate;
+
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import com.ignfab.minalac.generator.models.Model;
+import com.ignfab.minalac.generator.models.filters.ModelFilterMetadataIn;
+import com.ignfab.minalac.generator.parameters.ValueParser;
+
+/**
+ * Parameters for a {@link ModelFilterMetadataIn} with an "equals" operator.
+ */
+public class ModelFilterMetadataEqualsParams extends ModelFilterParams {
+
+    /**
+     * Name of the metadata to test (required).
+     */
+    @JsonSetter(nulls = Nulls.FAIL)
+    public String metadata;
+
+    /**
+     * Value of metadata to test (required).
+     */
+    @JsonSetter(nulls = Nulls.FAIL)
+    public Object equals;
+
+    /**
+     * Type of that value (optional, default "string").
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public ValueParser<?> as = ValueParser.STRING;
+
+    /**
+     * Creates a new {@code ModelFilterMetadataEqualsParams}.
+     *
+     * @param metadata name of the metadata to test.
+     * @param equals value of metadata to test.
+     */
+    @ConstructorProperties({"metadata", "equals"})
+    public ModelFilterMetadataEqualsParams(String metadata, Object equals) {
+        this.metadata = metadata;
+        this.equals = equals;
+    }
+
+    @Override
+    public void validate() {
+        if (metadata.isBlank())
+            throw new IllegalArgumentException("Metadata name cannot be empty or blank");
+    }
+
+    @Override
+    public Predicate<Model> create() {
+        return new ModelFilterMetadataIn(metadata, Collections.singletonList(as.parse(equals)));
+    }
+
+}

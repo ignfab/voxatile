@@ -1,7 +1,6 @@
 package com.ignfab.minalac.generator.renderers;
 
 import com.ignfab.minalac.generator.generation.Heightmap;
-import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
@@ -14,7 +13,7 @@ import com.ignfab.minalac.generator.world.Placeable;
 /**
  * A basic example of vector renderer intended to evolve.
  */
-public class VectorRenderer extends ModelRenderer {
+public class VectorRenderer extends ModelRenderer<ShapesVoxelizable2d> {
     private final Heightmap heightmap;
 
     // What to place inside and on edges of geometries
@@ -30,20 +29,15 @@ public class VectorRenderer extends ModelRenderer {
      * @param edge What to place on geometries edges
      */
     public VectorRenderer(ModelSelection selection, Heightmap heightmap, Placeable inside, Placeable edge) {
-        super(selection);
+        super(ShapesVoxelizable2d.class, selection);
         this.heightmap = heightmap;
         this.inside = inside;
         this.edge = edge;
     }
 
     @Override
-    protected void render(Model model, WorldBBox3d bbox) {
-        if (!(model instanceof ShapesVoxelizable2d voxelizable)) {
-            // TODO: Better warning about not possible to render a non voxelizable model
-            System.err.println("Ignoring non shapesvoxelizable model. Type: " + model.getClass());
-            return;
-        }
-        ShapesVoxelizer2d voxelizer = voxelizable.voxelize2d(bbox.to2d());
+    protected void render(ShapesVoxelizable2d model, WorldBBox3d bbox) {
+        ShapesVoxelizer2d voxelizer = model.voxelize2d(bbox.to2d());
 
         // Iterate over objects and place voxels on map at heightmap altitude
         for (Positioned2d voxel : voxelizer) {

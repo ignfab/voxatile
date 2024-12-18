@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.parameters.renderers;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.minetest.MTVoxelTypeParams;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -13,14 +14,15 @@ public class VectorRendererParamsTest {
 
         MTVoxelTypeParams grass = new MTVoxelTypeParams("default:grass");
         MTVoxelTypeParams brick = new MTVoxelTypeParams("default:stonebrick");
+        ModelSelectionParams selection = new ModelSelectionParams("building");
 
-        VectorRendererParams paramsWithoutType = new VectorRendererParams("", "ground", grass, brick);
+        VectorRendererParams paramsWithoutType = new VectorRendererParams(new ModelSelectionParams(""), "ground", grass, brick);
         assertThrows(IllegalArgumentException.class, paramsWithoutType::validate);
 
-        VectorRendererParams paramsWithoutHeightmap = new VectorRendererParams("building", "", grass, brick);
+        VectorRendererParams paramsWithoutHeightmap = new VectorRendererParams(selection, "", grass, brick);
         assertThrows(IllegalArgumentException.class, paramsWithoutHeightmap::validate);
 
-        VectorRendererParams params = new VectorRendererParams("building", "ground", grass, brick);
+        VectorRendererParams params = new VectorRendererParams(selection, "ground", grass, brick);
         assertDoesNotThrow(params::validate);
     }
 }

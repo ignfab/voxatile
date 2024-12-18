@@ -247,6 +247,146 @@ Fields:
 - `modelType`: the type of models to render
 - `heightmap`: the name of the heightmap to use. It must exist.
 
+## Model selections
+
+A model selection describes characteristics that models must match to be processed.
+
+Models are always selected on their type and that selection may be narrowed down by an extra filter. This filter can be a combination of other filters.
+
+Example of a model selection:
+```yaml
+models:
+  type: buildings
+  filter:
+    and:
+      - hasMetadata: height
+      - not:
+          metadata: classification
+          in: [ Monument, Castle, Chapel, Church ]
+```
+
+Fields:
+  - `type` (required): Type of models to select
+  - `filter` (optional, default none): Extra filter
+
+
+### Boolean operations
+
+Usual boolean operations can be applied on filters to alter them or combine them.
+
+#### Negation
+
+A filter can be negated using `not` filter.
+
+Example:
+```yaml
+  not:
+    ...filter...
+```
+
+Fields:
+  - `not`: The filter to negate (required)
+
+#### "And" combination
+
+Several filters can be combined using `and` filter. Result is true only if all of combined filters are true.
+
+Example:
+```yaml
+  and:
+    - ...filter1...
+    - ...filter2...
+    - ...filter3...
+```
+
+Fields:
+  - `and` (required): A list of filters
+
+#### "Or" combination
+
+Several filters can be combined using `or` filter. Result is true if at least one of combined filters is true.
+
+Example:
+```yaml
+  or:
+    - ...filter1...
+    - ...filter2...
+    - ...filter3...
+```
+
+Fields:
+  - `or` (required): A list of filters
+
+#### Combination
+
+Of course, `and`, `or` and `not` can be combined in complex expressions, for example:
+```Yaml
+and:
+  - ...filter1...
+  - not:
+      ...filter2...
+  - or:
+    - ...filter3...
+    - ...filter4...
+```
+This is equivalent to *filter1 AND (NOT filter2) AND (filter3 OR filter4)*.
+
+### Filtering on metadata
+
+These filters rely on models metadata.
+
+#### Has
+
+Returns true if given metadata exists for the model.
+
+Examples:
+```yaml
+   hasMetadata: classification
+```
+
+```yaml
+   hasMetadata: [ classification, height ]
+```
+
+Fields:
+  - `hasMetadata` (required): Metadata name or list of metadata names to check
+
+If a list of metadata name is given, model is selected only if it has all given metadata.
+
+#### Equals
+
+Returns true if given metadata has the given value.
+
+Example:
+```yaml
+   metadata: height
+   equals: 2
+   as: integer
+```
+
+Fields:
+  - `metadata` (required): Name of metadata to check
+  - `equals` (required): Value to compare with
+  - `as` (optional, default `text`): Type of value to compare with (`integer`, `decimal`, `text` or `boolean`)
+
+**Be careful with typing!** Value comparison includes type. Values with different type won't be equal. Metadata with text value "5" won't equal to 5 as integer.
+
+#### In
+
+Returns true if given metadata value is among given values.
+
+Example:
+```yaml
+   metadata: classification
+   in: [ Monument, Castle, Chapel, Church ]
+   as: text
+```
+
+Fields:
+  - `metadata` (required): Name of metadata to check
+  - `in` (required): List of values to compare with
+  - `as` (optional, default `text`): Type of values to compare with (`integer`, `decimal`, `text` or `boolean`)
+
 ## Placeables
 
 A placeable is something that can be placed in voxel world at a given position: a voxel, a structure or a pattern.
