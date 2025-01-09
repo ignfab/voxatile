@@ -96,9 +96,13 @@ public final class SampleImplementation {
         metadata.setWorldName("Minalac");
 
         File directory = cli.getOutputPath().toFile();
-        deleteDirectory(directory);
-        if (!directory.mkdirs())
-            throw new MapWriteException("Cannot generate the map because the folder " + directory.getAbsolutePath() + " cannot be created");
+
+        if (directory.exists()) {
+            purgeDirectory(directory);
+        } else {
+            if (!directory.mkdirs())
+                throw new MapWriteException("Cannot generate the map because the folder " + directory.getAbsolutePath() + " cannot be created");
+        }
 
         generation.world().save(directory);
         System.out.println("Done");
@@ -107,12 +111,15 @@ public final class SampleImplementation {
         System.out.println("Execution time: " + (end - start) / 1000 + "s");
     }
 
-    private static void deleteDirectory(File directoryToBeDeleted) {
-        File[] allContents = directoryToBeDeleted.listFiles();
-        if (allContents != null) {
-            for (File file : allContents)
-                deleteDirectory(file);
+    private static void purgeDirectory(File directoryToPurge) throws MapWriteException {
+        File[] files = directoryToPurge.listFiles();
+        if (files == null)
+            throw new MapWriteException("Unable to process content of: " + directoryToPurge + ". Is it a writable directory?");
+        for (File file : files) {
+            if (file.isDirectory())
+                purgeDirectory(file);
+            if (!file.delete())
+                throw new MapWriteException("Failed to delete " + file);
         }
-        directoryToBeDeleted.delete();
     }
 }
