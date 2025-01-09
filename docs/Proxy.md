@@ -25,7 +25,4 @@ export JAVA_TOOL_OPTIONS=$JAVA_OPTS
 
 ## Maven
 
-Because Maven uses Java, the options are the same, but the name of the environment variable is Maven-specific:
-```shell
-export MAVEN_OPTS=$JAVA_OPTS
-```
+The recommended method to specify corporate proxy information for Maven is to rely on the `settings.xml` file as documented [here](https://maven.apache.org/guides/mini/guide-proxies.html).

@@ -1,0 +1,55 @@
+name: Build and publish docker image
+run-name: ${{ github.actor }} is building docker image of ${{ github.repository }}#${{ github.ref_name }}
+on:
+  push:
+    paths:
+    - src/**
+    - pom.xml
+    - Dockerfile
+    - .m2-settings.xml
+    - .github/workflows/docker.yml
+  pull_request:
+    branches:
+    - "*"
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    name: docker-build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Log into registry ${{ env.REGISTRY }}
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ github.token }}
+
+    - name: Set Docker tag
+      id: set_docker_tag
+      run: |
+        branch="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+        if [ "$branch" == "main" ]; then
+          tag="latest"
+        else
+          tag="${branch//\//-}"
+        fi
+        echo "tag=${tag}" >> $GITHUB_OUTPUT
+
+    - name: Build and push Docker image
+      id: build-and-push
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        push: true
+        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.set_docker_tag.outputs.tag }}
