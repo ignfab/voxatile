@@ -8,18 +8,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ModelTest {
-    private static final class DummyModel extends ModelImpl {
-        @Override
-        public String salt() {
-            return "";
-        }
-    }
-
-    private DummyModel model;
+    private TestingModel model;
 
     @BeforeEach
     void init() {
-        model = new DummyModel();
+        model = new TestingModel();
     }
 
     @AfterEach
@@ -28,23 +21,23 @@ public class ModelTest {
     }
 
     @Test
-    @DisplayName("Test \"setMetadata\" method")
+    @DisplayName("\"setMetadata\" should store a value and remove it when set to null")
     void testSetMetadata() {
         model.setMetadata("test", "dummy");
-        assertEquals("dummy", (String) model.getMetadata("test"));
+        model.assertMetadata("test", "dummy");
 
         // Verify that "null" value removes metadata
         model.setMetadata("test", null);
-        assertFalse(model.hasMetadata("test"));
-        assertNull(model.getMetadata("test"));
+        model.assertMetadataAbsent("test");
+        model.assertMetadata("test", null);
     }
 
     @Test
-    @DisplayName("Test if the \"hasMetadata\" method finds the metadata")
+    @DisplayName("\"hasMetadata\" should return true when metadata exists and false otherwise")
     void testHasMetadata() {
         model.setMetadata("test", "dummy");
         assertTrue(model.hasMetadata("test"));
 
-        assertFalse(model.hasMetadata("invalid"));
+        model.assertMetadataAbsent("invalid");
     }
 }
