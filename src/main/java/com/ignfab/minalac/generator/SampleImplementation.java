@@ -29,6 +29,8 @@ import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 import org.geotools.api.referencing.FactoryException;
 
 import java.io.File;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,9 +48,12 @@ public final class SampleImplementation {
      * @param args command line arguments
      */
     public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException {
-        long start = System.currentTimeMillis();
+        // Execution duration start
+        Instant start = Instant.now();
         HttpTrustAllSSL.applyGlobally();
 
+        // Deserialization duration start
+        Instant initializationStart = Instant.now();
         // Command line arguments parsing & basic processing
         MinalacGeneratorCLI cli = new MinalacGeneratorCLI();
         cli.parse(args);
@@ -78,13 +83,28 @@ public final class SampleImplementation {
 
         Generation generation = parser.parse(cli.readParameters()).create();
 
-        System.out.println("Creation of the map.");
-        generation.scheduler().start();
+        System.out.println("Initialization: " + Duration.between(initializationStart, Instant.now()).toSeconds() + "s");
+        if (cli.generationDisabled()) {
+            System.out.println("Total: " + Duration.between(start, Instant.now()).toSeconds() + "s");
+            System.out.println("Done (stopped before map generation)");
+            return;
+        }
 
+        System.out.println("Creation of the map.");
+        // Start generation duration
+        Instant generationStart = Instant.now();
+        generation.scheduler().start();
         try {
             generation.scheduler().waitUntilAllTasksFinished(5, TimeUnit.MINUTES);
         } finally {
             generation.scheduler().shutdown();
+        }
+
+        System.out.println("Generation: " + Duration.between(generationStart, Instant.now()).toSeconds() + "s");
+        if (cli.saveDisabled()) {
+            System.out.println("Total: " + Duration.between(start, Instant.now()).toSeconds() + "s");
+            System.out.println("Done (stopped before saving map)");
+            return;
         }
 
         System.out.println("Saving world");
@@ -95,7 +115,7 @@ public final class SampleImplementation {
         metadata.setSpawn(new WorldCoords3d(spawnX, spawnY, generation.heightmaps().get("ground").get(spawnX, spawnY) + 1));
         metadata.setWorldName("Minalac");
 
-        File directory = cli.getOutputPath().toFile();
+        File directory = cli.outputPath().toFile();
 
         if (directory.exists()) {
             purgeDirectory(directory);
@@ -105,10 +125,8 @@ public final class SampleImplementation {
         }
 
         generation.world().save(directory);
+        System.out.println("Total: " + Duration.between(start, Instant.now()).toSeconds() + "s");
         System.out.println("Done");
-
-        long end = System.currentTimeMillis();
-        System.out.println("Execution time: " + (end - start) / 1000 + "s");
     }
 
     private static void purgeDirectory(File directoryToPurge) throws MapWriteException {
