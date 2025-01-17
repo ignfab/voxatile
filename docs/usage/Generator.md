@@ -25,7 +25,7 @@ Options:
 - `--generation-disabled` Stop before starting generation, after parameters parsed.
 - `--save-disabled` Stop before saving output file, after generation done.
 
-`<outputPath>`: generation output path.
+`<outputPath>`: generation output path (must be an existing and writable directory).
 
 Output path and generation parameters have to be provided.
 
@@ -54,6 +54,6 @@ If, for some reason, you don't want to build the JAR, you can run the [`exec:jav
 ```shell
 mvn clean compile exec:java \
   -Dexec.cleanupDaemonThreads=false \
-  -Dexec.mainClass="com.ignfab.minalac.generator.SampleImplementation" \
+  -Dexec.mainClass="com.ignfab.minalac.generator.MinalacGenerator" \
   -Dexec.args="-p parameters.yaml $HOME/.minetest/worlds/minalac"
 ```

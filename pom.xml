@@ -221,7 +221,7 @@
                         <!-- Ensures the JAR comes with a proper MANIFEST.MF file -->
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <!-- With at least an entry "Main-Class: ..." to make it executable -->
-                            <mainClass>com.ignfab.minalac.generator.SampleImplementation</mainClass>
+                            <mainClass>com.ignfab.minalac.generator.MinalacGenerator</mainClass>
                         </transformer>
                         <!-- Properly shades all resources, required for GeoTools HSQL embedded databases -->
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
