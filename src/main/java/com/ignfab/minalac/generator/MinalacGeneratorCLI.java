@@ -25,6 +25,9 @@ public class MinalacGeneratorCLI {
     private Path outputPath;
     private Path parametersPath;
 
+    private boolean generationDisabled;
+    private boolean saveDisabled;
+
     private final Options options;
 
     /**
@@ -32,8 +35,10 @@ public class MinalacGeneratorCLI {
      */
     public MinalacGeneratorCLI() {
         options = new Options();
-        options.addOption(new Option("h", "help", true, "Display command usage"));
+        options.addOption(new Option("h", "help", false, "Display command usage"));
         options.addOption(new Option("p", "param-file", true, "Get generation params from file"));
+        options.addOption(new Option(null, "generation-disabled", false, "Stop before starting generation, after parameters parsed"));
+        options.addOption(new Option(null, "save-disabled", false, "Stop before saving output file, after generation done"));
     }
 
     /**
@@ -67,6 +72,9 @@ public class MinalacGeneratorCLI {
                 System.exit(1);
             }
         }
+
+        generationDisabled = cmd.hasOption("--generation-disabled");
+        saveDisabled = cmd.hasOption("--save-disabled");
 
         if (cmd.getArgs().length != 1) {
             System.out.println("Please provide output path");
@@ -136,10 +144,31 @@ public class MinalacGeneratorCLI {
 
     /**
      * Returns output path.
+     * Allows saving the result of the generator.
      *
      * @return output path
      */
-    public Path getOutputPath() {
+    public Path outputPath() {
         return outputPath;
+    }
+
+    /**
+     * Returns generation disabled.
+     * Allows stopping execution when the generator finishes deserializing the parameters.
+     *
+     * @return generation disabled flag
+     */
+    public boolean generationDisabled() {
+        return generationDisabled;
+    }
+
+    /**
+     * Returns save disabled.
+     * Allows stopping execution after the game map generation.
+     *
+     * @return save disabled flag
+     */
+    public boolean saveDisabled() {
+        return saveDisabled;
     }
 }

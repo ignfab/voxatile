@@ -30,6 +30,8 @@ Refer to [generation parameters documentation](GenerationParameters.md) for furt
 `-h` `--help` display command usage.
 `-p path` `--param-file path` read generation parameters from given path. If omitted, parameters are read from `MINALAC_PARAMS` environment variable.
 `outputPath` generation output path (required).
+`--generation-disabled` Stop before starting generation, after parameters parsed (optional).
+`--save-disabled` Stop before saving output file, after generation done (optional).
 
 Output path and generation parameters has to be provided.
 
