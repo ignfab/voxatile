@@ -40,11 +40,10 @@ import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
 /**
- * This is a temporary class to have an idea of how the program works.
- * It generates a Minetest map which is a 3D rendering from a heightmap
+ * Main class of Minalac project.
  */
-public final class SampleImplementation {
-    private SampleImplementation() {
+public final class MinalacGenerator {
+    private MinalacGenerator() {
         throw new UnsupportedOperationException();
     }
 
@@ -129,28 +128,8 @@ public final class SampleImplementation {
         metadata.setWorldName("Minalac");
 
         File directory = cli.outputPath().toFile();
-
-        if (directory.exists()) {
-            purgeDirectory(directory);
-        } else {
-            if (!directory.mkdirs())
-                throw new MapWriteException("Cannot generate the map because the folder " + directory.getAbsolutePath() + " cannot be created");
-        }
-
         generation.world().save(directory);
         System.out.println("Total: " + Duration.between(start, Instant.now()).toSeconds() + "s");
         System.out.println("Done");
-    }
-
-    private static void purgeDirectory(File directoryToPurge) throws MapWriteException {
-        File[] files = directoryToPurge.listFiles();
-        if (files == null)
-            throw new MapWriteException("Unable to process content of: " + directoryToPurge + ". Is it a writable directory?");
-        for (File file : files) {
-            if (file.isDirectory())
-                purgeDirectory(file);
-            if (!file.delete())
-                throw new MapWriteException("Failed to delete " + file);
-        }
     }
 }
