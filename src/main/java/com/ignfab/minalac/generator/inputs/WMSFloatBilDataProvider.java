@@ -22,8 +22,7 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
     private static final String SERVICE = "WMS";
     private static final String VERSION = "1.3.0";
 
-    private final String baseURL;
-    private final String layer;
+    private final ParameterizedURL baseURL;
     private final ReferencedEnvelope envelope;
 
     private final int width;
@@ -37,16 +36,34 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
      * @param envelope limit of area to fetch
      */
     public WMSFloatBilDataProvider(String baseURL, String layer, ReferencedEnvelope envelope) {
-        this.baseURL = baseURL;
-        this.layer = layer;
         this.envelope = envelope;
 
         // Let's say we want heightmap with 1 map unit precision.
         // TODO: Should computed from capabilities and voxel size in realworld
         // (we don't need information more accurate than voxel size neither information more
         // accurate than capabilities)
-        this.width  = (int) Math.round(envelope.getMaxX() - envelope.getMinX());
-        this.height = (int) Math.round(envelope.getMaxY() - envelope.getMinY());
+        width  = (int) Math.round(envelope.getMaxX() - envelope.getMinX());
+        height = (int) Math.round(envelope.getMaxY() - envelope.getMinY());
+
+        String srsname = CRS.toSRS(envelope.getCoordinateReferenceSystem());
+        if (srsname == null)
+            throw new IllegalArgumentException("Could not retrieve SRS name for layer");
+
+        this.baseURL = ParameterizedURL.base(baseURL)
+            .parameter("SERVICE", SERVICE)
+            .parameter("VERSION", VERSION)
+            .parameter("REQUEST", "GetMap")
+            .parameter("LAYERS", layer)
+            .parameter("FORMAT", "image/x-bil;bits=32")
+            .parameter("STYLES", "")
+            .parameter("CRS", srsname)
+            .parameter("BBOX", envelope.getMinX()
+                + "," + envelope.getMinY()
+                + "," + envelope.getMaxX()
+                + "," + envelope.getMaxY())
+            .parameter("WIDTH", width)
+            .parameter("HEIGHT", height)
+            .build();
     }
 
     @Override
@@ -56,25 +73,11 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
 
     @Override
     public Provider.Result<FloatGeographicDataMatrix2d> provide() throws GenerationFailedException, RetryableException {
-        String srsname = CRS.toSRS(envelope.getCoordinateReferenceSystem());
-        if (srsname == null)
-            throw new GenerationFailedException("Could not retrieve SRS name for layer");
 
-        URLBuilder url = new URLBuilder(baseURL);
-        url.addQueryParameter("SERVICE", SERVICE);
-        url.addQueryParameter("VERSION", VERSION);
-        url.addQueryParameter("REQUEST", "GetMap");
-        url.addQueryParameter("LAYERS", layer);
-        url.addQueryParameter("FORMAT", "image/x-bil;bits=32");
-        url.addQueryParameter("STYLES", "");
-        url.addQueryParameter("CRS", srsname);
-        url.addQueryParameter("BBOX", envelope.getMinX() + "," + envelope.getMinY() + "," + envelope.getMaxX() + "," + envelope.getMaxY());
-        url.addQueryParameter("WIDTH", width);
-        url.addQueryParameter("HEIGHT", height);
 
         InputStream inputStream;
         try {
-            inputStream = url.toURL().openStream();
+            inputStream = baseURL.toURL().openStream();
         } catch (MalformedURLException e) {
             throw new GenerationFailedException("Invalid URL for layer", e);
         } catch (IOException e) {
