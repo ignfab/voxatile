@@ -1,14 +1,14 @@
-package com.ignfab.minalac.generator.parameters.placeables.structures;
+package com.ignfab.minalac.generator.parameters.placeables;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
-import com.ignfab.minalac.generator.parameters.placeables.TestingVoxelTypeParams;
+import com.ignfab.minalac.generator.placeables.Placeable;
+import com.ignfab.minalac.generator.placeables.Placer;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.Placeable;
 
 public class StackStructureParamsTest {
 
@@ -50,7 +50,8 @@ public class StackStructureParamsTest {
 
         // We need to test deserialization result by placing structure
         // (we are not supposed to know how placeable is managed)
-        placeable.place(0, 0, 0);
+        Placer placer = placeable.placer(null, null);
+        placer.place(0, 0, 0);
         world.assertVoxelNull(0, 0, 1);
         world.assertVoxel("a", 0, 0, 0);
         world.assertVoxel("b", 0, 0, -1);
@@ -91,7 +92,7 @@ public class StackStructureParamsTest {
 
         // We need to test deserialization result by placing structure
         // (we are not supposed to know how placeable is managed)
-        placeable.place(0, 0, 0);
+        placeable.placer(null, null).place(0, 0, 0);
         world.assertVoxelNull(0, 0, -1);
         world.assertVoxel("c", 0, 0, 0);
         world.assertVoxel("b", 0, 0, 1);

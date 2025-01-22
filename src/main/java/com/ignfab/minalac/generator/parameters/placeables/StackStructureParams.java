@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.parameters.placeables.structures;
+package com.ignfab.minalac.generator.parameters.placeables;
 
 import java.beans.ConstructorProperties;
 import java.util.Collections;
@@ -7,11 +7,9 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import com.ignfab.minalac.generator.parameters.placeables.CustomPlaceableParams;
-import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
-import com.ignfab.minalac.generator.world.NoVoxel;
-import com.ignfab.minalac.generator.world.Placeable;
-import com.ignfab.minalac.generator.world.SimpleVoxelStructure;
+import com.ignfab.minalac.generator.placeables.NoVoxel;
+import com.ignfab.minalac.generator.placeables.Placeable;
+import com.ignfab.minalac.generator.placeables.VoxelStructure;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
@@ -51,7 +49,7 @@ public class StackStructureParams extends CustomPlaceableParams {
         if (layers == null || layers.isEmpty())
             return NoVoxel.INSTANCE;
 
-        SimpleVoxelStructure structure = new SimpleVoxelStructure();
+        VoxelStructure structure = new VoxelStructure();
         int z = 0;
         for (Layer layer : layers) {
             Placeable placeable = layer.material.create(world);

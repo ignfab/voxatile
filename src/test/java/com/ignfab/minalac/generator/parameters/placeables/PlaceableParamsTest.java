@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.ignfab.minalac.generator.parameters.OutputFormat;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
-import com.ignfab.minalac.generator.parameters.placeables.structures.StackStructureParams;
 
 public class PlaceableParamsTest {
 
@@ -59,5 +58,15 @@ public class PlaceableParamsTest {
 
         StackStructureParams structureParams = assertInstanceOf(StackStructureParams.class, params);
         assertEquals(2, structureParams.layers.size());
+    }
+
+    @Test
+    @DisplayName("Test placeable deserialization using combined params")
+    public void testPlaceableParamsDeserializerCombined() throws JsonMappingException, JsonProcessingException {
+
+        PlaceableParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, "[ titi, toto, tata ]"));
+
+        CombinedPlaceableParams combinedParams = assertInstanceOf(CombinedPlaceableParams.class, params);
+        assertEquals(3, combinedParams.placeableParams.size());
     }
 }

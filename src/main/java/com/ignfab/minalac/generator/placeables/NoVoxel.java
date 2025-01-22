@@ -1,10 +1,10 @@
-package com.ignfab.minalac.generator.world;
+package com.ignfab.minalac.generator.placeables;
 
 /**
  * A placeable placing nothing.
  * Can be convenient to pass as a no-op voxel type to some operation.
  */
-public final class NoVoxel implements Placeable {
+public final class NoVoxel implements SimplePlaceable {
     /**
      * NoVoxel singleton instance.
      */

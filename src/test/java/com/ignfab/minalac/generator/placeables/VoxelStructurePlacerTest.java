@@ -1,16 +1,15 @@
-package com.ignfab.minalac.generator.world;
+package com.ignfab.minalac.generator.placeables;
 
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelType;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import org.junit.jupiter.api.Test;
 
-public class SimpleVoxelStructureTest {
+public class VoxelStructurePlacerTest {
 
     @Test
     public void testPlace() {
         TestingVoxelWorld world = new TestingVoxelWorld(new WorldBBox3d(-1, -2, -3, 3, 3, 3));
-
 
         VoxelType vtA = new TestingVoxelType(world, "A");
         VoxelType vtB = new TestingVoxelType(world, "B");
@@ -38,7 +37,7 @@ public class SimpleVoxelStructureTest {
         ^       |B B| |CDE| |   |
         |       |  B| | C | |   |
         + - > x +---+ +---+ +---+ */
-        SimpleVoxelStructure structure = new SimpleVoxelStructure();
+        VoxelStructure structure = new VoxelStructure();
 
         // z = -1 : fill with B
         structure.set(new WorldBBox3d(-1, -1, -1, 3, 3, 1), vtB);
@@ -59,8 +58,10 @@ public class SimpleVoxelStructureTest {
         // z = 1 |B  |
         structure.set(-1, 1, 1, vtB);
 
+        Placer placer = structure.placer(null, null);
+
         // Structure is placed at the center of the world
-        structure.place(0, -1, -2);
+        placer.place(0, -1, -2);
 
         // Expected outcome
         /* z:     -3   -2    -1
@@ -126,9 +127,10 @@ public class SimpleVoxelStructureTest {
         VoxelType vt = new TestingVoxelType(world, "*");
         vt.place(4, 4, 5);
 
-        SimpleVoxelStructure structure = new SimpleVoxelStructure();
-        structure.place(3, 4, 5);
-        structure.place(4, 4, 5);
+        VoxelStructure structure = new VoxelStructure();
+        Placer placer = structure.placer(null, null);
+        placer.place(3, 4, 5);
+        placer.place(4, 4, 5);
 
         world.assertVoxelNull(3, 4, 5);
         world.assertVoxel("*", 4, 4, 5);

@@ -1,12 +1,12 @@
-package com.ignfab.minalac.generator.world;
+package com.ignfab.minalac.generator.placeables;
 
 /**
- * The {@code VoxelType} interface represents a type of voxel that can be placed within a {@link VoxelWorld}.
+ * The {@code VoxelType} interface represents a type of voxel that can be placed within a {@link com.ignfab.minalac.generator.world.VoxelWorld}.
  */
-public interface VoxelType extends Placeable {
+public interface VoxelType extends SimplePlaceable {
     // TODO : Since the javadoc was added, see if it is still relevant to keep the content of doc/legacy/QuickStart.md
     /**
-     * Places the voxel in its corresponding {@link VoxelWorld} at the given coordinates.
+     * Places the voxel in its corresponding {@link com.ignfab.minalac.generator.world.VoxelWorld} at the given coordinates.
      * Coordinates are expressed using the system used in {@link com.ignfab.minalac.generator.utils.world3d.WorldCoords3d}.
      * In that system, the z-axis represents the altitude and increments correspond to the size of a voxel.
      * If provided coordinates are outside the limits of the world, the voxel will not be placed.

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelType;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
-import com.ignfab.minalac.generator.world.Placeable;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**

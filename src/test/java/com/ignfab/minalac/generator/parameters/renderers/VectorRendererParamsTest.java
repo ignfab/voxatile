@@ -2,7 +2,7 @@ package com.ignfab.minalac.generator.parameters.renderers;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.parameters.placeables.minetest.MTVoxelTypeParams;
+import com.ignfab.minalac.generator.parameters.placeables.MTVoxelTypeParams;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;

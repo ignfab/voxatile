@@ -44,16 +44,34 @@ renderers:
     type: ground
     heightmap: ground
     place:
-      type: stack
-      direction: downwards
-      layers:
-        - material: default:dirt_with_grass
-        - material:
-            type: voxel
-            node: default:dirt
-          height: 3
-        - material: default:stone
-          height: 10
+      - type: stack
+        direction: downwards
+        layers:
+          - material: default:dirt_with_grass
+          - material:
+              type: voxel
+              node: default:dirt
+            height: 3
+          - material: default:stone
+            height: 10
+      - type: stack
+        direction: upwards
+        layers:
+          - material:
+              - type: nothing
+          - material:
+              - type: random
+                place: default:grass_1
+                chance: 0.05
+              - type: random
+                place: default:grass_2
+                chance: 0.05
+              - type: random
+                place: default:grass_3
+                chance: 0.05
+              - type: random
+                place: default:grass_4
+                chance: 0.05
   building:
     after:
       - renderer:altitude

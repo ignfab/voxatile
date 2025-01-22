@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.parameters.placeables.minecraft;
+package com.ignfab.minalac.generator.parameters.placeables;
 
 import java.beans.ConstructorProperties;
 import java.util.Map;
@@ -8,8 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelType;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
-import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
-import com.ignfab.minalac.generator.world.Placeable;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**

@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.parameters.placeables.minetest;
+package com.ignfab.minalac.generator.parameters.placeables;
 
 import org.junit.jupiter.api.Test;
 

@@ -63,6 +63,7 @@ public class VectorRendererParams extends RendererParams {
     @Override
     public Renderer create(Generation generation) {
         return new VectorRenderer(
+            generation.seed(),
             new ModelSelection(generation.models(), modelType),
             generation.heightmaps().get(heightmap),
             inside.create(generation.world()),

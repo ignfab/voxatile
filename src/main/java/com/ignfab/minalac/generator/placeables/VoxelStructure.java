@@ -1,5 +1,7 @@
-package com.ignfab.minalac.generator.world;
+package com.ignfab.minalac.generator.placeables;
 
+import com.ignfab.minalac.generator.models.Model;
+import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
@@ -10,15 +12,14 @@ import java.util.Map;
  * {@code SimpleVoxelStructure} is a {@link Placeable} consisting of placeables at given coordinate offsets.
  * The structure can be defined notably by using the methods {@link #set(WorldCoords3d, Placeable)} and {@link #remove(WorldCoords3d)}.
  */
-public class SimpleVoxelStructure implements Placeable {
+public class VoxelStructure implements Placeable {
     private final Map<WorldCoords3d, Placeable> placeables = new HashMap<>();
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void place(int x, int y, int z) {
-        placeables.forEach((c, placeable) -> placeable.place(c.x() + x, c.y() + y, c.z() + z));
+    public Placer placer(Seed seed, Model model) {
+        VoxelStructurePlacer placer = new VoxelStructurePlacer();
+        placeables.forEach((position, placeable) -> placer.set(position, placeable.placer(seed, model)));
+        return placer;
     }
 
     /**
@@ -94,4 +95,5 @@ public class SimpleVoxelStructure implements Placeable {
         for (WorldCoords3d coords : bbox)
             remove(coords);
     }
+
 }

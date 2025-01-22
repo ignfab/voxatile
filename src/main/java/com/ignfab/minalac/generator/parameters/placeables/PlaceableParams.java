@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.ignfab.minalac.generator.parameters.OutputFormat;
-import com.ignfab.minalac.generator.world.Placeable;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
@@ -45,6 +45,8 @@ public abstract class PlaceableParams {
             ObjectCodec codec = jp.getCodec();
             JsonNode node = codec.readTree(jp);
 
+            if (node.isArray())
+                return new CombinedPlaceableParams(node, codec);
             if (node.isTextual())
                 return format.createVoxelTypeParams(node.textValue());
             if (!node.isObject())

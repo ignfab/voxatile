@@ -8,7 +8,7 @@ import java.io.File;
  * The {@code VoxelWorld} abstract class represents a three-dimensional world with voxels as the fundamental unit.
  * Implementations of this abstract class are primary meant to create playable world for voxel-based games such as Minecraft or Minetest.
  *
- * @see VoxelType
+ * @see com.ignfab.minalac.generator.placeables.VoxelType
  */
 public abstract class VoxelWorld {
     /**
