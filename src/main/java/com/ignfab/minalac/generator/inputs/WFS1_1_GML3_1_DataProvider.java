@@ -32,8 +32,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
     private static final String SERVICE = "WFS";
     private static final String VERSION = "2.0.0";
 
-    private final String baseURL;
-    private final String type;
+    private final ParameterizedURL url;
     private final ReferencedEnvelope envelope;
 
     /**
@@ -42,10 +41,26 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
      * @param baseURL the base URL
      * @param type Name of the WFS feature type to query
      * @param envelope Limit of area to fetch
+     *
+     * @throws IllegalArgumentException if SRS name could not be retrieved from envelope.
      */
     public WFS1_1_GML3_1_DataProvider(String baseURL, String type, ReferencedEnvelope envelope) {
-        this.baseURL = baseURL;
-        this.type = type;
+        String srsname = CRS.toSRS(envelope.getCoordinateReferenceSystem());
+        if (srsname == null)
+            throw new IllegalArgumentException("Could not retrieve SRS name for layer");
+
+        this.url = ParameterizedURL.base(baseURL)
+            .parameter("SERVICE", SERVICE)
+            .parameter("VERSION", VERSION)
+            .parameter("REQUEST", "GetFeature")
+            .parameter("OUTPUTFORMAT", "GML3")
+            .parameter("TYPENAMES", type)
+            .parameter("SRSNAME", srsname)
+            .parameter("BBOX", envelope.getMinX()
+                + "," + envelope.getMinY()
+                + "," + envelope.getMaxX()
+                + "," + envelope.getMaxY()
+                + "," + srsname).build();
         this.envelope = envelope;
     }
 
@@ -61,20 +76,13 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
         if (srsname == null)
             throw new GenerationFailedException("Could not retrieve SRS name for layer");
 
-        URLBuilder url = new URLBuilder(baseURL);
-        url.addQueryParameter("SERVICE", SERVICE);
-        url.addQueryParameter("VERSION", VERSION);
-        url.addQueryParameter("REQUEST", "GetFeature");
-        url.addQueryParameter("OUTPUTFORMAT", "GML3");
-        url.addQueryParameter("TYPENAMES", type);
-        url.addQueryParameter("SRSNAME", srsname);
-        url.addQueryParameter("BBOX", envelope.getMinX() + "," + envelope.getMinY() + "," + envelope.getMaxX() + "," + envelope.getMaxY() + "," + srsname);
-        url.addQueryParameter("STARTINDEX", 0);
-        url.addQueryParameter("COUNT", 1000);
 
         InputStream stream;
         try {
-            stream = url.toURL().openStream(); // TODO Replace with an HTTP requesting tool to allow unit testing and snapshots
+            stream = url.builder()
+                .parameter("STARTINDEX", 0)
+                .parameter("COUNT", 1000)
+                .buildURL().openStream(); // TODO Replace with an HTTP requesting tool to allow unit testing and snapshots
         } catch (MalformedURLException e) {
             throw new GenerationFailedException("Invalid URL for layer", e);
         } catch (IOException e) {
