@@ -46,14 +46,13 @@ renderers:
     type: ground
     heightmap: ground
     place:
-      type: stack
-      direction: downwards
-      layers:
-        - material: default:dirt_with_grass
-        - material: default:dirt
-          height: 3
-        - material: default:stone
-          height: 10
+      structure:
+        - put: default:dirt_with_grass
+          at: [0, 0, 0]
+        - put: default:dirt
+          at: [0, 0, -3..-1]
+        - put: default:stone
+          at: [0, 0, -20..-4]
   building-leveling:
     after:
       - source:bati

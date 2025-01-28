@@ -46,14 +46,13 @@ renderers:
     type: ground
     heightmap: ground
     place:
-      type: stack
-      direction: downwards
-      layers:
-        - material: minecraft:grass_block
-        - material: minecraft:dirt
-          height: 3
-        - material: minecraft:stone
-          height: 10
+      structure:
+        - put: minecraft:grass_block
+          at: [0, 0, 0]
+        - put: minecraft:dirt
+          at: [0, 0, -3..-1]
+        - put: minecraft:stone
+          at: [0, 0, -20..-4]
   building-leveling:
     after:
       - source:bati

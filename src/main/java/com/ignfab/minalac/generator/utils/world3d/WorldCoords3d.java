@@ -71,6 +71,28 @@ public record WorldCoords3d(int x, int y, int z) implements Positioned3d {
         return new WorldCoords3d((int) Math.ceil(x), (int) Math.ceil(y), (int) Math.ceil(z));
     }
 
+    /**
+     * Returns addition result with given coordinates.
+     *
+     * @param x x-commponent of value to add
+     * @param y y-commponent of value to add
+     * @param z z-commponent of value to add
+     * @return a new {@code WorldCoords3d} resulting of the addition.
+     */
+    public WorldCoords3d add(int x, int y, int z) {
+        return new WorldCoords3d(this.x + x, this.y + y, this.z + z);
+    }
+
+    /**
+     * Returns addition result with given value.
+     *
+     * @param value value to add
+     * @return a new {@code WorldCoords3d} resulting of the addition.
+     */
+    public WorldCoords3d add(WorldCoords3d value) {
+        return add(value.x, value.y, value.z);
+    }
+
     @Override
     public WorldCoords3d coords() {
         return this;

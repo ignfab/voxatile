@@ -26,6 +26,11 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
     public static final WorldBBox3d EMPTY = new WorldBBox3d(0, 0, 0, 0, 0, 0);
 
     /**
+     * A reusable instance of {@link WorldBBox3d} that contains only one voxel at (0, 0, 0).
+     */
+    public static final WorldBBox3d ORIGIN = new WorldBBox3d(0, 0, 0, 1, 1, 1);
+
+    /**
      * Creates a new {@link WorldBBox3d} by providing a starting position and the desired size of the bounding box.
      *
      * @param origin the starting position's coordinates (minimum point).

@@ -7,10 +7,10 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 /**
- * {@code SimpleVoxelStructure} is a {@link Placeable} consisting of placeables at given coordinate offsets.
+ * {@code PlaceableStructure} is a {@link Placeable} consisting of placeables at given coordinate offsets.
  * The structure can be defined notably by using the methods {@link #set(WorldCoords3d, Placeable)} and {@link #remove(WorldCoords3d)}.
  */
-public class SimpleVoxelStructure implements Placeable {
+public class PlaceableStructure implements Placeable {
     private final Map<WorldCoords3d, Placeable> placeables = new HashMap<>();
 
     /**
