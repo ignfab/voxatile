@@ -9,7 +9,7 @@ import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
-import com.ignfab.minalac.generator.parameters.placeables.TestingVoxelTypeParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
-import com.ignfab.minalac.generator.parameters.placeables.TestingVoxelTypeParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

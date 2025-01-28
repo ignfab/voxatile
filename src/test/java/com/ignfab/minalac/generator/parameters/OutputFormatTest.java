@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
-import com.ignfab.minalac.generator.parameters.placeables.TestingVoxelTypeParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
 
 public class OutputFormatTest {
 

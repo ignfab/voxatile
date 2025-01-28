@@ -1,22 +1,19 @@
-package com.ignfab.minalac.generator.parameters.placeables.minecraft;
+package com.ignfab.minalac.generator.parameters.placeables.voxels;
 
 import java.beans.ConstructorProperties;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelType;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
-import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.world.Placeable;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * A voxel type parameters for simple Minecraft voxel types with only block type name.
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NONE) // Prevents default deserializer from requiring type when using "default" placeable param structure
-public class MCVoxelTypeParams extends PlaceableParams {
+public class MCVoxelTypeParams extends VoxelParams {
     /**
      * Block type name (required).
      */

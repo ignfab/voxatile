@@ -9,12 +9,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.ignfab.minalac.generator.parameters.OutputFormat;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
-import com.ignfab.minalac.generator.parameters.placeables.structures.StackStructureParams;
+import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.NoVoxelParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
 
 public class PlaceableParamsTest {
 
+    // Voxel deserialization
+
     @Test
-    @DisplayName("Test placeable deserialization using shortcut")
+    @DisplayName("Test voxel deserialization")
     public void testPlaceableParamsDeserializerShortcut() throws JsonMappingException, JsonProcessingException {
         PlaceableParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, "test"));
         TestingVoxelTypeParams voxelTypeParams = assertInstanceOf(TestingVoxelTypeParams.class, params);
@@ -22,7 +26,7 @@ public class PlaceableParamsTest {
     }
 
     @Test
-    @DisplayName("Test placeable deserialization using shortcut without existing shortcut")
+    @DisplayName("Test voxel deserialization using shortcut without existing shortcut")
     public void testPlaceableParamsDeserializerNoShortcut() throws JsonMappingException, JsonProcessingException {
 
         OutputFormat format = new OutputFormat(null, TestingVoxelTypeParams.class, null);
@@ -30,7 +34,7 @@ public class PlaceableParamsTest {
     }
 
     @Test
-    @DisplayName("Test placeable deserialization using default")
+    @DisplayName("Test voxel deserialization using default")
     public void testPlaceableParamsDeserializerDefault() throws JsonMappingException, JsonProcessingException {
 
         PlaceableParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, "name: tata"));
@@ -39,7 +43,7 @@ public class PlaceableParamsTest {
     }
 
     @Test
-    @DisplayName("Test placeable deserialization using default without existing default")
+    @DisplayName("Test voxel deserialization using default without existing default")
     public void testPlaceableParamsDeserializerNoDefault() throws JsonMappingException, JsonProcessingException {
 
         OutputFormat format = new OutputFormat(null, null, TestingVoxelTypeParams::new);
@@ -47,17 +51,46 @@ public class PlaceableParamsTest {
     }
 
     @Test
-    @DisplayName("Test placeable deserialization using typed params")
-    public void testPlaceableParamsDeserializerTyped() throws JsonMappingException, JsonProcessingException {
-
+    @DisplayName("Test voxel deserialization using `voxel:` field")
+    public void testPlaceableParamsVoxelDeserialization() {
         PlaceableParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, """
-                type: stack
-                layers:
-                  - material: toto
-                  - material: titi
-                """));
+            voxel:
+                name: tata
+        """));
+        TestingVoxelTypeParams voxelTypeParams = assertInstanceOf(TestingVoxelTypeParams.class, params);
+        assertEquals(voxelTypeParams.name, "tata");
+    }
 
-        StackStructureParams structureParams = assertInstanceOf(StackStructureParams.class, params);
-        assertEquals(2, structureParams.layers.size());
+    // NoVoxel deserialization
+
+    @Test
+    @DisplayName("Test nothing deserialization")
+    public void testPlaceableParamsNothingDeserialization() {
+        PlaceableParams params;
+
+        // Canonical test
+        params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, """
+            nothing:
+        """));
+        assertInstanceOf(NoVoxelParams.class, params);
+
+        // Shortcut test
+        params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, "nothing"));
+        assertInstanceOf(NoVoxelParams.class, params);
+    }
+
+    // Structure deserialization
+
+    @Test
+    @DisplayName("Test structure deserialization")
+    public void testPlaceableParamsStructureDeserialization() throws JsonMappingException, JsonProcessingException {
+        PlaceableParams params;
+        params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, """
+            structure:
+              - at: [0, 0, 0]
+                put: A
+        """));
+
+        assertInstanceOf(PlaceableStructureParams.class, params);
     }
 }

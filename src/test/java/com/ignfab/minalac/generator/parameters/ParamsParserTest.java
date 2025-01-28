@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.parameters;
 
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
-import com.ignfab.minalac.generator.parameters.placeables.minetest.MTVoxelTypeParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelTypeParams;
 import com.ignfab.minalac.generator.parameters.renderers.TestingRendererParams;
 
 import org.junit.jupiter.api.Test;
