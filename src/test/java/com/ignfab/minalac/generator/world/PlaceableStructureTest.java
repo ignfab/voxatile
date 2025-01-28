@@ -6,7 +6,7 @@ import com.ignfab.minalac.generator.outputs.testing.TestingVoxelType;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
-public class SimpleVoxelStructureTest {
+public class PlaceableStructureTest {
 
     @Test
     public void testPlace() {
@@ -39,7 +39,7 @@ public class SimpleVoxelStructureTest {
         ^       |B B| |CDE| |   |
         |       |  B| | C | |   |
         + - > x +---+ +---+ +---+ */
-        SimpleVoxelStructure structure = new SimpleVoxelStructure();
+        PlaceableStructure structure = new PlaceableStructure();
 
         // z = -1 : fill with B
         structure.set(new WorldBBox3d(-1, -1, -1, 3, 3, 1), vtB);
@@ -127,7 +127,7 @@ public class SimpleVoxelStructureTest {
         VoxelType vt = new TestingVoxelType(world, "*");
         vt.place(4, 4, 5);
 
-        SimpleVoxelStructure structure = new SimpleVoxelStructure();
+        PlaceableStructure structure = new PlaceableStructure();
         structure.place(3, 4, 5);
         structure.place(4, 4, 5);
 
