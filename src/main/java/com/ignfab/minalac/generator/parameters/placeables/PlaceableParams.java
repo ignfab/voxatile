@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.parameters.placeables;
 
 import java.io.IOException;
+import java.util.Map.Entry;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -11,6 +12,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.ignfab.minalac.generator.parameters.OutputFormat;
+import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.NoVoxelParams;
 import com.ignfab.minalac.generator.world.Placeable;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
@@ -18,14 +21,12 @@ import com.ignfab.minalac.generator.world.VoxelWorld;
  * Base class for all placeable parameters (voxels and structures).
  */
 public abstract class PlaceableParams {
+
     /**
      * Deserializer for PlaceableParams.
      *
-     * This deserializer is able to perform deserialization in three different ways:
-     * 1 - If value is a string, uses the "shortcut" way, using {@link OutputFormat#createVoxelTypeParams(String)} format method.
-     * 2 - If value is an object without {@code type} attribute, performs "default" deserialization, using the other form of
-     *     {@link OutputFormat#createVoxelTypeParams(JsonNode, ObjectCodec)} format method.
-     * 3 - Otherwise, deserialize object using Jackson typeinfo mechanism.
+     * This deserializer is able to deserialize various forms of {@link PlaceableParams}, depending on {@link OutputFormat}:
+     * Nothing, Voxels (short and long description), Structures.
      */
     public static class Deserializer extends JsonDeserializer<PlaceableParams> {
         private OutputFormat format;
@@ -46,12 +47,33 @@ public abstract class PlaceableParams {
             ObjectCodec codec = jp.getCodec();
             JsonNode node = codec.readTree(jp);
 
-            if (node.isTextual())
+            if (node.isTextual()) {
+                // "Nothing" string stands for NoVoxelParams (places nothing)
+                if (node.textValue().equals("nothing"))
+                    return new NoVoxelParams();
+                // If value is a string, try to serialize other string using "shortcut" format method.
                 return format.createVoxelTypeParams(node.textValue());
+            }
             if (!node.isObject())
                 throw new InputCoercionException(jp, "Placeable should be either a string or an object", node.asToken(), PlaceableParams.class);
-            if (node.has("type"))
-                return codec.treeToValue(node, CustomPlaceableParams.class);
+
+            if (node.properties().size() == 1) {
+                // If value is an object with only one property, test if its one of hardcoded keys
+                Entry<String, JsonNode> property = node.properties().iterator().next();
+                switch (property.getKey()) {
+                    // Another way to tell "Nothing"
+                    case "nothing":
+                        return new NoVoxelParams();
+                    // Explicit way to deserialize voxels (could be handy for disambiguation)
+                    case "voxel":
+                        return format.createVoxelTypeParams(property.getValue(), codec);
+                    // For structures, relies on PlaceableStructureParams type deduction
+                    case "structure":
+                        return codec.treeToValue(property.getValue(), PlaceableStructureParams.class);
+                }
+            }
+
+            // If none of the above fits, fallback to voxel long description
             return format.createVoxelTypeParams(node, codec);
         }
     }

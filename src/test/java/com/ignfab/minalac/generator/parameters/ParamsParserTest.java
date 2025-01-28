@@ -5,7 +5,7 @@ import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
-import com.ignfab.minalac.generator.parameters.placeables.minetest.MTVoxelTypeParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelTypeParams;
 import com.ignfab.minalac.generator.parameters.renderers.TestingRendererParams;
 
 import static org.junit.jupiter.api.Assertions.*;

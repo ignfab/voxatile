@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
-import com.ignfab.minalac.generator.parameters.placeables.TestingVoxelTypeParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 
