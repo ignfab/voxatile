@@ -16,8 +16,8 @@ public class ParamsParserTest {
           center:
             latitude: 5.8
             longitude: 2.4
-          extendX: 500
-          extendY: 2500
+          extentX: 500
+          extentY: 2500
           angle: 30
         format: minetest
         """;
@@ -37,8 +37,8 @@ public class ParamsParserTest {
                   "latitude": 5.8,
                   "longitude": 2.4
                 },
-                "extendX": 500,
-                "extendY": 2500
+                "extentX": 500,
+                "extentY": 2500
               },
               "format": "minetest"
             }
@@ -87,8 +87,8 @@ public class ParamsParserTest {
             area:
               center:
                 longitude: 2.4
-              extendX: 500
-              extendY: 2500
+              extentX: 500
+              extentY: 2500
             format: minetest
             """
         ), "Absence of the latitude field should throw an exception");
@@ -97,8 +97,8 @@ public class ParamsParserTest {
             area:
               center:
                 latitude: 5.8
-              extendX: 500
-              extendY: 2500
+              extentX: 500
+              extentY: 2500
             format: minetest
             """
         ), "Absence of the longitude field should throw an exception");
@@ -108,28 +108,28 @@ public class ParamsParserTest {
               center:
                 latitude: 5.8
                 longitude: 2.4
-              extendY: 2500
+              extentY: 2500
             format: minetest
             """
-        ), "Absence of the extendX field should throw an exception");
+        ), "Absence of the extentX field should throw an exception");
 
         assertThrows(ParseException.class, () -> newParser().parse("""
             area:
               center:
                 latitude: 5.8
                 longitude: 2.4
-              extendX: 500
+              extentX: 500
             format: minetest
             """
-        ), "Absence of the extendY field should throw an exception");
+        ), "Absence of the extentY field should throw an exception");
 
         assertThrows(ParseException.class, () -> newParser().parse("""
             area:
               center:
                 latitude: 5.8
                 longitude: 2.4
-              extendX: 500
-              extendY: 2500
+              extentX: 500
+              extentY: 2500
             """
         ), "Absence of the format field should throw an exception");
     }

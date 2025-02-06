@@ -82,20 +82,20 @@ public class GenerationParamsTest {
     }
 
     @Test
-    public void testValidateExtendX() {
-        params.area.extendX = 0;
+    public void testValidateExtentX() {
+        params.area.extentX = 0;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params.area.extendX = -500;
+        params.area.extentX = -500;
         assertThrows(IllegalArgumentException.class, params::validate);
     }
 
     @Test
-    public void testValidateExtendY() {
-        params.area.extendY = 0;
+    public void testValidateExtentY() {
+        params.area.extentY = 0;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params.area.extendY = -10;
+        params.area.extentY = -10;
         assertThrows(IllegalArgumentException.class, params::validate);
     }
 

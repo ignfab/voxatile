@@ -34,8 +34,8 @@ area:
   center:
     latitude: 48.845
     longitude: 2.425
-  extendX: 1000
-  extendY: 1000
+  extentX: 1000
+  extentY: 1000
   angle: 0
 verticalScale: 1.0
 horizontalScale: 1.0
@@ -71,8 +71,8 @@ format: minetest
   - `center`: Contains the coordinates of the area's center point, expressed in the commonly used coordinate system (EPSG:4326)
     - `latitude`: latitude in decimal degrees
     - `longitude`: longitude in decimal degrees
-  - `extendX` (int): Horizontal extend of the area along the x-axis (in voxels)
-  - `extendY` (int):  Horizontal extend of the area along the y-axis (in voxels)
+  - `extentX` (int): Horizontal extent of the area along the x-axis (in voxels)
+  - `extentY` (int):  Horizontal extent of the area along the y-axis (in voxels)
   - `angle` (float): Clockwise rotation angle around area center (in degrees, optional, default 0)
 - `verticalScale`: Vertical size of voxels (in map units, usually meters)
 - `horizontalScale`: Horizontal size of voxels (in map units, usually meters)

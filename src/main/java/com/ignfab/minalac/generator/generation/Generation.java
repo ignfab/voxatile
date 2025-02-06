@@ -52,8 +52,8 @@ public class Generation {
      * @param crs Coordinate reference system used for generated world
      * @param centerX first coordinate of the center in the specified CRS
      * @param centerY second coordinate of the center in the specified CRS
-     * @param extendX Generated world size (in voxels) along x-coordinates
-     * @param extendY Generated world size (in voxels) along y-coordinates
+     * @param extentX Generated world size (in voxels) along x-coordinates
+     * @param extentY Generated world size (in voxels) along y-coordinates
      * @param horizontalScale Horizontal size of voxel in CRS units
      * @param verticalScale Vertical size of voxel in CRS units
      * @param angle Rotation angle around center in radians
@@ -65,8 +65,8 @@ public class Generation {
         CoordinateReferenceSystem crs,
         double centerX,
         double centerY,
-        int extendX,
-        int extendY,
+        int extentX,
+        int extentY,
         double horizontalScale,
         double verticalScale,
         double angle) {
@@ -75,11 +75,11 @@ public class Generation {
 
         WorldBBox3d maximumLimits = world.maxLimits();
         world.setLimits(new WorldBBox3d(
-            -extendX / 2,
-            -extendY / 2,
+            -extentX / 2,
+            -extentY / 2,
             maximumLimits.minZ(),
-            extendX,
-            extendY,
+            extentX,
+            extentY,
             maximumLimits.sizeZ()
         ));
 
