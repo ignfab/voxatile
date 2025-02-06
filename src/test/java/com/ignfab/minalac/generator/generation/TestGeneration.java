@@ -86,18 +86,18 @@ public class TestGeneration {
     }
 
     private static class EmptyVoxelWorld extends VoxelWorld {
-        private int extendX;
-        private int extendY;
+        private int extentX;
+        private int extentY;
 
-        protected EmptyVoxelWorld(int extendX, int extendY) {
+        protected EmptyVoxelWorld(int extentX, int extentY) {
             super(new VoxelWorldMetadata());
-            this.extendX = extendX;
-            this.extendY = extendY;
+            this.extentX = extentX;
+            this.extentY = extentY;
         }
 
         @Override
         public WorldBBox3d maxLimits() {
-            return new WorldBBox3d(-extendX / 2, -extendY / 2, 0, extendX, extendY, 1);
+            return new WorldBBox3d(-extentX / 2, -extentY / 2, 0, extentX, extentY, 1);
         }
 
         @Override

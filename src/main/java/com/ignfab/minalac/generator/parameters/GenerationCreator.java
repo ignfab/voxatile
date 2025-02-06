@@ -49,8 +49,8 @@ public final class GenerationCreator {
             targetCrs,
             center[0],
             center[1],
-            params.area.extendX,
-            params.area.extendY,
+            params.area.extentX,
+            params.area.extentY,
             params.horizontalScale,
             params.verticalScale,
             Math.toRadians(params.area.angle)

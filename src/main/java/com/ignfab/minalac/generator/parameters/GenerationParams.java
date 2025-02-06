@@ -117,10 +117,10 @@ public class GenerationParams {
             || -180 > area.center.longitude
             || area.center.longitude > 180)
             throw new IllegalArgumentException("The coordinates of the center field are incorrect");
-        if (area.extendX <= 0)
-            throw new IllegalArgumentException("The field extendX must be greater than 0");
-        if (area.extendY <= 0)
-            throw new IllegalArgumentException("The field extendY must be greater than 0");
+        if (area.extentX <= 0)
+            throw new IllegalArgumentException("The field extentX must be greater than 0");
+        if (area.extentY <= 0)
+            throw new IllegalArgumentException("The field extentY must be greater than 0");
 
         for (HeightmapParams params : heightmaps.values())
             params.validate();
@@ -177,15 +177,15 @@ public class GenerationParams {
          */
         public LatitudeLongitude center;
         /**
-         * Extends in voxel along the x-axis.
+         * Extent in voxel along the x-axis.
          * This field is required during deserialization.
          */
-        public int extendX;
+        public int extentX;
         /**
-         * Extends in voxel along the y-axis.
+         * Extent in voxel along the y-axis.
          * This field is required during deserialization.
          */
-        public int extendY;
+        public int extentY;
 
         /**
          * Rotation angle around center in degrees.
@@ -198,14 +198,14 @@ public class GenerationParams {
          * Constructor used to ensure that the required fields are present during deserialization.
          *
          * @param center  the center of the area.
-         * @param extendX the extends in voxel along the x-axis.
-         * @param extendY the extends in voxel along the y-axis.
+         * @param extentX the extent in voxel along the x-axis.
+         * @param extentY the extent in voxel along the y-axis.
          */
-        @ConstructorProperties({ "center", "extendX", "extendY" })
-        Area(LatitudeLongitude center, int extendX, int extendY) {
+        @ConstructorProperties({ "center", "extentX", "extentY" })
+        Area(LatitudeLongitude center, int extentX, int extentY) {
             this.center = center;
-            this.extendX = extendX;
-            this.extendY = extendY;
+            this.extentX = extentX;
+            this.extentY = extentY;
         }
     }
 }
