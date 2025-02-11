@@ -16,7 +16,7 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <geotools.version>31.0</geotools.version>
+        <geotools.version>32.2</geotools.version>
         <jackson.version>2.17.2</jackson.version>
     </properties>
 
