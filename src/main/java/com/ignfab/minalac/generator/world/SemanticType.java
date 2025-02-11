@@ -52,6 +52,23 @@ public enum SemanticType {
     PATH,
     CROPS,
 
+    // WOOLS
+    WOOL_WHITE,
+    WOOL_ORANGE,
+    WOOL_MAGENTA,
+    WOOL_YELLOW,
+    WOOL_GREEN,
+    WOOL_PINK,
+    WOOL_GRAY,
+    WOOL_LIGHT_GRAY,
+    WOOL_CYAN,
+    WOOL_PURPLE,
+    WOOL_BLUE,
+    WOOL_BROWN,
+    WOOL_DARK_GREEN,
+    WOOL_RED,
+    WOOL_BLACK,
+
     // COLORS
     WHITE,
     ORANGE,

@@ -67,6 +67,23 @@ public class MCVoxelTypeFactory implements VoxelTypeFactory {
             case PATH -> "minecraft:coarse_dirt";
             case CROPS -> "minecraft:wheat";
 
+            // WOOLS
+            case WOOL_WHITE -> "minecraft:white_wool";
+            case WOOL_ORANGE -> "minecraft:orange_wool";
+            case WOOL_MAGENTA -> "minecraft:magenta_wool";
+            case WOOL_YELLOW -> "minecraft:yellow_wool";
+            case WOOL_GREEN -> "minecraft:lime_wool";
+            case WOOL_PINK -> "minecraft:pink_wool";
+            case WOOL_GRAY -> "minecraft:gray_wool";
+            case WOOL_LIGHT_GRAY -> "minecraft:light_gray_wool";
+            case WOOL_CYAN -> "minecraft:cyan_wool";
+            case WOOL_PURPLE -> "minecraft:purple_wool";
+            case WOOL_BLUE -> "minecraft:blue_wool";
+            case WOOL_BROWN -> "minecraft:brown_wool";
+            case WOOL_DARK_GREEN -> "minecraft:green_wool";
+            case WOOL_RED -> "minecraft:red_wool";
+            case WOOL_BLACK -> "minecraft:black_wool";
+
             // COLORS
             case WHITE -> "minecraft:white_concrete";
             case ORANGE -> "minecraft:orange_concrete";

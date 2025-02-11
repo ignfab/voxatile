@@ -51,6 +51,23 @@ public class MTVoxelTypeFactory implements VoxelTypeFactory {
             case PATH -> new MTSimpleVoxelType(this.world, "default:dry_dirt");
             case CROPS -> new MTSimpleVoxelType(this.world, "default:dry_grass_5");
 
+            // WOOLS
+            case WOOL_WHITE -> new MTSimpleVoxelType(this.world, "wool:white");
+            case WOOL_ORANGE -> new MTSimpleVoxelType(this.world, "wool:orange");
+            case WOOL_MAGENTA -> new MTSimpleVoxelType(this.world, "wool:magenta");
+            case WOOL_YELLOW -> new MTSimpleVoxelType(this.world, "wool:yellow");
+            case WOOL_GREEN -> new MTSimpleVoxelType(this.world, "wool:green");
+            case WOOL_PINK -> new MTSimpleVoxelType(this.world, "wool:pink");
+            case WOOL_GRAY -> new MTSimpleVoxelType(this.world, "wool:dark_grey");
+            case WOOL_LIGHT_GRAY -> new MTSimpleVoxelType(this.world, "wool:grey");
+            case WOOL_CYAN -> new MTSimpleVoxelType(this.world, "wool:cyan");
+            case WOOL_PURPLE -> new MTSimpleVoxelType(this.world, "wool:violet");
+            case WOOL_BLUE -> new MTSimpleVoxelType(this.world, "wool:blue");
+            case WOOL_BROWN -> new MTSimpleVoxelType(this.world, "wool:brown");
+            case WOOL_DARK_GREEN -> new MTSimpleVoxelType(this.world, "wool:dark_green");
+            case WOOL_RED -> new MTSimpleVoxelType(this.world, "wool:red");
+            case WOOL_BLACK -> new MTSimpleVoxelType(this.world, "wool:black");
+
             case WHITE -> createColor(0xFFFFFF, false);
             case ORANGE -> createColor(0xFFA500, false);
             case MAGENTA -> createColor(0xFF00FF, false);
