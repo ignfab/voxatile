@@ -61,5 +61,26 @@ public interface Provider<T> {
      *
      * @param <T> The type of wrapped elements
      */
-    interface Result<T> extends Iterable<T>, Closeable {}
+    interface Result<T> extends Closeable {
+        /**
+         * Tells if more results are available for iteration.
+         *
+         * @return true if more results are available
+         *
+         * @throws RetryableException if something went wrong fetching results.
+         * @throws GenerationFailedException if definitely not able to fetch results.
+         */
+        boolean hasNext() throws GenerationFailedException, RetryableException;
+
+        /**
+         * Returns next available result.
+         *
+         * @return found result
+         *
+         * @throws RetryableException if something went wrong fetching results.
+         * @throws GenerationFailedException if definitely not able to fetch results.
+         * @throws java.util.NoSuchElementException if no more result available.
+         */
+        T next() throws GenerationFailedException, RetryableException;
+    }
 }

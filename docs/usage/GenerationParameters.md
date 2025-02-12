@@ -110,6 +110,7 @@ A provider capable of fetching vector data from a [Web Feature Service](https://
 - `url` (required): Base URL, including protocol and path, excluding request arguments (example: `https://data.geopf.fr/wfs/wfs`)
 - `features` (required): Name of WFS feature type to fetch
 - `crs` (optional): Wanted CRS for these features (defaults to target CRS)
+- `maxFeaturesPerQuery` (optional): Maximum number of features fetched per query (default 1000)
 
 **Suitable processors**: `geoToolsVector`
 
