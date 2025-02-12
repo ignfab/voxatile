@@ -16,6 +16,7 @@ sources:
       type: wfs
       url: https://data.geopf.fr/wfs/wfs
       features: BDTOPO_V3:batiment
+      maxFeaturesPerQuery: 500
     processor:
       type: geoToolsVector
     postProcessors:

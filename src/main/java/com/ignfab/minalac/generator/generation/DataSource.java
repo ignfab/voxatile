@@ -68,7 +68,8 @@ public class DataSource {
      */
     public void fetch() {
         try (Provider.Result<?> result = provider.provide()) {
-            for (Object data : result) {
+            while (result.hasNext()) {
+                Object data = result.next();
                 try {
                     Model model = processor.process(data);
                     for (PostProcessor<Model, ?> postProcessor : postProcessors) {

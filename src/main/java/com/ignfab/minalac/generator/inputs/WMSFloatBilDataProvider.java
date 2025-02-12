@@ -118,17 +118,26 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
 
     /**
      * Result returned by provide method. Here, only one result is provided.
-     *
-     * @param data resulting data
      */
-    public record Result(FloatGeographicDataMatrix2d data) implements Provider.Result<FloatGeographicDataMatrix2d> {
-        @Override
-        public Iterator<FloatGeographicDataMatrix2d> iterator() {
-            return Iterators.iterator(data);
+    public class Result implements Provider.Result<FloatGeographicDataMatrix2d> {
+        private Iterator<FloatGeographicDataMatrix2d> iterator;
+
+        Result(FloatGeographicDataMatrix2d data) {
+            iterator = Iterators.iterator(data);
         }
 
         @Override
         public void close() throws IOException {}
+
+        @Override
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public FloatGeographicDataMatrix2d next() {
+            return iterator.next();
+        }
     }
 
     @Override

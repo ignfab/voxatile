@@ -8,6 +8,8 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.Provider;
@@ -31,6 +33,12 @@ public class WFSProviderParams extends ProviderParams {
      * Coordinate reference system (optional, default: target CRS).
      */
     public String crs;
+
+    /**
+     * Maximum features fetched at once (optional, default: 1000).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public int maxFeaturesPerQuery = 1000;
 
     /**
      * Creates a new WFSProviderParams with mandatory fields.
@@ -63,6 +71,6 @@ public class WFSProviderParams extends ProviderParams {
             throw new IllegalArgumentException("Unable to compute envelope for given CRS", e);
         }
 
-        return new WFS1_1_GML3_1_DataProvider(url, features, envelope);
+        return new WFS1_1_GML3_1_DataProvider(url, features, envelope, maxFeaturesPerQuery);
     }
 }

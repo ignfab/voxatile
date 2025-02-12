@@ -1,7 +1,14 @@
 package com.ignfab.minalac.generator.inputs;
 
-import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
-import com.ignfab.minalac.generator.exceptions.RetryableException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.util.NoSuchElementException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.type.FeatureType;
@@ -15,14 +22,12 @@ import org.geotools.referencing.CRS;
 import org.geotools.xsd.Parser;
 import org.geotools.xsd.impl.ParserHandler.ContextCustomizer;
 import org.picocontainer.MutablePicoContainer;
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.util.Iterator;
+import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
+import com.ignfab.minalac.generator.exceptions.RetryableException;
 
 /**
  * Data provider using WFS 1.1 and GML 3.1.
@@ -34,6 +39,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
 
     private final ParameterizedURL url;
     private final ReferencedEnvelope envelope;
+    private final int maxFeaturePerQuery;
 
     /**
      * Constructs a new {@code WFS1_1_GML3_1_DataProvider}.
@@ -41,10 +47,14 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
      * @param baseURL the base URL
      * @param type Name of the WFS feature type to query
      * @param envelope Limit of area to fetch
+     * @param maxFeaturePerQuery Maximum number of feature per query
      *
      * @throws IllegalArgumentException if SRS name could not be retrieved from envelope.
      */
-    public WFS1_1_GML3_1_DataProvider(String baseURL, String type, ReferencedEnvelope envelope) {
+    public WFS1_1_GML3_1_DataProvider(String baseURL, String type, ReferencedEnvelope envelope, int maxFeaturePerQuery) {
+        this.maxFeaturePerQuery = maxFeaturePerQuery;
+        this.envelope = envelope;
+
         String srsname = CRS.toSRS(envelope.getCoordinateReferenceSystem());
         if (srsname == null)
             throw new IllegalArgumentException("Could not retrieve SRS name for layer");
@@ -61,7 +71,6 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
                 + "," + envelope.getMaxX()
                 + "," + envelope.getMaxY()
                 + "," + srsname).build();
-        this.envelope = envelope;
     }
 
     @Override
@@ -70,18 +79,14 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
     }
 
     @Override
-    public Result<SimpleFeature> provide() throws GenerationFailedException, RetryableException {
+    public Provider.Result<SimpleFeature> provide() throws GenerationFailedException, RetryableException {
 
-        String srsname = CRS.toSRS(envelope.getCoordinateReferenceSystem());
-        if (srsname == null)
-            throw new GenerationFailedException("Could not retrieve SRS name for layer");
-
-
+        // First we need to know total feature count
+        int count;
         InputStream stream;
         try {
             stream = url.builder()
-                .parameter("STARTINDEX", 0)
-                .parameter("COUNT", 1000)
+                .parameter("resultType", "hits")
                 .buildURL().openStream(); // TODO Replace with an HTTP requesting tool to allow unit testing and snapshots
         } catch (MalformedURLException e) {
             throw new GenerationFailedException("Invalid URL for layer", e);
@@ -89,29 +94,141 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
             throw new RetryableException("Error opening connection", e);
         }
 
-        // This code is temporary and no attention is given to its (bad) performance
-        // TODO: Improve that!
-        byte[] bytes;
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setValidating(true);
+        GetHitsHandler handler = new GetHitsHandler();
         try {
-            bytes = stream.readAllBytes();
-            stream.close();
-        } catch (IOException e) {
-            throw new RetryableException("Error opening connection", e);
+            SAXParser saxParser = factory.newSAXParser();
+            saxParser.parse(stream, handler);
+            count = handler.getCount();
+        } catch (SAXException | IOException e) {
+            throw new RetryableException(e);
+        } catch (ParserConfigurationException e) {
+            throw new GenerationFailedException(e);
         }
 
-        // Invalidate schema declaration because GML version 3.1 is not used in this schema (version is unspecified, defaulting to 3.2)
-        String string = new String(bytes).replace("http://BDTOPO_V3", "explicitly-invalid");
-        InputStream replacedStream = new ByteArrayInputStream(string.getBytes());
-        try {
-            // This is the "clean but not working" (see below) way to do things:
-            // return new FeaturesResult(new GML(GML.Version.GML3).decodeFeatureCollection(replacedStream).features(), replacedStream);
+        // Then we give hand to `Result` class for the rest.
+        return new Result(count);
+    }
 
-            // This is the "dirty but working" way:
-            return new FeaturesResult(decodeFeatureCollection(replacedStream).features(), replacedStream);
-        } catch (IOException e) {
-            throw new RetryableException("Error fetching data", e);
-        } catch (ParserConfigurationException | SAXException e) {
-            throw new GenerationFailedException("Unable to decode features", e);
+   /**
+     * A Result class for WFS that will fetch more features when needed.
+     */
+    private class Result implements Provider.Result<SimpleFeature> {
+
+        private int total;
+        private int remaining;
+        private SimpleFeatureIterator iterator;
+
+        Result(int total) {
+            this.total = total;
+            remaining = total;
+            iterator = null;
+        }
+
+        /**
+         * Fetches more results from URL.
+         */
+        private void fetchmore() throws RetryableException, GenerationFailedException {
+            InputStream stream;
+
+            try {
+                stream = url.builder()
+                    .parameter("STARTINDEX", total - remaining)
+                    .parameter("COUNT", Math.min(remaining, maxFeaturePerQuery))
+                    .buildURL().openStream(); // TODO Replace with an HTTP requesting tool to allow unit testing and snapshots
+            } catch (MalformedURLException e) {
+                throw new GenerationFailedException("Invalid URL for layer", e);
+            } catch (IOException e) {
+                throw new RetryableException("Error opening connection", e);
+            }
+
+            // This code is temporary and no attention is given to its (bad) performance
+            // TODO: Improve that!
+            byte[] bytes;
+            try {
+                bytes = stream.readAllBytes();
+                stream.close();
+            } catch (IOException e) {
+                throw new RetryableException("Error opening connection", e);
+            }
+
+            // Invalidate schema declaration because GML version 3.1 is not used in this schema (version is unspecified, defaulting to 3.2)
+            String string = new String(bytes).replace("http://BDTOPO_V3", "explicitly-invalid");
+            stream = new ByteArrayInputStream(string.getBytes());
+            try {
+                // This is the "clean but not working" (see below) way to do things:
+                // SimpleFeatureCollection collection = new GML(GML.Version.GML3).decodeFeatureCollection(replacedStream);
+
+                // This is the "dirty but working" way:
+                SimpleFeatureCollection collection = decodeFeatureCollection(stream);
+
+                iterator = collection.features();
+            } catch (IOException e) {
+                throw new RetryableException("Error fetching data", e);
+            } catch (ParserConfigurationException | SAXException e) {
+                throw new GenerationFailedException("Unable to decode features", e);
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            iterator.close();
+        }
+
+        // Checks we are in a valid position, eventually move.
+        private void check() throws RetryableException, GenerationFailedException {
+            if (remaining == 0)
+                return;
+
+            if (iterator == null || !iterator.hasNext())
+                fetchmore();
+        }
+
+        @Override
+        public boolean hasNext() throws RetryableException, GenerationFailedException {
+            check();
+
+            return iterator != null && iterator.hasNext();
+        }
+
+        @Override
+        public SimpleFeature next() throws RetryableException, GenerationFailedException {
+            check();
+
+            if (remaining == 0)
+                throw new NoSuchElementException("No more elements!");
+
+            remaining--;
+
+            try {
+                return iterator.next();
+            } catch (NoSuchElementException e) {
+                throw new RetryableException("Could not fetch all expected features", e);
+            }
+        }
+    }
+
+    @Override
+    public CoordinateReferenceSystem crs() {
+        return envelope.getCoordinateReferenceSystem();
+    }
+
+    /**
+     * Sax handler retrieving "numberMatched" attribute.
+     */
+    private static final class GetHitsHandler extends DefaultHandler {
+        private int count = -1;
+
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            count = Integer.parseInt(attributes.getValue("numberMatched"));
+        }
+
+        public int getCount() throws SAXException {
+            if (count == -1)
+                throw new SAXException("Attribute \"numberMatched\" not found.");
+            return count;
         }
     }
 
@@ -182,34 +299,4 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
     //
     // Hacky part ends here
     ////////////////////////
-
-    private record FeaturesResult(SimpleFeatureIterator features, InputStream stream) implements Result<SimpleFeature> {
-        @Override
-        public Iterator<SimpleFeature> iterator() {
-            return new Iter();
-        }
-
-        @Override
-        public void close() throws IOException {
-            features.close();
-            stream.close();
-        }
-
-        private final class Iter implements Iterator<SimpleFeature> {
-            @Override
-            public boolean hasNext() {
-                return features.hasNext();
-            }
-
-            @Override
-            public SimpleFeature next() {
-                return features.next();
-            }
-        }
-    }
-
-    @Override
-    public CoordinateReferenceSystem crs() {
-        return envelope.getCoordinateReferenceSystem();
-    }
 }
