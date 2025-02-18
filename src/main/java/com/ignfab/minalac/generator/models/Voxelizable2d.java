@@ -4,12 +4,11 @@ import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.voxelization.Voxelizer2d;
 
 /**
- * Represents an object that can be transformed into 2d voxels using a voxelizer.
- * This interface usually applies to models.
+ * Represents a model that can be transformed into 2d voxels using a voxelizer.
  */
-public interface Voxelizable2d {
+public interface Voxelizable2d extends Model {
     /**
-     * Provides a voxelizer that returns voxels representing this object in 2d.
+     * Provides a voxelizer that returns voxels representing this model in 2d.
      * The voxelizer must only return voxels inside the given bounding box.
      * <p>
      * Note that the voxelizer is not required to:

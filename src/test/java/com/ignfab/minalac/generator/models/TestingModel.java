@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * A testing model with only metadata and assertions.
  */
-public class TestingModel extends Model {
+public class TestingModel extends ModelImpl {
     public TestingModel() {}
 
     public TestingModel(Map<String, Object> metadata) {

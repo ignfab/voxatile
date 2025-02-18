@@ -9,7 +9,7 @@ import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
 /**
  * A model voxelizable in 2d consisting of a simple rectangle.
  */
-public class TestingRectangleShapeVoxelizable2dModel extends Model implements ShapesVoxelizable2d {
+public class TestingRectangleShapeVoxelizable2dModel extends ModelImpl implements ShapesVoxelizable2d {
     private final WorldBBox2d bbox;
 
     /**

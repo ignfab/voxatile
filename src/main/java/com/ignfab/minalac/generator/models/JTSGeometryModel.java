@@ -30,7 +30,7 @@ import java.util.List;
  * Model represented by a JTS Geometry.
  * It is voxelizable both in 2d and 3d.
  */
-public class JTSGeometryModel extends Model implements ShapesVoxelizable2d, ShapesVoxelizable3d {
+public class JTSGeometryModel extends ModelImpl implements ShapesVoxelizable2d, ShapesVoxelizable3d {
     private final Geometry geom;
 
     /**

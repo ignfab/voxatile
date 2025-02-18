@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.renderers;
 
-import com.ignfab.minalac.generator.models.Model;
+import com.ignfab.minalac.generator.models.ModelImpl;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -19,11 +19,11 @@ public class ModelRendererTest {
     public void testRender() {
         ModelStore modelStore = new ModelStore();
 
-        modelStore.add("digit", new ModelImpl('1'));
-        modelStore.add("digit", new ModelImpl('1'));
-        modelStore.add("digit", new ModelImpl('2'));
-        modelStore.add("letter", new ModelImpl('b'));
-        modelStore.add("letter", new ModelImpl('a'));
+        modelStore.add("digit", new ModelImplTester('1'));
+        modelStore.add("digit", new ModelImplTester('1'));
+        modelStore.add("digit", new ModelImplTester('2'));
+        modelStore.add("letter", new ModelImplTester('b'));
+        modelStore.add("letter", new ModelImplTester('a'));
 
         ModelRendererImpl renderer = new ModelRendererImpl(modelStore, "digit");
         assertEquals(0, renderer.modelsRendered.size());
@@ -31,10 +31,10 @@ public class ModelRendererTest {
         // Not testing rendering area
         renderer.render(WorldBBox3d.EMPTY);
 
-        assertTrue(renderer.modelsRendered.contains(new ModelImpl('1')));
-        assertTrue(renderer.modelsRendered.contains(new ModelImpl('2')));
-        assertEquals(2, Collections.frequency(renderer.modelsRendered, new ModelImpl('1')));
-        assertEquals(1, Collections.frequency(renderer.modelsRendered, new ModelImpl('2')));
+        assertTrue(renderer.modelsRendered.contains(new ModelImplTester('1')));
+        assertTrue(renderer.modelsRendered.contains(new ModelImplTester('2')));
+        assertEquals(2, Collections.frequency(renderer.modelsRendered, new ModelImplTester('1')));
+        assertEquals(1, Collections.frequency(renderer.modelsRendered, new ModelImplTester('2')));
         assertEquals(3, renderer.modelsRendered.size());
 
         ModelRendererImpl idleRenderer = new ModelRendererImpl(modelStore, "specialCharacter");
@@ -58,10 +58,10 @@ public class ModelRendererTest {
         }
     }
 
-    private static class ModelImpl extends Model {
+    private static class ModelImplTester extends ModelImpl {
         private final char type;
 
-        ModelImpl(char type) {
+        ModelImplTester(char type) {
             this.type = type;
         }
 
@@ -69,7 +69,7 @@ public class ModelRendererTest {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            ModelImpl model = (ModelImpl) o;
+            ModelImplTester model = (ModelImplTester) o;
             return type == model.type;
         }
 
