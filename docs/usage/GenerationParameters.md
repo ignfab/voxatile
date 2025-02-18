@@ -400,6 +400,20 @@ Fields:
   - `in` (required): List of values to compare with
   - `as` (optional, default `text`): Type of values to compare with (`integer`, `decimal`, `text` or `boolean`)
 
+#### Lower Than
+
+Selects model with given metadata value is strictly less than the specified threshold.
+
+Example:
+```yaml
+   metadata: height
+   lowerThan: 20
+```
+
+Fields:
+  - `metadata` (required): Name of the metadata to check
+  - `lowerThan` (required): Threshold value that the metadata must be lower than. (Only possible to compare numbers with this filter)
+
 ## Placeables
 
 A placeable is something that can be placed in voxel world at a given position: a voxel, a structure or a pattern.
