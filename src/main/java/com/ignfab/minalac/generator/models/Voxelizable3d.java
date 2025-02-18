@@ -6,11 +6,11 @@ import com.ignfab.minalac.generator.voxelization.Voxelizer3d;
 /**
  * Represents an object that can be transformed into 3d voxels using a voxelizer.
  * This interface usually applies to models.
- * Most objects representable in 3d can also be represented in 2d, but this is not always the case!
+ * Most models representable in 3d can also be represented in 2d, but this is not always the case!
  */
-public interface Voxelizable3d {
+public interface Voxelizable3d extends Model {
     /**
-     * Provides a voxelizer that returns voxels representing this object in 3d.
+     * Provides a voxelizer that returns voxels representing this model in 3d.
      * The voxelizer must only return voxels inside the given bounding box.
      * <p>
      * Note that the voxelizer is not required to:

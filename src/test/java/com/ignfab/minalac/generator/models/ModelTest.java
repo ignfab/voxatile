@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class ModelTest {
-    private static final class DummyModel extends Model {
+    private static final class DummyModel extends ModelImpl {
         @Override
         public String salt() {
             return "";

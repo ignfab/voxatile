@@ -12,7 +12,7 @@ import com.ignfab.minalac.generator.voxelization.Matrix2d;
 /**
  * A model based on a matrix of floats (usually a heightmap model).
  */
-public class FloatMatrixModel extends Model implements Matrix2d<Float> {
+public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
     private GeographicDataMatrix2d<Float> data;
     private MapToWorldConverter mapToWorld;
     private WorldToMapConverter worldToMap;

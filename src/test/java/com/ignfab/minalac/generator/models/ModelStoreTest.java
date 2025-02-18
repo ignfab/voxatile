@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ModelStoreTest {
-    class TestModel extends Model {
+    class TestModel extends ModelImpl {
         @Override
         public String salt() {
             return "";

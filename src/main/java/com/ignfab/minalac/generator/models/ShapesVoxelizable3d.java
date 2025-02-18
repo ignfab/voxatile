@@ -4,7 +4,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.shape3d.ShapesVoxelizer3d;
 
 /**
- * An object (likely a model) voxelizable by {@code ShapesVoxelizer3d}.
+ * A model voxelizable by {@code ShapesVoxelizer3d}.
  */
 public interface ShapesVoxelizable3d extends Voxelizable3d {
     @Override
