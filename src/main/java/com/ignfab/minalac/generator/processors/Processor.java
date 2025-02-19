@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.processors;
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.models.Model;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * A processor is responsible for transforming elements coming from
@@ -34,6 +35,13 @@ public interface Processor<T, M extends Model> {
      * @return the type of created models
      */
     Class<M> modelType();
+
+    /**
+     * Initializes this processor with the given CRS.
+     * @param layerCrs CRS of the layer to be processed
+     * @throws GenerationFailedException If unable to initialize
+     */
+    void initialize(CoordinateReferenceSystem layerCrs) throws GenerationFailedException;
 
     /**
      * Processes an element and creates a corresponding model.

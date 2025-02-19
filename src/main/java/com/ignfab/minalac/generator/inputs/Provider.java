@@ -2,10 +2,9 @@ package com.ignfab.minalac.generator.inputs;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 import java.io.Closeable;
-
-import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * A provider is responsible for acquiring data.
@@ -22,13 +21,6 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
  * @param <T> The type of provided elements
  */
 public interface Provider<T> {
-    /**
-     * Returns the coordinate reference system of provided data.
-     *
-     * @return CRS of provided data
-     */
-    CoordinateReferenceSystem crs();
-
     /**
      * Returns the type of provided elements.
      *
@@ -62,6 +54,13 @@ public interface Provider<T> {
      * @param <T> The type of wrapped elements
      */
     interface Result<T> extends Closeable {
+        /**
+         * Returns the coordinate reference system of resulting data.
+         *
+         * @return CRS of resulting data
+         */
+        CoordinateReferenceSystem crs();
+
         /**
          * Tells if more results are available for iteration.
          *
