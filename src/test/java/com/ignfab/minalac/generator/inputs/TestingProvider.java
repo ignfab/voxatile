@@ -2,11 +2,10 @@ package com.ignfab.minalac.generator.inputs;
 
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
-import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
-import com.ignfab.minalac.generator.exceptions.RetryableException;
+import java.util.NoSuchElementException;
 
 public class TestingProvider implements Provider<String> {
-    private CoordinateReferenceSystem crs;
+    private final CoordinateReferenceSystem crs;
 
     public TestingProvider(CoordinateReferenceSystem crs) {
         this.crs = crs;
@@ -18,12 +17,25 @@ public class TestingProvider implements Provider<String> {
     }
 
     @Override
-    public Result<String> provide() throws GenerationFailedException, RetryableException {
-        return null;
-    }
+    public Result<String> provide() {
+        return new Result<>() {
+            @Override
+            public CoordinateReferenceSystem crs() {
+                return crs;
+            }
 
-    @Override
-    public CoordinateReferenceSystem crs() {
-        return crs;
+            @Override
+            public void close() {}
+
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public String next() {
+                throw new NoSuchElementException();
+            }
+        };
     }
 }

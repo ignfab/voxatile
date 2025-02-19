@@ -1,9 +1,5 @@
 package com.ignfab.minalac.generator.parameters;
 
-import java.beans.ConstructorProperties;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.generation.DataSource;
@@ -14,6 +10,10 @@ import com.ignfab.minalac.generator.parameters.processors.post.PostProcessorPara
 import com.ignfab.minalac.generator.parameters.providers.ProviderParams;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
+
+import java.beans.ConstructorProperties;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents the parameters used for {@link DataSource} creation.
@@ -83,7 +83,7 @@ public class DataSourceParams {
      */
     public DataSource create(Generation generation) {
         Provider<?> provider = this.provider.create(generation);
-        Processor<?, ?> processor = this.processor.create(generation, provider.crs());
+        Processor<?, ?> processor = this.processor.create(generation);
         List<PostProcessor<?, ?>> postProcessors = new ArrayList<>();
         for (PostProcessorParams params : this.postProcessors)
             postProcessors.add(params.create());

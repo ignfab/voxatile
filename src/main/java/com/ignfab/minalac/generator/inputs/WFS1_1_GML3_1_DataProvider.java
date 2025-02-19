@@ -1,15 +1,7 @@
 package com.ignfab.minalac.generator.inputs;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.util.NoSuchElementException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
+import com.ignfab.minalac.generator.exceptions.RetryableException;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.type.FeatureType;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
@@ -26,8 +18,14 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
-import com.ignfab.minalac.generator.exceptions.RetryableException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.util.NoSuchElementException;
 
 /**
  * Data provider using WFS 1.1 and GML 3.1.
@@ -116,7 +114,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
      */
     private class Result implements Provider.Result<SimpleFeature> {
 
-        private int total;
+        private final int total;
         private int remaining;
         private SimpleFeatureIterator iterator;
 
@@ -125,6 +123,11 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
             remaining = total;
             iterator = null;
         }
+
+       @Override
+       public CoordinateReferenceSystem crs() {
+           return envelope.getCoordinateReferenceSystem();
+       }
 
         /**
          * Fetches more results from URL.
@@ -207,11 +210,6 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
                 throw new RetryableException("Could not fetch all expected features", e);
             }
         }
-    }
-
-    @Override
-    public CoordinateReferenceSystem crs() {
-        return envelope.getCoordinateReferenceSystem();
     }
 
     /**
