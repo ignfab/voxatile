@@ -1,0 +1,53 @@
+name: Validating example parameters
+on:
+  push:
+    paths:
+      - src/main/**
+      - examples/**
+      - pom.xml
+      - .github/workflows/parameters-tests.yml
+
+jobs:
+  test-parameters:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Maven
+        run: |
+          mvn --batch-mode --no-transfer-progress --update-snapshots -Dmaven.test.skip=true package
+
+      - name: Run generator to validate example parameters
+        run: |
+          FORMATS=$(./generate.sh -l formats)
+          PLACES=$(./generate.sh -l places)
+          PROCESSES=$(./generate.sh -l processes)
+
+          error=0
+          set +e
+          for FORMAT in $FORMATS; do
+            for PLACE in $PLACES; do
+              for PROCESS in $PROCESSES; do
+                output=$(./generate.sh -g $FORMAT $PROCESS $PLACE 2>&1)
+                if [ $? -ne 0 ]; then
+                  echo "::group::Error parsing parameters: format=$FORMAT, place=$PLACE, process=$PROCESS"
+                  echo "Parameters used:"
+                  ./generate.sh -y $FORMAT $PROCESS $PLACE
+                  echo
+                  echo "Java output:"
+                  echo "$output"
+                  echo "::endgroup::"
+                  error=1
+                fi
+              done
+            done
+          done
+          set -e
+          exit $error

@@ -10,6 +10,10 @@ FORMATS_DIR=$PARAMS_DIR/formats
 PROCESSES_DIR=$PARAMS_DIR/processes
 PLACES_DIR=$PARAMS_DIR/places
 
+list_yaml_files() {
+    ls -1 $1 | grep '.yaml$' | sed -r "s/(.*)\.yaml$/$2\1/"
+}
+
 usage() {
     echo "$0 [options] <format> <process> <place> [<outputdir>]"
     echo "available options:"
@@ -17,11 +21,11 @@ usage() {
     echo "-s Stops before saving"
     echo "-y Display Yaml configuration only"
     echo "formats:"
-    ls -1 $FORMATS_DIR | grep '.yaml$' | sed -r 's/(.*)\.yaml$/\t\1/'
+    list_yaml_files $FORMATS_DIR "\t"
     echo "processes:"
-    ls -1 $PROCESSES_DIR | grep '.yaml$' | sed -r 's/(.*)\.yaml$/\t\1/'
+    list_yaml_files $PROCESSES_DIR "\t"
     echo "places:"
-    ls -1 $PLACES_DIR | grep '.yaml$' | sed -r 's/(.*)\.yaml$/\t\1/'
+    list_yaml_files $PLACES_DIR "\t"
     echo "outputdir is required if no option given (if directory exists, it will be emptied)"
 }
 
@@ -43,6 +47,25 @@ while [[ "$1" == "-"* ]]; do
         -y)
             display_only=1
             unset output_dir_needed
+            ;;
+        -l)
+            case $1 in
+                formats)
+                    list_yaml_files $FORMATS_DIR
+                    ;;
+                processes)
+                    list_yaml_files $PROCESSES_DIR
+                    ;;
+                places)
+                    list_yaml_files $PLACES_DIR
+                    ;;
+                *)
+                    echo "Unknown -l option $1"
+                    usage
+                    exit 1
+                    ;;
+            esac
+            exit 0 
             ;;
         *)
             echo "Unknown option $opt"

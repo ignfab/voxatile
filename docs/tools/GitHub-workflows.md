@@ -91,3 +91,14 @@ This workflow triggers when a push on any branch modifies the Java main or test 
 It consists of a single job, executing the [unit tests](JUnit.md). It currently does not report details other than in the workflow logs.
 
 The workflow fails if any unit test does not pass, or if the project does not compile.
+
+### Parameters tests
+
+> [!TIP]
+> See the [`parameters-tests.yml`](../../.github/workflows/parameters-tests.yml) file.
+
+This workflow triggers when a push on any branch modifies example files or Java main source files.
+
+It consists of a single job, executing the `generate.sh` script multiple times to find errors present in example files. It tries every possible combination of parameters.
+
+The workflow fails if any example file is incorrect, or if the project does not compile.
