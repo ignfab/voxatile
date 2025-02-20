@@ -69,12 +69,8 @@ renderers:
     models:
       type: building
       filter:
-        not:
-          or:
-            - metadata: height
-              lowerThan: 0
-            - metadata: height
-              equals: 0
+        metadata: height
+        greaterThan: 0
     heightmap: ground
     roof: *voxel-cobble
     wall: *voxel-stone

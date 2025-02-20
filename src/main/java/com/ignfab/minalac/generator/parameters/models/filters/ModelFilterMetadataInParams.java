@@ -3,17 +3,16 @@ package com.ignfab.minalac.generator.parameters.models.filters;
 import java.beans.ConstructorProperties;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.models.Model;
-import com.ignfab.minalac.generator.models.filters.ModelFilterMetadataIn;
+import com.ignfab.minalac.generator.models.filters.ModelFilterOnMetadataValue;
 import com.ignfab.minalac.generator.parameters.ValueParser;
 
 /**
- * Parameters for a {@link ModelFilterMetadataIn}.
+ * Parameters for filtering models by metadata values.
  */
 public class ModelFilterMetadataInParams extends ModelFilterParams {
 
@@ -57,7 +56,7 @@ public class ModelFilterMetadataInParams extends ModelFilterParams {
 
     @Override
     public Predicate<Model> create() {
-        return new ModelFilterMetadataIn(metadata, in.stream().map(as::parse).collect(Collectors.toList()));
+        List<? extends Object> inParsed = in.stream().map(as::parse).toList();
+        return new ModelFilterOnMetadataValue<>(as.type(), metadata, inParsed::contains);
     }
-
 }

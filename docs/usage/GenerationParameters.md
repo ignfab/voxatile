@@ -459,3 +459,16 @@ Fields:
   - `metadata` (required): Name of the metadata to check
   - `lowerThan` (required): Threshold value that the metadata must be lower than. (Only possible to compare numbers with this filter)
 
+#### Greater Than
+
+Selects the model with the given metadata value that is strictly greater than the specified threshold.
+
+Example:
+```yaml
+   metadata: height
+   greaterThan: 20
+```
+
+Fields:
+  - `metadata` (required): Name of the metadata to check
+  - `greaterThan` (required): Threshold value that the metadata must be greater than. (Only possible to compare numbers with this filter)

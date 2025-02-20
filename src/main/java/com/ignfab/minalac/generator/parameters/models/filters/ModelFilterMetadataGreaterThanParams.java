@@ -10,9 +10,9 @@ import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.filters.ModelFilterOnMetadataValue;
 
 /**
- * Parameters for a filter that selects models where the metadata value is less than a specified threshold.
+ * Parameters for a filter that selects models where the metadata value is greater than a specified threshold.
  */
-public class ModelFilterMetadataLowerThanParams extends ModelFilterParams {
+public class ModelFilterMetadataGreaterThanParams extends ModelFilterParams {
 
     /**
      * Name of the metadata to compare (required).
@@ -24,18 +24,18 @@ public class ModelFilterMetadataLowerThanParams extends ModelFilterParams {
      * Threshold value (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public double lowerThan;
+    public double greaterThan;
 
     /**
-     * Creates a new {@code ModelFilterMetadataLowerThanParams}.
+     * Creates a new {@code ModelFilterMetadataGreaterThanParams}.
      *
      * @param metadata name of the metadata to compare
-     * @param lowerThan threshold value
+     * @param greaterThan threshold value
      */
-    @ConstructorProperties({ "metadata", "lowerThan" })
-    public ModelFilterMetadataLowerThanParams(String metadata, double lowerThan) {
+    @ConstructorProperties({ "metadata", "greaterThan" })
+    public ModelFilterMetadataGreaterThanParams(String metadata, double greaterThan) {
         this.metadata = metadata;
-        this.lowerThan = lowerThan;
+        this.greaterThan = greaterThan;
     }
 
     @Override
@@ -46,6 +46,6 @@ public class ModelFilterMetadataLowerThanParams extends ModelFilterParams {
 
     @Override
     public Predicate<Model> create() {
-        return new ModelFilterOnMetadataValue<>(Number.class, metadata, metadataValue -> metadataValue.doubleValue() < lowerThan);
+        return new ModelFilterOnMetadataValue<>(Number.class, metadata, metadataValue -> metadataValue.doubleValue() > greaterThan);
     }
 }
