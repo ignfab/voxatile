@@ -1,18 +1,17 @@
 package com.ignfab.minalac.generator.parameters.models.filters;
 
 import java.beans.ConstructorProperties;
-import java.util.Collections;
 import java.util.function.Predicate;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.models.Model;
-import com.ignfab.minalac.generator.models.filters.ModelFilterMetadataIn;
+import com.ignfab.minalac.generator.models.filters.ModelFilterOnMetadataValue;
 import com.ignfab.minalac.generator.parameters.ValueParser;
 
 /**
- * Parameters for a {@link ModelFilterMetadataIn} with an "equals" operator.
+ * Parameters for an "equals" operator.
  */
 public class ModelFilterMetadataEqualsParams extends ModelFilterParams {
 
@@ -54,7 +53,7 @@ public class ModelFilterMetadataEqualsParams extends ModelFilterParams {
 
     @Override
     public Predicate<Model> create() {
-        return new ModelFilterMetadataIn(metadata, Collections.singletonList(as.parse(equals)));
+        Object equals = as.parse(this.equals);
+        return new ModelFilterOnMetadataValue<>(as.type(), metadata, equals::equals);
     }
-
 }
