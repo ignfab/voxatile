@@ -1,8 +1,5 @@
 package com.ignfab.minalac.generator.models.filters;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -10,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.TestingModel;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ModelFilterMetadataLowerThanTest {
     @Test

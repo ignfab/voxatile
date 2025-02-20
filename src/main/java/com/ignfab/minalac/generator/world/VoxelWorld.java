@@ -1,8 +1,8 @@
 package com.ignfab.minalac.generator.world;
 
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-
 import java.io.File;
+
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * The {@code VoxelWorld} abstract class represents a three-dimensional world with voxels as the fundamental unit.

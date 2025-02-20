@@ -1,10 +1,5 @@
 package com.ignfab.minalac.generator.parameters;
 
-import com.ignfab.minalac.generator.generation.DataSource;
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.utils.random.Seed;
-import com.ignfab.minalac.generator.renderers.Renderer;
-
 import org.geotools.api.geometry.Position;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
@@ -13,6 +8,11 @@ import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.geometry.Position2D;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+
+import com.ignfab.minalac.generator.generation.DataSource;
+import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.renderers.Renderer;
+import com.ignfab.minalac.generator.utils.random.Seed;
 
 /**
  * This class is used to create a new {@link Generation} from {@link GenerationParams} parameters.

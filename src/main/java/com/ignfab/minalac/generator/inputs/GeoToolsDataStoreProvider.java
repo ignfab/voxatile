@@ -1,9 +1,8 @@
 package com.ignfab.minalac.generator.inputs;
 
-import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
-import com.ignfab.minalac.generator.exceptions.RetryableException;
-import com.ignfab.minalac.generator.exceptions.TransformException;
-import com.ignfab.minalac.generator.utils.coordinates.EnvelopeProvider;
+import java.io.IOException;
+import java.util.Map;
+
 import org.geotools.api.data.DataStore;
 import org.geotools.api.data.DataStoreFinder;
 import org.geotools.api.data.FeatureReader;
@@ -19,8 +18,10 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
-import java.io.IOException;
-import java.util.Map;
+import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
+import com.ignfab.minalac.generator.exceptions.RetryableException;
+import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.utils.coordinates.EnvelopeProvider;
 
 /**
  * Data provider using GeoTools {@link DataStore}.

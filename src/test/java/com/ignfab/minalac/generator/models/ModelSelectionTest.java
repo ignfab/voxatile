@@ -1,14 +1,13 @@
 package com.ignfab.minalac.generator.models;
 
+import java.util.Arrays;
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.models.filters.ModelFilterHasMetadata;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.assertBrowsesAllOnce;
-import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.assertEmpty;
+import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
 
 public class ModelSelectionTest {
 

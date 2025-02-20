@@ -1,7 +1,5 @@
 package com.ignfab.minalac.generator.utils.coordinates;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.operation.MathTransform;
 import org.geotools.referencing.CRS;
@@ -14,6 +12,8 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.util.AffineTransformation;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MapToMapConverterTest {
 

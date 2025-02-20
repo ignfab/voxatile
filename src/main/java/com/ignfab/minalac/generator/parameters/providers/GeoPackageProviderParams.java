@@ -1,17 +1,18 @@
 package com.ignfab.minalac.generator.parameters.providers;
 
+import java.beans.ConstructorProperties;
+import java.io.File;
+
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.inputs.GeoPackageDataProvider;
-import com.ignfab.minalac.generator.inputs.Provider;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
 
-import java.beans.ConstructorProperties;
-import java.io.File;
+import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.inputs.GeoPackageDataProvider;
+import com.ignfab.minalac.generator.inputs.Provider;
 
 /**
  * Parameters for GeoPackage providers.

@@ -1,10 +1,10 @@
 package com.ignfab.minalac.generator.processors.post;
 
+import java.util.function.Function;
+
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.models.Model;
-
-import java.util.function.Function;
 
 /**
  * Post-processor parsing a metadata value in-place.

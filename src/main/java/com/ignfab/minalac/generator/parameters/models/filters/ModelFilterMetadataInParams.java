@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.filters.ModelFilterMetadataIn;
 import com.ignfab.minalac.generator.parameters.ValueParser;

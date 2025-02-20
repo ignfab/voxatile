@@ -1,16 +1,13 @@
 package com.ignfab.minalac.generator.outputs.testing;
 
+import java.io.File;
+
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
-
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
-import java.io.File;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Testing purpose voxel world output.

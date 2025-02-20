@@ -1,9 +1,10 @@
 package com.ignfab.minalac.generator.processors;
 
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.models.Model;
-import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * A processor is responsible for transforming elements coming from

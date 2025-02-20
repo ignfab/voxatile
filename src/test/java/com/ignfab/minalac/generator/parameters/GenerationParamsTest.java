@@ -1,5 +1,10 @@
 package com.ignfab.minalac.generator.parameters;
 
+import java.util.HashMap;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
@@ -8,13 +13,8 @@ import com.ignfab.minalac.generator.parameters.placeables.TestingVoxelTypeParams
 import com.ignfab.minalac.generator.parameters.placeables.minetest.MTVoxelTypeParams;
 import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.TestingProviderParams;
-import com.ignfab.minalac.generator.parameters.renderers.TestingRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.BuildingRendererParams;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
+import com.ignfab.minalac.generator.parameters.renderers.TestingRendererParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 

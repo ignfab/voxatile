@@ -1,12 +1,12 @@
 package com.ignfab.minalac.generator.processors.post;
 
-import com.ignfab.minalac.generator.models.Model;
-import com.ignfab.minalac.generator.models.TestingModel;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
+import com.ignfab.minalac.generator.models.Model;
+import com.ignfab.minalac.generator.models.TestingModel;
 
 import static org.junit.jupiter.api.Assertions.*;
 

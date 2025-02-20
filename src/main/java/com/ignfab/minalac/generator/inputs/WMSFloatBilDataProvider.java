@@ -1,18 +1,19 @@
 package com.ignfab.minalac.generator.inputs;
 
-import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
-import com.ignfab.minalac.generator.exceptions.RetryableException;
-import com.ignfab.minalac.generator.utils.iterator.Iterators;
-import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.CRS;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Iterator;
+
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
+
+import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
+import com.ignfab.minalac.generator.exceptions.RetryableException;
+import com.ignfab.minalac.generator.utils.iterator.Iterators;
 
 /**
  * Data provider for Web Map Service (raster data).

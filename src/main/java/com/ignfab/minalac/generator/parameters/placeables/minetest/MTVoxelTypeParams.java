@@ -5,8 +5,9 @@ import java.beans.ConstructorProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.Nulls;
-import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelType;
+import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.parameters.placeables.CustomPlaceableParams;
 import com.ignfab.minalac.generator.world.Placeable;
 import com.ignfab.minalac.generator.world.VoxelWorld;

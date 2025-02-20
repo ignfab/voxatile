@@ -1,12 +1,13 @@
 package com.ignfab.minalac.generator.utils.world2d.iterator;
 
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+import java.util.NoSuchElementException;
+
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
-import java.util.NoSuchElementException;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WorldBBox2dIteratorTest {
     @Test

@@ -1,6 +1,11 @@
 package com.ignfab.minalac.generator.voxelization.shape2d.iterator;
 
-import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
@@ -8,13 +13,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Polygon2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Polyline2d;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-
+import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class Polygon2dIteratorTest {

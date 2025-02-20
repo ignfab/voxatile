@@ -1,12 +1,13 @@
 package com.ignfab.minalac.generator.parameters.processors;
 
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
 import org.junit.jupiter.api.Test;
+
+import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 import static org.junit.jupiter.api.Assertions.*;
 

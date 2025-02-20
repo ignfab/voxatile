@@ -1,8 +1,8 @@
 package com.ignfab.minalac.generator.outputs.minecraft;
 
-import net.querz.nbt.tag.CompoundTag;
-
 import java.util.Map;
+
+import net.querz.nbt.tag.CompoundTag;
 
 /**
  * {@code MCBlockEntityVoxelType} abstract class represents a Minecraft block with additional data associated with it.

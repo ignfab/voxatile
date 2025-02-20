@@ -1,8 +1,8 @@
 package com.ignfab.minalac.generator.inputs;
 
-import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
-
 import java.util.NoSuchElementException;
+
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 public class TestingProvider implements Provider<String> {
     private final CoordinateReferenceSystem crs;

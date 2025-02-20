@@ -1,14 +1,14 @@
 package com.ignfab.minalac.generator.voxelization.shape2d;
 
-import com.ignfab.minalac.generator.utils.iterator.Iterables;
-import com.ignfab.minalac.generator.utils.world2d.Bounded2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import com.ignfab.minalac.generator.utils.iterator.Iterables;
+import com.ignfab.minalac.generator.utils.world2d.Bounded2d;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
 /**
  * Represents a 2d polyline in the voxel world.

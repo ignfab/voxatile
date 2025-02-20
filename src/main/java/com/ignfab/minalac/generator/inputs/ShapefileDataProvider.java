@@ -1,15 +1,16 @@
 package com.ignfab.minalac.generator.inputs;
 
-import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
-import com.ignfab.minalac.generator.exceptions.RetryableException;
-import com.ignfab.minalac.generator.utils.coordinates.EnvelopeProvider;
-import org.geotools.api.data.DataStore;
-import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Map;
+
+import org.geotools.api.data.DataStore;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+
+import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
+import com.ignfab.minalac.generator.exceptions.RetryableException;
+import com.ignfab.minalac.generator.utils.coordinates.EnvelopeProvider;
 
 /**
  * Data provider using Shapefile.

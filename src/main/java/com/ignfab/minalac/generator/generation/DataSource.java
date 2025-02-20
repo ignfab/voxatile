@@ -1,5 +1,9 @@
 package com.ignfab.minalac.generator.generation;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
@@ -8,10 +12,6 @@ import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A data source with a provider, a processor and some (or no) post-processors.

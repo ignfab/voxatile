@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.voxelization.shape2d.iterator;
 
-import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Line2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LineVoxel2d;
 
-import java.util.Arrays;
+import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
 
 public class Line2dIteratorTest {
     @Test

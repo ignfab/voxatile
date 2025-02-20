@@ -1,14 +1,14 @@
 package com.ignfab.minalac.generator.models.filters;
 
+import java.util.Map;
+import java.util.function.Predicate;
+
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.TestingModel;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.Map;
-import java.util.function.Predicate;
 
 public class ModelFilterHasMetadataTest {
 

@@ -1,8 +1,5 @@
 package com.ignfab.minalac.generator.outputs.minetest.utils;
 
-import com.ignfab.minalac.generator.outputs.minetest.Block;
-import com.ignfab.minalac.generator.world.MapWriteException;
-
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -10,6 +7,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import com.ignfab.minalac.generator.outputs.minetest.Block;
+import com.ignfab.minalac.generator.world.MapWriteException;
 
 /**
  * {@code SQLiteMapWriter} is responsible for creating and updating the {@code map.sqlite} file,

@@ -1,10 +1,11 @@
 package com.ignfab.minalac.generator.utils.world3d.iterator;
 
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import java.util.NoSuchElementException;
+
 import org.junit.jupiter.api.Test;
 
-import java.util.NoSuchElementException;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 import static org.junit.jupiter.api.Assertions.*;
 

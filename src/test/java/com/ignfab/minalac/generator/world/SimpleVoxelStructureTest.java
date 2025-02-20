@@ -1,9 +1,10 @@
 package com.ignfab.minalac.generator.world;
 
+import org.junit.jupiter.api.Test;
+
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelType;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import org.junit.jupiter.api.Test;
 
 public class SimpleVoxelStructureTest {
 

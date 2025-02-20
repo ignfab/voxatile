@@ -1,10 +1,10 @@
 package com.ignfab.minalac.generator.voxelization.shape3d.iterator;
 
-import com.ignfab.minalac.generator.voxelization.shape3d.Line3d;
-import com.ignfab.minalac.generator.voxelization.shape3d.LineVoxel3d;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
+import com.ignfab.minalac.generator.voxelization.shape3d.Line3d;
+import com.ignfab.minalac.generator.voxelization.shape3d.LineVoxel3d;
 
 /**
  * An iterator returning voxels of each position on a 3d line.

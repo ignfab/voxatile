@@ -1,5 +1,12 @@
 package com.ignfab.minalac.generator;
 
+import java.io.File;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.concurrent.TimeUnit;
+
+import org.geotools.api.referencing.FactoryException;
+
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
@@ -18,8 +25,8 @@ import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParam
 import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
-import com.ignfab.minalac.generator.parameters.renderers.GroundRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.BuildingRendererParams;
+import com.ignfab.minalac.generator.parameters.renderers.GroundRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.HeightmapRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.LevelingRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.VectorRendererParams;
@@ -29,12 +36,6 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
-import org.geotools.api.referencing.FactoryException;
-
-import java.io.File;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is a temporary class to have an idea of how the program works.

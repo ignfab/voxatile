@@ -1,14 +1,15 @@
 package com.ignfab.minalac.generator.parameters.renderers;
 
+import java.beans.ConstructorProperties;
+
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
-import com.ignfab.minalac.generator.renderers.Renderer;
 import com.ignfab.minalac.generator.renderers.BuildingRenderer;
-
-import java.beans.ConstructorProperties;
+import com.ignfab.minalac.generator.renderers.Renderer;
 
 /**
  * Parameters for {@link BuildingRenderer}.

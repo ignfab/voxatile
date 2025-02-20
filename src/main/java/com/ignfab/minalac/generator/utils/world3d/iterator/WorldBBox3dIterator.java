@@ -1,10 +1,10 @@
 package com.ignfab.minalac.generator.utils.world3d.iterator;
 
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 /**
  * An iterator over all coordinates in a {@link WorldBBox3d}.

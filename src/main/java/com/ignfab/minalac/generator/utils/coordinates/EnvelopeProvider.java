@@ -1,9 +1,10 @@
 package com.ignfab.minalac.generator.utils.coordinates;
 
-import com.ignfab.minalac.generator.exceptions.TransformException;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+
+import com.ignfab.minalac.generator.exceptions.TransformException;
 
 /**
  * An {@code EnvelopeProvider} computes envelope in a given CRS.
