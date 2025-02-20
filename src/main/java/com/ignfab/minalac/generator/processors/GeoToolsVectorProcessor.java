@@ -1,16 +1,17 @@
 package com.ignfab.minalac.generator.processors;
 
+import org.geotools.api.feature.Property;
+import org.geotools.api.feature.simple.SimpleFeature;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.locationtech.jts.geom.Geometry;
+
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.models.JTSGeometryModel;
 import com.ignfab.minalac.generator.utils.coordinates.CoordsConverterProvider;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
-import org.geotools.api.feature.Property;
-import org.geotools.api.feature.simple.SimpleFeature;
-import org.geotools.api.referencing.FactoryException;
-import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
-import org.locationtech.jts.geom.Geometry;
 
 /**
  * Processor transforming {@link SimpleFeature} GeoTools object

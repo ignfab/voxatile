@@ -1,10 +1,9 @@
 package com.ignfab.minalac.generator.parameters;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ValueParserTest {
     @Test

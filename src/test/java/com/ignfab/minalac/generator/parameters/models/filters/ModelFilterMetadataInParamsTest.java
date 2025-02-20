@@ -1,12 +1,12 @@
 package com.ignfab.minalac.generator.parameters.models.filters;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.models.filters.ModelFilterMetadataIn;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
 
 public class ModelFilterMetadataInParamsTest {
 

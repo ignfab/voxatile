@@ -1,10 +1,10 @@
 package com.ignfab.minalac.generator.generation;
 
+import java.util.Arrays;
+
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldSize2d;
-
-import java.util.Arrays;
 
 /**
  * A 2d heightmap in voxel world units.

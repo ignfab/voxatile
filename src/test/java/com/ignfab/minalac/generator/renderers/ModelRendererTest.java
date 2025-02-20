@@ -1,15 +1,16 @@
 package com.ignfab.minalac.generator.renderers;
 
-import com.ignfab.minalac.generator.models.ModelImpl;
-import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.models.ModelStore;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import org.junit.jupiter.api.Test;
+
+import com.ignfab.minalac.generator.models.ModelImpl;
+import com.ignfab.minalac.generator.models.ModelSelection;
+import com.ignfab.minalac.generator.models.ModelStore;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 import static org.junit.jupiter.api.Assertions.*;
 

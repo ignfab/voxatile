@@ -1,7 +1,8 @@
 package com.ignfab.minalac.generator.processors;
 
-import com.ignfab.minalac.generator.models.TestingModel;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+
+import com.ignfab.minalac.generator.models.TestingModel;
 
 public class TestingProcessor implements Processor<String, TestingModel> {
 

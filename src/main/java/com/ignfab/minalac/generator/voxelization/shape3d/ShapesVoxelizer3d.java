@@ -1,14 +1,14 @@
 package com.ignfab.minalac.generator.voxelization.shape3d;
 
-import com.ignfab.minalac.generator.utils.iterator.Iterables;
-import com.ignfab.minalac.generator.utils.world3d.Positioned3d;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.voxelization.Voxelizer3d;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import com.ignfab.minalac.generator.utils.iterator.Iterables;
+import com.ignfab.minalac.generator.utils.world3d.Positioned3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.voxelization.Voxelizer3d;
 
 /**
  * A voxelizer based on 3d shapes.

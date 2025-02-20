@@ -1,10 +1,10 @@
 package com.ignfab.minalac.generator.utils.world3d;
 
+import java.util.Iterator;
+
 import com.ignfab.minalac.generator.utils.iterator.Iterators;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.iterator.WorldBBox3dIterator;
-
-import java.util.Iterator;
 
 /**
  * The {@code WorldBBox3d} class represents a three-dimensional bounding box that surrounds an area of the voxel world.

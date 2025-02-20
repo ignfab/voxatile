@@ -1,16 +1,16 @@
 package com.ignfab.minalac.generator.processors.post;
 
-import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
-import com.ignfab.minalac.generator.exceptions.IgnorableException;
-import com.ignfab.minalac.generator.models.Model;
-import com.ignfab.minalac.generator.models.TestingModel;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
+import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
+import com.ignfab.minalac.generator.exceptions.IgnorableException;
+import com.ignfab.minalac.generator.models.Model;
+import com.ignfab.minalac.generator.models.TestingModel;
 
 import static org.junit.jupiter.api.Assertions.*;
 

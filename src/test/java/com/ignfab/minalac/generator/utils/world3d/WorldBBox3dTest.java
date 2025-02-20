@@ -1,16 +1,16 @@
 package com.ignfab.minalac.generator.utils.world3d;
 
-import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
-
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+
+import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WorldBBox3dTest {
     @Test

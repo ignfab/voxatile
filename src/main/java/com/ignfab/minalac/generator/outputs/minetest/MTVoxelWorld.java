@@ -1,18 +1,18 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.MapWriteException;
-import com.ignfab.minalac.generator.world.VoxelWorld;
-import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
-import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.world.MapWriteException;
+import com.ignfab.minalac.generator.world.VoxelWorld;
+import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
 /**
  * Implementation of {@link VoxelWorld} that creates a playable world specifically for Minetest.

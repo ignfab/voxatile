@@ -1,13 +1,14 @@
 package com.ignfab.minalac.generator.outputs.minecraft;
 
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.querz.nbt.tag.CompoundTag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 import static org.junit.jupiter.api.Assertions.*;
 

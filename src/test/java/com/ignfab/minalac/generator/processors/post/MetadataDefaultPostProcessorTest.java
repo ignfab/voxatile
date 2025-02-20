@@ -1,10 +1,10 @@
 package com.ignfab.minalac.generator.processors.post;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.models.TestingModel;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MetadataDefaultPostProcessorTest {
     @Test

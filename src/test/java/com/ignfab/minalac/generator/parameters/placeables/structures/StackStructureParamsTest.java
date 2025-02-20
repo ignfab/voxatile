@@ -1,7 +1,6 @@
 package com.ignfab.minalac.generator.parameters.placeables.structures;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
@@ -9,6 +8,8 @@ import com.ignfab.minalac.generator.parameters.placeables.TestingVoxelTypeParams
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.Placeable;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StackStructureParamsTest {
 

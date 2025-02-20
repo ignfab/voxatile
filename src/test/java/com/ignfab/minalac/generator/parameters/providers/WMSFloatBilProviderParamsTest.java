@@ -1,7 +1,5 @@
 package com.ignfab.minalac.generator.parameters.providers;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.NoSuchAuthorityCodeException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
@@ -11,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WMSFloatBilProviderParamsTest {
     @Test

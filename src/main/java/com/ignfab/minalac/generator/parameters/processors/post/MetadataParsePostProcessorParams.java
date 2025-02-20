@@ -1,13 +1,14 @@
 package com.ignfab.minalac.generator.parameters.processors.post;
 
+import java.beans.ConstructorProperties;
+
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.parameters.ValueParser;
 import com.ignfab.minalac.generator.processors.post.MetadataParsePostProcessor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
-
-import java.beans.ConstructorProperties;
 
 /**
  * Parameters for {@link MetadataParsePostProcessor}.

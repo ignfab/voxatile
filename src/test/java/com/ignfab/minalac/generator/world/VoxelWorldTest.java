@@ -1,13 +1,13 @@
 package com.ignfab.minalac.generator.world;
 
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import org.junit.jupiter.api.Test;
-
 import java.io.File;
 
+import org.junit.jupiter.api.Test;
+
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class VoxelWorldTest {
     @Test

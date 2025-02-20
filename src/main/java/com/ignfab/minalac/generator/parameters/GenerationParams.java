@@ -1,14 +1,15 @@
 package com.ignfab.minalac.generator.parameters;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.parameters.renderers.RendererParams;
-
 import java.beans.ConstructorProperties;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+
+import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.parameters.renderers.RendererParams;
 
 /**
  * GenerationParams represents the parameters used during the generation.

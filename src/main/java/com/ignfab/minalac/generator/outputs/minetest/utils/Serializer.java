@@ -1,18 +1,18 @@
 package com.ignfab.minalac.generator.outputs.minetest.utils;
 
-import com.ignfab.minalac.generator.outputs.minetest.Block;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
-import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
+
+import com.ignfab.minalac.generator.outputs.minetest.Block;
 
 /**
  * This class is responsible for providing the serialized {@code Block} needed by the {@code map.sqlite} file.
  * @see SQLiteMapWriter
- * @see com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld#save(File)
+ * @see com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld#save(java.io.File)
  */
 public class Serializer {
 

@@ -1,9 +1,10 @@
 package com.ignfab.minalac.generator.outputs.minecraft;
 
-import com.ignfab.minalac.generator.world.VoxelType;
+import java.util.Map;
+
 import net.querz.nbt.tag.CompoundTag;
 
-import java.util.Map;
+import com.ignfab.minalac.generator.world.VoxelType;
 
 /**
  * {@code MCVoxelType} class provides the necessary structure and mechanism in order to implement {@link VoxelType} for Minecraft.

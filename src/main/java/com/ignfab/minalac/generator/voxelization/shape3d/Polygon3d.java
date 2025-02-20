@@ -1,12 +1,12 @@
 package com.ignfab.minalac.generator.voxelization.shape3d;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.world3d.Bounded3d;
 import com.ignfab.minalac.generator.utils.world3d.Positioned3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-
-import java.util.Collection;
-import java.util.LinkedList;
 
 /**
  * Represents a 3d polygon with holes in the voxel world.

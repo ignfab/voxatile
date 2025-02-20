@@ -1,10 +1,11 @@
 package com.ignfab.minalac.generator.inputs;
 
-import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
-import com.ignfab.minalac.generator.exceptions.RetryableException;
+import java.io.Closeable;
+
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
-import java.io.Closeable;
+import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
+import com.ignfab.minalac.generator.exceptions.RetryableException;
 
 /**
  * A provider is responsible for acquiring data.

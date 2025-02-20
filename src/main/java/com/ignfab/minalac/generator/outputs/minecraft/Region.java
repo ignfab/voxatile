@@ -1,11 +1,11 @@
 package com.ignfab.minalac.generator.outputs.minecraft;
 
+import java.io.File;
+import java.io.IOException;
+
 import net.querz.mca.Chunk;
 import net.querz.mca.MCAFile;
 import net.querz.mca.MCAUtil;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Represents a Minecraft region.

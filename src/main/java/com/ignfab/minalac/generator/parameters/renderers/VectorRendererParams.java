@@ -1,12 +1,12 @@
 package com.ignfab.minalac.generator.parameters.renderers;
 
+import java.beans.ConstructorProperties;
+
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.renderers.Renderer;
 import com.ignfab.minalac.generator.renderers.VectorRenderer;
-
-import java.beans.ConstructorProperties;
 
 /**
  * Concrete class of {@link RendererParams} representing the parameters of a {@link VectorRenderer}.

@@ -1,13 +1,13 @@
 package com.ignfab.minalac.generator.utils.iterator;
 
-import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
-
-import org.junit.jupiter.api.Test;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
+import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
 
 public class IterablesTest {
 

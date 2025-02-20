@@ -4,10 +4,11 @@ import java.beans.ConstructorProperties;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.parameters.ValueParser;
-import com.ignfab.minalac.generator.processors.post.PostProcessor;
 import com.ignfab.minalac.generator.processors.post.MetadataDefaultPostProcessor;
+import com.ignfab.minalac.generator.processors.post.PostProcessor;
 
 /**
  * Parameters for {@link MetadataDefaultPostProcessor}.

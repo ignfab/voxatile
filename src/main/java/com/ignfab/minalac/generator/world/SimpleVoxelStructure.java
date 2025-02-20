@@ -1,10 +1,10 @@
 package com.ignfab.minalac.generator.world;
 
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 /**
  * {@code SimpleVoxelStructure} is a {@link Placeable} consisting of placeables at given coordinate offsets.

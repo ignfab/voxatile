@@ -2,11 +2,12 @@ package com.ignfab.minalac.generator.parameters.processors.post;
 
 import java.beans.ConstructorProperties;
 
-import com.ignfab.minalac.generator.processors.post.PostProcessor;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.processors.post.MetadataCopyPostProcessor;
+import com.ignfab.minalac.generator.processors.post.PostProcessor;
 
 /**
  * Parameters for {@link MetadataCopyPostProcessor}.

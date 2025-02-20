@@ -1,11 +1,8 @@
 package com.ignfab.minalac.generator.processors;
 
-import com.ignfab.minalac.generator.models.JTSGeometryModel;
-import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
-import com.ignfab.minalac.generator.utils.iterator.Iterables;
-import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.api.referencing.FactoryException;
@@ -17,10 +14,14 @@ import org.geotools.referencing.operation.transform.IdentityTransform;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.util.AffineTransformation;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import com.ignfab.minalac.generator.models.JTSGeometryModel;
+import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
+import com.ignfab.minalac.generator.utils.iterator.Iterables;
+import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
-import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.assertBrowsesAllOnce;
+import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GeoToolsVectorProcessorTest {

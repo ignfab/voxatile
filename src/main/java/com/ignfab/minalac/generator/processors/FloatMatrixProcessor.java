@@ -1,5 +1,8 @@
 package com.ignfab.minalac.generator.processors;
 
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
@@ -7,8 +10,6 @@ import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.models.FloatMatrixModel;
 import com.ignfab.minalac.generator.utils.coordinates.CoordsConverterProvider;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
-import org.geotools.api.referencing.FactoryException;
-import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Processor transforming {@link FloatGeographicDataMatrix2d} into a

@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.parameters.processors.post;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.ignfab.minalac.generator.processors.post.MetadataParsePostProcessor.ParsingFailurePolicy;
 
 /**

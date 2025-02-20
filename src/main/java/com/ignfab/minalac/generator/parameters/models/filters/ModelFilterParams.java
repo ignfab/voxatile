@@ -4,6 +4,7 @@ import java.util.function.Predicate;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import com.ignfab.minalac.generator.models.Model;
 
 /**

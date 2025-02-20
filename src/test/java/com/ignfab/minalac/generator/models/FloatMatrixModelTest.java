@@ -1,7 +1,5 @@
 package com.ignfab.minalac.generator.models;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.geotools.referencing.operation.transform.IdentityTransform;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.util.AffineTransformation;
@@ -11,6 +9,8 @@ import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FloatMatrixModelTest {
     @Test

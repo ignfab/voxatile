@@ -1,5 +1,16 @@
 package com.ignfab.minalac.generator.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
@@ -14,17 +25,6 @@ import com.ignfab.minalac.generator.voxelization.shape3d.Point3d;
 import com.ignfab.minalac.generator.voxelization.shape3d.Polygon3d;
 import com.ignfab.minalac.generator.voxelization.shape3d.Polyline3d;
 import com.ignfab.minalac.generator.voxelization.shape3d.ShapesVoxelizer3d;
-
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryCollection;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Model represented by a JTS Geometry.

@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.world;
 /**
  * Exception thrown if a problem occurs when saving a {@link VoxelWorld}.
  *
- * @see VoxelWorld#save(File)
+ * @see VoxelWorld#save(java.io.File)
  */
 public class MapWriteException extends Exception {
     /**
