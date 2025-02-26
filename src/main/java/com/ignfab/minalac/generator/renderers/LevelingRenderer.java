@@ -7,7 +7,7 @@ import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.Voxelizer2d;
-import com.ignfab.minalac.generator.world.Placeable;
+import com.ignfab.minalac.generator.placeables.Placeable;
 
 /**
  * Alters floor level to guarantee flat surface under each model.

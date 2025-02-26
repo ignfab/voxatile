@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.world;
+package com.ignfab.minalac.generator.placeables;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +18,7 @@ public class PlaceableStructure implements Placeable {
      */
     @Override
     public void place(int x, int y, int z) {
+        // TODO: Ensure order is constant!
         placeables.forEach((c, placeable) -> placeable.place(c.x() + x, c.y() + y, c.z() + z));
     }
 

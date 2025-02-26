@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.renderers;
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.world.Placeable;
+import com.ignfab.minalac.generator.placeables.Placeable;
 
 /**
  * Ground renderer renders a basic ground using altitude from given heightmap.

@@ -14,7 +14,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.VoxelType;
+import com.ignfab.minalac.generator.placeables.VoxelType;
 
 import static org.junit.jupiter.api.Assertions.*;
 

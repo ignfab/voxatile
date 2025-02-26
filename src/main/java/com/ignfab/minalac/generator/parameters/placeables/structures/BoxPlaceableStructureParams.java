@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.parameters.utils.WorldBBox3dParams;
-import com.ignfab.minalac.generator.world.Placeable;
-import com.ignfab.minalac.generator.world.PlaceableStructure;
+import com.ignfab.minalac.generator.placeables.Placeable;
+import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
