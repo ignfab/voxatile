@@ -85,9 +85,9 @@ public class BuildingRendererParams extends RendererParams {
         return new BuildingRenderer(
             models.create(generation.models()),
             generation.heightmaps().get(heightmap),
-            roof.create(generation.world()),
-            wall.create(generation.world()),
-            window.create(generation.world())
+            roof.create(generation.seed(), generation.world()),
+            wall.create(generation.seed(), generation.world()),
+            window.create(generation.seed(), generation.world())
         );
     }
 }

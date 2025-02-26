@@ -44,6 +44,6 @@ public class GroundRendererParams extends RendererParams {
 
     @Override
     public Renderer create(Generation generation) {
-        return new GroundRenderer(generation.heightmaps().get(heightmap), place.create(generation.world()));
+        return new GroundRenderer(generation.heightmaps().get(heightmap), place.create(generation.seed(), generation.world()));
     }
 }

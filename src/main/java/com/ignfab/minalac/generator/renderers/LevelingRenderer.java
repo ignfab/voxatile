@@ -3,11 +3,11 @@ package com.ignfab.minalac.generator.renderers;
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.Voxelizable2d;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.Voxelizer2d;
-import com.ignfab.minalac.generator.world.Placeable;
 
 /**
  * Alters floor level to guarantee flat surface under each model.

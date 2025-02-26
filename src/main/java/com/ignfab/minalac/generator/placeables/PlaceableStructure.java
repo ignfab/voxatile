@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.world;
+package com.ignfab.minalac.generator.placeables;
 
 import java.util.HashMap;
 import java.util.Map;

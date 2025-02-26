@@ -83,12 +83,39 @@ renderers:
     roof: *voxel-cobble
     wall: *voxel-stone
     window: *voxel-glass
-  vegetation:
+  forest:
     after:
       - renderer:ground
       - source:vegetation
     type: vector
     models:
       type: vegetation
+      filter:
+        metadata: nature
+        in:
+          - "Bois"
+          - "Forêt fermée de conifères"
+          - "Forêt fermée de feuillus"
+          - "Forêt fermée mixte"
+          - "Forêt ouverte"
+          - "Zone arborée"
     heightmap: ground
-    place: *voxel-forest-ground
+    place:
+      - pattern:
+          seed: forest-grass
+          chance: 0.1
+          place:
+            structure:
+              - at: [0, 0, 1]
+                put: *forest-grass
+      - *voxel-forest-ground
+      - pattern:
+          seed: forest-tree1
+          chance: 0.01
+          place: *forest-tree1
+      - pattern:
+          seed: tree2
+          chance: 0.003
+          place: *forest-tree2
+
+

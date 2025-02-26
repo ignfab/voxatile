@@ -13,6 +13,21 @@ A placeable is something that can be placed in voxel world at a given position: 
 * [Structures](#structures)
   * [Boxes structures](#boxes-structures)
   * [Blueprint structures](#blueprint-structures)
+* [Patterns](#patterns)
+  * [Random patterns](#random-patterns)
+
+## Combine placeables
+
+Placeables may have to be combined. This is done by giving a list of placeables instead of a single placeable. Top item will be placed first, then next one, until bottom of the list. Each item overwrites what was placed before.
+
+For example, to have some randomly placed dirt voxels on a grass ground:
+```yaml
+place:
+  - default:dirt_with_grass
+  - pattern:
+      chance: 0.03
+      place: default:dirt
+```
 
 ## Voxels
 
@@ -268,3 +283,24 @@ place:
 Which gives that result:
 ![A wooden base with lamp posts at each corner floating in the air](img/structure-composite.png)
 
+## Patterns
+
+Patterns are sets of voxels but unlike structures, they are not placed at once from given position. Also unlike structures, they are unbounded.
+Instead a pattern may tell to a renderer what to place at a given position according to it. For example it can be used to draw stripes or place trees randomly.
+
+### Random Patterns
+
+This is a basic random pattern placing something or not with a given chance:
+```yaml
+place:
+  pattern:
+    chance: 0.5
+    place: default:stone
+```
+
+Fields:
+- `chance`: Chance that placeable will be placed (required).
+- `place`: [Placeable](Placeables.md) to place (required).
+- `seed`: Random seed (optional default "").
+
+Chance of 0.0 (and lower) means never, chance of 1.0 and higher mean always. In between means the probability (for example 0.25 is 1 chance out of 4).

@@ -22,10 +22,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
+import com.ignfab.minalac.generator.placeables.NoVoxel;
+import com.ignfab.minalac.generator.placeables.Placeable;
+import com.ignfab.minalac.generator.placeables.PlaceableStructure;
+import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.NoVoxel;
-import com.ignfab.minalac.generator.world.Placeable;
-import com.ignfab.minalac.generator.world.PlaceableStructure;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
@@ -162,13 +163,13 @@ public class BlueprintPlaceableStructureParams extends PlaceableStructureParams.
     }
 
     @Override
-    public void apply(VoxelWorld world, PlaceableStructure structure) {
+    public void apply(Seed seed, VoxelWorld world, PlaceableStructure structure) {
         // Prepare translation form chars to placeables
         placeables = new HashMap<>();
         // Default space char for no voxel
         placeables.put(' ', NoVoxel.INSTANCE);
         // Create placeables for each `with` keys
-        with.forEach((key, value) -> placeables.put(key, value.create(world)));
+        with.forEach((key, value) -> placeables.put(key, value.create(seed, world)));
 
         WorldCoords3d position = new WorldCoords3d(xOffset, yOffset, zOffset);
 
