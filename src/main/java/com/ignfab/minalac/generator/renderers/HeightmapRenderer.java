@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.renderers;
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.models.FloatMatrixModel;
 import com.ignfab.minalac.generator.models.ModelSelection;
+import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.Matrix2d;
@@ -21,12 +22,12 @@ public class HeightmapRenderer extends ModelRenderer<FloatMatrixModel> {
      * @param heightmap Heightmap where heights will be written
      */
     public HeightmapRenderer(ModelSelection selection, Heightmap heightmap) {
-        super(FloatMatrixModel.class, selection);
+        super(null, FloatMatrixModel.class, selection);
         this.heightmap = heightmap;
     }
 
     @Override
-    protected void render(FloatMatrixModel model, WorldBBox3d bbox) {
+    protected void render(Seed seed, FloatMatrixModel model, WorldBBox3d bbox) {
         // Iterate over matrix and fill heightmap altitude
         for (Matrix2d.Value<Float> value : model) {
             WorldCoords2d c = value.coords();

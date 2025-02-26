@@ -1,4 +1,6 @@
-package com.ignfab.minalac.generator.world;
+package com.ignfab.minalac.generator.placeables;
+
+import java.util.Random;
 
 /**
  * A placeable placing nothing.
@@ -18,10 +20,11 @@ public final class NoVoxel implements Placeable {
     /**
      * Does not place anything at x, y, z.
      *
+     * @param random random generator to use if random needed
      * @param x x-coordinate where to place nothing
      * @param y y-coordinate where to place nothing
      * @param z z-coordinate where to place nothing
      */
     @Override
-    public void place(int x, int y, int z) {}
+    public void place(Random random, int x, int y, int z) {}
 }

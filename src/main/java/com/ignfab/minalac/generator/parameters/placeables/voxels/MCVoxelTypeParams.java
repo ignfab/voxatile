@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelType;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
-import com.ignfab.minalac.generator.world.Placeable;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**

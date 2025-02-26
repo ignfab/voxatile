@@ -26,7 +26,8 @@ renderers:
     after:
       - source:bati
     type: vector
-    modelType: building
+    models:
+      type: building
     heightmap: ground
     inside: default:cobble
     edge: default:stone
@@ -230,6 +231,7 @@ This renderer places a column of voxels under a heightmap.
 **Type**: ground
 
 **Extra parameters**:
+- `seed`: Random seed for this renderer instance (optional, default "");
 - `heightmap`: Name of the heightmap to use
 - `place`: [Placeable](Placeables.md) to place at each heightmap voxel.
 
@@ -253,6 +255,7 @@ edge: default:stone
 
 Fields:
 - `type`: Must be the value `vector`.
+- `seed`: Random seed for this renderer instance (optional, default "");
 - `modelType`: the type of models to render
 - `heightmap`: the name of the ground heightmap to use. It must exist.
 - `inside`: [Placeable](Placeables.md) to place on each inside voxel
@@ -268,6 +271,7 @@ heightmap: ground
 
 Fields:
 - `type`: Must be the value `heightmap`
+- `seed`: Random seed for this renderer instance (optional, default "");
 - `modelType`: the type of models to render
 - `heightmap`: the name of the heightmap to use. It must exist.
 
@@ -279,6 +283,7 @@ Ground height is given by `heightmap`. If it's not flat under a model, it will b
 
 Fields:
 - `type`: Must be the value `leveling`
+- `seed`: Random seed for this renderer instance (optional, default "");
 - `models`: Type of models to render
 - `heightmap`: Heightmap of the ground, will be updated according to leveling.
 - `filling`: [Placeable](Placeables.md) placed beneath the model, ensuring it connects to the ground and does not appear to float.
@@ -291,6 +296,7 @@ Building height is given by `height` metadata (the behavior of this renderer is 
 
 Fields:
 - `type`: Must be the value `building`
+- `seed`: Random seed for this renderer instance (optional, default "");
 - `models`: Type of models to render.
 - `heightmap`: Name of the heightmap to use. It must exist.
 - `roof`: [Placeable](Placeables.md) used to render roofs.

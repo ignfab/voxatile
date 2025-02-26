@@ -4,7 +4,7 @@ import java.util.Map;
 
 import net.querz.nbt.tag.CompoundTag;
 
-import com.ignfab.minalac.generator.world.VoxelType;
+import com.ignfab.minalac.generator.placeables.VoxelType;
 
 /**
  * {@code MCVoxelType} class provides the necessary structure and mechanism in order to implement {@link VoxelType} for Minecraft.

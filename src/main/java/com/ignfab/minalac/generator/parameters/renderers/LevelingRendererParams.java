@@ -16,6 +16,12 @@ import com.ignfab.minalac.generator.renderers.Renderer;
  */
 public class LevelingRendererParams extends RendererParams {
     /**
+     * Random salt for this renderer (optional, default "").
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public String salt = "";
+
+    /**
      * Type of models to render (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
@@ -64,6 +70,7 @@ public class LevelingRendererParams extends RendererParams {
     @Override
     public Renderer create(Generation generation) {
         return new LevelingRenderer(
+            generation.seed().salt(salt),
             models.create(generation.models()),
             generation.heightmaps().get(heightmap),
             filling.create(generation.world())

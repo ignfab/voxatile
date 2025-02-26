@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.models.ModelImpl;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
+import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,11 +51,11 @@ public class ModelRendererTest {
         private final List<ModelImpl> modelsRendered = new ArrayList<>();
 
         ModelRendererImpl(ModelStore store, String modelType) {
-            super(ModelImpl.class, new ModelSelection(store, modelType, null));
+            super(new Seed(""), ModelImpl.class, new ModelSelection(store, modelType, null));
         }
 
         @Override
-        protected void render(ModelImpl model, WorldBBox3d bbox) {
+        protected void render(Seed seed, ModelImpl model, WorldBBox3d bbox) {
             modelsRendered.add(model);
         }
     }
@@ -81,7 +82,7 @@ public class ModelRendererTest {
 
         @Override
         public String salt() {
-            throw new UnsupportedOperationException("Unimplemented method 'salt'");
+            return "test";
         }
     }
 }

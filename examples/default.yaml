@@ -32,6 +32,14 @@ sources:
         metadata: height
         value: 5
         as: integer
+  veget:
+    modelType: vegetation
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:zone_de_vegetation
+    processor:
+      type: geoToolsVector
 renderers:
   altitude:
     after:
@@ -79,6 +87,43 @@ renderers:
     roof: default:cobble
     wall: default:stone
     window: default:glass
+  forest:
+    after:
+      - renderer:ground
+      - source:veget
+    type: vector
+    models:
+      type: vegetation
+      filter:
+        metadata: nature
+        in:
+          - "Bois"
+          - "Forêt fermée de conifères"
+          - "Forêt fermée de feuillus"
+          - "Forêt fermée mixte"
+          - "Forêt ouverte"
+          - "Zone arborée"
+    heightmap: ground
+    inside:
+      - pattern:
+          chance: 0.1
+          place:
+            structure:
+              - at: [0, 0, 1]
+                put: default:junglegrass
+      - default:dirt_with_rainforest_litter
+      - pattern:
+          chance: 0.05
+          place:
+            structure:
+              - at: [-2..2, -2..2, 4..8]
+                put:
+                  pattern:
+                    place: default:leaves
+                    chance: 0.9
+              - at: [0, 0, 0..4]
+                put: default:tree
+    edge: nothing
 verticalScale: 1.0
 horizontalScale: 1.0
 area:

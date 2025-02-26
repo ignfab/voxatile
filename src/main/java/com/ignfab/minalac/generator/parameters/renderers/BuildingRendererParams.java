@@ -15,6 +15,13 @@ import com.ignfab.minalac.generator.renderers.Renderer;
  * Parameters for {@link BuildingRenderer}.
  */
 public class BuildingRendererParams extends RendererParams {
+
+    /**
+     * Random salt for this renderer (optional, default "").
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public String salt = "";
+
     /**
      * Type of models to render (required).
      */
@@ -83,6 +90,7 @@ public class BuildingRendererParams extends RendererParams {
     @Override
     public Renderer create(Generation generation) {
         return new BuildingRenderer(
+            generation.seed().salt(salt),
             models.create(generation.models()),
             generation.heightmaps().get(heightmap),
             roof.create(generation.world()),
