@@ -1,9 +1,10 @@
-package com.ignfab.minalac.generator.world;
+package com.ignfab.minalac.generator.placeables;
 
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelType;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
+import com.ignfab.minalac.generator.utils.random.TestingRandom;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 public class PlaceableStructureTest {
@@ -61,7 +62,7 @@ public class PlaceableStructureTest {
         structure.set(-1, 1, 1, vtB);
 
         // Structure is placed at the center of the world
-        structure.place(0, -1, -2);
+        structure.place(new TestingRandom(), 0, -1, -2);
 
         // Expected outcome
         /* z:     -3   -2    -1
@@ -128,8 +129,8 @@ public class PlaceableStructureTest {
         vt.place(4, 4, 5);
 
         PlaceableStructure structure = new PlaceableStructure();
-        structure.place(3, 4, 5);
-        structure.place(4, 4, 5);
+        structure.place(new TestingRandom(), 3, 4, 5);
+        structure.place(new TestingRandom(), 4, 4, 5);
 
         world.assertVoxelNull(3, 4, 5);
         world.assertVoxel("*", 4, 4, 5);

@@ -21,10 +21,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
+import com.ignfab.minalac.generator.placeables.NoVoxel;
+import com.ignfab.minalac.generator.placeables.Placeable;
+import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.NoVoxel;
-import com.ignfab.minalac.generator.world.Placeable;
-import com.ignfab.minalac.generator.world.PlaceableStructure;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**

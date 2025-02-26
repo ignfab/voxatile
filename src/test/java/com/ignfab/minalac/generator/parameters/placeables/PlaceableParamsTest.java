@@ -61,6 +61,18 @@ public class PlaceableParamsTest {
         assertEquals(voxelTypeParams.name, "tata");
     }
 
+    // Combined deserialization
+
+    @Test
+    @DisplayName("Test placeable deserialization using combined params")
+    public void testPlaceableParamsDeserializerCombined() throws JsonMappingException, JsonProcessingException {
+
+        PlaceableParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, "[ titi, toto, tata ]"));
+
+        CombinedPlaceableParams combinedParams = assertInstanceOf(CombinedPlaceableParams.class, params);
+        assertEquals(3, combinedParams.placeableParams.size());
+    }
+
     // NoVoxel deserialization
 
     @Test

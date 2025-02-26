@@ -1,14 +1,17 @@
 package com.ignfab.minalac.generator.renderers;
 
+import java.util.Random;
+
 import com.ignfab.minalac.generator.generation.Heightmap;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
+import com.ignfab.minalac.generator.placeables.Placeable;
+import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LineVoxel2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
-import com.ignfab.minalac.generator.world.Placeable;
 
 /**
  * Rendering of buildings.
@@ -39,6 +42,7 @@ public class BuildingRenderer extends ModelRenderer<ShapesVoxelizable2d> {
     /**
      * Creates a new {@code BuildingRenderer}.
      *
+     * @param seed random seed for this renderer
      * @param selection building models selection
      * @param heightmap heightmap of the ground (on which features will be placed)
      * @param roof {@code Placeable} for roofs
@@ -46,13 +50,14 @@ public class BuildingRenderer extends ModelRenderer<ShapesVoxelizable2d> {
      * @param window {@code Placeable} for windows
      */
     public BuildingRenderer(
+        Seed seed,
         ModelSelection selection,
         Heightmap heightmap,
         Placeable roof,
         Placeable wall,
         Placeable window
     ) {
-        super(ShapesVoxelizable2d.class, selection);
+        super(seed, ShapesVoxelizable2d.class, selection);
         this.heightmap = heightmap;
         this.roof = roof;
         this.wall = wall;
@@ -60,7 +65,9 @@ public class BuildingRenderer extends ModelRenderer<ShapesVoxelizable2d> {
     }
 
     @Override
-    protected void render(ShapesVoxelizable2d model, WorldBBox3d bbox) {
+    protected void render(Seed seed, ShapesVoxelizable2d model, WorldBBox3d bbox) {
+        Random random = seed.createRandom();
+
         // TODO: Implement a post-processor for value rounding to rollback this change
         int height = (int) Math.round(
             /* Casting to Number is needed to avoid a cast exception in BuildingRendererTest */
@@ -74,9 +81,9 @@ public class BuildingRenderer extends ModelRenderer<ShapesVoxelizable2d> {
             int zMin = heightmap.get(c);
 
             for (int z = 1; z < height; z++)
-                ((z % 4 == 0) ? window : wall).place(c.x(), c.y(), zMin + z);
+                ((z % 4 == 0) ? window : wall).place(random, c.x(), c.y(), zMin + z);
             // Build the border of the roof of the building
-            roof.place(c.x(), c.y(), zMin + height);
+            roof.place(random, c.x(), c.y(), zMin + height);
         }
 
         // Build the floors of the building
@@ -85,9 +92,9 @@ public class BuildingRenderer extends ModelRenderer<ShapesVoxelizable2d> {
             int zMin = heightmap.get(c);
 
             for (int z = 2; z < height; z = z + 4)
-                roof.place(c.x(), c.y(), zMin + z);
+                roof.place(random, c.x(), c.y(), zMin + z);
             // Build the inside of the roof of the building
-            roof.place(c.x(), c.y(), zMin + height);
+            roof.place(random, c.x(), c.y(), zMin + height);
         }
     }
 }

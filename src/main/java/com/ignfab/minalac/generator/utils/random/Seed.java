@@ -8,7 +8,10 @@ import java.util.Random;
  * See docs/development/RandomNumbers.md for further documentation.
  */
 public class Seed {
-    private final String seed;
+    /**
+     * Internal seed string.
+     */
+    protected final String seed;
 
     /**
      * Creates a new {@code Seed} from a String.

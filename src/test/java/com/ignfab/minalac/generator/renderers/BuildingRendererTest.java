@@ -11,10 +11,11 @@ import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dMod
 import com.ignfab.minalac.generator.models.filters.ModelFilterHasMetadata;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
+import com.ignfab.minalac.generator.placeables.Placeable;
+import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.Placeable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,6 +49,7 @@ public class BuildingRendererTest {
         String voxelBName = "voxelB";
         String voxelCName = "voxelC";
         assertDoesNotThrow(() -> new BuildingRenderer(
+            new Seed(""),
             new ModelSelection(models, "building", new ModelFilterHasMetadata("height")),
             heightmap,
             new TestingVoxelTypeParams(voxelAName).create(world),
@@ -102,6 +104,7 @@ public class BuildingRendererTest {
 
         Placeable placeable = new TestingVoxelTypeParams("voxel").create(world);
         assertDoesNotThrow(() -> new BuildingRenderer(
+            new Seed(""),
             new ModelSelection(models, "building", new ModelFilterHasMetadata("height")),
             heightmap,
             placeable,
@@ -124,6 +127,7 @@ public class BuildingRendererTest {
 
         Placeable placeable = new TestingVoxelTypeParams("voxel").create(world);
         assertDoesNotThrow(() -> new BuildingRenderer(
+            new Seed(""),
             new ModelSelection(models, "building", new ModelFilterHasMetadata("height")),
             heightmap,
             placeable,

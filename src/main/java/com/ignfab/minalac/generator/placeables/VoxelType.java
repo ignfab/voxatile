@@ -1,4 +1,8 @@
-package com.ignfab.minalac.generator.world;
+package com.ignfab.minalac.generator.placeables;
+
+import java.util.Random;
+
+import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * The {@code VoxelType} interface represents a type of voxel that can be placed within a {@link VoxelWorld}.
@@ -16,4 +20,9 @@ public interface VoxelType extends Placeable {
      * @param z the z-coordinate value
      */
     void place(int x, int y, int z);
+
+    @Override
+    default void place(Random random, int x, int y, int z) {
+        place(x, y, z);
+    }
 }

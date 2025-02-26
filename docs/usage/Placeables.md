@@ -15,6 +15,19 @@ A placeable is something that can be placed in voxel world at a given position: 
   * [Blueprint structures](#blueprint-structures)
 * [Patterns](#patterns)
 
+## Combine placeables
+
+Placeable may have to be combined. This is done by giving a list of placeable instead of a single placeable. Top item will be placed first, then next one, until bottom of the list.
+
+For example, to have some randomly placed dirt voxels on a grass ground:
+```yaml
+place:
+    - pattern:
+        chance: 0.03
+        place: default:dirt
+    - default:dirt_with_grass
+```
+
 ## Voxels
 
 Voxel descriptions depend on chosen game format. In both Minecraft and Minetest, voxels are mainly defined by a string (block type or node type). They may have some extra optional parameters (like metadata).
@@ -268,8 +281,21 @@ Which gives that result:
 
 ## Patterns
 
-**NOTE**: To be implemented
-
 Patterns are sets of voxels but unlike structures, they are not placed at once from given position. Also unlike structures, they are unbounded.
 Instead a pattern may tell to a renderer what to place at a given position according to it. For example it can be used to draw stripes or place trees randomly.
 
+### Random Patterns
+
+This is a basic random pattern placing something or not with a given chance:
+```yaml
+place:
+  pattern:
+    chance: 0.5
+    place: default:stone
+```
+
+Fields:
+- `chance`: Chance that placeable will be placed (required).
+- `place`: [Placeable](Placeables.md) to place (required).
+
+Chance of 0.0 (and lower) means never, chance of 1.0 and higher mean always. In between means the probablility (for example 0.25 is 1 chance out of 4).

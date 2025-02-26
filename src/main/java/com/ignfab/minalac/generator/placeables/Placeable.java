@@ -1,6 +1,9 @@
-package com.ignfab.minalac.generator.world;
+package com.ignfab.minalac.generator.placeables;
+
+import java.util.Random;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * The {@code Placeable} interface represents something placeable in voxel world.
@@ -11,18 +14,20 @@ public interface Placeable {
      * Places the placeable at given position in {@link VoxelWorld}.
      * Coordinates are expressed using the system used in {@link WorldCoords3d}.
      *
+     * @param random random generator to use if random needed
      * @param x position x-coordinate
      * @param y position y-coordinate
      * @param z position z-coordinate
      */
-    void place(int x, int y, int z);
+    void place(Random random, int x, int y, int z);
 
     /**
      * Places the placeable at given position in {@link VoxelWorld}.
      *
+     * @param random random generator to use if random needed
      * @param position position where to place the placeable
      */
-    default void place(WorldCoords3d position) {
-        place(position.x(), position.y(), position.z());
+    default void place(Random random, WorldCoords3d position) {
+        place(random, position.x(), position.y(), position.z());
     }
 }

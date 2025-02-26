@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.outputs.testing;
 
-import com.ignfab.minalac.generator.world.VoxelType;
+import com.ignfab.minalac.generator.placeables.VoxelType;
 
 /**
  * A dummy voxelType implementation for {@code TestingVoxelWorld}.

@@ -12,9 +12,10 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.ignfab.minalac.generator.parameters.OutputFormat;
+import com.ignfab.minalac.generator.parameters.placeables.patterns.PatternParams;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.NoVoxelParams;
-import com.ignfab.minalac.generator.world.Placeable;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
@@ -54,6 +55,9 @@ public abstract class PlaceableParams {
                 // If value is a string, try to serialize other string using "shortcut" format method.
                 return format.createVoxelTypeParams(node.textValue());
             }
+            if (node.isArray())
+                return new CombinedPlaceableParams(node, codec);
+
             if (!node.isObject())
                 throw new InputCoercionException(jp, "Placeable should be either a string or an object", node.asToken(), PlaceableParams.class);
 
@@ -70,6 +74,9 @@ public abstract class PlaceableParams {
                     // For structures, relies on PlaceableStructureParams type deduction
                     case "structure":
                         return codec.treeToValue(property.getValue(), PlaceableStructureParams.class);
+                    // For patterns, relies on PatternParams type deduction
+                    case "pattern":
+                        return codec.treeToValue(property.getValue(), PatternParams.class);
                 }
             }
 
