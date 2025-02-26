@@ -8,10 +8,10 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
+import com.ignfab.minalac.generator.placeables.NoVoxel;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.renderers.Renderer;
 import com.ignfab.minalac.generator.renderers.VectorRenderer;
-import com.ignfab.minalac.generator.world.NoVoxel;
-import com.ignfab.minalac.generator.world.Placeable;
 
 /**
  * Concrete class of {@link RendererParams} representing the parameters of a {@link VectorRenderer}.
@@ -83,13 +83,13 @@ public class VectorRendererParams extends RendererParams {
         Placeable bordersPlaceable = NoVoxel.INSTANCE;
 
         if (place != null) {
-            insidePlaceable = place.create(generation.world());
+            insidePlaceable = place.create(generation.seed(), generation.world());
             bordersPlaceable = insidePlaceable;
         } else {
             if (inside != null)
-                insidePlaceable = inside.create(generation.world());
+                insidePlaceable = inside.create(generation.seed(), generation.world());
             if (borders != null)
-                bordersPlaceable = borders.create(generation.world());
+                bordersPlaceable = borders.create(generation.seed(), generation.world());
         }
 
         return new VectorRenderer(

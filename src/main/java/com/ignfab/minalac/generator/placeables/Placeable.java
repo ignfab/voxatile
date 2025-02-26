@@ -1,6 +1,7 @@
-package com.ignfab.minalac.generator.world;
+package com.ignfab.minalac.generator.placeables;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * The {@code Placeable} interface represents something placeable in voxel world.

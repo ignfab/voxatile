@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.parameters.placeables.voxels;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,6 +27,6 @@ public class MTVoxelTypeParamsTest {
     @Test
     public void testCreate() {
         MTVoxelTypeParams params = new MTVoxelTypeParams("tata");
-        assertDoesNotThrow(() -> params.create(new MTVoxelWorld()));
+        assertDoesNotThrow(() -> params.create(TestingSeed.UNUSED, new MTVoxelWorld()));
     }
 }

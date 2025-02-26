@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
-import com.ignfab.minalac.generator.world.VoxelType;
+import com.ignfab.minalac.generator.placeables.VoxelType;
 
 /**
  * {@code MTVoxelType} is an abstract class to provide the necessary structure and mechanism in order to implement {@link VoxelType} for Minetest.

@@ -6,3 +6,28 @@ references:
   - &voxel-grass minecraft:grass_block
   - &voxel-glass minecraft:glass
   - &voxel-forest-ground minecraft:podzol
+  - &forest-grass minecraft:fern
+  - &forest-tree1
+    structure:
+      - put:
+          pattern:
+             place:
+              block: minecraft:oak_leaves
+              properties:
+                persistent: true
+             chance: 0.8
+        at: [ -3..3, -3..3, 4..10 ]
+      - put: minecraft:oak_log
+        at: [ 0, 0, 0..5 ]
+  - &forest-tree2
+    structure:
+      - put:
+          pattern:
+            place:
+              block: minecraft:birch_leaves
+              properties:
+                persistent: true
+            chance: 0.8
+        at: [ -3..3, -3..3, 4..10 ]
+      - put: minecraft:birch_log
+        at: [ 0, 0, 0..5 ]

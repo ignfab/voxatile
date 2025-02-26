@@ -1,14 +1,15 @@
 package com.ignfab.minalac.generator.utils.random;
 
-import java.util.Random;
-
 /**
  * A seed for a sequence of random numbers.
  *
  * See docs/development/RandomNumbers.md for further documentation.
  */
 public class Seed {
-    private final String seed;
+    /**
+     * Internal seed string.
+     */
+    protected final String seed;
 
     /**
      * Creates a new {@code Seed} from a String.
@@ -42,6 +43,19 @@ public class Seed {
     }
 
     /**
+     * Returns seed reprensentation as long integer.
+     *
+     * @return seed as long integer.
+     */
+    public long asLong() {
+        // We could use hashCode() but it's only int and random uses long seeds
+        long s = 0;
+        for (char c : seed.toCharArray())
+            s = 31L * s + c;
+        return s;
+    }
+
+    /**
      * Creates a {@code Random} object from this seed.
      * All calls on the same seed will give a {@code Random} object generating
      * the same sequence of numbers.
@@ -49,12 +63,7 @@ public class Seed {
      * @return a new {@code Random} object
      */
     public Random createRandom() {
-        // We could use hashCode() but it's only int and random uses long seeds
-        long s = 0;
-        for (char c : seed.toCharArray())
-            s = 31L * s + c;
-
-        return new Random(s);
+        return new Random(this);
     }
 
     /**

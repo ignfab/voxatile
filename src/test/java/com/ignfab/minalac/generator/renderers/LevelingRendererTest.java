@@ -10,6 +10,7 @@ import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
+import com.ignfab.minalac.generator.utils.random.TestingSeed;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -60,7 +61,7 @@ public class LevelingRendererTest {
         assertDoesNotThrow(() -> new LevelingRenderer(
             new ModelSelection(models, "model", null),
             heightmap,
-            placeable.create(world)
+            placeable.create(TestingSeed.UNUSED, world)
         ).render(bbox));
 
         // Verify Heightmap has been updated only where wanted
