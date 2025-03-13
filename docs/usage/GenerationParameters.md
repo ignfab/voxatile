@@ -78,6 +78,11 @@ format: minetest
 - `horizontalScale`: Horizontal size of voxels (in map units, usually meters)
 - `crs`: Coordinate Reference System to be used for projecting geographical data into voxel world
 - `format`: Output format (`minetest` or `minecraft`)
+- `references`: Ignored field where references (or other content) can be put in
+
+## References
+
+YAML references are processed by the generator. They can be defined anywhere in parameters. A `references` field is available at root to put references not going anywhere else.
 
 ## Dependencies
 
