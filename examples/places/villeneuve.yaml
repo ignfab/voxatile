@@ -1,0 +1,9 @@
+# Railroads entanglement at Villeneuve
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 48.757
+    longitude: 2.437
+  extentX: 1000
+  extentY: 1000
