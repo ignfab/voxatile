@@ -223,4 +223,27 @@ public class ParamsParserTest {
             + MINIMAL_YAML
         ), "Wrong type field value");
     }
+
+    @Test
+    public void testParseReferences() {
+        ParamsParser parser = newParser();
+        parser.registerParams("tragedy", TestingRendererParams.class);
+
+        GenerationParams params = assertDoesNotThrow(() -> parser.parse("""
+            references:
+              - &girl juliet
+              - &boy romeo
+            renderers:
+              verona:
+                type: tragedy
+                requiredField: *girl
+                optionalField: *boy
+            """
+            + MINIMAL_YAML
+        ));
+
+        TestingRendererParams rendererParams = assertInstanceOf(TestingRendererParams.class, params.renderers.get("verona"));
+        assertEquals("juliet", rendererParams.requiredField);
+        assertEquals("romeo", rendererParams.optionalField);
+    }
 }

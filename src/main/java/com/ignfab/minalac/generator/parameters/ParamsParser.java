@@ -1,13 +1,19 @@
 package com.ignfab.minalac.generator.parameters;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.DuplicateKeyException;
 
 /**
  * A Json/Yaml parser able to decode parameters into a {@code Generation} object.
@@ -32,32 +38,45 @@ public class ParamsParser {
      * @param serialized A string containing the generation parameters data in Json or Yaml format
      * @return the corresponding generation parameters object.
      * @throws ParseException if an error occurs during deserialization such as an invalid structure
+     * @throws JsonProcessingException
      */
-    public GenerationParams parse(String serialized) throws ParseException {
+    public GenerationParams parse(String serialized) throws ParseException, JsonProcessingException {
         GenerationParams params;
         SimpleModule module;
+
+        // Resolve yaml references and pick up format
+        // (Jackson is not able to do it by itself but it is still very good at deserializing)
+        LoaderOptions options = new LoaderOptions();
+        options.setAllowDuplicateKeys(false);
+        Yaml yaml = new Yaml(options);
+
+        Map<Object, Object> document;
+        try {
+            document = yaml.load(serialized);
+        } catch (DuplicateKeyException e) {
+            throw new ParseException(e);
+        }
 
         // Custom deserializers
         module = new SimpleModule();
         module.addDeserializer(OutputFormat.class, formatDeserializer);
         mapper.registerModule(module);
 
+        if (!document.containsKey("format"))
+            throw new ParseException("Missing format field!");
+
+        OutputFormat format = mapper.readValue(yaml.dump(document.get("format")), OutputFormat.class);
+
+        // Register format specific deserializer
+        format.registerPlaceableDeserializer(mapper);
+
+        // Deserialize the whole parameter object
         try {
-            // Deserialize as generic tree
-            JsonNode node = mapper.readValue(serialized, JsonNode.class);
-
-            // Read output format information only
-            OutputFormat format = mapper.treeToValue(node.at("/format"), OutputFormat.class);
-
-            // Register format specific deserializer
-            format.registerPlaceableDeserializer(mapper);
-
-            // Deserialize the whole parameter object
-            params = mapper.treeToValue(node, GenerationParams.class);
-
-        } catch (JsonProcessingException e) {
+            params = mapper.readValue(yaml.dump(document), GenerationParams.class);
+        } catch (MismatchedInputException | ValueInstantiationException e) {
             throw new ParseException(e);
         }
+
         try {
             params.validate();
         } catch (IllegalArgumentException e) {

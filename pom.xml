@@ -118,6 +118,12 @@
             <artifactId>jackson-dataformat-yaml</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+        <!-- SnakeYAML (Yaml processing) -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.3</version>
+        </dependency>
         <!-- Transitive dependencies for databind (If missing they might have a NoSuchMethodError)-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

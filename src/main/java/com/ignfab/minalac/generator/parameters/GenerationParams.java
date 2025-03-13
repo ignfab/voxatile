@@ -7,6 +7,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.renderers.RendererParams;
@@ -24,6 +25,13 @@ import com.ignfab.minalac.generator.parameters.renderers.RendererParams;
 public class GenerationParams {
     // For now :
     // - field mapName is not yet implemented (should probably be)
+
+    /**
+     * A placeholder for Yaml references than does not go anywhere else.
+     * Content of this field will be ignored.
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public JsonNode references;
 
     /**
      * Vertical scale (vertical size of voxel in meters).
