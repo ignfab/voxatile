@@ -1,0 +1,9 @@
+# Viaduct at Millau
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 44.085
+    longitude: 3.021
+  extentX: 1000
+  extentY: 1000

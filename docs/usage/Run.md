@@ -5,61 +5,37 @@
 
 ## TL;DR;
 
-Run and compile from repository root:
+Compile and run from repository root:
 
 ```shell
-mvn -Dmaven.test.skip=true clean package && java -jar target/Generator.jar -p examples/default.yaml $HOME/.minetest/worlds/minalac
+mvn -Dmaven.test.skip=true clean package && ./generate.sh minetest full ign $HOME/.minetest/worlds/minalac
 ```
 
-Run jar only:
+Run only (from repository root):
 
 ```shell
-java -jar Generator.jar -p examples/default.yaml $HOME/.minetest/worlds/minalac
+./generate.sh minetest full ign $HOME/.minetest/worlds/minalac
 ```
 
-This command assume you already have the `Generator.jar` file in your current working directory. If this is not the case, see instructions below and pick the one that best fits your case.
+## generate.sh
 
-## Generation parameters
+`generate.sh` scripts creates yaml configuration from configuration fragments and passes it to `Generator.jar`.
 
-Generation involves too many parameters to be passed on command line. They are passed either by file using `-p`/`--param-file` command line option or using `MINALAC_PARAMS` environment variable.
+It mimics a simple behavior of future `minalac-configurator` and is only intended to be used for testing purpose.
 
-Refer to [generation parameters documentation](GenerationParameters.md) for further information.
-
-## Command line arguments
-
-`-h` `--help` display command usage.
-`-p path` `--param-file path` read generation parameters from given path. If omitted, parameters are read from `MINALAC_PARAMS` environment variable.
-`outputPath` generation output path (required).
-`--generation-disabled` Stop before starting generation, after parameters parsed (optional).
-`--save-disabled` Stop before saving output file, after generation done (optional).
-
-Output path and generation parameters has to be provided.
-
-## Compile and run
-
-If you have cloned the project repository, you can [build the JAR using Maven](../tools/Maven.md#create-an-executable-jar) and run it:
-```shell
-mvn -Dmaven.test.skip=true clean package && java -jar target/Generator.jar -p examples/default.yaml $HOME/.minetest/worlds/minalac
+Usage:
+```bash
+generate.sh [options] <format> <process> <place> [<outputPath>]
 ```
 
-## Download workflow artifact
+Where:
+- `options` may be:
+   - `-y` do nothing but displaying resulting parameters (in Yaml format).
+   - `-g` do not perform generation.
+   - `-s` do not save generated map to disk.
+- `<format>` is the wanted generation format, refering to yaml file (without extension) in `examples/formats`.
+- `<process>` is the wanted generation process, refering to yaml file (without extension) in `examples/processes`.
+- `<places>` is the wanted generation area, refering to yaml file (without extension) in `examples/places`.
+- `<outputPath>` is where world files will be generated, only required if no option set (if directory exists, it will be emptied).
 
-> [!CAUTION]
-> Please review the code first before running the JAR if it comes from a PR from an untrusted source!
-
-If you just want to test the JAR from a different branch (e.g. to validate a PR), you can just download the [JAR built by the GitHub workflow](../tools/GitHub-workflows.md#build-jar), available as an artifact. You can find the link in the PR discussion or in the commit comments if no PR is open for the desired branch.
-
-Once you downloaded (and extracted) the artifact, you should have the `Generator.jar` file and will be able to run it:
-```shell
-java -jar Generator.jar -p examples/default.yaml $HOME/.minetest/worlds/minalac
-```
-
-## Run using Maven
-
-If, for some reason, you don't want to build the JAR, you can run the [`exec:java`](https://www.mojohaus.org/exec-maven-plugin/java-mojo.html) Maven goal:
-```shell
-mvn clean compile exec:java \
-  -Dexec.cleanupDaemonThreads=false \
-  -Dexec.mainClass="com.ignfab.minalac.generator.SampleImplementation" \
-  -Dexec.args="-p examples/default.yaml $HOME/.minetest/worlds/minalac"
-```
+While many places are available, there are only two formats (`minecraft`, `minetest`) and one process (`full`) for now.

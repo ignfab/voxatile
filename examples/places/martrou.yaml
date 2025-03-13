@@ -1,0 +1,9 @@
+# Bridge over the Charente river at Martrou
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 45.917
+    longitude: -0.967
+  extentX: 1000
+  extentY: 1000

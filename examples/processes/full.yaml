@@ -47,11 +47,11 @@ renderers:
     heightmap: ground
     place:
       structure:
-        - put: minecraft:grass_block
+        - put: *voxel-grass
           at: [0, 0, 0]
-        - put: minecraft:dirt
+        - put: *voxel-dirt
           at: [0, 0, -3..-1]
-        - put: minecraft:stone
+        - put: *voxel-stone
           at: [0, 0, -20..-4]
   building-leveling:
     after:
@@ -61,7 +61,7 @@ renderers:
     models:
       type: building
     heightmap: ground
-    filling: minecraft:cobblestone
+    filling: default:cobble
   building:
     after:
       - renderer:building-leveling
@@ -76,17 +76,6 @@ renderers:
             - metadata: height
               equals: 0
     heightmap: ground
-    roof: minecraft:cobblestone
-    wall: minecraft:stone
-    window: minecraft:glass
-verticalScale: 1.0
-horizontalScale: 1.0
-area:
-  center:
-    latitude: 48.845
-    longitude: 2.425
-  angle: 0
-  extentX: 1000
-  extentY: 1000
-crs: EPSG:2154
-format: minecraft
+    roof: *voxel-cobble
+    wall: *voxel-stone
+    window: *voxel-glass

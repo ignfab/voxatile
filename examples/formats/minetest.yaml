@@ -1,0 +1,7 @@
+format: minetest
+references:
+  - &voxel-stone default:stone
+  - &voxel-dirt default:dirt
+  - &voxel-cobble default:cobble
+  - &voxel-grass default:dirt_with_grass
+  - &voxel-glass default:glass

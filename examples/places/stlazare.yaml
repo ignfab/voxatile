@@ -1,0 +1,9 @@
+# Rails and bridges at Saint-Lazare station
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 48.879
+    longitude: 2.323
+  extentX: 1000
+  extentY: 1000
