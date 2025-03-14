@@ -11,8 +11,10 @@ import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.composer.ComposerException;
 import org.yaml.snakeyaml.constructor.DuplicateKeyException;
 
 /**
@@ -44,16 +46,21 @@ public class ParamsParser {
         GenerationParams params;
         SimpleModule module;
 
-        // Resolve yaml references and pick up format
+        // Resolve Yaml anchors and pick up format
         // (Jackson is not able to do it by itself but it is still very good at deserializing)
-        LoaderOptions options = new LoaderOptions();
-        options.setAllowDuplicateKeys(false);
-        Yaml yaml = new Yaml(options);
+
+        LoaderOptions loaderOptions = new LoaderOptions();
+        loaderOptions.setAllowDuplicateKeys(false);
+
+        DumperOptions dumperOptions = new DumperOptions();
+        dumperOptions.setDereferenceAliases(true); // Prevents new anchor generation on dumping
+
+        Yaml yaml = new Yaml(loaderOptions, dumperOptions);
 
         Map<Object, Object> document;
         try {
             document = yaml.load(serialized);
-        } catch (DuplicateKeyException e) {
+        } catch (DuplicateKeyException | ComposerException e) {
             throw new ParseException(e);
         }
 

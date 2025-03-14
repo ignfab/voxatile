@@ -135,6 +135,44 @@ public class ParamsParserTest {
     }
 
     @Test
+    public void testAnchors() {
+        assertDoesNotThrow(() -> newParser().parse("""
+            references:
+              - &area
+                center:
+                  latitude: 5.8
+                  longitude: 2.4
+                extentX: 500
+                extentY: 2500
+                angle: 30
+              - &format minetest
+            area: *area
+            format: *format
+            """
+        ), "Anchors should be resolved");
+
+        assertThrows(ParseException.class, () -> newParser().parse("""
+            area: *area
+            format: *format
+            """
+        ), "Unresolved anchors should throw an exception");
+
+        ParamsParser parser = newParser();
+        parser.registerParams("customIdentifier", TestingRendererParams.class);
+
+        assertDoesNotThrow(() -> parser.parse("""
+            renderers:
+              smeargle1: &rdr
+                type: customIdentifier
+                requiredField: sketch
+              smeargle2: *rdr
+              smeargle3: *rdr
+            """
+            + MINIMAL_YAML
+        ), "Repeating Yaml parameters should be parsed without generating anchors");
+    }
+
+    @Test
     public void testParseHeightmaps() {
         // By default, jackson doesn't check the existence of duplicates keys: last occurrence takes precedence.
         // Checks if configuration was properly done so an exception is thrown.
