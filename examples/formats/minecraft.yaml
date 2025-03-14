@@ -5,4 +5,4 @@ references:
   - &voxel-cobble minecraft:cobblestone
   - &voxel-grass minecraft:grass_block
   - &voxel-glass minecraft:glass
-
+  - &voxel-forest-ground minecraft:podzol

@@ -27,13 +27,11 @@ class VectorRendererTest {
     private VoxelType inside;
     private VoxelType edge;
 
-
-
     @BeforeEach
     public void setUp() {
         bbox = new WorldBBox3d(-1, -2, -3, 4, 5, 6);
         world = new TestingVoxelWorld(bbox);
-        heightmap = new Heightmap(bbox.to2d(), -1);
+        heightmap = new Heightmap(bbox.to2d(), 0);
         store = new ModelStore();
         modelSelection = new ModelSelection(store, "testing", null);
         inside = new TestingVoxelType(world, "INSIDE");
@@ -106,7 +104,7 @@ class VectorRendererTest {
         new VectorRenderer(modelSelection, heightmap, inside, edge).render(bbox);
 
         for (WorldCoords3d pos : bbox) {
-            if (pos.z() == (pos.x() + pos.y()) / 2 + 1) // + 1 because vector renderer places voxels 1 pos above heightmap
+            if (pos.z() == (pos.x() + pos.y()) / 2)
                 world.assertVoxelNotNull(pos);
             else
                 world.assertVoxelNull(pos);
@@ -128,7 +126,7 @@ class VectorRendererTest {
         new VectorRenderer(modelSelection, heightmap, inside, edge).render(bbox);
 
         for (WorldCoords3d pos : bbox) {
-            if (pos.z() == pos.x() + pos.y() * 2 + 1)
+            if (pos.z() == pos.x() + pos.y() * 2)
                 world.assertVoxelNotNull(pos);
             else
                 world.assertVoxelNull(pos);

@@ -5,3 +5,4 @@ references:
   - &voxel-cobble default:cobble
   - &voxel-grass default:dirt_with_grass
   - &voxel-glass default:glass
+  - &voxel-forest-ground default:dirt_with_rainforest_litter
