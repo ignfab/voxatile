@@ -2,11 +2,16 @@ package com.ignfab.minalac.generator.parameters.renderers;
 
 import java.beans.ConstructorProperties;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.renderers.Renderer;
 import com.ignfab.minalac.generator.renderers.VectorRenderer;
+import com.ignfab.minalac.generator.world.NoVoxel;
+import com.ignfab.minalac.generator.world.Placeable;
 
 /**
  * Concrete class of {@link RendererParams} representing the parameters of a {@link VectorRenderer}.
@@ -19,48 +24,79 @@ public class VectorRendererParams extends RendererParams {
     /**
      * The name of the ground heightmap to use (required).
      */
+    @JsonSetter(nulls = Nulls.FAIL)
     public String heightmap;
     /**
-     * What to place inside shapes (required).
+     * What to place on shapes (optional).
      */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public PlaceableParams place;
+    /**
+     * What to place inside shapes only (optional).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
     public PlaceableParams inside;
     /**
-     * What to place on shapes edges (required).
+     * What to place on shapes borders only (optional).
      */
-    public PlaceableParams edge;
+    @JsonSetter(nulls = Nulls.SKIP)
+    public PlaceableParams borders;
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
      * @param models models selection to render.
      * @param heightmap the name of the ground heightmap to use.
-     * @param inside what to place on inside shapes
-     * @param edge what to place on shapes edges
      */
-    @ConstructorProperties({"models", "heightmap", "inside", "edge"})
-    public VectorRendererParams(ModelSelectionParams models, String heightmap, PlaceableParams inside, PlaceableParams edge) {
+    @ConstructorProperties({"models", "heightmap"})
+    public VectorRendererParams(ModelSelectionParams models, String heightmap) {
         this.models = models;
         this.heightmap = heightmap;
-        this.inside = inside;
-        this.edge = edge;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
+        models.validate();
+
         if (heightmap.isEmpty())
             throw new IllegalArgumentException("The field heightmap cannot be empty");
-        inside.validate();
-        edge.validate();
-        models.validate();
+
+        if (place == null && inside == null && borders == null)
+            throw new IllegalArgumentException("At least one of 'place', 'inside' or 'borders' should be specified");
+
+        if (place != null) {
+            if (inside != null || borders != null)
+                throw new IllegalArgumentException("Incompatible fields: 'place' can't be present along with 'inside' or 'borders'");
+            place.validate();
+        }
+
+        if (inside != null)
+           inside.validate();
+
+        if (borders != null)
+            borders.validate();
     }
 
     @Override
     public Renderer create(Generation generation) {
+        Placeable insidePlaceable = NoVoxel.INSTANCE;
+        Placeable bordersPlaceable = NoVoxel.INSTANCE;
+
+        if (place != null) {
+            insidePlaceable = place.create(generation.world());
+            bordersPlaceable = insidePlaceable;
+        } else {
+            if (inside != null)
+                insidePlaceable = inside.create(generation.world());
+            if (borders != null)
+                bordersPlaceable = borders.create(generation.world());
+        }
+
         return new VectorRenderer(
             models.create(generation.models()),
             generation.heightmaps().get(heightmap),
-            inside.create(generation.world()),
-            edge.create(generation.world())
+            insidePlaceable,
+            bordersPlaceable
         );
     }
 }

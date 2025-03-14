@@ -26,10 +26,11 @@ renderers:
     after:
       - source:bati
     type: vector
-    modelType: building
+    models:
+      type: building
     heightmap: ground
     inside: default:cobble
-    edge: default:stone
+    borders: default:stone
 area:
   center:
     latitude: 48.845
@@ -232,13 +233,15 @@ Each renderer has a field `type` which is used to identify it.
 
 This renderer places a column of voxels under a heightmap.
 
-**Type**: ground
+#### Type `ground`
 
-**Extra parameters**:
+#### Extra parameters
+
 - `heightmap`: Name of the heightmap to use
 - `place`: [Placeable](Placeables.md) to place at each heightmap voxel.
 
-Example:
+#### Example
+
 ```yaml
 type: ground
 heightmap: altitude
@@ -248,33 +251,61 @@ This will put a grass voxel at heightmap altitude. For better rendering, place v
 
 ### Vector renderer
 
+This renderer draws 2-D geometries (points, linear things and surfaces) on a given heightmap.
+
+#### Type `vector`
+
+#### Extra parameters
+
+- `models`: [Selection of models](#model-selections) to render (required, models must be voxelizable in 2d)
+- `heightmap`: Name of the ground heightmap to use (required)
+- `place`: [Placeable](Placeables.md) to place on each voxel of shapes (optional)
+- `inside`: [Placeable](Placeables.md) to place on each voxel inside shapes (optional)
+- `borders`: [Placeable](Placeables.md) to place on each voxel of shapes borders (optional)
+
+**NOTE**: `place` cannot be used with `inside` or `borders` (`inside` and `borders` may be used together).
+
+#### Examples
+
+Draw "building" shapes with cobble on ground:
 ```yaml
 type: vector
-modelType: building
+models:
+  type: building
 heightmap: ground
-inside: default:coble
-edge: default:stone
+place: default:cobble
 ```
 
-Fields:
-- `type`: Must be the value `vector`.
-- `modelType`: the type of models to render
-- `heightmap`: the name of the ground heightmap to use. It must exist.
-- `inside`: [Placeable](Placeables.md) to place on each inside voxel
-- `edge`: [Placeable](Placeables.md) to place on each edge voxel
+Draw same shapes but with wooden borders and glass inside:
+```yaml
+type: vector
+models:
+  type: building
+heightmap: ground
+borders: default:wood
+inside: default:glass
+```
+
 
 ### Heightmap renderer
 
+This renderer populates a heightmap with models data. Existing data is overwritten.
+
+#### Type `heightmap`
+
+#### Extra parameters
+
+- `models`: [Selection of models](#model-selections) to render (required, models must be float matrices)
+- `heightmap`: Name of the heightmap to populate (required, updated)
+
+#### Example
+
 ```yaml
 type: heightmap
-modelType: mnt
+models:
+  type: altitude
 heightmap: ground
 ```
-
-Fields:
-- `type`: Must be the value `heightmap`
-- `modelType`: the type of models to render
-- `heightmap`: the name of the heightmap to use. It must exist.
 
 ### Leveling renderer
 
@@ -282,11 +313,22 @@ Levels ground under selected models.
 
 Ground height is given by `heightmap`. If it's not flat under a model, it will be risen enough to be flat over model surface. `filling` voxels will be added to world and `heightmap` will be updated accordingly.
 
-Fields:
-- `type`: Must be the value `leveling`
-- `models`: Type of models to render
-- `heightmap`: Heightmap of the ground, will be updated according to leveling.
+#### Type `leveling`
+
+#### Extra parameters
+- `models`: [Selection of models](#model-selections) to render (required, models must be voxelizable in 2d)
+- `heightmap`: Name of the ground heightmap (required, updated according to leveling)
 - `filling`: [Placeable](Placeables.md) placed beneath the model, ensuring it connects to the ground and does not appear to float.
+
+#### Example
+
+```yaml
+type: leveling
+models:
+  type: buildings
+heightmap: ground
+filling: default:cobble
+```
 
 ### Building renderer
 
@@ -294,16 +336,31 @@ Renders buildings using selected models as buildings footprint.
 
 Building height is given by `height` metadata (the behavior of this renderer is undefined if value is missing, negative or zero).
 
-Fields:
-- `type`: Must be the value `building`
-- `models`: Type of models to render.
-- `heightmap`: Name of the heightmap to use. It must exist.
+#### Type `building`
+
+#### Extra parameters
+
+- `models`: [Selection of models](#model-selections) to render (required, models must be voxelizable in 2d)
+- `heightmap`: Name of the heightmap to use (required)
 - `roof`: [Placeable](Placeables.md) used to render roofs.
 - `wall`: [Placeable](Placeables.md) used to render walls.
 - `window`: [Placeable](Placeables.md) used to render windows.
 
 #### Required model metadata
+
 - `height`: Height of building to render (must be a positive integer)
+
+#### Example
+
+```yaml
+type: building
+models:
+  type: buildings
+heightmap: ground
+roof: default:cobble
+wall: default:brick
+window: default:glass
+```
 
 ## Model selections
 

@@ -32,6 +32,14 @@ sources:
         metadata: height
         value: 5
         as: integer
+  vegetation:
+    modelType: vegetation
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:zone_de_vegetation
+    processor:
+      type: geoToolsVector
 renderers:
   altitude:
     after:
@@ -75,3 +83,12 @@ renderers:
     roof: *voxel-cobble
     wall: *voxel-stone
     window: *voxel-glass
+  vegetation:
+    after:
+      - renderer:ground
+      - source:vegetation
+    type: vector
+    models:
+      type: vegetation
+    heightmap: ground
+    place: *voxel-forest-ground

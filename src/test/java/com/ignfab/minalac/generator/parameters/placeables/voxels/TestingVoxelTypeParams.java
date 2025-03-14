@@ -33,6 +33,12 @@ public class TestingVoxelTypeParams extends VoxelParams {
     }
 
     @Override
+    public void validate() {
+        if (name.isBlank())
+            throw new IllegalArgumentException();
+    }
+
+    @Override
     public Placeable create(VoxelWorld world) {
         if (world instanceof TestingVoxelWorld testingWorld)
             return new TestingVoxelType(testingWorld, name);
