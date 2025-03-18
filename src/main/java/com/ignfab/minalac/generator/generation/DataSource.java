@@ -12,6 +12,7 @@ import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * A data source with a provider, a processor and some (or no) post-processors.
@@ -65,9 +66,11 @@ public class DataSource {
 
     /**
      * Fetches data from provider, and create and process models.
+     *
+     * @param bbox bounding box of region to fetch data for
      */
-    public void fetch() {
-        try (Provider.Result<?> result = provider.provide()) {
+    public void fetch(WorldBBox3d bbox) {
+        try (Provider.Result<?> result = provider.provide(bbox)) {
             processor.initialize(result.crs());
             while (result.hasNext()) {
                 Object data = result.next();

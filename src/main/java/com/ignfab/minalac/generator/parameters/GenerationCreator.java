@@ -69,7 +69,7 @@ public final class GenerationCreator {
             DataSource dataSource = dataSourceParams.create(generation);
             generation.scheduler().schedule(
                 "source:" + name,
-                dataSource::fetch,
+                () -> dataSource.fetch(generation.world().limits()),
                 dataSourceParams.after
             );
         });

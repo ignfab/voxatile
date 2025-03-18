@@ -54,14 +54,14 @@ public class TestGeneration {
         assertEquals(249, box.maxY());
 
         // We should have an envelope +/- 500 around center (250 voxel * 2.0 meters/voxels = 500m)
-        Envelope envelope = generation.getEnvelopeForCRS(crs2154);
+        Envelope envelope = generation.getEnvelopeForCRS(crs2154, box);
         assertEquals(657_280.0, envelope.getMinX(), 2);
         assertEquals(6_860_230.0, envelope.getMinY(), 2);
         assertEquals(658_280.0, envelope.getMaxX(), 2);
         assertEquals(6_861_230.0, envelope.getMaxY(), 2);
 
         // Try another CRS
-        envelope = generation.getEnvelopeForCRS(crs4326);
+        envelope = generation.getEnvelopeForCRS(crs4326, box);
         assertEquals(48.8407, envelope.getMinX(), 0.0002);
         assertEquals(2.4179, envelope.getMinY(), 0.0002);
 

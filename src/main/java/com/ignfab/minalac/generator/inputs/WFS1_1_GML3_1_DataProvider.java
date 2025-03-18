@@ -11,6 +11,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.type.FeatureType;
+import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -27,6 +28,9 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
+import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.utils.coordinates.EnvelopeProvider;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * Data provider using WFS 1.1 and GML 3.1.
@@ -37,25 +41,29 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
     private static final String VERSION = "2.0.0";
 
     private final ParameterizedURL url;
-    private final ReferencedEnvelope envelope;
+    private final CoordinateReferenceSystem crs;
+    private final EnvelopeProvider envelopeProvider;
     private final int maxFeaturePerQuery;
+    private final String srsName;
 
     /**
      * Constructs a new {@code WFS1_1_GML3_1_DataProvider}.
      *
      * @param baseURL the base URL
      * @param type Name of the WFS feature type to query
-     * @param envelope Limit of area to fetch
+     * @param crs coordinate reference system to use for this source
+     * @param envelopeProvider function to use to compute envelopes from bounding boxes
      * @param maxFeaturePerQuery Maximum number of feature per query
      *
      * @throws IllegalArgumentException if SRS name could not be retrieved from envelope.
      */
-    public WFS1_1_GML3_1_DataProvider(String baseURL, String type, ReferencedEnvelope envelope, int maxFeaturePerQuery) {
+    public WFS1_1_GML3_1_DataProvider(String baseURL, String type, CoordinateReferenceSystem crs, EnvelopeProvider envelopeProvider, int maxFeaturePerQuery) {
         this.maxFeaturePerQuery = maxFeaturePerQuery;
-        this.envelope = envelope;
+        this.crs = crs;
+        this.envelopeProvider = envelopeProvider;
 
-        String srsname = CRS.toSRS(envelope.getCoordinateReferenceSystem());
-        if (srsname == null)
+        srsName = CRS.toSRS(crs);
+        if (srsName == null)
             throw new IllegalArgumentException("Could not retrieve SRS name for layer");
 
         this.url = ParameterizedURL.base(baseURL)
@@ -64,12 +72,8 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
             .parameter("REQUEST", "GetFeature")
             .parameter("OUTPUTFORMAT", "GML3")
             .parameter("TYPENAMES", type)
-            .parameter("SRSNAME", srsname)
-            .parameter("BBOX", envelope.getMinX()
-                + "," + envelope.getMinY()
-                + "," + envelope.getMaxX()
-                + "," + envelope.getMaxY()
-                + "," + srsname).build();
+            .parameter("SRSNAME", srsName)
+            .build();
     }
 
     @Override
@@ -78,7 +82,22 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
     }
 
     @Override
-    public Provider.Result<SimpleFeature> provide() throws GenerationFailedException, RetryableException {
+    public Provider.Result<SimpleFeature> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
+
+        ReferencedEnvelope envelope;
+        try {
+            envelope = envelopeProvider.computeForCRS(crs, bbox);
+        } catch (FactoryException | TransformException e) {
+            throw new GenerationFailedException(e);
+        }
+
+        ParameterizedURL url = this.url.builder()
+            .parameter("BBOX", envelope.getMinX()
+                + "," + envelope.getMinY()
+                + "," + envelope.getMaxX()
+                + "," + envelope.getMaxY()
+                + "," + srsName)
+            .build();
 
         // First we need to know total feature count
         int count;
@@ -107,7 +126,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
         }
 
         // Then we give hand to `Result` class for the rest.
-        return new Result(count);
+        return new Result(url, count);
     }
 
    /**
@@ -115,11 +134,13 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
      */
     private class Result implements Provider.Result<SimpleFeature> {
 
+        private final ParameterizedURL url;
         private final int total;
         private int remaining;
         private SimpleFeatureIterator iterator;
 
-        Result(int total) {
+        Result(ParameterizedURL url, int total) {
+            this.url = url;
             this.total = total;
             remaining = total;
             iterator = null;
@@ -127,7 +148,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
 
        @Override
        public CoordinateReferenceSystem crs() {
-           return envelope.getCoordinateReferenceSystem();
+           return crs;
        }
 
         /**

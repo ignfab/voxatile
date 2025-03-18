@@ -22,6 +22,7 @@ import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.utils.coordinates.EnvelopeProvider;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * Data provider using GeoTools {@link DataStore}.
@@ -65,7 +66,7 @@ public abstract class GeoToolsDataStoreProvider implements Provider<SimpleFeatur
     }
 
     @Override
-    public Result<SimpleFeature> provide() throws GenerationFailedException, RetryableException {
+    public Result<SimpleFeature> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
         try {
             // TODO Find a better way to make sure we dispose the store in case of exception
             // (but be careful not to dispose it too early, especially before reading data!)
@@ -78,7 +79,7 @@ public abstract class GeoToolsDataStoreProvider implements Provider<SimpleFeatur
             CoordinateReferenceSystem crs = crsOverride == null ? geom.getCoordinateReferenceSystem() : crsOverride;
             ReferencedEnvelope envelope;
             try {
-                envelope = envelopeProvider.computeForCRS(crs);
+                envelope = envelopeProvider.computeForCRS(crs, bbox);
             } catch (FactoryException | TransformException e) {
                 store.dispose();
                 throw new GenerationFailedException(e);
