@@ -7,13 +7,17 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Iterator;
 
+import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
+import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.utils.coordinates.EnvelopeProvider;
 import com.ignfab.minalac.generator.utils.iterator.Iterators;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * Data provider for Web Map Service (raster data).
@@ -23,30 +27,24 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
     private static final String VERSION = "1.3.0";
 
     private final ParameterizedURL baseURL;
-    private final ReferencedEnvelope envelope;
-
-    private final int width;
-    private final int height;
+    private final CoordinateReferenceSystem crs;
+    private final EnvelopeProvider envelopeProvider;
+    private final String srsName;
 
     /**
      * Creates a new {@code WMSDataProvider}.
      *
      * @param baseURL base URL of the service
      * @param layer name of the WMS layer to query
-     * @param envelope limit of area to fetch
+     * @param crs coordinate reference system to use for this source
+     * @param envelopeProvider function to use to compute envelopes from bounding boxes
      */
-    public WMSFloatBilDataProvider(String baseURL, String layer, ReferencedEnvelope envelope) {
-        this.envelope = envelope;
+    public WMSFloatBilDataProvider(String baseURL, String layer, CoordinateReferenceSystem crs, EnvelopeProvider envelopeProvider) {
+        this.crs = crs;
+        this.envelopeProvider = envelopeProvider;
 
-        // Let's say we want heightmap with 1 map unit precision.
-        // TODO: Should computed from capabilities and voxel size in realworld
-        // (we don't need information more accurate than voxel size neither information more
-        // accurate than capabilities)
-        width  = (int) Math.round(envelope.getMaxX() - envelope.getMinX());
-        height = (int) Math.round(envelope.getMaxY() - envelope.getMinY());
-
-        String srsname = CRS.toSRS(envelope.getCoordinateReferenceSystem());
-        if (srsname == null)
+        srsName = CRS.toSRS(crs);
+        if (srsName == null)
             throw new IllegalArgumentException("Could not retrieve SRS name for layer");
 
         this.baseURL = ParameterizedURL.base(baseURL)
@@ -56,13 +54,6 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
             .parameter("LAYERS", layer)
             .parameter("FORMAT", "image/x-bil;bits=32")
             .parameter("STYLES", "")
-            .parameter("CRS", srsname)
-            .parameter("BBOX", envelope.getMinX()
-                + "," + envelope.getMinY()
-                + "," + envelope.getMaxX()
-                + "," + envelope.getMaxY())
-            .parameter("WIDTH", width)
-            .parameter("HEIGHT", height)
             .build();
     }
 
@@ -72,12 +63,35 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
     }
 
     @Override
-    public Provider.Result<FloatGeographicDataMatrix2d> provide() throws GenerationFailedException, RetryableException {
+    public Provider.Result<FloatGeographicDataMatrix2d> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
 
+        ReferencedEnvelope envelope;
+        try {
+            envelope = envelopeProvider.computeForCRS(crs, bbox);
+        } catch (FactoryException | TransformException e) {
+            throw new GenerationFailedException(e);
+        }
+
+        // Let's say we want heightmap with 1 map unit precision.
+        // TODO: Should computed from capabilities and voxel size in realworld
+        // (we don't need information more accurate than voxel size neither information more
+        // accurate than capabilities)
+        int width  = (int) Math.round(envelope.getMaxX() - envelope.getMinX());
+        int height = (int) Math.round(envelope.getMaxY() - envelope.getMinY());
+
+        ParameterizedURL url = baseURL.builder()
+            .parameter("CRS", srsName)
+            .parameter("BBOX", envelope.getMinX()
+                + "," + envelope.getMinY()
+                + "," + envelope.getMaxX()
+                + "," + envelope.getMaxY())
+            .parameter("WIDTH", width)
+            .parameter("HEIGHT", height)
+            .build();
 
         InputStream inputStream;
         try {
-            inputStream = baseURL.toURL().openStream();
+            inputStream = url.toURL().openStream();
         } catch (MalformedURLException e) {
             throw new GenerationFailedException("Invalid URL for layer", e);
         } catch (IOException e) {
@@ -128,7 +142,7 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
 
         @Override
         public CoordinateReferenceSystem crs() {
-            return envelope.getCoordinateReferenceSystem();
+            return crs;
         }
 
         @Override

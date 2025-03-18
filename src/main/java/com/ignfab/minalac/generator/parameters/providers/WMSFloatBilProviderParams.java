@@ -4,10 +4,8 @@ import java.beans.ConstructorProperties;
 
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 
-import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.inputs.Provider;
@@ -56,13 +54,6 @@ public class WMSFloatBilProviderParams extends ProviderParams {
         else
             layerCrs = generation.crs();
 
-        ReferencedEnvelope envelope;
-        try {
-            envelope = generation.getEnvelopeForCRS(layerCrs);
-        } catch (FactoryException | TransformException e) {
-            throw new IllegalArgumentException("Unable to compute envelope for given CRS", e);
-        }
-
-        return new WMSFloatBilDataProvider(url, layer, envelope);
+        return new WMSFloatBilDataProvider(url, layer, layerCrs, generation::getEnvelopeForCRS);
     }
 }

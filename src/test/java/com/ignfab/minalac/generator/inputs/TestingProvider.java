@@ -4,6 +4,8 @@ import java.util.NoSuchElementException;
 
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+
 public class TestingProvider implements Provider<String> {
     private final CoordinateReferenceSystem crs;
 
@@ -17,7 +19,7 @@ public class TestingProvider implements Provider<String> {
     }
 
     @Override
-    public Result<String> provide() {
+    public Result<String> provide(WorldBBox3d bbox) {
         return new Result<>() {
             @Override
             public CoordinateReferenceSystem crs() {

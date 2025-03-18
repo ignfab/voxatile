@@ -6,11 +6,12 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * A provider is responsible for acquiring data.
  * <p>
- * Its main method is {@link #provide()}, which should return a
+ * Its main method is {@link #provide(WorldBBox3d)}, which should return a
  * {@link Result}. A result is both iterable and closable, which
  * means it must be closed at the end of iteration, or in case
  * an error occurs and no other element will be consumed.
@@ -41,11 +42,12 @@ public interface Provider<T> {
      *  }
      * }</pre>
      *
+     * @param bbox Bbox to get elements for
      * @return A result wrapping elements and close method
      * @throws GenerationFailedException If a fatal error occurs while fetching data
      * @throws RetryableException If an error occurs but retrying may solve the issue
      */
-    Result<T> provide() throws GenerationFailedException, RetryableException;
+    Result<T> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException;
 
     /**
      * A result wraps elements and a close method.

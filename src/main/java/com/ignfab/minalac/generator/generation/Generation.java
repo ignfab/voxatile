@@ -132,19 +132,20 @@ public class Generation {
     }
 
     /**
-     * Returns geographic envelope (bounding box equivalent) of generated world
-     * in a given CRS.
+     * Returns geographic envelope (bounding box equivalent) of a given
+     * bounding box in a given CRS.
      *
      * @param crs Coordinate reference system to get envelope for.
-     * @return ReferencedEnvelope covering generated world in CRS.
+     * @param bbox Bounding box to get envelope for.
+     * @return ReferencedEnvelope covering given bounding box in CRS.
      */
-    public ReferencedEnvelope getEnvelopeForCRS(CoordinateReferenceSystem crs) throws FactoryException, TransformException {
+    public ReferencedEnvelope getEnvelopeForCRS(CoordinateReferenceSystem crs, WorldBBox3d bbox) throws FactoryException, TransformException {
         WorldToMapConverter converter = makeCoordsConverter(crs).inverse();
 
-        int minX = world.limits().minX();
-        int minY = world.limits().minY();
-        int maxX = world.limits().maxX() + 1;
-        int maxY = world.limits().maxY() + 1;
+        int minX = bbox.minX();
+        int minY = bbox.minY();
+        int maxX = bbox.maxX() + 1;
+        int maxY = bbox.maxY() + 1;
         Geometry geom = new GeometryFactory().createLinearRing(new Coordinate[] {
             new Coordinate(minX, minY),
             new Coordinate(maxX, minY),
