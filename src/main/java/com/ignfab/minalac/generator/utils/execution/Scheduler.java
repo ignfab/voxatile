@@ -153,8 +153,10 @@ public class Scheduler {
         // Pause this thread by sleeping until being waked up by the end / failure of tasks
         // The synchronized block is mandatory to take ownership of the lock
         synchronized (lock) {
-            // TODO Spurious wakeup guard
-            lock.wait(unit.toMillis(timeout));
+            // Spurious wakeup guard
+            long timeoutAt = System.currentTimeMillis() + unit.toMillis(timeout);
+            while (error == null && !tasks.isEmpty() && System.currentTimeMillis() < timeoutAt)
+                lock.wait(timeoutAt - System.currentTimeMillis());
         }
         // Propagates the task failure, if any
         if (error != null)
