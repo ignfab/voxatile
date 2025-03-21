@@ -31,6 +31,7 @@ import com.ignfab.minalac.generator.parameters.renderers.GroundRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.HeightmapRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.LevelingRendererParams;
 import com.ignfab.minalac.generator.parameters.renderers.VectorRendererParams;
+import com.ignfab.minalac.generator.utils.execution.Scheduler;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -92,6 +93,13 @@ public final class SampleImplementation {
         parser.registerParams("default", MetadataDefaultPostProcessorParams.class);
 
         Generation generation = parser.parse(cli.readParameters()).create();
+
+        try {
+            generation.scheduler().validate();
+        } catch (Scheduler.IllegalSchedulerException e) {
+            e.printStackTrace();
+            return;
+        }
 
         System.out.println("Initialization: " + Duration.between(initializationStart, Instant.now()).toSeconds() + "s");
         if (cli.generationDisabled()) {
