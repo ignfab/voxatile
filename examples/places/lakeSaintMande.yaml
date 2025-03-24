@@ -1,0 +1,9 @@
+# Lake of Saint-Mandé
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 48.841
+    longitude: 2.421
+  extentX: 1000
+  extentY: 1000

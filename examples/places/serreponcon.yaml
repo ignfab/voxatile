@@ -1,0 +1,9 @@
+# Lake of Serre-Ponçon
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 44.452
+    longitude: 6.393
+  extentX: 1000
+  extentY: 1000
