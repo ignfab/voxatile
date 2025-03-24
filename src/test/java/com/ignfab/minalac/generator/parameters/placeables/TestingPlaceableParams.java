@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.parameters.placeables;
 
+import com.ignfab.minalac.generator.placeables.NoVoxel;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.world.VoxelWorld;
@@ -8,6 +9,14 @@ import com.ignfab.minalac.generator.world.VoxelWorld;
  * Class for testing placeable params.
  */
 public class TestingPlaceableParams extends PlaceableParams {
+    /**
+     * An invalid testing placeable params.
+     */
+    public static final TestingPlaceableParams INVALID = new TestingPlaceableParams(null);
+    /**
+     * A valid testing placeable params.
+     */
+    public static final TestingPlaceableParams VALID = new TestingPlaceableParams(NoVoxel.INSTANCE);
     private final Placeable placeable;
 
     /**

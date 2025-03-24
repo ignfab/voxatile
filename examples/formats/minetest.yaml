@@ -11,8 +11,8 @@ references:
     structure:
       - put:
           pattern:
-             place: default:leaves
-             chance: 0.8
+            place: default:leaves
+            chance: 0.8
         at: [ -3..3, -3..3, 4..10 ]
       - put: default:tree
         at: [ 0, 0, 0..5 ]
@@ -25,3 +25,5 @@ references:
         at: [ -3..3, -3..3, 4..10 ]
       - put: default:aspen_tree
         at: [ 0, 0, 0..5 ]
+  - &voxel-water default:water_source
+  - &voxel-air air

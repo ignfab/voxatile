@@ -1,6 +1,8 @@
 heightmaps:
   ground:
     default: 0
+  water:
+    default: 0
 sources:
   mnt:
     modelType: mnt
@@ -40,19 +42,39 @@ sources:
       features: BDTOPO_V3:zone_de_vegetation
     processor:
       type: geoToolsVector
+  surfaceEau:
+    modelType: water
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:surface_hydrographique
+    processor:
+      type: geoToolsVector
 renderers:
   altitude:
     after:
       - source:mnt
-    type: heightmap
+    type: matrixToHeightmap
     models:
       type: mnt
     heightmap: ground
+  mntCorrection:
+    after:
+      - source:surfaceEau
+      - renderer:altitude
+    type: copyHeightmap
+    models:
+      type: water
+    from:
+      localMin: ground
+      range: 9
+    to: ground
   ground:
     after:
       - renderer:altitude
-    type: ground
-    heightmap: ground
+      - renderer:mntCorrection
+    type: heightmapRenderer
+    at: ground
     place:
       structure:
         - put: *voxel-grass
@@ -117,5 +139,51 @@ renderers:
           seed: tree2
           chance: 0.003
           place: *forest-tree2
-
-
+  waterPresence:
+    after:
+      - source:surfaceEau
+    type: copyHeightmap
+    models:
+      type: water
+    from: 1
+    to: water
+  waterHeight:
+    after:
+      - renderer:waterPresence
+    type: copyHeightmap
+    models:
+      type: water
+    from:
+      remap:
+        manhattan: water
+        maximumDistance: 12
+        targetValue: 0
+      mapping:
+        0: 0
+        1: 1
+        2: 8
+        3..3: 10
+        4..6: 11
+        7..12: 12
+    to: water
+  waterRdr:
+    after:
+      - renderer:ground
+      - renderer:waterHeight
+      # Vegetation and water vector data overlap in certain areas. (Because of vegetation representing canopy)
+      # The dependency and air voxel below should be removed when cropping is implemented on vector data.
+      - renderer:forest
+    type: heightmapRenderer
+    minimum:
+      sum:
+        - ground
+        - 1
+        - product: [ -1, water ]
+    maximum: ground
+    place:
+      structure:
+        - put: *voxel-water
+          at: [ 0, 0, 0 ]
+        # This a dirt fix to remove vegetation on water
+        - put: *voxel-air
+          at: [ 0, 0, 1..12 ]

@@ -2,50 +2,75 @@ package com.ignfab.minalac.generator.parameters.renderers;
 
 import java.beans.ConstructorProperties;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
+import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.renderers.HeightmapRenderer;
 import com.ignfab.minalac.generator.renderers.Renderer;
 
 /**
- * Concrete class of {@link RendererParams} representing the parameters of a {@link HeightmapRenderer}.
+ * Represents the parameters of a {@link HeightmapRenderer}.
+ * Can be used by providing either at field or both minimum and maximum fields.
  */
 public class HeightmapRendererParams extends RendererParams {
     /**
-     * The type of models to render.
-     * This field is required during deserialization.
+     * The heightmap to use.
      */
-    public ModelSelectionParams models;
+    public ReadableHeightmapParams at;
     /**
-     * The name of the heightmap to use.
-     * This field is required during deserialization.
+     * The minimum heightmap.
      */
-    public String heightmap;
+    public ReadableHeightmapParams minimum;
+    /**
+     * The maximum heightmap.
+     */
+    public ReadableHeightmapParams maximum;
+    /**
+     * The material to place (required).
+     */
+    @JsonSetter(nulls = Nulls.FAIL)
+    public PlaceableParams place;
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
-     * @param models models selection to render.
-     * @param heightmap the name of the heightmap to use.
+     * @param place the material to place.
      */
-    @ConstructorProperties({"models", "heightmap"})
-    public HeightmapRendererParams(ModelSelectionParams models, String heightmap) {
-        this.models = models;
-        this.heightmap = heightmap;
+    @ConstructorProperties({"place"})
+    public HeightmapRendererParams(PlaceableParams place) {
+        this.place = place;
     }
 
     @Override
-    public void validate() throws IllegalArgumentException {
-        if (heightmap.isEmpty())
-            throw new IllegalArgumentException("The field heightmap cannot be empty");
-        models.validate();
+    public void validate() {
+        // Validity of fields combination
+        if ((at != null || minimum == null || maximum == null)
+            && (at == null || minimum != null || maximum != null))
+            throw new IllegalArgumentException("Either at or both minimum and maximum must be provided");
+        if (at != null)
+            at.validate();
+        else {
+            minimum.validate();
+            maximum.validate();
+        }
+        place.validate();
     }
 
     @Override
     public Renderer create(Generation generation) {
-        return new HeightmapRenderer(
-            models.create(generation.models()),
-            generation.heightmaps().get(heightmap)
-        );
+        ReadableHeightmap from;
+        ReadableHeightmap to;
+        if (at != null) {
+            from = at.create(generation);
+            to = from;
+        } else {
+            from = minimum.create(generation);
+            to = maximum.create(generation);
+        }
+        return new HeightmapRenderer(from, to, place.create(generation.seed(), generation.world()));
     }
 }

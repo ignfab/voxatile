@@ -1,38 +1,39 @@
 package com.ignfab.minalac.generator.renderers;
 
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
-import com.ignfab.minalac.generator.models.FloatMatrixModel;
-import com.ignfab.minalac.generator.models.ModelSelection;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.voxelization.Matrix2d;
 
 /**
- * Heightmap renderer copies data from given models to a heightmap.
- * If data is overlapping, only the last information in the iterator order is kept.
+ * This renderer places the placeable between a minimum and maximum heightmap.
  */
-public class HeightmapRenderer extends ModelRenderer<FloatMatrixModel> {
-    private final Heightmap heightmap;
+public class HeightmapRenderer implements Renderer {
+    private final ReadableHeightmap minimum;
+    private final ReadableHeightmap maximum;
+    private final Placeable placeable;
 
     /**
-     * Creates a new HeightmapRenderer.
+     * Creates a new {@code HeightmapRenderer}.
      *
-     * @param selection the model selection containing the wanted models to render (only {@code FloatMatrixModel} will be)
-     * @param heightmap Heightmap where heights will be written
+     * @param minimum the minimum heightmap.
+     * @param maximum the maximum heightmap.
+     * @param placeable the material to place.
      */
-    public HeightmapRenderer(ModelSelection selection, Heightmap heightmap) {
-        super(FloatMatrixModel.class, selection);
-        this.heightmap = heightmap;
+    public HeightmapRenderer(ReadableHeightmap minimum, ReadableHeightmap maximum, Placeable placeable) {
+        this.minimum = minimum;
+        this.maximum = maximum;
+        this.placeable = placeable;
     }
 
     @Override
-    protected void render(FloatMatrixModel model, WorldBBox3d bbox) {
-        // Iterate over matrix and fill heightmap altitude
-        for (Matrix2d.Value<Float> value : model) {
-            WorldCoords2d c = value.coords();
-            if (heightmap.bbox().contains(c)) {
-                heightmap.set(c, Math.round(value.value()));
-            }
-        }
+    public void render(WorldBBox3d bbox) {
+        if (minimum == maximum)
+            for (WorldCoords2d c : bbox.to2d().intersection(maximum.bbox()))
+                placeable.place(c.x(), c.y(), maximum.get(c));
+        else
+            for (WorldCoords2d c : bbox.to2d().intersection(minimum.bbox()).intersection(maximum.bbox()))
+                for (int z = minimum.get(c); z <= maximum.get(c); z++)
+                    placeable.place(c.x(), c.y(), z);
     }
 }

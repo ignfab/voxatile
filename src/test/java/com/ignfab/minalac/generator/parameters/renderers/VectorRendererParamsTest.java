@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
+import com.ignfab.minalac.generator.parameters.placeables.TestingPlaceableParams;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,60 +17,60 @@ public class VectorRendererParamsTest {
 
         // Test required arguments
         params = new VectorRendererParams(new ModelSelectionParams(""), TestingHeightmapParams.VALID);
-        params.place = new TestingVoxelTypeParams("A");
+        params.place = TestingPlaceableParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new VectorRendererParams(selection, TestingHeightmapParams.INVALID);
-        params.place = new TestingVoxelTypeParams("A");
+        params.place = TestingPlaceableParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new VectorRendererParams(selection, TestingHeightmapParams.VALID);
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new VectorRendererParams(selection, TestingHeightmapParams.VALID);
-        params.borders = new TestingVoxelTypeParams("A");
+        params.borders = TestingPlaceableParams.VALID;
         assertDoesNotThrow(params::validate);
 
         // Test optional arguments
         params = new VectorRendererParams(selection, TestingHeightmapParams.VALID);
-        params.borders = new TestingVoxelTypeParams("A");
-        params.inside = new TestingVoxelTypeParams("B");
+        params.borders = TestingPlaceableParams.VALID;
+        params.inside = TestingPlaceableParams.VALID;
         assertDoesNotThrow(params::validate);
 
         params = new VectorRendererParams(selection, TestingHeightmapParams.VALID);
-        params.inside = new TestingVoxelTypeParams("B");
+        params.inside = TestingPlaceableParams.VALID;
         assertDoesNotThrow(params::validate);
 
         params = new VectorRendererParams(selection, TestingHeightmapParams.VALID);
-        params.borders = new TestingVoxelTypeParams("A");
+        params.borders = TestingPlaceableParams.VALID;
         assertDoesNotThrow(params::validate);
 
         params = new VectorRendererParams(selection, TestingHeightmapParams.VALID);
-        params.place = new TestingVoxelTypeParams("C");
+        params.place = TestingPlaceableParams.VALID;
         assertDoesNotThrow(params::validate);
 
         // Test incompatible arguments
         params = new VectorRendererParams(selection, TestingHeightmapParams.VALID);
-        params.place = new TestingVoxelTypeParams("C");
-        params.borders = new TestingVoxelTypeParams("A");
+        params.place = TestingPlaceableParams.VALID;
+        params.borders = TestingPlaceableParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new VectorRendererParams(selection, TestingHeightmapParams.VALID);
-        params.place = new TestingVoxelTypeParams("C");
-        params.inside = new TestingVoxelTypeParams("B");
+        params.place = TestingPlaceableParams.VALID;
+        params.inside = TestingPlaceableParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         // Test invalid arguments
         params = new VectorRendererParams(selection, TestingHeightmapParams.VALID);
-        params.borders = new TestingVoxelTypeParams("");
+        params.borders = TestingPlaceableParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new VectorRendererParams(selection, TestingHeightmapParams.VALID);
-        params.inside = new TestingVoxelTypeParams("");
+        params.inside = TestingPlaceableParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new VectorRendererParams(selection, TestingHeightmapParams.VALID);
-        params.place = new TestingVoxelTypeParams("");
+        params.place = TestingPlaceableParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
     }
