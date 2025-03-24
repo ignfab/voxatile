@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.renderers;
 
-import com.ignfab.minalac.generator.generation.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.Voxelizable2d;
 import com.ignfab.minalac.generator.placeables.Placeable;

@@ -6,8 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelTypeParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
@@ -117,7 +118,7 @@ public class GenerationParamsTest {
         TestingVoxelTypeParams placeable = new TestingVoxelTypeParams("voxel");
         params.renderers.put("building", new BuildingRendererParams(
             new ModelSelectionParams("building"),
-            "ground",
+            new StoredHeightmapParams("ground"),
             placeable,
             placeable,
             placeable

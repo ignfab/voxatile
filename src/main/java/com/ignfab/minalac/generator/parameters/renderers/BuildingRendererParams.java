@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.renderers.BuildingRenderer;
@@ -25,7 +26,7 @@ public class BuildingRendererParams extends RendererParams {
      * Name of the ground heightmap to use (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String heightmap;
+    public ReadableHeightmapParams heightmap;
 
     /**
      * {@code Placeable} used to render the roof of the models (required).
@@ -58,7 +59,7 @@ public class BuildingRendererParams extends RendererParams {
     @ConstructorProperties({ "models", "heightmap", "roof", "wall", "window" })
     public BuildingRendererParams(
         ModelSelectionParams models,
-        String heightmap,
+        ReadableHeightmapParams heightmap,
         PlaceableParams roof,
         PlaceableParams wall,
         PlaceableParams window
@@ -72,8 +73,7 @@ public class BuildingRendererParams extends RendererParams {
 
     @Override
     public void validate() throws IllegalArgumentException {
-        if (heightmap.isBlank())
-            throw new IllegalArgumentException("'heightmap' field cannot be empty or contain only whitespace.");
+        heightmap.validate();
         roof.validate();
         wall.validate();
         window.validate();
@@ -84,7 +84,7 @@ public class BuildingRendererParams extends RendererParams {
     public Renderer create(Generation generation) {
         return new BuildingRenderer(
             models.create(generation.models()),
-            generation.heightmaps().get(heightmap),
+            heightmap.create(generation),
             roof.create(generation.seed(), generation.world()),
             wall.create(generation.seed(), generation.world()),
             window.create(generation.seed(), generation.world())

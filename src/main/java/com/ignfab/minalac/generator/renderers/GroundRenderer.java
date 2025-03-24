@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.renderers;
 
-import com.ignfab.minalac.generator.generation.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;

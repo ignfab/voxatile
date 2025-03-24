@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.renderers;
 
-import com.ignfab.minalac.generator.generation.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.placeables.Placeable;
@@ -19,7 +19,7 @@ public class BuildingRenderer extends ModelRenderer<ShapesVoxelizable2d> {
     /**
      * Heightmap of the ground.
      */
-    private final Heightmap heightmap;
+    private final ReadableHeightmap heightmap;
 
     /**
      * {@code Placeable} representing the roof of the building.
@@ -47,7 +47,7 @@ public class BuildingRenderer extends ModelRenderer<ShapesVoxelizable2d> {
      */
     public BuildingRenderer(
         ModelSelection selection,
-        Heightmap heightmap,
+        ReadableHeightmap heightmap,
         Placeable roof,
         Placeable wall,
         Placeable window

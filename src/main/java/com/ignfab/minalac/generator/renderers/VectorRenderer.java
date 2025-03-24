@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.renderers;
 
-import com.ignfab.minalac.generator.generation.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.placeables.NoVoxel;
@@ -15,7 +15,7 @@ import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
  * A basic example of vector renderer intended to evolve.
  */
 public class VectorRenderer extends ModelRenderer<ShapesVoxelizable2d> {
-    private final Heightmap heightmap;
+    private final ReadableHeightmap heightmap;
 
     // What to place inside and on edges of geometries
     private final Placeable inside;
@@ -29,7 +29,7 @@ public class VectorRenderer extends ModelRenderer<ShapesVoxelizable2d> {
      * @param inside What to place inside geometries
      * @param borders What to place on geometries borders
      */
-    public VectorRenderer(ModelSelection selection, Heightmap heightmap, Placeable inside, Placeable borders) {
+    public VectorRenderer(ModelSelection selection, ReadableHeightmap heightmap, Placeable inside, Placeable borders) {
         super(ShapesVoxelizable2d.class, selection);
         this.heightmap = heightmap;
         this.inside = inside;

@@ -10,6 +10,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.util.AffineTransformation;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;

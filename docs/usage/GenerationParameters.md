@@ -47,7 +47,7 @@ format: minetest
 ## Fields description
 
 - `heightmaps`: Heightmaps available for the generation
-  - _`<name>`_: Unique name of the heightmap
+  - _`<name>`_: Unique name of the [heightmap](Heightmaps.md)
       - `default` (int or str): Default value for all heightmap cells (integer or one of `minimal`, `min`, `maximal` or `max`)
 - `sources`: Sources providing models to render
   - _`<name>`_: Unique name of the source

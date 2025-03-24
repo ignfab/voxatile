@@ -1,8 +1,11 @@
-package com.ignfab.minalac.generator.generation;
+package com.ignfab.minalac.generator.generation.heighmaps;
 
 import java.lang.reflect.Field;
 
 import org.junit.jupiter.api.Test;
+
+import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -90,5 +93,53 @@ public class HeightmapTest {
         Heightmap heightmap = new Heightmap(0, 0, 3, 2, 0);
         assertThrows(IndexOutOfBoundsException.class, () -> heightmap.set(25, 25, 0));
         assertThrows(IndexOutOfBoundsException.class, () -> heightmap.get(25, 25));
+    }
+
+    @Test
+    public void testCopy() throws NoSuchFieldException, IllegalAccessException {
+        WorldBBox2d bbox = new WorldBBox2d(-1, -2, 2, 3);
+        Heightmap heightmap = new Heightmap(bbox, 0);
+
+        heightmap.set(-1, -2, 1);
+        heightmap.set(-1, -1, 2);
+        heightmap.set(-1, 0, 3);
+        heightmap.set(0, -2, 4);
+        heightmap.set(0, -1, 5);
+        heightmap.set(0, 0, 6);
+
+        Heightmap copy = heightmap.copy();
+
+        assertNotSame(heightmap, copy);
+
+        assertEquals(heightmap.bbox(), copy.bbox());
+
+        int expectedValue = 1;
+        for (int x = -1; x <= 0; x++)
+            for (int y = -2; y <= 0; y++) {
+                assertEquals(expectedValue, copy.get(x, y));
+                expectedValue++;
+            }
+        assertNotSame(getValuesField(heightmap), getValuesField(copy));
+    }
+
+    @Test
+    public void testSwap() throws NoSuchFieldException, IllegalAccessException {
+        WorldBBox2d bbox = new WorldBBox2d(-1, -2, 2, 3);
+
+        Heightmap heightmap = new Heightmap(bbox, 0);
+        int[] valuesHeightmap = { 7, 7, 7, 7, 7, 7 };
+        setValuesField(heightmap, valuesHeightmap);
+
+        Heightmap other = new Heightmap(bbox, 0);
+        int[] valuesOther = { 1, 2, 3, 4, 5, 6 };
+        setValuesField(other, valuesOther);
+
+        Heightmap otherDifferentBbox = new Heightmap(new WorldBBox2d(0, -2, 5, 4), 7);
+
+        assertThrows(IllegalArgumentException.class, () -> heightmap.swap(otherDifferentBbox));
+        assertDoesNotThrow(() -> heightmap.swap(other));
+
+        assertSame(valuesOther, getValuesField(heightmap));
+        assertSame(valuesHeightmap, getValuesField(other));
     }
 }

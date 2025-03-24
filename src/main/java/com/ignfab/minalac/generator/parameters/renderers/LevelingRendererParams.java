@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.renderers.LevelingRenderer;
@@ -25,7 +26,7 @@ public class LevelingRendererParams extends RendererParams {
      * Name of the ground heightmap to use (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String heightmap;
+    public StoredHeightmapParams heightmap;
 
     /**
      * {@code Placeable} used to fill the space beneath the model,
@@ -45,7 +46,7 @@ public class LevelingRendererParams extends RendererParams {
     @ConstructorProperties({ "models", "heightmap", "filling" })
     public LevelingRendererParams(
         ModelSelectionParams models,
-        String heightmap,
+        StoredHeightmapParams heightmap,
         PlaceableParams filling
     ) {
         this.models = models;
@@ -55,8 +56,7 @@ public class LevelingRendererParams extends RendererParams {
 
     @Override
     public void validate() throws IllegalArgumentException {
-        if (heightmap.isBlank())
-            throw new IllegalArgumentException("The 'heightmap' field cannot be empty or contain only whitespace.");
+        heightmap.validate();
         models.validate();
         filling.validate();
     }
@@ -65,7 +65,7 @@ public class LevelingRendererParams extends RendererParams {
     public Renderer create(Generation generation) {
         return new LevelingRenderer(
             models.create(generation.models()),
-            generation.heightmaps().get(heightmap),
+            heightmap.create(generation),
             filling.create(generation.seed(), generation.world())
         );
     }
