@@ -32,5 +32,15 @@ public record IntegerInterval(int begin, int end) implements Comparable<IntegerI
     public int size() {
         return end - begin + 1;
     }
+
+    /**
+     * Checks if this interval contains the provided value.
+     *
+     * @param value the value to check.
+     * @return true if the interval contains the value.
+     */
+    public boolean contains(int value) {
+        return begin <= value && value <= end;
+    }
 }
 

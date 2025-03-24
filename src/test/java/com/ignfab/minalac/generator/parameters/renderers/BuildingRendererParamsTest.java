@@ -8,6 +8,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.parameters.ParamsTester;
+import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
+import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
 
@@ -17,13 +19,13 @@ public class BuildingRendererParamsTest {
     @Test
     public void testValidate() {
         TestingVoxelTypeParams placeable = new TestingVoxelTypeParams("voxel");
-        BuildingRendererParams paramsWithoutType = new BuildingRendererParams(new ModelSelectionParams(""), "ground", placeable, placeable, placeable);
+        BuildingRendererParams paramsWithoutType = new BuildingRendererParams(new ModelSelectionParams(""), TestingHeightmapParams.VALID, placeable, placeable, placeable);
         assertThrows(IllegalArgumentException.class, paramsWithoutType::validate);
 
-        BuildingRendererParams paramsWithoutHeightmap = new BuildingRendererParams(new ModelSelectionParams("building"), "", placeable, placeable, placeable);
+        BuildingRendererParams paramsWithoutHeightmap = new BuildingRendererParams(new ModelSelectionParams("building"), TestingHeightmapParams.INVALID, placeable, placeable, placeable);
         assertThrows(IllegalArgumentException.class, paramsWithoutHeightmap::validate);
 
-        BuildingRendererParams params = new BuildingRendererParams(new ModelSelectionParams("building"), "ground", placeable, placeable, placeable);
+        BuildingRendererParams params = new BuildingRendererParams(new ModelSelectionParams("building"), TestingHeightmapParams.VALID, placeable, placeable, placeable);
         assertDoesNotThrow(params::validate);
     }
 
@@ -42,7 +44,7 @@ public class BuildingRendererParamsTest {
         window: voxelC
         """, mapper));
         assertEquals("building", params.models.type);
-        assertEquals("ground", params.heightmap);
+        assertEquals("ground", assertInstanceOf(StoredHeightmapParams.class, params.heightmap).name);
         assertEquals("voxelA", assertInstanceOf(TestingVoxelTypeParams.class, params.roof).name);
         assertEquals("voxelB", assertInstanceOf(TestingVoxelTypeParams.class, params.wall).name);
         assertEquals("voxelC", assertInstanceOf(TestingVoxelTypeParams.class, params.window).name);

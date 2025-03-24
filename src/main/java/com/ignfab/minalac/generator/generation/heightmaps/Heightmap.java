@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.generation;
+package com.ignfab.minalac.generator.generation.heightmaps;
 
 import java.util.Arrays;
 
@@ -9,15 +9,9 @@ import com.ignfab.minalac.generator.utils.world2d.WorldSize2d;
 /**
  * A 2d heightmap in voxel world units.
  */
-public class Heightmap {
-    /**
-     * The bounding box of the heightmap.
-     */
-    protected final WorldBBox2d bbox;
-    /**
-     * The array used to store the height values.
-     */
-    protected final int[] values;
+public class Heightmap implements ReadableHeightmap {
+    private final WorldBBox2d bbox;
+    private int[] values;
 
     /**
      * Creates a new {@link Heightmap}.
@@ -56,42 +50,27 @@ public class Heightmap {
         this(new WorldBBox2d(origin, size), defaultValue);
     }
 
+    private Heightmap(WorldBBox2d bbox, int[] values) {
+        if (values.length != bbox.size().area())
+            throw new IllegalArgumentException("Provided array length doesn't match bbox area");
+        this.bbox = bbox;
+        this.values = Arrays.copyOf(values, values.length);
+    }
+
     private int index(int x, int y) {
         if (!bbox.contains(x, y))
             throw new IndexOutOfBoundsException("Index out of range at (x=%d, y=%d)".formatted(x, y));
         return (x - bbox.minX()) * bbox.sizeY() + (y - bbox.minY());
     }
 
-    /**
-     * Returns the bounding box of the heightmap.
-     *
-     * @return the {@link WorldBBox2d} associated to the heightmap.
-     */
+    @Override
     public WorldBBox2d bbox() {
         return bbox;
     }
 
-    /**
-     * Returns the height at a specified position.
-     *
-     * @param x the x-coordinate of the position
-     * @param y the y-coordinate of the position
-     * @return the {@code int} height at specified position
-     * @throws IndexOutOfBoundsException if position is outside the heightmap.
-     */
+    @Override
     public int get(int x, int y) {
         return values[index(x, y)];
-    }
-
-    /**
-     * Returns the height at a specified position.
-     *
-     * @param position the position
-     * @return the {@code int} height at specified position
-     * @throws IndexOutOfBoundsException if position is outside the heightmap.
-     */
-    public int get(WorldCoords2d position) {
-        return get(position.x(), position.y());
     }
 
     /**
@@ -115,5 +94,29 @@ public class Heightmap {
      */
     public void set(WorldCoords2d position, int height) {
         set(position.x(), position.y(), height);
+    }
+
+    /**
+     * Returns a copy of this heightmap.
+     *
+     * @return a copy of this heightmap.
+     */
+    public Heightmap copy() {
+        return new Heightmap(bbox, values);
+    }
+
+    /**
+     * Replaces all height values of this heightmap with the heights of the provided heightmap.
+     * The provided heightmap must match this heightmap bounding box.
+     * The other heightmap will get the current values of this heightmap.
+     *
+     * @param other the heightmap
+     */
+    public void swap(Heightmap other) {
+        if (!other.bbox.equals(bbox))
+            throw new IllegalArgumentException("Bounding boxes are not equal");
+        int[] values = this.values;
+        this.values = other.values;
+        other.values = values;
     }
 }

@@ -125,14 +125,21 @@ public abstract class IntegerIntervalParams {
      *
      * It maps format name to a {@code CustomParams} object.
      */
-    static class Deserializer extends JsonDeserializer<FallbackParams> {
+    public static class Deserializer extends JsonDeserializer<FallbackParams> {
 
         @Override
         public FallbackParams deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonMappingException {
+            return stringToFallbackParams(jp.readValueAs(String.class));
+        }
 
-            String string = jp.readValueAs(String.class);
-
+         /**
+          * Returns a new FallbackParams from a string.
+          *
+          * @param string the string to transform.
+          * @return a new FallbackParams.
+          * */
+        public static FallbackParams stringToFallbackParams(String string) {
             int index = string.indexOf("..");
             if (index == -1) {
                 int value = Integer.parseInt(string.trim());

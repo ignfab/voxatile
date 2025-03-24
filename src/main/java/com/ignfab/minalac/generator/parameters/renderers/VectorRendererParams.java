@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.placeables.NoVoxel;
@@ -25,7 +26,7 @@ public class VectorRendererParams extends RendererParams {
      * The name of the ground heightmap to use (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String heightmap;
+    public ReadableHeightmapParams heightmap;
     /**
      * What to place on shapes (optional).
      */
@@ -49,7 +50,7 @@ public class VectorRendererParams extends RendererParams {
      * @param heightmap the name of the ground heightmap to use.
      */
     @ConstructorProperties({"models", "heightmap"})
-    public VectorRendererParams(ModelSelectionParams models, String heightmap) {
+    public VectorRendererParams(ModelSelectionParams models, ReadableHeightmapParams heightmap) {
         this.models = models;
         this.heightmap = heightmap;
     }
@@ -58,8 +59,7 @@ public class VectorRendererParams extends RendererParams {
     public void validate() throws IllegalArgumentException {
         models.validate();
 
-        if (heightmap.isEmpty())
-            throw new IllegalArgumentException("The field heightmap cannot be empty");
+        heightmap.validate();
 
         if (place == null && inside == null && borders == null)
             throw new IllegalArgumentException("At least one of 'place', 'inside' or 'borders' should be specified");
@@ -94,7 +94,7 @@ public class VectorRendererParams extends RendererParams {
 
         return new VectorRenderer(
             models.create(generation.models()),
-            generation.heightmaps().get(heightmap),
+            heightmap.create(generation),
             insidePlaceable,
             bordersPlaceable
         );

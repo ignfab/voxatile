@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.parameters;
 import java.beans.ConstructorProperties;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
 
 /**
  * Represents the parameters of a type of {@link Heightmap}.

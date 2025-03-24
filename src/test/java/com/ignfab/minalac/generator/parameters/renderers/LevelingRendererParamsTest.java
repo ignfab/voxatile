@@ -8,6 +8,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.parameters.ParamsTester;
+import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
 
@@ -18,13 +19,13 @@ public class LevelingRendererParamsTest {
     public void testValidate() {
         TestingVoxelTypeParams placeable = new TestingVoxelTypeParams("voxel");
 
-        LevelingRendererParams paramsWithoutType = new LevelingRendererParams(new ModelSelectionParams(""), "ground", placeable);
+        LevelingRendererParams paramsWithoutType = new LevelingRendererParams(new ModelSelectionParams(""), new StoredHeightmapParams("ground"), placeable);
         assertThrows(IllegalArgumentException.class, paramsWithoutType::validate);
 
-        LevelingRendererParams paramsWithoutHeightmap = new LevelingRendererParams(new ModelSelectionParams("building"), "", placeable);
+        LevelingRendererParams paramsWithoutHeightmap = new LevelingRendererParams(new ModelSelectionParams("building"), new StoredHeightmapParams(""), placeable);
         assertThrows(IllegalArgumentException.class, paramsWithoutHeightmap::validate);
 
-        LevelingRendererParams params = new LevelingRendererParams(new ModelSelectionParams("building"), "ground", placeable);
+        LevelingRendererParams params = new LevelingRendererParams(new ModelSelectionParams("building"), new StoredHeightmapParams("ground"), placeable);
         assertDoesNotThrow(params::validate);
     }
 
@@ -41,7 +42,7 @@ public class LevelingRendererParamsTest {
         filling: voxel
         """, mapper));
         assertEquals("building", params.models.type);
-        assertEquals("ground", params.heightmap);
+        assertEquals("ground", params.heightmap.name);
         assertEquals("voxel", assertInstanceOf(TestingVoxelTypeParams.class,  params.filling).name);
 
         assertThrows(MismatchedInputException.class, () -> ParamsTester.deserialize(LevelingRendererParams.class, """
