@@ -12,7 +12,7 @@ import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 /**
  * Parameters for a {@link LocalMinimumHeightmap}.
  */
-public class LocalMinimumHeightmapParams extends CustomReadableHeightmapParams {
+public class LocalMinimumHeightmapParams implements ReadableHeightmapParams {
     /**
      * The base heightmap (required).
      */

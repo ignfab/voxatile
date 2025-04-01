@@ -12,7 +12,7 @@ import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 /**
  * Parameters for {@link CappedManhattanHeightmap}.
  */
-public class CappedManhattanHeightmapParams extends CustomReadableHeightmapParams  {
+public class CappedManhattanHeightmapParams implements ReadableHeightmapParams {
     /**
      * The base heightmap (required).
      */

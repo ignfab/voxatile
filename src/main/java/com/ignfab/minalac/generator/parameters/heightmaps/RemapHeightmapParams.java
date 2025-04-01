@@ -23,7 +23,7 @@ import com.ignfab.minalac.generator.utils.IntegerInterval;
  * It returns the value associated with the first interval containing the original value.
  * If no match is found, the original value is returned.
  */
-public class RemapHeightmapParams extends CustomReadableHeightmapParams {
+public class RemapHeightmapParams implements ReadableHeightmapParams {
     /**
      * The base heightmap (required).
      */
