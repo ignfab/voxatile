@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelTypeParams;
-import com.ignfab.minalac.generator.parameters.renderers.TestingRendererParams;
+import com.ignfab.minalac.generator.parameters.tasks.TestingTaskParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,7 +56,7 @@ public class ParamsParserTest {
         assertEquals(1.0, params.verticalScale);
         assertEquals(1.0, params.horizontalScale);
         assertEquals(Collections.emptyMap(), params.heightmaps);
-        assertEquals(Collections.emptyMap(), params.renderers);
+        assertEquals(Collections.emptyMap(), params.forEachTile);
     }
 
     @Test
@@ -158,10 +158,10 @@ public class ParamsParserTest {
         ), "Unresolved anchors should throw an exception");
 
         ParamsParser parser = newParser();
-        parser.registerParams("customIdentifier", TestingRendererParams.class);
+        parser.registerParams("customIdentifier", TestingTaskParams.class);
 
         assertDoesNotThrow(() -> parser.parse("""
-            renderers:
+            forEachTile:
               smeargle1: &rdr
                 type: customIdentifier
                 requiredField: sketch
@@ -218,14 +218,14 @@ public class ParamsParserTest {
     public void testParseRenderers() {
         // Testing explicit and implicit empty renderers
         GenerationParams paramsExplicit = assertDoesNotThrow(() -> newParser().parse(MINIMAL_YAML + "renderers: {}"), "Explicit empty renderers should not trigger exception");
-        assertEquals(Collections.emptyMap(), paramsExplicit.renderers, "Explicit empty renderers should result in a empty map");
+        assertEquals(Collections.emptyMap(), paramsExplicit.forEachTile, "Explicit empty renderers should result in a empty map");
         // `renderers:` is by default deserialized as null
         GenerationParams paramsImplicit = assertDoesNotThrow(() -> newParser().parse(MINIMAL_YAML + "renderers:"), "Implicit empty renderers should not trigger exception");
-        assertEquals(Collections.emptyMap(), paramsImplicit.renderers, "Implicit empty renderers should result in a empty map");
+        assertEquals(Collections.emptyMap(), paramsImplicit.forEachTile, "Implicit empty renderers should result in a empty map");
 
         // There is a field `type` needed for resolving the concrete class.
         assertThrows(ParseException.class, () -> newParser().parse("""
-            renderers:
+            forEachTile:
               someRendererName:
                 someField: foo
             """
@@ -233,10 +233,10 @@ public class ParamsParserTest {
         ), "Type field is missing");
 
         ParamsParser parser = newParser();
-        parser.registerParams("customIdentifier", TestingRendererParams.class);
+        parser.registerParams("customIdentifier", TestingTaskParams.class);
 
         GenerationParams genParams = assertDoesNotThrow(() -> parser.parse("""
-            renderers:
+            forEachTile:
               smeargle:
                 type: customIdentifier
                 requiredField: sketch
@@ -245,15 +245,15 @@ public class ParamsParserTest {
         ), "Renderer should be deserialized");
 
         // type field is not deserialized only used to find out the class that should be used for deserialization
-        assertNotNull(genParams.renderers.get("smeargle"));
-        assertNull(genParams.renderers.get("smeargle").type, "Type field should not be deserialized");
+        assertNotNull(genParams.forEachTile.get("smeargle"));
+        assertNull(genParams.forEachTile.get("smeargle").type, "Type field should not be deserialized");
 
-        TestingRendererParams rendererParams = (TestingRendererParams) genParams.renderers.get("smeargle");
+        TestingTaskParams rendererParams = (TestingTaskParams) genParams.forEachTile.get("smeargle");
         assertEquals("sketch", rendererParams.requiredField);
         assertEquals("defaultOptionalValue", rendererParams.optionalField);
 
         assertThrows(ParseException.class, () -> parser.parse("""
-            renderers:
+            forEachTile:
               zorua:
                 type: wrongIdentifier
                 requiredField: rest
@@ -265,13 +265,13 @@ public class ParamsParserTest {
     @Test
     public void testParseReferences() {
         ParamsParser parser = newParser();
-        parser.registerParams("tragedy", TestingRendererParams.class);
+        parser.registerParams("tragedy", TestingTaskParams.class);
 
         GenerationParams params = assertDoesNotThrow(() -> parser.parse("""
             references:
               - &girl juliet
               - &boy romeo
-            renderers:
+            forEachTile:
               verona:
                 type: tragedy
                 requiredField: *girl
@@ -280,7 +280,7 @@ public class ParamsParserTest {
             + MINIMAL_YAML
         ));
 
-        TestingRendererParams rendererParams = assertInstanceOf(TestingRendererParams.class, params.renderers.get("verona"));
+        TestingTaskParams rendererParams = assertInstanceOf(TestingTaskParams.class, params.forEachTile.get("verona"));
         assertEquals("juliet", rendererParams.requiredField);
         assertEquals("romeo", rendererParams.optionalField);
     }

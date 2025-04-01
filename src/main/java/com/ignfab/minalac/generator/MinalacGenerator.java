@@ -32,12 +32,13 @@ import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParam
 import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
-import com.ignfab.minalac.generator.parameters.renderers.BuildingRendererParams;
-import com.ignfab.minalac.generator.parameters.renderers.CopyHeightmapRendererParams;
-import com.ignfab.minalac.generator.parameters.renderers.HeightmapRendererParams;
-import com.ignfab.minalac.generator.parameters.renderers.LevelingRendererParams;
-import com.ignfab.minalac.generator.parameters.renderers.MatrixToHeightmapRendererParams;
-import com.ignfab.minalac.generator.parameters.renderers.VectorRendererParams;
+import com.ignfab.minalac.generator.parameters.tasks.CopyHeightmapTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.LevelGroundTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.PopulateHeightmapTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.RenderVectorsTaskParams;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -79,13 +80,14 @@ public final class MinalacGenerator {
 
         // TODO: Static method that provides a ParamsParser with all default renderers
         // If those name values are modified, update the documentation accordingly
-        parser.registerParams("matrixToHeightmap", MatrixToHeightmapRendererParams.class);
-        parser.registerParams("heightmapRenderer", HeightmapRendererParams.class);
-        parser.registerParams("vector", VectorRendererParams.class);
-        parser.registerParams("leveling", LevelingRendererParams.class);
-        parser.registerParams("building", BuildingRendererParams.class);
+        parser.registerParams("copyHeightmap", CopyHeightmapTaskParams.class);
+        parser.registerParams("fetchData", FetchDataTaskParams.class);
+        parser.registerParams("levelGround", LevelGroundTaskParams.class);
+        parser.registerParams("populateHeightmap", PopulateHeightmapTaskParams.class);
+        parser.registerParams("renderBuildings", RenderBuildingsTaskParams.class);
+        parser.registerParams("renderHeightmap", RenderHeightmapTaskParams.class);
+        parser.registerParams("renderVectors", RenderVectorsTaskParams.class);
 
-        parser.registerParams("copyHeightmap", CopyHeightmapRendererParams.class);
 
         parser.registerParams("wfs", WFSProviderParams.class);
         parser.registerParams("gpkg", GeoPackageProviderParams.class);
@@ -116,7 +118,7 @@ public final class MinalacGenerator {
         // Start generation duration
         Instant generationStart = Instant.now();
         try {
-            generation.scheduler().run(5, TimeUnit.MINUTES);
+            generation.scheduler().run(generation.world().limits(), 5, TimeUnit.MINUTES);
         } finally {
             generation.scheduler().shutdown();
         }

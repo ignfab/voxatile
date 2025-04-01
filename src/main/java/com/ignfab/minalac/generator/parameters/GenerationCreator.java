@@ -9,9 +9,8 @@ import org.geotools.geometry.Position2D;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 
-import com.ignfab.minalac.generator.generation.DataSource;
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.renderers.Renderer;
+import com.ignfab.minalac.generator.tasks.TileTask;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
 /**
@@ -64,32 +63,14 @@ public final class GenerationCreator {
             )
         );
 
-        // Data Sources scheduling
-        params.sources.forEach((name, dataSourceParams) -> {
-            DataSource dataSource = dataSourceParams.create(generation);
-            generation.scheduler().schedule(
-                "source:" + name,
-                () -> dataSource.fetch(generation.world().limits())
-            );
+        // ForEachTile scheduling
+        params.forEachTile.forEach((name, taskParams) -> {
+            TileTask task = taskParams.create(generation);
+            generation.scheduler().schedule(name, task);
         });
-
-        params.sources.forEach((name, dataSourceParams) -> {
-            for (String depName : dataSourceParams.after)
-                generation.scheduler().addDependency("source:" + name, depName);
-        });
-
-        // Renderers scheduling
-        params.renderers.forEach((name, rendererParams) -> {
-            Renderer renderer = rendererParams.create(generation);
-            generation.scheduler().schedule(
-                "renderer:" + name,
-                () -> renderer.render(generation.world().limits())
-            );
-        });
-
-        params.renderers.forEach((name, rendererParams) -> {
-            for (String depName : rendererParams.after)
-                generation.scheduler().addDependency("renderer:" + name, depName);
+        params.forEachTile.forEach((name, taskParams) -> {
+            for (String depName : taskParams.after)
+                generation.scheduler().addDependency(name, depName);
         });
 
         return generation;

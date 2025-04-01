@@ -41,7 +41,7 @@ public class Generation {
     private final ModelStore models = new ModelStore();
     private final Store<Heightmap> heightmaps = new Store<>();
 
-    private final Scheduler scheduler = new Scheduler();
+    private final Scheduler<WorldBBox3d> scheduler = new Scheduler<>();
 
     /**
      * Constructs a new generation context.
@@ -128,7 +128,7 @@ public class Generation {
      * Returns the generation scheduler.
      * @return the scheduler.
      */
-    public Scheduler scheduler() {
+    public Scheduler<WorldBBox3d> scheduler() {
         return scheduler;
     }
 
