@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
@@ -38,6 +39,10 @@ public final class ParamsTester {
     public static <T> T deserialize(Class<T> cls, String serialized, OutputFormat format, ObjectMapper mapper) throws JsonProcessingException {
         mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
         mapper.enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
+
+        SimpleModule module = new SimpleModule("ParamsTesterModule");
+        module.setDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
+        mapper.registerModule(module);
 
         format.registerPlaceableDeserializer(mapper);
 

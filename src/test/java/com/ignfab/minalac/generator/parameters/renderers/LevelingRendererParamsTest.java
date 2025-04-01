@@ -42,7 +42,7 @@ public class LevelingRendererParamsTest {
         filling: voxel
         """, mapper));
         assertEquals("building", params.models.type);
-        assertEquals("ground", params.heightmap.name);
+        assertEquals("ground", params.heightmap.stored);
         assertEquals("voxel", assertInstanceOf(TestingVoxelTypeParams.class,  params.filling).name);
 
         assertThrows(MismatchedInputException.class, () -> ParamsTester.deserialize(LevelingRendererParams.class, """

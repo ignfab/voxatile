@@ -39,7 +39,7 @@ public class MatrixToHeightmapRendererParamsTest {
             mapper
         ));
         assertInstanceOf(ModelSelectionParams.class, params.models);
-        assertEquals("ground", params.heightmap.name);
+        assertEquals("ground", params.heightmap.stored);
 
         assertDoesNotThrow(params::validate);
         assertDoesNotThrow(() -> params.create(generation));

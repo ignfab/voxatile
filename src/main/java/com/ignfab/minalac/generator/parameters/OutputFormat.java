@@ -91,7 +91,7 @@ public class OutputFormat {
      */
     public void registerPlaceableDeserializer(ObjectMapper mapper) {
         // Register format specific deserializer
-        SimpleModule module = new SimpleModule();
+        SimpleModule module = new SimpleModule("OutputFormatModule");
         module.addDeserializer(PlaceableParams.class, new PlaceableParams.Deserializer(this));
         mapper.registerModule(module);
 

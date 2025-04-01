@@ -24,6 +24,6 @@ public class ReadableHeightmapParamsDeserializerTest {
     public void testReadableHeightmapParamsDeserializerStored() {
         ReadableHeightmapParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(ReadableHeightmapParams.class, "ground"));
         StoredHeightmapParams shp = assertInstanceOf(StoredHeightmapParams.class, params);
-        assertEquals("ground", shp.name);
+        assertEquals("ground", shp.stored);
     }
 }

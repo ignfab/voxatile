@@ -44,7 +44,7 @@ public class BuildingRendererParamsTest {
         window: voxelC
         """, mapper));
         assertEquals("building", params.models.type);
-        assertEquals("ground", assertInstanceOf(StoredHeightmapParams.class, params.heightmap).name);
+        assertEquals("ground", assertInstanceOf(StoredHeightmapParams.class, params.heightmap).stored);
         assertEquals("voxelA", assertInstanceOf(TestingVoxelTypeParams.class, params.roof).name);
         assertEquals("voxelB", assertInstanceOf(TestingVoxelTypeParams.class, params.wall).name);
         assertEquals("voxelC", assertInstanceOf(TestingVoxelTypeParams.class, params.window).name);

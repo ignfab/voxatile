@@ -43,7 +43,7 @@ public class CopyHeightmapRendererParamsTest {
         ));
         assertInstanceOf(ModelSelectionParams.class, params.models);
         assertInstanceOf(StoredHeightmapParams.class, params.from);
-        assertEquals("ground", params.to.name);
+        assertEquals("ground", params.to.stored);
 
         assertDoesNotThrow(params::validate);
         assertDoesNotThrow(() -> params.create(generation));

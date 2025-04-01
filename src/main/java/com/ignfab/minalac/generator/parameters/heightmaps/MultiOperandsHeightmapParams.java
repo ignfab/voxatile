@@ -12,7 +12,7 @@ import com.ignfab.minalac.generator.generation.heightmaps.SimpleBinaryOperatorHe
 /**
  * Abstract class for applying successive operation on a list of heightmaps.
  */
-public abstract class MultiOperandsHeightmapParams extends CustomReadableHeightmapParams {
+public abstract class MultiOperandsHeightmapParams implements ReadableHeightmapParams {
     private final List<ReadableHeightmapParams> operands;
     private final IntBinaryOperator operator;
 

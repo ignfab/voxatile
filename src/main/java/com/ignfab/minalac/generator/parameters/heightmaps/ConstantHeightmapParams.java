@@ -9,7 +9,7 @@ import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 /**
  * Parameters for a {@link ConstantHeightmap}.
  */
-public class ConstantHeightmapParams extends CustomReadableHeightmapParams {
+public class ConstantHeightmapParams implements ReadableHeightmapParams {
     /**
      * The constant value (required).
      */

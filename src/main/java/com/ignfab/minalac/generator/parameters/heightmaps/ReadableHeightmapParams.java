@@ -2,21 +2,32 @@ package com.ignfab.minalac.generator.parameters.heightmaps;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.exc.InputCoercionException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.deser.std.DelegatingDeserializer;
+import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.parameters.JsonDelegateDeserialize;
 
 /**
  * Base interface for all {@code ReadableHeightmap} parameters.
  */
-@JsonDeserialize(using = ReadableHeightmapParams.Deserializer.class)
+@JsonDelegateDeserialize(using = ReadableHeightmapParams.Deserializer.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
+@JsonSubTypes({
+    @JsonSubTypes.Type(ConstantHeightmapParams.class),
+    @JsonSubTypes.Type(MultiOperandsHeightmapParams.Sum.class),
+    @JsonSubTypes.Type(MultiOperandsHeightmapParams.Product.class),
+    @JsonSubTypes.Type(LocalMinimumHeightmapParams.class),
+    @JsonSubTypes.Type(CappedManhattanHeightmapParams.class),
+    @JsonSubTypes.Type(RemapHeightmapParams.class),
+    @JsonSubTypes.Type(StoredHeightmapParams.class)
+})
 public interface ReadableHeightmapParams {
     /**
      * Validates parameters.
@@ -42,18 +53,27 @@ public interface ReadableHeightmapParams {
      * 2 - If the value is a string, {@code StoredHeightmapParams} is used.
      * 3 - Otherwise, deserialization is done using Jackson deduction mechanism.
      */
-    class Deserializer extends JsonDeserializer<ReadableHeightmapParams> {
+    class Deserializer extends DelegatingDeserializer {
+        /**
+         * Creates a new instance.
+         * @param delegate The default deserializer.
+         */
+        public Deserializer(JsonDeserializer<?> delegate) {
+            super(delegate);
+        }
+
         @Override
-        public ReadableHeightmapParams deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-            ObjectCodec codec = jsonParser.getCodec();
-            JsonNode node = codec.readTree(jsonParser);
-            if (node.isInt())
-                return new ConstantHeightmapParams(node.asInt());
-            if (node.isTextual())
-                return new StoredHeightmapParams(node.asText());
-            if (node.isObject())
-                return codec.treeToValue(node, CustomReadableHeightmapParams.class);
-            throw new InputCoercionException(jsonParser, "ReadableHeightmap should be either an integer, a string or an object", node.asToken(), ReadableHeightmapParams.class);
+        protected JsonDeserializer<?> newDelegatingInstance(JsonDeserializer<?> delegate) {
+            return new Deserializer(delegate);
+        }
+
+        @Override
+        public Object deserializeWithType(JsonParser jsonParser, DeserializationContext deserializationContext, TypeDeserializer typeDeserializer) throws IOException {
+            return switch (jsonParser.currentToken()) {
+                case VALUE_NUMBER_INT -> new ConstantHeightmapParams(jsonParser.getIntValue());
+                case VALUE_STRING -> new StoredHeightmapParams(jsonParser.getText());
+                default -> super.deserializeWithType(jsonParser, deserializationContext, typeDeserializer);
+            };
         }
     }
 }
