@@ -4,7 +4,7 @@ package com.ignfab.minalac.generator.utils.execution;
  * Exception thrown when an exception occurs in a {@link ScheduledTask}.
  */
 public class TaskFailedException extends Exception {
-    private final ScheduledTask task;
+    private final ScheduledTask<?> task;
 
     /**
      * Creates a new exception.
@@ -12,7 +12,7 @@ public class TaskFailedException extends Exception {
      * @param task the failed task
      * @param cause the exception causing the failure
      */
-    public TaskFailedException(ScheduledTask task, Throwable cause) {
+    public TaskFailedException(ScheduledTask<?> task, Throwable cause) {
         super("Task failed: " + task.id(), cause);
         this.task = task;
     }
@@ -22,7 +22,7 @@ public class TaskFailedException extends Exception {
      *
      * @return the failed task
      */
-    public ScheduledTask getTask() {
+    public ScheduledTask<?> getTask() {
         return task;
     }
 }

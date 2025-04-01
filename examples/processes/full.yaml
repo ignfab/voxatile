@@ -3,17 +3,22 @@ heightmaps:
     default: 0
   water:
     default: 0
-sources:
-  mnt:
-    modelType: mnt
+
+forEachTile:
+
+  fetchAltitude:
+    type: fetchData
+    modelType: altitude
     provider:
       type: wmsFloat
       url: https://data.geopf.fr/wms-r/wms
       layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
     processor:
       type: floatMatrix
-  bati:
-    modelType: building
+
+  fetchBuildings:
+    type: fetchData
+    modelType: buildings
     provider:
       type: wfs
       url: https://data.geopf.fr/wfs/wfs
@@ -34,7 +39,9 @@ sources:
         metadata: height
         value: 5
         as: integer
-  vegetation:
+
+  fetchVegetation:
+    type: fetchData
     modelType: vegetation
     provider:
       type: wfs
@@ -42,7 +49,9 @@ sources:
       features: BDTOPO_V3:zone_de_vegetation
     processor:
       type: geoToolsVector
-  surfaceEau:
+
+  fetchWater:
+    type: fetchData
     modelType: water
     provider:
       type: wfs
@@ -50,18 +59,19 @@ sources:
       features: BDTOPO_V3:surface_hydrographique
     processor:
       type: geoToolsVector
-renderers:
-  altitude:
+
+  setAltitude:
     after:
-      - source:mnt
-    type: matrixToHeightmap
+      - fetchAltitude
+    type: populateHeightmap
     models:
-      type: mnt
+      type: altitude
     heightmap: ground
-  mntCorrection:
+
+  flattenWater:
     after:
-      - source:surfaceEau
-      - renderer:altitude
+      - fetchWater
+      - setAltitude
     type: copyHeightmap
     models:
       type: water
@@ -69,11 +79,12 @@ renderers:
       localMin: ground
       range: 9
     to: ground
-  ground:
+
+  renderGround:
     after:
-      - renderer:altitude
-      - renderer:mntCorrection
-    type: heightmapRenderer
+      - setAltitude
+      - flattenWater
+    type: renderHeightmap
     at: ground
     place:
       structure:
@@ -83,21 +94,23 @@ renderers:
           at: [0, 0, -3..-1]
         - put: *voxel-stone
           at: [0, 0, -20..-4]
-  building-leveling:
+
+  levelBuildings:
     after:
-      - source:bati
-      - renderer:ground
-    type: leveling
+      - fetchBuildings
+      - renderGround
+    type: levelGround
     models:
-      type: building
+      type: buildings
     heightmap: ground
-    filling: default:cobble
-  building:
+    filling: *voxel-cobble
+
+  renderBuildings:
     after:
-      - renderer:building-leveling
-    type: building
+      - levelBuildings
+    type: renderBuildings
     models:
-      type: building
+      type: buildings
       filter:
         metadata: height
         greaterThan: 0
@@ -105,11 +118,12 @@ renderers:
     roof: *voxel-cobble
     wall: *voxel-stone
     window: *voxel-glass
-  forest:
+
+  renderForest:
     after:
-      - renderer:ground
-      - source:vegetation
-    type: vector
+      - renderGround
+      - fetchVegetation
+    type: renderVectors
     models:
       type: vegetation
       filter:
@@ -139,17 +153,19 @@ renderers:
           seed: tree2
           chance: 0.003
           place: *forest-tree2
-  waterPresence:
+
+  populateWaterPresence:
     after:
-      - source:surfaceEau
+      - fetchWater
     type: copyHeightmap
     models:
       type: water
     from: 1
     to: water
-  waterHeight:
+
+  computeWaterDepth:
     after:
-      - renderer:waterPresence
+      - populateWaterPresence
     type: copyHeightmap
     models:
       type: water
@@ -166,14 +182,15 @@ renderers:
         4..6: 11
         7..12: 12
     to: water
-  waterRdr:
+
+  renderWater:
     after:
-      - renderer:ground
-      - renderer:waterHeight
+      - renderGround
+      - computeWaterDepth
       # Vegetation and water vector data overlap in certain areas. (Because of vegetation representing canopy)
       # The dependency and air voxel below should be removed when cropping is implemented on vector data.
-      - renderer:forest
-    type: heightmapRenderer
+      - renderForest
+    type: renderHeightmap
     minimum:
       sum:
         - ground

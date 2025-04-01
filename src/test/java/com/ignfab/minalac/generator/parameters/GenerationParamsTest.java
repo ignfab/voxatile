@@ -14,8 +14,9 @@ import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelTypePara
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
 import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.TestingProviderParams;
-import com.ignfab.minalac.generator.parameters.renderers.BuildingRendererParams;
-import com.ignfab.minalac.generator.parameters.renderers.TestingRendererParams;
+import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.TestingTaskParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,7 +30,7 @@ public class GenerationParamsTest {
         OutputFormat format = new OutputFormat(MTVoxelWorld::new, MTVoxelTypeParams.class, MTVoxelTypeParams::new);
         params = new GenerationParams(area, format);
         params.heightmaps = new HashMap<>();
-        params.renderers = new HashMap<>();
+        params.forEachTile = new HashMap<>();
     }
 
     @Test
@@ -110,13 +111,13 @@ public class GenerationParamsTest {
         params.crs = "EPSG:5643";
         params.heightmaps.put("ground", new HeightmapParams("0"));
         params.heightmaps.put("altitude", new HeightmapParams("minimal"));
-        params.renderers.put("renderer1", new TestingRendererParams("value1"));
-        params.renderers.put("renderer2", new TestingRendererParams("value2"));
-        params.sources.put("source1", new DataSourceParams("models1", new TestingProviderParams("value3"), new TestingProcessorParams("value4")));
-        params.sources.put("source2", new DataSourceParams("models2", new TestingProviderParams("value5"), new TestingProcessorParams("value6")));
+        params.forEachTile.put("renderer1", new TestingTaskParams("value1"));
+        params.forEachTile.put("renderer2", new TestingTaskParams("value2"));
+        params.forEachTile.put("source1", new FetchDataTaskParams("models1", new TestingProviderParams("value3"), new TestingProcessorParams("value4")));
+        params.forEachTile.put("source2", new FetchDataTaskParams("models2", new TestingProviderParams("value5"), new TestingProcessorParams("value6")));
 
         TestingVoxelTypeParams placeable = new TestingVoxelTypeParams("voxel");
-        params.renderers.put("building", new BuildingRendererParams(
+        params.forEachTile.put("building", new RenderBuildingsTaskParams(
             new ModelSelectionParams("building"),
             new StoredHeightmapParams("ground"),
             placeable,

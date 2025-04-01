@@ -9,7 +9,7 @@ This page is about different methods for building and running Generator. They ar
 
 Generation involves too many parameters to be passed on command line. They are passed either by file using `-p`/`--param-file` command line option or using `MINALAC_PARAMS` environment variable.
 
-Refer to [generation parameters documentation](GenerationParameters.md) for further information.
+Refer to [generation parameters documentation](parameters/Parameters.md) for further information.
 
 To avoid useless efforts building a parameter file, you can use provided `generate.sh` script (see [Run.md](Run.md#generatesh)).
 

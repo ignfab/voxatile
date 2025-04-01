@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.parameters.renderers.RendererParams;
+import com.ignfab.minalac.generator.parameters.tasks.TileTaskParams;
 
 /**
  * GenerationParams represents the parameters used during the generation.
@@ -19,7 +19,7 @@ import com.ignfab.minalac.generator.parameters.renderers.RendererParams;
  * The verification of their presence is done by the constructor via the {@code @ConstructorProperties} annotation, as it is currently the only supported method by the library.
  * @see <a href="https://github.com/FasterXML/jackson-dataformat-xml/issues/625">GitHub issue about required fields during deserialization</a>.
  *
- * Refer to docs/usage/GenerationParameters.md for parameters format.
+ * Refer to docs/usage/parameters/Parameters.md for parameters format.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GenerationParams {
@@ -80,24 +80,13 @@ public class GenerationParams {
     public Map<String, HeightmapParams> heightmaps = new LinkedHashMap<>();
 
     /**
-     * Sources used during the generation, by name (optional).
+     * Description of the schedule that will run for each tile.
      */
     @JsonSetter(
         nulls = Nulls.SKIP,
-        // To prevent null values on required field of an element of the map.
         contentNulls = Nulls.FAIL
     )
-    public Map<String, DataSourceParams> sources = new LinkedHashMap<>();
-
-    /**
-     * Renderers used during the generation, by name (optional).
-     */
-    @JsonSetter(
-        nulls = Nulls.SKIP,
-        // To prevent null values on required field of an element of the map.
-        contentNulls = Nulls.FAIL
-    )
-    Map<String, RendererParams> renderers = new LinkedHashMap<>();
+    public Map<String, TileTaskParams> forEachTile = new LinkedHashMap<>();
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
@@ -133,9 +122,7 @@ public class GenerationParams {
 
         for (HeightmapParams params : heightmaps.values())
             params.validate();
-        for (DataSourceParams params : sources.values())
-            params.validate();
-        for (RendererParams params : renderers.values())
+        for (TileTaskParams params : forEachTile.values())
             params.validate();
     }
 
