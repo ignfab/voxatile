@@ -6,8 +6,10 @@ Each post-processor has a field `type` which is used to identify it.
 ## Table of contents
 * [Accepted and processed model types](#accepted-and-processed-model-types)
 * [Multi-processing steps](#multi-processing-steps)
+* [Conditional post-processing](#conditional-post-processing)
 * [Generic post-processors](#generic-post-processors)
   * [Identity](#identity)
+  * [Discard](#discard)
   * [Metadata copy](#metadata-copy)
   * [Metadata default](#metadata-default)
   * [Metadata parse](#metadata-parse)
@@ -42,6 +44,35 @@ In this situation, the accepted model type of the chain is the one of the first 
 
 Note: An empty chain (`postProcessing: []`) is equivalent to the [identity](#identity) post-processor, and a chain of only one post-processor is equivalent to that single post-processor.
 
+## Conditional post-processing
+
+Sometimes, only a subset of models need specific post-processing. This can be handled using a conditional post-processor, with a [model filter](GenerationParameters.md#model-selections) as condition, and post-processing to apply to matching models.
+
+**Type**: conditional
+
+**Extra parameters**:
+- `if` (required): [Models filter](GenerationParameters.md#model-selections) to decide which models should be post-processed.
+- `then` (required): Post-processing to apply to matching models.
+- `else` (optional, default [identity](#identity)): Post-processing to apply to other models.
+
+For example, to apply a buffer around the geometry of models with a given metadata value, and discard others:
+```yaml
+postProcessing:
+  type: conditional
+  if:
+    metadata: classification
+    equals: forest
+  then:
+    type: geometryBuffer
+    buffer: 3
+  else:
+    type: discard
+```
+
+Of course, `then` can contain multiple post-processing steps, as explained in [the previous section](#multi-processing-steps).
+
+Warning: Models that do not match the condition will be left untouched. Thus, the processed model type of this post-processor is defined as "Same as input", and the accepted model type is the one of the underlying post-processing operation. This means that operation must comply with the "Same as input" processed model type requirement.
+
 ## Generic post-processors
 
 These post-processors can be applied to any model, and they only modifies the model, without changing its type.
@@ -55,6 +86,12 @@ These post-processors can be applied to any model, and they only modifies the mo
 A post-processor doing nothing, returning the input model untouched. It can be convenient if one is required, but you don't need one.
 
 **Type**: identity
+
+### Discard
+
+A post-processor discarding everything. It can be paired with [conditional post-processing](#conditional-post-processing) to drop models based on a condition.
+
+**Type**: discard
 
 ### Metadata copy
 

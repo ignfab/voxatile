@@ -19,6 +19,8 @@ import com.ignfab.minalac.generator.parameters.placeables.voxels.MCVoxelTypePara
 import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelTypeParams;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.post.ConditionalPostProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.post.DiscardPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.IdentityPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.JTSGeometryBufferPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataCopyPostProcessorParams;
@@ -92,6 +94,8 @@ public final class MinalacGenerator {
         parser.registerParams("geoToolsVector", GeoToolsVectorProcessorParams.class);
 
         parser.registerParams("identity", IdentityPostProcessorParams.class);
+        parser.registerParams("discard", DiscardPostProcessorParams.class);
+        parser.registerParams("conditional", ConditionalPostProcessorParams.class);
         parser.registerParams("copy", MetadataCopyPostProcessorParams.class);
         parser.registerParams("default", MetadataDefaultPostProcessorParams.class);
         parser.registerParams("parse", MetadataParsePostProcessorParams.class);
