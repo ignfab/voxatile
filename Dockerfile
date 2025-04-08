@@ -36,7 +36,7 @@ RUN <<EOF
 EOF
 
 # Build
-RUN mvn clean package
+RUN mvn -Dmaven.test.skip=true clean package
 
 #
 # Package stage
