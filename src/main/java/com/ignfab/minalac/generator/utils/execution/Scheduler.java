@@ -3,7 +3,9 @@ package com.ignfab.minalac.generator.utils.execution;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -153,11 +155,67 @@ public class Scheduler {
         // Pause this thread by sleeping until being waked up by the end / failure of tasks
         // The synchronized block is mandatory to take ownership of the lock
         synchronized (lock) {
-            // TODO Spurious wakeup guard
-            lock.wait(unit.toMillis(timeout));
+            // Spurious wakeup guard
+            long timeoutAt = System.currentTimeMillis() + unit.toMillis(timeout);
+            while (error == null && !tasks.isEmpty() && System.currentTimeMillis() < timeoutAt)
+                lock.wait(timeoutAt - System.currentTimeMillis());
         }
         // Propagates the task failure, if any
         if (error != null)
             throw error;
+    }
+
+    public void validate() throws IllegalSchedulerException {
+        Validator validator = new Validator(tasks);
+        validator.buildGraph();
+        validator.checkForCycles();
+    }
+
+    private static class Validator {
+        private final Map<String, TaskNode> tasksById;
+
+        public Validator(Collection<ScheduledTask> tasks) {
+            tasksById = new HashMap<>(tasks.size());
+            for (ScheduledTask task : tasks)
+                tasksById.put(task.getId(), new TaskNode(task, new ArrayList<>()));
+        }
+
+        private TaskNode require(String id) throws IllegalSchedulerException {
+            TaskNode node = tasksById.get(id);
+            if (node == null)
+                throw new IllegalSchedulerException("Task with id " + id + " not found");
+            return node;
+        }
+
+        public void buildGraph() throws IllegalSchedulerException {
+            for (TaskNode node : tasksById.values())
+                for (String condition : node.task().getConditions())
+                    node.requirements().add(require(condition));
+        }
+
+        public void checkForCycles() throws IllegalSchedulerException {
+            for (TaskNode node : tasksById.values())
+                if (node.hasRequirement(node))
+                    throw new IllegalSchedulerException("Task with id " + node.taskId() + " has cyclic dependency");
+        }
+    }
+
+    private record TaskNode(ScheduledTask task, List<TaskNode> requirements) {
+        public String taskId() {
+            return task.getId();
+        }
+
+        public boolean hasRequirement(TaskNode node) {
+            for (TaskNode requirement : requirements)
+                if (requirement.taskId().equals(node.taskId()) || requirement.hasRequirement(node))
+                    return true;
+            return false;
+        }
+    }
+
+    public static class IllegalSchedulerException extends Exception {
+        public IllegalSchedulerException(String message) {
+            super(message);
+        }
     }
 }
