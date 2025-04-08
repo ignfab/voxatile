@@ -10,7 +10,7 @@ import com.ignfab.minalac.generator.models.Model;
  * <p>
  * The model same model object is returned after post-processing.
  */
-public class MetadataCopyPostProcessor implements PostProcessor<Model, Model> {
+public class MetadataCopyPostProcessor extends PostProcessor.Generic {
     private final String from;
     private final String to;
     private final boolean abortIfFromIsAbsent;
@@ -28,16 +28,6 @@ public class MetadataCopyPostProcessor implements PostProcessor<Model, Model> {
         this.to = to;
         this.abortIfFromIsAbsent = abortIfFromIsAbsent;
         this.doNotOverwriteExistingTo = doNotOverwriteExistingTo;
-    }
-
-    @Override
-    public Class<? super Model> acceptedModelType() {
-        return Model.class;
-    }
-
-    @Override
-    public Class<? extends Model> processedModelType(Class<? extends Model> inputModelType) {
-        return inputModelType;
     }
 
     @Override

@@ -11,7 +11,7 @@ import com.ignfab.minalac.generator.models.Model;
  *
  * @param <T> type of parsed value
  */
-public class MetadataParsePostProcessor<T> implements PostProcessor<Model, Model> {
+public class MetadataParsePostProcessor<T> extends PostProcessor.Generic {
     private final String name;
     private final Class<T> type;
     private final Function<Object, ? extends T> parser;
@@ -39,16 +39,6 @@ public class MetadataParsePostProcessor<T> implements PostProcessor<Model, Model
         this.parser = parser;
         this.ifMissingMetadata = ifMissingMetadata;
         this.ifParserFails = ifParserFails;
-    }
-
-    @Override
-    public Class<? super Model> acceptedModelType() {
-        return Model.class;
-    }
-
-    @Override
-    public Class<? extends Model> processedModelType(Class<? extends Model> inputModelType) {
-        return inputModelType;
     }
 
     @Override

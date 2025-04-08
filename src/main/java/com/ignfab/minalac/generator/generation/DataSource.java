@@ -1,8 +1,6 @@
 package com.ignfab.minalac.generator.generation;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
@@ -22,7 +20,7 @@ public class DataSource {
     private final String modelType;
     private final Provider<?> provider;
     private final Processor<Object, ?> processor;
-    private final List<PostProcessor<Model, ?>> postProcessors;
+    private final PostProcessor<Model, ?> postProcessor;
 
     /**
      * Creates a new data source.
@@ -31,37 +29,33 @@ public class DataSource {
      * @param modelType name of type to be associated with them
      * @param provider data provider
      * @param processor processor converting provided data to models
-     * @param postProcessors eventual post-processor to run on created models
+     * @param postProcessor post-processor to run on created models
      */
     public DataSource(
         ModelStore modelStore,
         String modelType,
         Provider<?> provider,
         Processor<?, ? extends Model> processor,
-        List<PostProcessor<?, ?>> postProcessors
+        PostProcessor<?, ?> postProcessor
     ) {
-        Class<? extends Model> modelClass = processor.modelType();
-
         if (!processor.acceptedType().isAssignableFrom(provider.providedType()))
-            throw new IllegalArgumentException("Processor cannot treat provided type. Provided = %s, Accepted = %s".formatted(provider.providedType(), processor.acceptedType()));
+            throw new IllegalArgumentException("%s cannot treat provided type. Provided = %s, Accepted = %s".formatted(
+                processor.getClass().getSimpleName(),
+                provider.providedType(),
+                processor.acceptedType()
+            ));
+        postProcessor.checkProcessingType(processor.modelType());
 
-        this.postProcessors = new ArrayList<>();
-        for (PostProcessor<?, ?> postProcessor : postProcessors) {
-            if (!postProcessor.acceptedModelType().isAssignableFrom(modelClass))
-                throw new IllegalArgumentException("PostProcessor cannot treat model type. Current model type = %s, Accepted model type = %s".formatted(modelType, postProcessor.acceptedModelType()));
-            @SuppressWarnings("unchecked") // The model type has been validated above
-            PostProcessor<Model, ?> uncheckedPostProcessor = (PostProcessor<Model, ?>) postProcessor;
-            this.postProcessors.add(uncheckedPostProcessor);
-            modelClass = uncheckedPostProcessor.processedModelType(modelClass);
-        }
-
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked") // The provided type has been validated above
         Processor<Object, ?> uncheckedProcessor = (Processor<Object, ?>) processor;
+        @SuppressWarnings("unchecked") // The model type has been validated above
+        PostProcessor<Model, ?> uncheckedPostProcessor = (PostProcessor<Model, ?>) postProcessor;
 
         this.modelStore = modelStore;
         this.modelType = modelType;
         this.provider = provider;
         this.processor = uncheckedProcessor;
+        this.postProcessor = uncheckedPostProcessor;
     }
 
     /**
@@ -76,13 +70,11 @@ public class DataSource {
                 Object data = result.next();
                 try {
                     Model model = processor.process(data);
-                    for (PostProcessor<Model, ?> postProcessor : postProcessors) {
-                        if (model == null)
-                            break;
+                    if (model != null) {
                         model = postProcessor.process(model);
+                        if (model != null)
+                            modelStore.add(modelType, model);
                     }
-                    if (model != null)
-                        modelStore.add(modelType, model);
                 } catch (IgnorableException e) {
                     // TODO Add an exception handling policy
                     // To fail even on ignorable exceptions:

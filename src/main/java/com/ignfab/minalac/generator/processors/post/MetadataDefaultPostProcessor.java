@@ -5,7 +5,7 @@ import com.ignfab.minalac.generator.models.Model;
 /**
  * Post-processor that applies a default value for a specified metadata.
  */
-public class MetadataDefaultPostProcessor implements PostProcessor<Model, Model> {
+public class MetadataDefaultPostProcessor extends PostProcessor.Generic {
     private final String name;
     private final Object defaultValue;
 
@@ -18,16 +18,6 @@ public class MetadataDefaultPostProcessor implements PostProcessor<Model, Model>
     public MetadataDefaultPostProcessor(String name, Object defaultValue) {
         this.name = name;
         this.defaultValue = defaultValue;
-    }
-
-    @Override
-    public Class<? super Model> acceptedModelType() {
-        return Model.class;
-    }
-
-    @Override
-    public Class<? extends Model> processedModelType(Class<? extends Model> inputModelType) {
-       return inputModelType;
     }
 
     @Override
