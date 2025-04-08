@@ -41,6 +41,16 @@ public class SequentialPostProcessorTest {
     }
 
     @Test
+    @DisplayName("Sequential post-processor stops when model is discarded by one of its underlying post-processors")
+    public void testDiscarded() {
+        TestingModel discarded = getProcessed(new SequentialPostProcessor<>(List.of(ppA, ppB, DiscardPostProcessor.INSTANCE, ppC)));
+        assertNull(discarded);
+        ppA.assertPostProcessed(model);
+        ppB.assertPostProcessed(model);
+        ppC.assertNotPostProcessed(model);
+    }
+
+    @Test
     @DisplayName("Sequential post-processor checks the processing types of its underlying post-processors")
     public void testCheckProcessingType() {
         SequentialPostProcessor<?, ?> postProcessor = new SequentialPostProcessor<>(List.of(
