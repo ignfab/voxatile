@@ -23,22 +23,22 @@ docker build --no-cache \
 
 ## Run image locally
 
-Here, the generation parameters are passed from an example file to the container using the `MINALAC_PARAMS` environment variable. A local `output/` directory must have been created beforehand.
+Here, the generation parameters are computed using the utility script `generate.sh` (with the `-y` option) and passed to the container using the `MINALAC_PARAMS` environment variable. A local `output/` directory must have been created beforehand.
 
 ```shell
 mkdir output
-MINALAC_PARAMS=$(cat examples/minecraft.yaml) docker run \
+MINALAC_PARAMS=$(./generate.sh -y minetest full ign) docker run \
     -u $(id -u ${USER}):$(id -g ${USER}) \
     -v ./output:/output \
     -e MINALAC_PARAMS \
     minalac-generator
 ```
 
-If corporate proxy is needed use the `JAVA_TOOL_OPTIONS` environment variable to declare it:
+If corporate proxy is needed, use the `JAVA_TOOL_OPTIONS` environment variable to declare it:
 
 ```shell
 mkdir output
-MINALAC_PARAMS=$(cat examples/minecraft.yaml) docker run \
+MINALAC_PARAMS=$(./generate.sh -y minetest full ign) docker run \
     -u $(id -u ${USER}):$(id -g ${USER}) \
     -v ./output:/output \
     -e MINALAC_PARAMS \

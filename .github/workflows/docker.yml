@@ -8,9 +8,6 @@ on:
     - Dockerfile
     - .m2-settings.xml
     - .github/workflows/docker.yml
-  pull_request:
-    branches:
-    - "*"
 
 env:
   REGISTRY: ghcr.io
