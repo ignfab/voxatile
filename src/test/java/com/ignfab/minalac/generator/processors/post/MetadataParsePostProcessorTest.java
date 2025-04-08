@@ -2,7 +2,6 @@ package com.ignfab.minalac.generator.processors.post;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,19 +22,6 @@ public class MetadataParsePostProcessorTest {
             "string", "value",
             "int", 7
         ));
-    }
-
-    @Test
-    public void testCapabilities() {
-        MetadataParsePostProcessor<?> postProcessor = new MetadataParsePostProcessor<>(
-            "name",
-            Object.class,
-            Function.identity(),
-            MetadataParsePostProcessor.ParsingFailurePolicy.IGNORE,
-            MetadataParsePostProcessor.ParsingFailurePolicy.IGNORE
-        );
-        assertTrue(postProcessor.acceptedModelType().isAssignableFrom(TestingModel.class), "post-processor accepts any model type");
-        assertTrue(TestingModel.class.isAssignableFrom(postProcessor.processedModelType(TestingModel.class)), "post-processor produces same model type");
     }
 
     private TestingModel getProcessed(MetadataParsePostProcessor<?> postProcessor) {

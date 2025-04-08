@@ -1,7 +1,6 @@
 package com.ignfab.minalac.generator.parameters;
 
 import java.beans.ConstructorProperties;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -9,12 +8,10 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.DataSource;
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.post.IdentityPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.PostProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.ProviderParams;
-import com.ignfab.minalac.generator.processors.Processor;
-import com.ignfab.minalac.generator.processors.post.PostProcessor;
 
 /**
  * Represents the parameters used for {@link DataSource} creation.
@@ -40,7 +37,7 @@ public class DataSourceParams {
      * Additional data-processing steps (optional).
      */
     @JsonSetter(nulls = Nulls.SKIP)
-    public List<PostProcessorParams> postProcessors = new ArrayList<>();
+    public PostProcessorParams postProcessing = new IdentityPostProcessorParams();
 
     /**
      * Dependencies (optional).
@@ -72,8 +69,7 @@ public class DataSourceParams {
 
         provider.validate();
         processor.validate();
-        for (PostProcessorParams params : postProcessors)
-            params.validate();
+        postProcessing.validate();
     }
 
     /**
@@ -83,18 +79,12 @@ public class DataSourceParams {
      * @return the created data source
      */
     public DataSource create(Generation generation) {
-        Provider<?> provider = this.provider.create(generation);
-        Processor<?, ?> processor = this.processor.create(generation);
-        List<PostProcessor<?, ?>> postProcessors = new ArrayList<>();
-        for (PostProcessorParams params : this.postProcessors)
-            postProcessors.add(params.create());
-
         return new DataSource(
             generation.models(),
             modelType,
-            provider,
-            processor,
-            postProcessors
+            provider.create(generation),
+            processor.create(generation),
+            postProcessing.create()
         );
     }
 }

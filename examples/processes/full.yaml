@@ -21,7 +21,7 @@ sources:
       maxFeaturesPerQuery: 500
     processor:
       type: geoToolsVector
-    postProcessors:
+    postProcessing:
       - type: copy
         metadata: hauteur
         to: height

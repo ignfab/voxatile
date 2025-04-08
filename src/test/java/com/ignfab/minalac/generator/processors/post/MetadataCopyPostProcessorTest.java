@@ -22,13 +22,6 @@ public class MetadataCopyPostProcessorTest {
         ));
     }
 
-    @Test
-    public void testCapabilities() {
-        MetadataCopyPostProcessor postProcessor = new MetadataCopyPostProcessor("a", "d", false, false);
-        assertTrue(postProcessor.acceptedModelType().isAssignableFrom(TestingModel.class), "post-processor accepts any model type");
-        assertTrue(TestingModel.class.isAssignableFrom(postProcessor.processedModelType(TestingModel.class)), "post-processor produces same model type");
-    }
-
     private TestingModel getProcessed(MetadataCopyPostProcessor postProcessor) {
         Model processedModel = assertDoesNotThrow(() -> postProcessor.process(model));
         return assertInstanceOf(TestingModel.class, processedModel);
