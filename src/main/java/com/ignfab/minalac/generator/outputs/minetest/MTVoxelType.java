@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
+import java.util.Objects;
+
 import com.ignfab.minalac.generator.placeables.VoxelType;
 
 /**
@@ -74,5 +76,18 @@ public class MTVoxelType implements VoxelType {
      */
     public byte getParam2() {
         return param2;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MTVoxelType that = (MTVoxelType) o;
+        return param1 == that.param1 && param2 == that.param2 && world == that.world && type.equals(that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(world, type, param1, param2);
     }
 }

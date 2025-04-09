@@ -1,8 +1,11 @@
 package com.ignfab.minalac.generator.outputs.minecraft;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import net.querz.nbt.tag.CompoundTag;
+import net.querz.nbt.tag.StringTag;
 
 import com.ignfab.minalac.generator.placeables.VoxelType;
 
@@ -49,6 +52,29 @@ public class MCVoxelType implements VoxelType {
     }
 
     /**
+     * Creates a new instance of {@link MCVoxelType} from a {@link CompoundTag} and a {@link MCVoxelWorld}.
+     *
+     * @param block the {@code CompoundTag} representing a block.
+     * @param world the world in which the voxel can be placed
+     * @return a new {@code MCVoxelType}
+     */
+    public static MCVoxelType fromBlockState(CompoundTag block, MCVoxelWorld world) {
+        String type = block.getStringTag("Name").getValue();
+
+        CompoundTag propertiesTag = block.getCompoundTag("Properties");
+        if (propertiesTag != null) {
+            Map<String, String> properties = new HashMap<>();
+            propertiesTag.forEach(entry -> properties.put(
+                entry.getKey(),
+                ((StringTag) entry.getValue()).getValue()
+            ));
+            return new MCVoxelType(world, type, properties);
+        }
+
+        return new MCVoxelType(world, type);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -61,5 +87,18 @@ public class MCVoxelType implements VoxelType {
             block.put("Properties", state);
         }
         world.setBlockState(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MCVoxelType that = (MCVoxelType) o;
+        return world == that.world && type.equals(that.type) && Objects.equals(properties, that.properties);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(world, type, properties);
     }
 }

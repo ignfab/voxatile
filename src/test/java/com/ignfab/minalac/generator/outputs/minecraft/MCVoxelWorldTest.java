@@ -3,11 +3,13 @@ package com.ignfab.minalac.generator.outputs.minecraft;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import net.querz.nbt.tag.CompoundTag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import com.ignfab.minalac.generator.placeables.VoxelType;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
@@ -70,5 +72,31 @@ public class MCVoxelWorldTest {
         assertTrue(world.isOutOfLimits(-11, 0, 19));
         assertTrue(world.isOutOfLimits(-10, -1, 19));
         assertTrue(world.isOutOfLimits(-10, 0, 20));
+    }
+
+    @Test
+    public void testGetVoxel() {
+        MCVoxelWorld world = new MCVoxelWorld();
+        world.setLimits(new WorldBBox3d(new WorldCoords3d(-20, -20, 0), new WorldCoords3d(50, 50, 255)));
+        VoxelType stone = new MCVoxelType(world, "minecraft:stone");
+        VoxelType barrel = new MCVoxelType(world, "minecraft:barrel", Map.of(
+            "facing", "south",
+            "open", "true"
+        ));
+        VoxelType dirt = new MCVoxelType(world, "minecraft:dirt");
+        barrel.place(-9, -8, 1);
+        stone.place(4, -3, 78);
+        dirt.place(-7, 5, 55);
+
+        assertEquals(barrel, world.getVoxel(-9, -8, 1));
+        assertEquals(stone, world.getVoxel(4, -3, 78));
+        assertEquals(dirt, world.getVoxel(-7, 5, 55));
+
+        // Minecraft zMax
+        dirt.place(3, 4, 255);
+        assertEquals(dirt, world.getVoxel(3, 4, 255));
+        // Minecraft zMin
+        barrel.place(-9, -8, 0);
+        assertEquals(barrel, world.getVoxel(-9, -8, 0));
     }
 }

@@ -33,15 +33,13 @@ public class Block {
      * Places the specified voxel on the block by updating the block's three array parameters.
      * The coordinate system is the one used in Minetest.
      *
-     * @param x the x-coordinate value relatively to the block
-     * @param y the y-coordinate value relatively to the block
-     * @param z the z-coordinate value relatively to the block
+     * @param nodeX the x-coordinate value relatively to the block
+     * @param nodeY the y-coordinate value relatively to the block
+     * @param nodeZ the z-coordinate value relatively to the block
      * @param voxel the {@link MTVoxelType} to place within the block
      */
-    public void set(int x, int y, int z, MTVoxelType voxel) {
-        // Node location on arrays
-        // https://github.com/minetest/minetest/blob/master/doc/world_format.md#node-data
-        int i = z << 8 | y << 4 | x;
+    public void set(int nodeX, int nodeY, int nodeZ, MTVoxelType voxel) {
+        int i = nodeCoordsToIndex(nodeX, nodeY, nodeZ);
         param0[i] = getOrCreateIdForType(voxel.getType());
         param1[i] = voxel.getParam1();
         param2[i] = voxel.getParam2();
@@ -106,5 +104,16 @@ public class Block {
      */
     public byte[] getParam2() {
         return param2;
+    }
+
+    private int nodeCoordsToIndex(int nodeX, int nodeY, int nodeZ) {
+        // Node location on arrays
+        // https://github.com/minetest/minetest/blob/master/doc/world_format.md#node-data
+        return nodeZ << 8 | nodeY << 4 | nodeX;
+    }
+
+    protected MTVoxelType get(int nodeX, int nodeY, int nodeZ, MTVoxelWorld world) {
+        int i = nodeCoordsToIndex(nodeX, nodeY, nodeZ);
+        return new MTVoxelType(world, nameIdMapping.get((int) param0[i]), param1[i], param2[i]);
     }
 }

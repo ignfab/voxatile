@@ -13,6 +13,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.placeables.VoxelType;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -101,6 +102,11 @@ public class TestGeneration {
 
         @Override
         public void save(File destination) throws MapWriteException {
+        }
+
+        @Override
+        public VoxelType getVoxel(int x, int y, int z) {
+            return null;
         }
     }
 }

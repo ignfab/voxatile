@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.outputs.testing;
 
 import java.io.File;
 
+import com.ignfab.minalac.generator.placeables.VoxelType;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
@@ -48,6 +49,13 @@ public class TestingVoxelWorld extends VoxelWorld {
     @Override
     public void save(File destination) throws MapWriteException {}
 
+    @Override
+    public VoxelType getVoxel(int x, int y, int z) {
+        if (!limits().contains(x, y, z)) return null;
+        String type = voxels[index(x, y, z)];
+        return type == null ? null : new TestingVoxelType(this, type);
+    }
+
     // This method should not be called with out of bounds coordinate
     private int index(int x, int y, int z) {
         return x - limits().minX() + limits().sizeX()
@@ -68,8 +76,10 @@ public class TestingVoxelWorld extends VoxelWorld {
      * @param value Voxel value to set at this position
      */
     public void set(int x, int y, int z, String value) {
-        if (limits().contains(x, y, z))
+        if (limits().contains(x, y, z)) {
             voxels[index(x, y, z)] = value;
+            updateHeightmaps(x, y, z);
+        }
     }
 
     /**

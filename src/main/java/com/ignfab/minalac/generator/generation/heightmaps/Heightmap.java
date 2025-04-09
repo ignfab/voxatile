@@ -12,6 +12,10 @@ import com.ignfab.minalac.generator.utils.world2d.WorldSize2d;
 public class Heightmap implements ReadableHeightmap {
     private final WorldBBox2d bbox;
     private int[] values;
+    /**
+     * A reusable instance of an empty {@link Heightmap}.
+     */
+    public static final Heightmap EMPTY = new Heightmap(WorldBBox2d.EMPTY, 0);
 
     /**
      * Creates a new {@link Heightmap}.
