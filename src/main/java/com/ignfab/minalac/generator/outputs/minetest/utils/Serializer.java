@@ -12,7 +12,7 @@ import com.ignfab.minalac.generator.outputs.minetest.Block;
 /**
  * This class is responsible for providing the serialized {@code Block} needed by the {@code map.sqlite} file.
  * @see SQLiteMapWriter
- * @see com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld#save(java.io.File)
+ * @see com.ignfab.minalac.generator.outputs.minetest.MTVoxelTile#save()
  */
 public class Serializer {
 

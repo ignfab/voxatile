@@ -36,9 +36,9 @@ public class Block {
      * @param nodeX the x-coordinate value relatively to the block
      * @param nodeY the y-coordinate value relatively to the block
      * @param nodeZ the z-coordinate value relatively to the block
-     * @param voxel the {@link MTVoxelType} to place within the block
+     * @param voxel the {@link MTVoxel} to place within the block
      */
-    public void set(int nodeX, int nodeY, int nodeZ, MTVoxelType voxel) {
+    public void set(int nodeX, int nodeY, int nodeZ, MTVoxel voxel) {
         int i = nodeCoordsToIndex(nodeX, nodeY, nodeZ);
         param0[i] = getOrCreateIdForType(voxel.getType());
         param1[i] = voxel.getParam1();
@@ -112,8 +112,8 @@ public class Block {
         return nodeZ << 8 | nodeY << 4 | nodeX;
     }
 
-    protected MTVoxelType get(int nodeX, int nodeY, int nodeZ, MTVoxelWorld world) {
+    protected MTVoxel get(int nodeX, int nodeY, int nodeZ) {
         int i = nodeCoordsToIndex(nodeX, nodeY, nodeZ);
-        return new MTVoxelType(world, nameIdMapping.get((int) param0[i]), param1[i], param2[i]);
+        return new MTVoxel(nameIdMapping.get((int) param0[i]), param1[i], param2[i]);
     }
 }

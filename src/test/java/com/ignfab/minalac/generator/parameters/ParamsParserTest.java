@@ -4,8 +4,8 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelTypeParams;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 import com.ignfab.minalac.generator.parameters.tasks.TestingTaskParams;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,12 +19,12 @@ public class ParamsParserTest {
           extentX: 500
           extentY: 2500
           angle: 30
-        format: minetest
+        format: testing
         """;
 
     private ParamsParser newParser() {
         ParamsParser parser = new ParamsParser();
-        parser.registerFormat("minetest", new OutputFormat(MTVoxelWorld::new, MTVoxelTypeParams.class, MTVoxelTypeParams::new));
+        parser.registerFormat("testing", new OutputFormat(TestingVoxelWorld::new, TestingVoxelParams.class, TestingVoxelParams::new));
         return parser;
     }
 
@@ -40,7 +40,7 @@ public class ParamsParserTest {
                 "extentX": 500,
                 "extentY": 2500
               },
-              "format": "minetest"
+              "format": "testing"
             }
             """
         ), "Should be able to parse JSON format");
@@ -81,7 +81,7 @@ public class ParamsParserTest {
 
     @Test
     public void testParseMissingRequiredField() {
-        assertThrows(ParseException.class, () -> newParser().parse("format: minetest"), "Absence of the area field should throw an exception");
+        assertThrows(ParseException.class, () -> newParser().parse("format: testing"), "Absence of the area field should throw an exception");
 
         assertThrows(ParseException.class, () -> newParser().parse("""
             area:
@@ -89,7 +89,7 @@ public class ParamsParserTest {
                 longitude: 2.4
               extentX: 500
               extentY: 2500
-            format: minetest
+            format: testing
             """
         ), "Absence of the latitude field should throw an exception");
 
@@ -99,7 +99,7 @@ public class ParamsParserTest {
                 latitude: 5.8
               extentX: 500
               extentY: 2500
-            format: minetest
+            format: testing
             """
         ), "Absence of the longitude field should throw an exception");
 
@@ -109,7 +109,7 @@ public class ParamsParserTest {
                 latitude: 5.8
                 longitude: 2.4
               extentY: 2500
-            format: minetest
+            format: testing
             """
         ), "Absence of the extentX field should throw an exception");
 
@@ -119,7 +119,7 @@ public class ParamsParserTest {
                 latitude: 5.8
                 longitude: 2.4
               extentX: 500
-            format: minetest
+            format: testing
             """
         ), "Absence of the extentY field should throw an exception");
 
@@ -145,7 +145,7 @@ public class ParamsParserTest {
                 extentX: 500
                 extentY: 2500
                 angle: 30
-              - &format minetest
+              - &format testing
             area: *area
             format: *format
             """

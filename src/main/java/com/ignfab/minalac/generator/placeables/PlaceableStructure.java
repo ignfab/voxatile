@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * {@code PlaceableStructure} is a {@link Placeable} consisting of placeables at given coordinate offsets.
@@ -18,8 +19,8 @@ public class PlaceableStructure implements Placeable {
      * {@inheritDoc}
      */
     @Override
-    public void place(int x, int y, int z) {
-        placeables.forEach((c, placeable) -> placeable.place(c.x() + x, c.y() + y, c.z() + z));
+    public void place(VoxelTile tile, int x, int y, int z) {
+        placeables.forEach((c, placeable) -> placeable.place(tile, c.x() + x, c.y() + y, c.z() + z));
     }
 
     /**
@@ -110,7 +111,7 @@ public class PlaceableStructure implements Placeable {
      */
     public Placeable get(int x, int y, int z) {
         Placeable placeable = placeables.get(new WorldCoords3d(x, y, z));
-        return placeable == null ? NoVoxel.INSTANCE : placeable;
+        return placeable == null ? Nothing.INSTANCE : placeable;
     }
 
     /**
@@ -119,7 +120,7 @@ public class PlaceableStructure implements Placeable {
      * This is not the bounding box of all that would be placed.
      * Limits will only contain origin coordinates of contained placeables.
      * <p>
-     * In other words, limits contains every position for which {@link #get} returns something other than {@link NoVoxel#INSTANCE}.
+     * In other words, limits contains every position for which {@link #get} returns something other than {@link Nothing#INSTANCE}.
      * This may be used to know how to repeat this structure.
      *
      * @return limits of the structure in relative coordinates.

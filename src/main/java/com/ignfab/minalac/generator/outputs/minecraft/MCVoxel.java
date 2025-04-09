@@ -7,17 +7,14 @@ import java.util.Objects;
 import net.querz.nbt.tag.CompoundTag;
 import net.querz.nbt.tag.StringTag;
 
-import com.ignfab.minalac.generator.placeables.VoxelType;
+import com.ignfab.minalac.generator.placeables.Placeable;
+import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
- * {@code MCVoxelType} class provides the necessary structure and mechanism in order to implement {@link VoxelType} for Minecraft.
+ * {@code MCVoxel} class implements a {@link Placeable} voxel for Minecraft.
  * A voxel in Minecraft, known as block, consists of two parameters: type and state properties.
  */
-public class MCVoxelType implements VoxelType {
-    /**
-     * The Minecraft World object.
-     */
-    protected final MCVoxelWorld world;
+public class MCVoxel implements Placeable {
     /**
      * The block type string.
      * @see <a href="https://minecraft.wiki/w/Block">List of block types (Minecraft Wiki)</a>
@@ -29,36 +26,32 @@ public class MCVoxelType implements VoxelType {
     protected final Map<String, String> properties;
 
     /**
-     * Constructs a new {@code MCVoxelType}.
+     * Constructs a new {@code MCVoxel}.
      *
-     * @param world the {@link MCVoxelWorld} in which the voxel can be placed
      * @param type the block type string
      */
-    public MCVoxelType(MCVoxelWorld world, String type) {
-        this(world, type, null);
+    public MCVoxel(String type) {
+        this(type, null);
     }
 
     /**
-     * Constructs a new {@code MCVoxelType}.
+     * Constructs a new {@code MCVoxel}.
      *
-     * @param world the {@link MCVoxelWorld} in which the voxel can be placed
      * @param type the block type string
      * @param properties the block state properties
      */
-    public MCVoxelType(MCVoxelWorld world, String type, Map<String, String> properties) {
-        this.world = world;
+    public MCVoxel(String type, Map<String, String> properties) {
         this.type = type;
         this.properties = properties;
     }
 
     /**
-     * Creates a new instance of {@link MCVoxelType} from a {@link CompoundTag} and a {@link MCVoxelWorld}.
+     * Creates a new instance of {@link MCVoxel} from a {@link CompoundTag} and a {@link MCVoxelWorld}.
      *
      * @param block the {@code CompoundTag} representing a block.
-     * @param world the world in which the voxel can be placed
-     * @return a new {@code MCVoxelType}
+     * @return a new {@code MCVoxel}
      */
-    public static MCVoxelType fromBlockState(CompoundTag block, MCVoxelWorld world) {
+    public static MCVoxel fromBlockState(CompoundTag block) {
         String type = block.getStringTag("Name").getValue();
 
         CompoundTag propertiesTag = block.getCompoundTag("Properties");
@@ -68,17 +61,30 @@ public class MCVoxelType implements VoxelType {
                 entry.getKey(),
                 ((StringTag) entry.getValue()).getValue()
             ));
-            return new MCVoxelType(world, type, properties);
+            return new MCVoxel(type, properties);
         }
 
-        return new MCVoxelType(world, type);
+        return new MCVoxel(type);
+    }
+
+    @Override
+    public void place(VoxelTile tile, int x, int y, int z)  {
+        if (tile instanceof MCVoxelTile mcTile) {
+            place(mcTile, x, y, z);
+        } else {
+            throw new IllegalArgumentException("Voxel does not match voxel tile output format");
+        }
     }
 
     /**
-     * {@inheritDoc}
+     * Places this voxel on a {@link MCVoxelTile} at given position.
+     *
+     * @param tile tile to place into
+     * @param x position x-coordinate
+     * @param y position y-coordinate
+     * @param z position z-coordinate
      */
-    @Override
-    public void place(int x, int y, int z)  {
+    protected void place(MCVoxelTile tile, int x, int y, int z)  {
         CompoundTag block = new CompoundTag();
         block.putString("Name", type);
         if (properties != null) {
@@ -86,19 +92,19 @@ public class MCVoxelType implements VoxelType {
             properties.forEach(state::putString);
             block.put("Properties", state);
         }
-        world.setBlockState(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
+        tile.setBlockState(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MCVoxelType that = (MCVoxelType) o;
-        return world == that.world && type.equals(that.type) && Objects.equals(properties, that.properties);
+        MCVoxel that = (MCVoxel) o;
+        return type.equals(that.type) && Objects.equals(properties, that.properties);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(world, type, properties);
+        return Objects.hash(type, properties);
     }
 }

@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.utils.random.Seed;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * Main parameter class for {@link PlaceableStructure}.
@@ -42,10 +41,10 @@ public final class PlaceableStructureParams extends PlaceableParams {
     }
 
     @Override
-    public PlaceableStructure create(Seed seed, VoxelWorld world) {
+    public PlaceableStructure create(Seed seed) {
         PlaceableStructure structure = new PlaceableStructure();
         for (Variant param : params)
-            param.apply(seed, world, structure);
+            param.apply(seed, structure);
 
         return structure;
     }
@@ -100,10 +99,9 @@ public final class PlaceableStructureParams extends PlaceableParams {
          *
          * It is used rather than a {@code create} method to allow merging several parameters into one structure.
          *
-         * @param world World for which {@code PlaceableStructure} is created.
          * @param seed Random seed to use for this {@code PlaceableStructure}.
          * @param structure Structure which put created voxels into
          */
-        public abstract void apply(Seed seed, VoxelWorld world, PlaceableStructure structure);
+        public abstract void apply(Seed seed, PlaceableStructure structure);
     }
 }

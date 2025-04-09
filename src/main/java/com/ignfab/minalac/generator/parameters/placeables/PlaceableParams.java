@@ -14,10 +14,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.ignfab.minalac.generator.parameters.OutputFormat;
 import com.ignfab.minalac.generator.parameters.placeables.patterns.PatternParams;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.NoVoxelParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * Base class for all placeable parameters (voxels and structures).
@@ -52,9 +50,9 @@ public abstract class PlaceableParams {
             if (node.isTextual()) {
                 // "Nothing" string stands for NoVoxelParams (places nothing)
                 if (node.textValue().equals("nothing"))
-                    return new NoVoxelParams();
+                    return new NothingParams();
                 // If value is a string, try to serialize other string using "shortcut" format method.
-                return format.createVoxelTypeParams(node.textValue());
+                return format.createVoxelParams(node.textValue());
             }
             if (node.isArray())
                 return new CombinedPlaceableParams(node, codec);
@@ -68,10 +66,10 @@ public abstract class PlaceableParams {
                 switch (property.getKey()) {
                     // Another way to tell "Nothing"
                     case "nothing":
-                        return new NoVoxelParams();
+                        return new NothingParams();
                     // Explicit way to deserialize voxels (could be handy for disambiguation)
                     case "voxel":
-                        return format.createVoxelTypeParams(property.getValue(), codec);
+                        return format.createVoxelParams(property.getValue(), codec);
                     // For structures, relies on PlaceableStructureParams type deduction
                     case "structure":
                         return codec.treeToValue(property.getValue(), PlaceableStructureParams.class);
@@ -82,7 +80,7 @@ public abstract class PlaceableParams {
             }
 
             // If none of the above fits, fallback to voxel long description
-            return format.createVoxelTypeParams(node, codec);
+            return format.createVoxelParams(node, codec);
         }
     }
 
@@ -98,10 +96,9 @@ public abstract class PlaceableParams {
     /**
      * Creates a new {@code Placeable} out of parameters.
      *
-     * @param world World for which {@code Placeable} is created.
      * @param seed Random seed to use for this {@code Placeable}.
      *
      * @return Created {@code Placeable}
      */
-    public abstract Placeable create(Seed seed, VoxelWorld world);
+    public abstract Placeable create(Seed seed);
 }

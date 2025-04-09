@@ -1,7 +1,5 @@
 package com.ignfab.minalac.generator.generation;
 
-import java.io.File;
-
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
@@ -13,11 +11,11 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
-import com.ignfab.minalac.generator.placeables.VoxelType;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
+import com.ignfab.minalac.generator.world.VoxelTile;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
@@ -101,12 +99,16 @@ public class TestGeneration {
         }
 
         @Override
-        public void save(File destination) throws MapWriteException {
+        public void initialize() throws MapWriteException {
         }
 
         @Override
-        public VoxelType getVoxel(int x, int y, int z) {
-            return null;
+        public void finalizeAndSave() throws MapWriteException {
+        }
+
+        @Override
+        public VoxelTile newTile(WorldBBox3d limits) {
+            throw new UnsupportedOperationException("Unimplemented method 'newTile'");
         }
     }
 }

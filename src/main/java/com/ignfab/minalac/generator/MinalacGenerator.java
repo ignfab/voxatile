@@ -17,8 +17,8 @@ import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.parameters.OutputFormat;
 import com.ignfab.minalac.generator.parameters.ParamsParser;
 import com.ignfab.minalac.generator.parameters.ParseException;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.MCVoxelTypeParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelTypeParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.MCVoxelParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelParams;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.ConditionalPostProcessorParams;
@@ -44,6 +44,7 @@ import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
+import com.ignfab.minalac.generator.world.VoxelTile;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
 /**
@@ -70,13 +71,19 @@ public final class MinalacGenerator {
         // Command line arguments parsing & basic processing
         MinalacGeneratorCLI cli = new MinalacGeneratorCLI();
         cli.parse(args);
+        File destination;
+
+        if (cli.saveDisabled())
+            destination = null;
+        else
+            destination = cli.outputPath().toFile();
 
         // Generation parsing
         ParamsParser parser = new ParamsParser();
 
         // Register game formats
-        parser.registerFormat("minecraft", new OutputFormat(MCVoxelWorld::new, MCVoxelTypeParams.class, MCVoxelTypeParams::new));
-        parser.registerFormat("minetest", new OutputFormat(MTVoxelWorld::new, MTVoxelTypeParams.class, MTVoxelTypeParams::new));
+        parser.registerFormat("minecraft", new OutputFormat(() -> new MCVoxelWorld(destination), MCVoxelParams.class, MCVoxelParams::new));
+        parser.registerFormat("minetest", new OutputFormat(() -> new MTVoxelWorld(destination), MTVoxelParams.class, MTVoxelParams::new));
 
         // TODO: Static method that provides a ParamsParser with all default renderers
         // If those name values are modified, update the documentation accordingly
@@ -114,21 +121,23 @@ public final class MinalacGenerator {
             return;
         }
 
+
         System.out.println("Creation of the map.");
         // Start generation duration
         Instant generationStart = Instant.now();
+
+        // Initialize world
+        generation.world().initialize();
+
+        // One unique tile for now
+        VoxelTile tile = generation.world().newTile(generation.world().limits());
         try {
-            generation.scheduler().run(generation.world().limits(), 5, TimeUnit.MINUTES);
+            generation.scheduler().run(tile, 5, TimeUnit.MINUTES);
         } finally {
             generation.scheduler().shutdown();
         }
 
         System.out.println("Generation: " + Duration.between(generationStart, Instant.now()).toSeconds() + "s");
-        if (cli.saveDisabled()) {
-            System.out.println("Total: " + Duration.between(start, Instant.now()).toSeconds() + "s");
-            System.out.println("Done (stopped before saving map)");
-            return;
-        }
 
         System.out.println("Saving world");
         VoxelWorldMetadata metadata = generation.world().getMetadata();
@@ -138,8 +147,8 @@ public final class MinalacGenerator {
         metadata.setSpawn(new WorldCoords3d(spawnX, spawnY, generation.heightmaps().get("ground").get(spawnX, spawnY) + 1));
         metadata.setWorldName("Minalac");
 
-        File directory = cli.outputPath().toFile();
-        generation.world().save(directory);
+        tile.save();
+        generation.world().finalizeAndSave();
         System.out.println("Total: " + Duration.between(start, Instant.now()).toSeconds() + "s");
         System.out.println("Done");
     }

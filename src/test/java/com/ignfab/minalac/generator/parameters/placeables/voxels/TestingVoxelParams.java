@@ -6,30 +6,29 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.Nulls;
 
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelType;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
+import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
- * A voxel type parameters for simple Minetest voxel types with only node type name.
+ * Voxel parameters for testing with name only.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE) // Prevents default deserializer from requiring type when using "default" placeable param structure
-public class TestingVoxelTypeParams extends VoxelParams {
+public class TestingVoxelParams extends PlaceableParams {
     /**
-     * Node type name (required).
+     * Voxel name (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
     public String name;
 
     /**
-     * Creates a new {@code TestingVoxelTypeParams}.
+     * Creates a new {@code TestingVoxelParams}.
      *
-     * @param name Voxel type name
+     * @param name Voxel name
      */
     @ConstructorProperties({"name"})
-    public TestingVoxelTypeParams(String name) {
+    public TestingVoxelParams(String name) {
         this.name = name;
     }
 
@@ -40,9 +39,7 @@ public class TestingVoxelTypeParams extends VoxelParams {
     }
 
     @Override
-    public Placeable create(Seed seed, VoxelWorld world) {
-        if (world instanceof TestingVoxelWorld testingWorld)
-            return new TestingVoxelType(testingWorld, name);
-        return null;
+    public Placeable create(Seed seed) {
+        return new TestingVoxel(name);
     }
 }

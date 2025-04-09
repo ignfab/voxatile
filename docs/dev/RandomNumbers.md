@@ -79,7 +79,7 @@ Example of a task using random numbers:
 
     ...
 
-    public void run(Model model, WorldBBox3d bbox) {
+    public void run(Model model, VoxelTile tile) {
         // Seed MUST be salted with model we render
         Random random = seed.salt(model).createRandom();
 

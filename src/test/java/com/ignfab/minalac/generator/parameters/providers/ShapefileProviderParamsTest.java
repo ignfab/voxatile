@@ -11,7 +11,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,10 +19,7 @@ public class ShapefileProviderParamsTest {
     @Test
     public void testCreate(@TempDir File tmp) throws FactoryException, IOException {
         CoordinateReferenceSystem crs = CRS.decode("EPSG:2154");
-        Generation generation = new Generation(
-            new TestingVoxelWorld(
-                new WorldBBox3d(-10, -10, -10, 20, 20, 20)
-            ), null, crs, 0, 0, 20, 20, 1, 1, 0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, crs, 0, 0, 20, 20, 1, 1, 0);
         File file = new File(tmp, "fake.shp");
         if (!file.createNewFile())
             fail("Unable to setup test file");

@@ -5,8 +5,8 @@ import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
+import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A {@link TileTask} copying values of a heightmap to another at all coordinates within the model's shape.
@@ -29,8 +29,8 @@ public class CopyHeightmapTask extends ModelTask<ShapesVoxelizable2d> {
     }
 
     @Override
-    protected void run(ShapesVoxelizable2d model, WorldBBox3d bbox) {
-        ShapesVoxelizer2d voxelizer = model.voxelize2d(bbox.to2d().intersection(from.bbox()).intersection(to.bbox()));
+    protected void run(ShapesVoxelizable2d model, VoxelTile tile) {
+        ShapesVoxelizer2d voxelizer = model.voxelize2d(tile.limits().to2d().intersection(from.bbox()).intersection(to.bbox()));
         Heightmap buffered = to.copy();
         for (Positioned2d voxel : voxelizer)
             buffered.set(voxel.coords(), from.get(voxel.coords()));

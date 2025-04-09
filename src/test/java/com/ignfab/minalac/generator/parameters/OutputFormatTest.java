@@ -7,7 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,32 +18,32 @@ public class OutputFormatTest {
     public void testConstructor() {
         assertDoesNotThrow(() -> new OutputFormat(
             () -> null,
-            TestingVoxelTypeParams.class,
-            TestingVoxelTypeParams::new
+            TestingVoxelParams.class,
+            TestingVoxelParams::new
         ));
     }
 
     @Test
-    @DisplayName("Test createVoxelTypeParams using shortcut")
-    public void testCreateVoxelTypeParamsShortcut() {
+    @DisplayName("Test createVoxelParams using shortcut")
+    public void testCreateVoxelParamsShortcut() {
         OutputFormat format = new OutputFormat(
             () -> null,
-            TestingVoxelTypeParams.class,
-            TestingVoxelTypeParams::new
+            TestingVoxelParams.class,
+            TestingVoxelParams::new
         );
 
-        PlaceableParams params = assertDoesNotThrow(() -> format.createVoxelTypeParams("test"));
-        TestingVoxelTypeParams testingParams = assertInstanceOf(TestingVoxelTypeParams.class, params);
+        PlaceableParams params = assertDoesNotThrow(() -> format.createVoxelParams("test"));
+        TestingVoxelParams testingParams = assertInstanceOf(TestingVoxelParams.class, params);
         assertEquals(testingParams.name, "test");
     }
 
     @Test
-    @DisplayName("Test createVoxelTypeParams using default class")
-    public void testCreateVoxelTypeParamsDefault() throws JsonProcessingException {
+    @DisplayName("Test createVoxelParams using default class")
+    public void testCreateVoxelParamsDefault() throws JsonProcessingException {
         OutputFormat format = new OutputFormat(
             () -> null,
-            TestingVoxelTypeParams.class,
-            TestingVoxelTypeParams::new
+            TestingVoxelParams.class,
+            TestingVoxelParams::new
         );
 
         ObjectMapper mapper = new ObjectMapper();
@@ -51,14 +51,14 @@ public class OutputFormatTest {
 
         JsonNode node = mapper.readValue("{ \"name\": \"test\" }", JsonNode.class);
 
-        PlaceableParams params = assertDoesNotThrow(() -> format.createVoxelTypeParams(node, mapper));
-        TestingVoxelTypeParams testingParams = assertInstanceOf(TestingVoxelTypeParams.class, params);
+        PlaceableParams params = assertDoesNotThrow(() -> format.createVoxelParams(node, mapper));
+        TestingVoxelParams testingParams = assertInstanceOf(TestingVoxelParams.class, params);
         assertEquals(testingParams.name, "test");
     }
 
     @Test
-    @DisplayName("Test createVoxelTypeParams with null default and shortcut")
-    public void testCreateVoxelTypeParamsNull() throws JsonProcessingException {
+    @DisplayName("Test createVoxelParams with null default and shortcut")
+    public void testCreateVoxelParamsNull() throws JsonProcessingException {
         OutputFormat format = assertDoesNotThrow(() -> new OutputFormat(
             () -> null,
             null,
@@ -70,7 +70,7 @@ public class OutputFormatTest {
 
         JsonNode node = mapper.readValue("{ \"toto\": \"tata\" }", JsonNode.class);
 
-        assertThrows(IllegalArgumentException.class, () -> format.createVoxelTypeParams("test"));
-        assertThrows(IllegalArgumentException.class, () -> format.createVoxelTypeParams(node, mapper));
+        assertThrows(IllegalArgumentException.class, () -> format.createVoxelParams("test"));
+        assertThrows(IllegalArgumentException.class, () -> format.createVoxelParams(node, mapper));
     }
 }

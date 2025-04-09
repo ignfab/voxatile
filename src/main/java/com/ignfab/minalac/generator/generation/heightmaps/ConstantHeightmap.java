@@ -22,8 +22,6 @@ public class ConstantHeightmap implements ReadableHeightmap {
 
     @Override
     public int get(int x, int y) {
-        if (!bbox.contains(x, y))
-            throw new IndexOutOfBoundsException("Index out of range at (x=%d, y=%d)".formatted(x, y));
         return value;
     }
 

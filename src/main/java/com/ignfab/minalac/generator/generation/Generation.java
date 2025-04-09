@@ -17,6 +17,7 @@ import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
 import com.ignfab.minalac.generator.utils.execution.Scheduler;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.world.VoxelTile;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
@@ -41,7 +42,7 @@ public class Generation {
     private final ModelStore models = new ModelStore();
     private final Store<Heightmap> heightmaps = new Store<>();
 
-    private final Scheduler<WorldBBox3d> scheduler = new Scheduler<>();
+    private final Scheduler<VoxelTile> scheduler = new Scheduler<>();
 
     /**
      * Constructs a new generation context.
@@ -128,7 +129,7 @@ public class Generation {
      * Returns the generation scheduler.
      * @return the scheduler.
      */
-    public Scheduler<WorldBBox3d> scheduler() {
+    public Scheduler<VoxelTile> scheduler() {
         return scheduler;
     }
 

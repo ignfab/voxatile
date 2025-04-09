@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.placeables.Pattern;
 import com.ignfab.minalac.generator.utils.random.Seed;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * Main parameter class for {@link Pattern}.
@@ -18,5 +17,5 @@ import com.ignfab.minalac.generator.world.VoxelWorld;
 public abstract class PatternParams extends PlaceableParams {
 
     @Override
-    public abstract Pattern create(Seed seed, VoxelWorld world);
+    public abstract Pattern create(Seed seed);
 }

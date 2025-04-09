@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.models.ModelImpl;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.world.VoxelTile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +20,7 @@ public class ModelTaskTest {
 
     @Test
     public void testRender() {
+        TestingVoxelTile tile = new TestingVoxelTile(WorldBBox3d.ORIGIN);
         ModelStore modelStore = new ModelStore();
 
         modelStore.add("digit", new ModelImplTester('1'));
@@ -30,7 +33,7 @@ public class ModelTaskTest {
         assertEquals(0, task.modelsRendered.size());
 
         // Not testing rendering area
-        task.run(WorldBBox3d.EMPTY);
+        task.run(tile);
 
         assertTrue(task.modelsRendered.contains(new ModelImplTester('1')));
         assertTrue(task.modelsRendered.contains(new ModelImplTester('2')));
@@ -41,7 +44,7 @@ public class ModelTaskTest {
         ModelTaksImpl idleTask = new ModelTaksImpl(modelStore, "specialCharacter");
         assertEquals(0, idleTask.modelsRendered.size());
 
-        idleTask.run(WorldBBox3d.EMPTY);
+        idleTask.run(tile);
 
         assertEquals(0, idleTask.modelsRendered.size());
     }
@@ -54,7 +57,7 @@ public class ModelTaskTest {
         }
 
         @Override
-        protected void run(ModelImpl model, WorldBBox3d bbox) {
+        protected void run(ModelImpl model, VoxelTile tile) {
             modelsRendered.add(model);
         }
     }

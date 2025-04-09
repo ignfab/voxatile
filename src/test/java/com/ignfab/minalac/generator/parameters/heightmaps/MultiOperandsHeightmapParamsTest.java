@@ -10,7 +10,7 @@ import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MultiOperandsHeightmapParamsTest {
     @Test
     public void testDeserializeSum() {
-        Generation generation = new Generation(new TestingVoxelWorld(new WorldBBox3d(0, 0, 0, 3, 1, 1)), null, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
         Heightmap ground = new Heightmap(0, 0, 3, 1, 0);
         ground.set(0, 0, 0);
         ground.set(1, 0, 2);
@@ -44,7 +44,7 @@ public class MultiOperandsHeightmapParamsTest {
 
     @Test
     public void testDeserializeProduct() {
-        Generation generation = new Generation(new TestingVoxelWorld(new WorldBBox3d(0, 0, 0, 3, 1, 1)), null, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
         Heightmap ground = new Heightmap(0, 0, 3, 1, 0);
         ground.set(0, 0, 0);
         ground.set(1, 0, 2);

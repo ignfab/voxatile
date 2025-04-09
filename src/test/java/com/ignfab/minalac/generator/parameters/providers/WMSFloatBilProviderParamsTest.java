@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,10 +16,7 @@ public class WMSFloatBilProviderParamsTest {
     @Test
     public void testCreate() throws NoSuchAuthorityCodeException, FactoryException {
         CoordinateReferenceSystem crs = CRS.decode("EPSG:2154");
-        Generation generation = new Generation(
-            new TestingVoxelWorld(
-                new WorldBBox3d(-50, -50, -50, 100, 100, 100)
-            ), null, crs, 0, 0, 100, 100, 1, 1, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, crs, 0, 0, 100, 100, 1, 1, 0.0);
 
         // A simple OK test
         final WMSFloatBilProviderParams params = new WMSFloatBilProviderParams("http://toto.com", "layer1");

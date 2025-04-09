@@ -84,16 +84,15 @@ public record Region(int regionX, int regionZ, MCAFile file) {
     }
 
     /**
-     * Returns a block as a new {@link MCVoxelType}.
+     * Returns a block as a new {@link MCVoxel}.
      *
      * @param blockX the in-game x-coordinate
      * @param blockY the in-game y-coordinate
      * @param blockZ the in-game z-coordinate
-     * @param world the {@code MCVoxelWorld} in which the voxel can be placed
      * @return the corresponding voxel, or {@code null} if it doesn't exist
      */
-    public MCVoxelType getBlock(int blockX, int blockY, int blockZ, MCVoxelWorld world) {
+    public MCVoxel getBlock(int blockX, int blockY, int blockZ) {
         CompoundTag block = file().getBlockStateAt(blockX, blockY, blockZ);
-        return (block == null) ? null : MCVoxelType.fromBlockState(block, world);
+        return (block == null) ? null : MCVoxel.fromBlockState(block);
     }
 }
