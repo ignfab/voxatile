@@ -31,7 +31,8 @@ public class TestingVoxelWorld extends VoxelWorld {
         super(null);
         maxLimits = bbox;
         voxels = new String[bbox.size().volume()];
-        super.setLimits(bbox);
+        if (bbox != WorldBBox3d.EMPTY)
+            super.setLimits(bbox);
     }
 
     @Override

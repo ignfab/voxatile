@@ -5,8 +5,8 @@ import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
+import com.ignfab.minalac.generator.world.VoxelWorld;
 
 // TODO: Rename this class as it is not a renderer per se. Should be be an "operation" or "task".
 /**
@@ -30,8 +30,8 @@ public class CopyHeightmapRenderer extends ModelRenderer<ShapesVoxelizable2d> {
     }
 
     @Override
-    protected void render(ShapesVoxelizable2d model, WorldBBox3d bbox) {
-        ShapesVoxelizer2d voxelizer = model.voxelize2d(bbox.to2d().intersection(from.bbox()).intersection(to.bbox()));
+    protected void render(ShapesVoxelizable2d model, VoxelWorld world) {
+        ShapesVoxelizer2d voxelizer = model.voxelize2d(world.limits().to2d().intersection(from.bbox()).intersection(to.bbox()));
         Heightmap buffered = to.copy();
         for (Positioned2d voxel : voxelizer)
             buffered.set(voxel.coords(), from.get(voxel.coords()));

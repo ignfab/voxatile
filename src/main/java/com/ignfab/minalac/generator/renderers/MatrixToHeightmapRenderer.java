@@ -5,8 +5,8 @@ import com.ignfab.minalac.generator.models.FloatMatrixModel;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.Matrix2d;
+import com.ignfab.minalac.generator.world.VoxelWorld;
 
 // TODO: Rename this class as it is not a renderer per se. Should be be an "operation" or "task".
 /**
@@ -28,8 +28,8 @@ public class MatrixToHeightmapRenderer extends ModelRenderer<FloatMatrixModel> {
     }
 
     @Override
-    protected void render(FloatMatrixModel model, WorldBBox3d bbox) {
-        WorldBBox2d intersection = bbox.to2d().intersection(heightmap.bbox());
+    protected void render(FloatMatrixModel model, VoxelWorld world) {
+        WorldBBox2d intersection = world.limits().to2d().intersection(heightmap.bbox());
         // Iterate over matrix and fill heightmap altitude
         for (Matrix2d.Value<Float> value : model) {
             WorldCoords2d c = value.coords();

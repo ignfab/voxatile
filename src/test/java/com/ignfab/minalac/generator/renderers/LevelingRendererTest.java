@@ -61,8 +61,8 @@ public class LevelingRendererTest {
         assertDoesNotThrow(() -> new LevelingRenderer(
             new ModelSelection(models, "model", null),
             heightmap,
-            placeable.create(TestingSeed.UNUSED, world)
-        ).render(bbox));
+            placeable.create(TestingSeed.UNUSED)
+        ).render(world));
 
         // Verify Heightmap has been updated only where wanted
         for (WorldCoords2d pos : world.limits().to2d()) {

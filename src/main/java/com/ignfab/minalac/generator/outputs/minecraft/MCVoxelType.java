@@ -5,16 +5,13 @@ import java.util.Map;
 import net.querz.nbt.tag.CompoundTag;
 
 import com.ignfab.minalac.generator.placeables.VoxelType;
+import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * {@code MCVoxelType} class provides the necessary structure and mechanism in order to implement {@link VoxelType} for Minecraft.
  * A voxel in Minecraft, known as block, consists of two parameters: type and state properties.
  */
 public class MCVoxelType implements VoxelType {
-    /**
-     * The Minecraft World object.
-     */
-    protected final MCVoxelWorld world;
     /**
      * The block type string.
      * @see <a href="https://minecraft.wiki/w/Block">List of block types (Minecraft Wiki)</a>
@@ -28,22 +25,19 @@ public class MCVoxelType implements VoxelType {
     /**
      * Constructs a new {@code MCVoxelType}.
      *
-     * @param world the {@link MCVoxelWorld} in which the voxel can be placed
      * @param type the block type string
      */
-    public MCVoxelType(MCVoxelWorld world, String type) {
-        this(world, type, null);
+    public MCVoxelType(String type) {
+        this(type, null);
     }
 
     /**
      * Constructs a new {@code MCVoxelType}.
      *
-     * @param world the {@link MCVoxelWorld} in which the voxel can be placed
      * @param type the block type string
      * @param properties the block state properties
      */
-    public MCVoxelType(MCVoxelWorld world, String type, Map<String, String> properties) {
-        this.world = world;
+    public MCVoxelType(String type, Map<String, String> properties) {
         this.type = type;
         this.properties = properties;
     }
@@ -52,7 +46,7 @@ public class MCVoxelType implements VoxelType {
      * {@inheritDoc}
      */
     @Override
-    public void place(int x, int y, int z)  {
+    public void place(VoxelWorld world, int x, int y, int z)  {
         CompoundTag block = new CompoundTag();
         block.putString("Name", type);
         if (properties != null) {
@@ -60,6 +54,6 @@ public class MCVoxelType implements VoxelType {
             properties.forEach(state::putString);
             block.put("Properties", state);
         }
-        world.setBlockState(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
+        ((MCVoxelWorld) world).setBlockState(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
     }
 }

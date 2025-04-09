@@ -10,7 +10,6 @@ import com.ignfab.minalac.generator.parameters.utils.WorldBBox3dParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.utils.random.Seed;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * A parameters class variant for {@link PlaceableStructure}.
@@ -52,8 +51,8 @@ public class BoxPlaceableStructureParams extends PlaceableStructureParams.Varian
     }
 
     @Override
-    public void apply(Seed seed, VoxelWorld world, PlaceableStructure structure) {
-        Placeable placeable = put.create(seed, world);
+    public void apply(Seed seed, PlaceableStructure structure) {
+        Placeable placeable = put.create(seed);
         structure.set(at.create(), placeable);
     }
 }

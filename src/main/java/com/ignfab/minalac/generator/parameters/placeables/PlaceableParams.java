@@ -17,7 +17,6 @@ import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableSt
 import com.ignfab.minalac.generator.parameters.placeables.voxels.NoVoxelParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * Base class for all placeable parameters (voxels and structures).
@@ -98,10 +97,9 @@ public abstract class PlaceableParams {
     /**
      * Creates a new {@code Placeable} out of parameters.
      *
-     * @param world World for which {@code Placeable} is created.
      * @param seed Random seed to use for this {@code Placeable}.
      *
      * @return Created {@code Placeable}
      */
-    public abstract Placeable create(Seed seed, VoxelWorld world);
+    public abstract Placeable create(Seed seed);
 }

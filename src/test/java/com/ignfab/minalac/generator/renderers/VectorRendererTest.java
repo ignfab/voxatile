@@ -34,8 +34,9 @@ class VectorRendererTest {
         heightmap = new Heightmap(bbox.to2d(), 0);
         store = new ModelStore();
         modelSelection = new ModelSelection(store, "testing", null);
-        inside = new TestingVoxelType(world, "INSIDE");
-        edge = new TestingVoxelType(world, "EDGE");
+
+        inside = new TestingVoxelType("INSIDE");
+        edge = new TestingVoxelType("EDGE");
     }
 
     @Test
@@ -53,7 +54,7 @@ class VectorRendererTest {
         // Add one model covering the whole map with INSIDE voxels
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(modelBbox));
 
-        new VectorRenderer(modelSelection, heightmap, inside, edge).render(bbox);
+        new VectorRenderer(modelSelection, heightmap, inside, edge).render(world);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == 0 && modelBbox.contains(pos.to2d()))
@@ -70,7 +71,7 @@ class VectorRendererTest {
         WorldBBox2d modelBbox = new WorldBBox2d(0, -1, 3, 4);
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(modelBbox));
 
-        new VectorRenderer(modelSelection, heightmap, inside, edge).render(bbox);
+        new VectorRenderer(modelSelection, heightmap, inside, edge).render(world);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() != 0 || !modelBbox.contains(pos.to2d())) {
@@ -94,6 +95,7 @@ class VectorRendererTest {
     @Test
     @DisplayName("Test rendering on a non flat heightmap")
     public void testRenderHeightmap() {
+
         // Prepare a non flat Heightmap
         for (WorldCoords2d pos : bbox.to2d())
             heightmap.set(pos, (pos.x() + pos.y()) / 2);
@@ -101,7 +103,7 @@ class VectorRendererTest {
         // Add one model covering the whole map
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(bbox.to2d()));
 
-        new VectorRenderer(modelSelection, heightmap, inside, edge).render(bbox);
+        new VectorRenderer(modelSelection, heightmap, inside, edge).render(world);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == (pos.x() + pos.y()) / 2)
@@ -123,7 +125,7 @@ class VectorRendererTest {
         // Add one model covering the whole map with BORDER voxels
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(bbox.to2d()));
 
-        new VectorRenderer(modelSelection, heightmap, inside, edge).render(bbox);
+        new VectorRenderer(modelSelection, heightmap, inside, edge).render(world);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == pos.x() + pos.y() * 2)
@@ -140,7 +142,7 @@ class VectorRendererTest {
         WorldBBox2d modelBbox = new WorldBBox2d(bbox.minX() - 1, bbox.minY() - 1, bbox.sizeX() + 2, bbox.sizeY() + 2);
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(modelBbox));
 
-        new VectorRenderer(modelSelection, heightmap, inside, edge).render(bbox);
+        new VectorRenderer(modelSelection, heightmap, inside, edge).render(world);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == 0)

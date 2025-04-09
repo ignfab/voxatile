@@ -39,9 +39,9 @@ public class CombinedPlaceableParamsTest {
         params.placeableParams.add(new TestingPlaceableParams(placeable));
         params.placeableParams.add(new TestingPlaceableParams(placeable));
 
-        Placeable result = assertDoesNotThrow(() -> params.create(TestingSeed.UNUSED, new TestingVoxelWorld(WorldBBox3d.ORIGIN)));
+        Placeable result = assertDoesNotThrow(() -> params.create(TestingSeed.UNUSED));
         CombinedPlaceable combined = assertInstanceOf(CombinedPlaceable.class, result);
-        combined.place(0, 0, 0);
+        combined.place(new TestingVoxelWorld(WorldBBox3d.ORIGIN), 0, 0, 0);
         assertEquals(3, placeable.timesPlaced());
     }
 }

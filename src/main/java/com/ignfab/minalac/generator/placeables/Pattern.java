@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.placeables;
 
+import com.ignfab.minalac.generator.world.VoxelWorld;
+
 /**
  * A pattern of placeables.
  *
@@ -20,7 +22,7 @@ public interface Pattern extends Placeable {
 
     // Default place implementation allowing to use any pattern as placeable.
     @Override
-    default void place(int x, int y, int z) {
-        get(x, y, z).place(x, y, z);
+    default void place(VoxelWorld world, int x, int y, int z) {
+        get(x, y, z).place(world, x, y, z);
     }
 }

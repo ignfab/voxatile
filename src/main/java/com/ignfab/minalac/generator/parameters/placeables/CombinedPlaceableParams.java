@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.ignfab.minalac.generator.placeables.CombinedPlaceable;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * Parameters for a {@link CombinedPlaceable}.
@@ -42,10 +41,10 @@ public class CombinedPlaceableParams extends PlaceableParams {
     }
 
     @Override
-    public Placeable create(Seed seed, VoxelWorld world) {
+    public Placeable create(Seed seed) {
         CombinedPlaceable combined = new CombinedPlaceable();
         for (PlaceableParams placeable : placeableParams)
-            combined.add(placeable.create(seed, world));
+            combined.add(placeable.create(seed));
 
         return combined;
     }

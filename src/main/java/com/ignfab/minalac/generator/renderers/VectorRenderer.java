@@ -7,9 +7,9 @@ import com.ignfab.minalac.generator.placeables.NoVoxel;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LineVoxel2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
+import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * A basic example of vector renderer intended to evolve.
@@ -37,15 +37,15 @@ public class VectorRenderer extends ModelRenderer<ShapesVoxelizable2d> {
     }
 
     @Override
-    protected void render(ShapesVoxelizable2d model, WorldBBox3d bbox) {
-        ShapesVoxelizer2d voxelizer = model.voxelize2d(bbox.to2d());
+    protected void render(ShapesVoxelizable2d model, VoxelWorld world) {
+        ShapesVoxelizer2d voxelizer = model.voxelize2d(world.limits().to2d());
 
         if (inside != NoVoxel.INSTANCE) {
             // In case of same border & inside, don't perform two iterations
             if (inside == borders) {
                 for (Positioned2d voxel : voxelizer) {
                     WorldCoords2d c = voxel.coords();
-                    inside.place(c.x(), c.y(), heightmap.get(c));
+                    inside.place(world, c.x(), c.y(), heightmap.get(c));
                 }
                 return;
             }
@@ -53,7 +53,7 @@ public class VectorRenderer extends ModelRenderer<ShapesVoxelizable2d> {
             // Iteration over inside voxels
             for (Positioned2d voxel : voxelizer.inside()) {
                 WorldCoords2d c = voxel.coords();
-                inside.place(c.x(), c.y(), heightmap.get(c));
+                inside.place(world, c.x(), c.y(), heightmap.get(c));
             }
         }
 
@@ -61,7 +61,7 @@ public class VectorRenderer extends ModelRenderer<ShapesVoxelizable2d> {
             // Iteration over border voxels
             for (LineVoxel2d voxel : voxelizer.borders()) {
                 WorldCoords2d c = voxel.coords();
-                borders.place(c.x(), c.y(), heightmap.get(c));
+                borders.place(world, c.x(), c.y(), heightmap.get(c));
             }
     }
 }

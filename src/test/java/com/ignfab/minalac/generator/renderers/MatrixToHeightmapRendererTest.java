@@ -11,6 +11,7 @@ import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.models.FloatMatrixModel;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
@@ -39,7 +40,7 @@ public class MatrixToHeightmapRendererTest {
 
         MatrixToHeightmapRenderer renderer = new MatrixToHeightmapRenderer(selection, heightmap);
 
-        renderer.render(new WorldBBox3d(-1, -2, 0, 3, 3, 1));
+        renderer.render(new TestingVoxelWorld(new WorldBBox3d(-1, -2, 0, 3, 3, 1)));
 
         assertValue(0, heightmap, -1, -2);
         assertValue(0, heightmap, 0, -2);

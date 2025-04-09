@@ -71,6 +71,6 @@ public class HeightmapRendererParams extends RendererParams {
             from = minimum.create(generation);
             to = maximum.create(generation);
         }
-        return new HeightmapRenderer(from, to, place.create(generation.seed(), generation.world()));
+        return new HeightmapRenderer(from, to, place.create(generation.seed()));
     }
 }

@@ -83,13 +83,13 @@ public class VectorRendererParams extends RendererParams {
         Placeable bordersPlaceable = NoVoxel.INSTANCE;
 
         if (place != null) {
-            insidePlaceable = place.create(generation.seed(), generation.world());
+            insidePlaceable = place.create(generation.seed());
             bordersPlaceable = insidePlaceable;
         } else {
             if (inside != null)
-                insidePlaceable = inside.create(generation.seed(), generation.world());
+                insidePlaceable = inside.create(generation.seed());
             if (borders != null)
-                bordersPlaceable = borders.create(generation.seed(), generation.world());
+                bordersPlaceable = borders.create(generation.seed());
         }
 
         return new VectorRenderer(

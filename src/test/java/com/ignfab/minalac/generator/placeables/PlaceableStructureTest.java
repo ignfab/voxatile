@@ -12,12 +12,11 @@ public class PlaceableStructureTest {
     public void testPlace() {
         TestingVoxelWorld world = new TestingVoxelWorld(new WorldBBox3d(-1, -2, -3, 3, 3, 3));
 
-
-        VoxelType vtA = new TestingVoxelType(world, "A");
-        VoxelType vtB = new TestingVoxelType(world, "B");
-        VoxelType vtC = new TestingVoxelType(world, "C");
-        VoxelType vtD = new TestingVoxelType(world, "D");
-        VoxelType vtE = new TestingVoxelType(world, "E");
+        VoxelType vtA = new TestingVoxelType("A");
+        VoxelType vtB = new TestingVoxelType("B");
+        VoxelType vtC = new TestingVoxelType("C");
+        VoxelType vtD = new TestingVoxelType("D");
+        VoxelType vtE = new TestingVoxelType("E");
 
         // World voxel configuration
         /* z :    -2   -1
@@ -28,9 +27,9 @@ public class PlaceableStructureTest {
         + - > x +---+ +---+ */
         for (int x = -1; x <= 1; x++)
             for (int y = -2; y <= 0; y++)
-                vtA.place(x, y, -2); // layer of A at z = -2
-        vtA.place(1, 0, -1); // |  A| at z = -1 & y = 0
-        vtA.place(1, -2, -1); // |  A| at z = -1 & y = -2
+                vtA.place(world, x, y, -2); // layer of A at z = -2
+        vtA.place(world, 1, 0, -1); // |  A| at z = -1 & y = 0
+        vtA.place(world, 1, -2, -1); // |  A| at z = -1 & y = -2
 
         // Structure voxel configuration
         /* z:     -1    0     1
@@ -61,7 +60,7 @@ public class PlaceableStructureTest {
         structure.set(-1, 1, 1, vtB);
 
         // Structure is placed at the center of the world
-        structure.place(0, -1, -2);
+        structure.place(world, 0, -1, -2);
 
         // Expected outcome
         /* z:     -3   -2    -1
@@ -124,12 +123,12 @@ public class PlaceableStructureTest {
     public void testPlaceWithEmptyStructure() {
         TestingVoxelWorld world = new TestingVoxelWorld(new WorldBBox3d(3, 4, 5, 2, 1, 1));
 
-        VoxelType vt = new TestingVoxelType(world, "*");
-        vt.place(4, 4, 5);
+        VoxelType vt = new TestingVoxelType("*");
+        vt.place(world, 4, 4, 5);
 
         PlaceableStructure structure = new PlaceableStructure();
-        structure.place(3, 4, 5);
-        structure.place(4, 4, 5);
+        structure.place(world, 3, 4, 5);
+        structure.place(world, 4, 4, 5);
 
         world.assertVoxelNull(3, 4, 5);
         world.assertVoxel("*", 4, 4, 5);

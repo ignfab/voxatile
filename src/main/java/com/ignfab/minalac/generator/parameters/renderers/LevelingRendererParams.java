@@ -66,7 +66,7 @@ public class LevelingRendererParams extends RendererParams {
         return new LevelingRenderer(
             models.create(generation.models()),
             heightmap.create(generation),
-            filling.create(generation.seed(), generation.world())
+            filling.create(generation.seed())
         );
     }
 }

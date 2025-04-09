@@ -51,10 +51,10 @@ public class BuildingRendererTest {
         assertDoesNotThrow(() -> new BuildingRenderer(
             new ModelSelection(models, "building", new ModelFilterHasMetadata("height")),
             heightmap,
-            new TestingVoxelTypeParams(voxelAName).create(TestingSeed.UNUSED, world),
-            new TestingVoxelTypeParams(voxelBName).create(TestingSeed.UNUSED, world),
-            new TestingVoxelTypeParams(voxelCName).create(TestingSeed.UNUSED, world)
-        ).render(bbox));
+            new TestingVoxelTypeParams(voxelAName).create(TestingSeed.UNUSED),
+            new TestingVoxelTypeParams(voxelBName).create(TestingSeed.UNUSED),
+            new TestingVoxelTypeParams(voxelCName).create(TestingSeed.UNUSED)
+        ).render(world));
 
         for (WorldCoords3d c : world.limits()) {
             int x = c.x();
@@ -101,14 +101,14 @@ public class BuildingRendererTest {
         Model building = new TestingRectangleShapeVoxelizable2dModel(modelBbox);
         models.add("building", building);
 
-        Placeable placeable = new TestingVoxelTypeParams("voxel").create(TestingSeed.UNUSED, world);
+        Placeable placeable = new TestingVoxelTypeParams("voxel").create(TestingSeed.UNUSED);
         assertDoesNotThrow(() -> new BuildingRenderer(
             new ModelSelection(models, "building", new ModelFilterHasMetadata("height")),
             heightmap,
             placeable,
             placeable,
             placeable
-        ).render(bbox));
+        ).render(world));
     }
 
     /**
@@ -123,14 +123,14 @@ public class BuildingRendererTest {
         building.setMetadata("height", -20);
         models.add("building", building);
 
-        Placeable placeable = new TestingVoxelTypeParams("voxel").create(TestingSeed.UNUSED, world);
+        Placeable placeable = new TestingVoxelTypeParams("voxel").create(TestingSeed.UNUSED);
         assertDoesNotThrow(() -> new BuildingRenderer(
             new ModelSelection(models, "building", new ModelFilterHasMetadata("height")),
             heightmap,
             placeable,
             placeable,
             placeable
-        ).render(bbox));
+        ).render(world));
 
         for (WorldCoords3d c : world.limits())
             world.assertVoxelNull(c);

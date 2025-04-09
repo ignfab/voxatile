@@ -79,7 +79,7 @@ public final class GenerationCreator {
             Renderer renderer = rendererParams.create(generation);
             generation.scheduler().schedule(
                 "renderer:" + name,
-                () -> renderer.render(generation.world().limits()),
+                () -> renderer.render(generation.world()),
                 rendererParams.after
             );
         });

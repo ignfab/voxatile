@@ -7,10 +7,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelType;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * A voxel type parameters for simple Minetest voxel types with only node type name.
@@ -40,9 +38,7 @@ public class TestingVoxelTypeParams extends VoxelParams {
     }
 
     @Override
-    public Placeable create(Seed seed, VoxelWorld world) {
-        if (world instanceof TestingVoxelWorld testingWorld)
-            return new TestingVoxelType(testingWorld, name);
-        return null;
+    public Placeable create(Seed seed) {
+        return new TestingVoxelType(name);
     }
 }

@@ -11,7 +11,7 @@ public class HeightmapRendererTest {
     @Test
     public void testRender() {
         TestingVoxelWorld world = new TestingVoxelWorld(new WorldBBox3d(-1, -2, -1, 3, 3, 3));
-        TestingVoxelType voxel = new TestingVoxelType(world, "voxel");
+        TestingVoxelType voxel = new TestingVoxelType("voxel");
 
         Heightmap minimum = new Heightmap(-1, -2, 3, 2, 0);
         minimum.set(-1, -1, -1);
@@ -40,7 +40,7 @@ public class HeightmapRendererTest {
         */
 
         HeightmapRenderer renderer = new HeightmapRenderer(minimum, maximum, voxel);
-        renderer.render(world.maxLimits());
+        renderer.render(world);
         // Expected output.
         /*
            ^             ^              ^

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * {@code PlaceableStructure} is a {@link Placeable} consisting of placeables at given coordinate offsets.
@@ -17,8 +18,8 @@ public class PlaceableStructure implements Placeable {
      * {@inheritDoc}
      */
     @Override
-    public void place(int x, int y, int z) {
-        placeables.forEach((c, placeable) -> placeable.place(c.x() + x, c.y() + y, c.z() + z));
+    public void place(VoxelWorld world, int x, int y, int z) {
+        placeables.forEach((c, placeable) -> placeable.place(world, c.x() + x, c.y() + y, c.z() + z));
     }
 
     /**

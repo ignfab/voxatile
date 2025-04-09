@@ -6,10 +6,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelType;
-import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * A voxel type parameters for Minetest voxel types with only node type name.
@@ -48,9 +46,7 @@ public class MTVoxelTypeParams extends VoxelParams {
     }
 
     @Override
-    public Placeable create(Seed seed, VoxelWorld world) {
-        if (world instanceof MTVoxelWorld mtWorld)
-            return new MTVoxelType(mtWorld, node, param1, param2);
-        throw new IllegalArgumentException("Voxel type does not match voxel world format");
+    public Placeable create(Seed seed) {
+        return new MTVoxelType(node, param1, param2);
     }
 }

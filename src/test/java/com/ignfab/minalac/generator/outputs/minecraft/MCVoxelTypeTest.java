@@ -23,19 +23,19 @@ public class MCVoxelTypeTest {
 
     @Test
     public void testPlace() {
-        MCVoxelType air = new MCVoxelType(worldMock, "minecraft:air");
-        air.place(3, -7, 64);
+        MCVoxelType air = new MCVoxelType("minecraft:air");
+        air.place(worldMock, 3, -7, 64);
         CompoundTag expectedAir = new CompoundTag();
         expectedAir.putString("Name", "minecraft:air");
         worldMock.assertBlockStateAt(3, 64, 6, expectedAir); // X/Y/Z => X/Z/-Y
 
-        MCVoxelType stairs = new MCVoxelType(worldMock, "minecraft:oak_stairs", Map.of(
+        MCVoxelType stairs = new MCVoxelType("minecraft:oak_stairs", Map.of(
             "facing", "north",
             "half", "bottom",
             "shape", "straight",
             "waterlogged", "false"
         ));
-        stairs.place(-43, 0, 192);
+        stairs.place(worldMock, -43, 0, 192);
         CompoundTag expectedStairs = new CompoundTag();
         expectedStairs.putString("Name", "minecraft:oak_stairs");
         CompoundTag properties = new CompoundTag();

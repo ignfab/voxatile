@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.renderers;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * This renderer places the placeable between a minimum and maximum heightmap.
@@ -27,13 +27,13 @@ public class HeightmapRenderer implements Renderer {
     }
 
     @Override
-    public void render(WorldBBox3d bbox) {
+    public void render(VoxelWorld world) {
         if (minimum == maximum)
-            for (WorldCoords2d c : bbox.to2d().intersection(maximum.bbox()))
-                placeable.place(c.x(), c.y(), maximum.get(c));
+            for (WorldCoords2d c : world.limits().to2d().intersection(maximum.bbox()))
+                placeable.place(world, c.x(), c.y(), maximum.get(c));
         else
-            for (WorldCoords2d c : bbox.to2d().intersection(minimum.bbox()).intersection(maximum.bbox()))
+            for (WorldCoords2d c : world.limits().to2d().intersection(minimum.bbox()).intersection(maximum.bbox()))
                 for (int z = minimum.get(c); z <= maximum.get(c); z++)
-                    placeable.place(c.x(), c.y(), z);
+                    placeable.place(world, c.x(), c.y(), z);
     }
 }

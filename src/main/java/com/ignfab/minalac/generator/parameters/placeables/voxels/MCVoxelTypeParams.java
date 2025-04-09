@@ -7,10 +7,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelType;
-import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * A voxel type parameters for simple Minecraft voxel types with only block type name.
@@ -45,9 +43,7 @@ public class MCVoxelTypeParams extends VoxelParams {
     }
 
     @Override
-    public Placeable create(Seed seed, VoxelWorld world) {
-        if (world instanceof MCVoxelWorld mcWorld)
-            return new MCVoxelType(mcWorld, block, properties);
-        throw new IllegalArgumentException("Voxel type does not match voxel world format");
+    public Placeable create(Seed seed) {
+        return new MCVoxelType(block, properties);
     }
 }

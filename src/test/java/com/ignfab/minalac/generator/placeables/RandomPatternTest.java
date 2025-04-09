@@ -24,12 +24,12 @@ public class RandomPatternTest {
 
         RandomPattern pattern1 = new RandomPattern(seed, placeable, 0.5);
         random.setNextDouble(1.0);
-        assertDoesNotThrow(() -> pattern1.place(0, 0, 0));
+        assertDoesNotThrow(() -> pattern1.place(null, 0, 0, 0));
         assertNull(placeable.lastPlaced());
 
         random.setNextDouble(0.0);
         RandomPattern pattern2 = new RandomPattern(seed, placeable, 0.5);
-        assertDoesNotThrow(() -> pattern2.place(0, 0, 0));
+        assertDoesNotThrow(() -> pattern2.place(null, 0, 0, 0));
         assertEquals(new WorldCoords3d(0, 0, 0), placeable.lastPlaced());
     }
 }

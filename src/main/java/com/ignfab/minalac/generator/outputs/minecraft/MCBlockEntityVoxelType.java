@@ -4,6 +4,8 @@ import java.util.Map;
 
 import net.querz.nbt.tag.CompoundTag;
 
+import com.ignfab.minalac.generator.world.VoxelWorld;
+
 /**
  * {@code MCBlockEntityVoxelType} abstract class represents a Minecraft block with additional data associated with it.
  * That additional information is known as block entity.
@@ -13,22 +15,20 @@ public abstract class MCBlockEntityVoxelType extends MCVoxelType {
     /**
      * Constructs a new {@code MCBlockEntityVoxelType}.
      *
-     * @param world the {@link MCVoxelWorld} in which the voxel can be placed
      * @param type the block type string
      */
-    public MCBlockEntityVoxelType(MCVoxelWorld world, String type) {
-        super(world, type);
+    public MCBlockEntityVoxelType(String type) {
+        super(type);
     }
 
     /**
      * Constructs a new {@code MCBlockEntityVoxelType}.
      *
-     * @param world the {@link MCVoxelWorld} in which the voxel can be placed
      * @param type the block type string
      * @param properties the block state properties
      */
-    public MCBlockEntityVoxelType(MCVoxelWorld world, String type, Map<String, String> properties) {
-        super(world, type, properties);
+    public MCBlockEntityVoxelType(String type, Map<String, String> properties) {
+        super(type, properties);
     }
 
     protected abstract void serialize(CompoundTag tag);
@@ -37,8 +37,8 @@ public abstract class MCBlockEntityVoxelType extends MCVoxelType {
      * {@inheritDoc}
      */
     @Override
-    public void place(int x, int y, int z)  {
-        super.place(x, y, z);
+    public void place(VoxelWorld world, int x, int y, int z)  {
+        super.place(world, x, y, z);
         CompoundTag block = new CompoundTag();
         block.putString("id", type);
         block.putBoolean("keepPacked", false);
@@ -47,6 +47,6 @@ public abstract class MCBlockEntityVoxelType extends MCVoxelType {
         block.putInt("y", z);
         block.putInt("z", -y - 1);
         serialize(block);
-        world.addBlockEntity(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
+        ((MCVoxelWorld) world).addBlockEntity(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
     }
 }

@@ -1,17 +1,13 @@
 package com.ignfab.minalac.generator.outputs.testing;
 
 import com.ignfab.minalac.generator.placeables.VoxelType;
+import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * A dummy voxelType implementation for {@code TestingVoxelWorld}.
  * All testing voxel type are represented by simple strings.
  */
 public class TestingVoxelType implements VoxelType {
-    /**
-     * World where voxel are placed.
-     */
-    protected TestingVoxelWorld world;
-
     /**
      * Type of the voxel type.
      */
@@ -20,11 +16,9 @@ public class TestingVoxelType implements VoxelType {
     /**
      * Creates a new TestingVoxelType.
      *
-     * @param world World in which this voxel type will be placed
      * @param type A string for this voxel type (this value will be set in voxel world)
      */
-    public TestingVoxelType(TestingVoxelWorld world, String type) {
-        this.world = world;
+    public TestingVoxelType(String type) {
         this.type = type;
     }
 
@@ -36,8 +30,8 @@ public class TestingVoxelType implements VoxelType {
      * @param z z-coordinate where to place voxel
      */
     @Override
-    public void place(int x, int y, int z) {
-        this.world.set(x, y, z, this);
+    public void place(VoxelWorld world, int x, int y, int z) {
+        ((TestingVoxelWorld) world).set(x, y, z, this);
     }
 
     /**

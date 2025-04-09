@@ -18,5 +18,5 @@ public interface VoxelType extends Placeable {
      * @param z the z-coordinate value
      */
     @Override
-    void place(int x, int y, int z);
+    void place(VoxelWorld world, int x, int y, int z);
 }

@@ -32,10 +32,10 @@ public class TestingVoxelWorldTest {
     @DisplayName("Test setting in the world using voxel type can be retrieved")
     public void testGetVoxelType() {
         TestingVoxelWorld world = new TestingVoxelWorld(new WorldBBox3d(1, 2, 3, 4, 5, 6));
-        VoxelType vt1 = new TestingVoxelType(world, "AA");
-        VoxelType vt2 = new TestingVoxelType(world, "BB");
-        vt1.place(1, 2, 3);
-        vt2.place(3, 4, 5);
+        VoxelType vt1 = new TestingVoxelType("AA");
+        VoxelType vt2 = new TestingVoxelType("BB");
+        vt1.place(world, 1, 2, 3);
+        vt2.place(world, 3, 4, 5);
         world.assertVoxel("AA", 1, 2, 3);
         world.assertVoxel("BB", 3, 4, 5);
     }

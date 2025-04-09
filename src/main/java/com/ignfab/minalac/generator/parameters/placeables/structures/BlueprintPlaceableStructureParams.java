@@ -27,7 +27,6 @@ import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * A parameters class variant for {@link PlaceableStructure}.
@@ -163,13 +162,13 @@ public class BlueprintPlaceableStructureParams extends PlaceableStructureParams.
     }
 
     @Override
-    public void apply(Seed seed, VoxelWorld world, PlaceableStructure structure) {
+    public void apply(Seed seed, PlaceableStructure structure) {
         // Prepare translation form chars to placeables
         placeables = new HashMap<>();
         // Default space char for no voxel
         placeables.put(' ', NoVoxel.INSTANCE);
         // Create placeables for each `with` keys
-        with.forEach((key, value) -> placeables.put(key, value.create(seed, world)));
+        with.forEach((key, value) -> placeables.put(key, value.create(seed)));
 
         WorldCoords3d position = new WorldCoords3d(xOffset, yOffset, zOffset);
 

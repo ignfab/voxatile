@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
 import com.ignfab.minalac.generator.placeables.VoxelType;
+import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * {@code MTVoxelType} is an abstract class to provide the necessary structure and mechanism in order to implement {@link VoxelType} for Minetest.
@@ -8,10 +9,6 @@ import com.ignfab.minalac.generator.placeables.VoxelType;
  * @see <a href="https://github.com/minetest/minetest/blob/master/src/mapnode.h#L138">Minetest's MapNode class</a> for more information about the node's parameters
  */
 public class MTVoxelType implements VoxelType {
-    /**
-     * The Minetest World object.
-     */
-    protected MTVoxelWorld world;
     /**
      * The node type string.
      * @see <a href="https://wiki.minetest.net/Games/Minetest_Game/Nodes">List of node types (Minetest Wiki)</a>
@@ -31,23 +28,21 @@ public class MTVoxelType implements VoxelType {
     /**
      * Constructs a new {@code MTVoxelType}.
      *
-     * @param world the {@link MTVoxelWorld} in which the voxel can be placed
      * @param type the node type string
      * @param param1 the param1 data of the node
      * @param param2 the param2 data of the node
      * @see <a href="https://github.com/minetest/minetest/blob/master/src/mapnode.h#L138">Minetest's MapNode class</a> for more information about the node's parameters
      */
-    public MTVoxelType(MTVoxelWorld world, String type, byte param1, byte param2) {
-        this.world = world;
+    public MTVoxelType(String type, byte param1, byte param2) {
         this.type = type;
         this.param1 = param1;
         this.param2 = param2;
     }
 
     @Override
-    public void place(int x, int y, int z)  {
+    public void place(VoxelWorld world, int x, int y, int z)  {
         // The y-axis in Minetest corresponds, in our chosen coordinate system, to the z-axis, hence the inversion
-        this.world.set(x, z, y, this);
+        ((MTVoxelWorld) world).set(x, z, y, this);
     }
 
     /**
