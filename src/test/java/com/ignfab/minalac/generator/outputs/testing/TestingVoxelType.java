@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.outputs.testing;
 
+import java.util.Objects;
+
 import com.ignfab.minalac.generator.placeables.VoxelType;
 
 /**
@@ -47,5 +49,18 @@ public class TestingVoxelType implements VoxelType {
      */
     protected String getType() {
         return type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TestingVoxelType that = (TestingVoxelType) o;
+        return world == that.world && Objects.equals(type, that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(world, type);
     }
 }

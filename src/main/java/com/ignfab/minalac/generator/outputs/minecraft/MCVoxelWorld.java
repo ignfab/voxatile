@@ -17,6 +17,7 @@ import net.querz.nbt.tag.IntTag;
 import net.querz.nbt.tag.ListTag;
 import net.querz.nbt.tag.StringTag;
 
+import com.ignfab.minalac.generator.placeables.VoxelType;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldSize3d;
@@ -471,6 +472,8 @@ public class MCVoxelWorld extends VoxelWorld {
 
         if (isOutOfLimits(blockX, blockY, blockZ)) return;
         getOrCreateRegion(blockX, blockZ).file().setBlockStateAt(blockX, blockY, blockZ, block, false);
+        // (In-Game coords to world coords) X/Z/-Y => X/Y/Z
+        updateHeightmaps(blockX, -(blockZ + 1), blockY);
     }
 
     // In-Game coords
@@ -496,6 +499,21 @@ public class MCVoxelWorld extends VoxelWorld {
             regions.put(key, region);
         }
         return region;
+    }
+
+    /**
+     * {@inheritDoc}
+     * The returned voxel is not necessarily one placed using {@link VoxelType#place}.
+     * It may be an air block created when a {@link Region} is initialized.
+     */
+    @Override
+    public VoxelType getVoxel(int x, int y, int z) {
+        Region region = regions.get(computeRegionKey(MCAUtil.blockToRegion(x), MCAUtil.blockToRegion(-y - 1)));
+
+        if (region == null) return null;
+
+        // (World coords to In-Game coords) X/Y/Z => X/Z/-Y-1
+        return region.getBlock(x, z, -y - 1, this);
     }
 
     // In-Game coords

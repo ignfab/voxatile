@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
+import com.ignfab.minalac.generator.placeables.VoxelType;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
@@ -45,10 +46,8 @@ public class MTVoxelWorld extends VoxelWorld {
     }
 
     // Retrieves or creates the mapblock corresponding to given voxel position.
-    private Block getOrCreateBlock(int x, int y, int z) {
-        // See position hashing algorithm on world format documentation
-        // https://github.com/minetest/minetest/blob/master/doc/world_format.md#position-hashing
-        Integer pos = z * 16777216 + y * 4096 + x;
+    private Block getOrCreateBlock(int blockX, int blockY, int blockZ) {
+        Integer pos = coordsToPos(blockX, blockY, blockZ);
 
         Block block = blocks.get(pos);
         if (block == null)
@@ -60,6 +59,16 @@ public class MTVoxelWorld extends VoxelWorld {
                 }
             }
         return block;
+    }
+
+    private Block getBlock(int blockX, int blockY, int blockZ) {
+        return blocks.get(coordsToPos(blockX, blockY, blockZ));
+    }
+
+    private Integer coordsToPos(int blockX, int blockY, int blockZ) {
+        // See position hashing algorithm on world format documentation
+        // https://github.com/minetest/minetest/blob/master/doc/world_format.md#position-hashing
+        return blockZ * 16777216 + blockY * 4096 + blockX;
     }
 
     /**
@@ -76,6 +85,9 @@ public class MTVoxelWorld extends VoxelWorld {
         if (!limits().contains(x, z, y)) return;
 
         getOrCreateBlock(x >> 4, y >> 4, z >> 4).set(x & 0x0f, y & 0x0f, z & 0x0f, voxel);
+
+        // (In-Game coords to world coords) XZY => XYZ
+        updateHeightmaps(x, z, y);
     }
 
     /**
@@ -119,5 +131,21 @@ public class MTVoxelWorld extends VoxelWorld {
         } catch (IOException e) {
             throw new MapWriteException(e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     * The returned voxel is not necessarily one placed using {@link VoxelType#place}.
+     * It may be an air node created when a {@link Block} is initialized.
+     */
+    @Override
+    public VoxelType getVoxel(int x, int y, int z) {
+        // X/Y/Z => X/Z/Y
+        Block block = getBlock(x >> 4, z >> 4, y >> 4);
+
+        if (block == null) return null;
+
+        // X/Y/Z => X/Z/Y
+        return block.get(x & 0x0f, z & 0x0f, y & 0x0f, this);
     }
 }

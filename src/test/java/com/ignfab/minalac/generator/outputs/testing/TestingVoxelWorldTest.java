@@ -38,6 +38,11 @@ public class TestingVoxelWorldTest {
         vt2.place(3, 4, 5);
         world.assertVoxel("AA", 1, 2, 3);
         world.assertVoxel("BB", 3, 4, 5);
+
+        assertEquals(vt1, world.getVoxel(1, 2, 3));
+        assertEquals(vt2, world.getVoxel(3, 4, 5));
+        assertNull(world.getVoxel(0, 0, 0));
+        assertNull(world.getVoxel(3, 2, 5));
     }
 
     @Test

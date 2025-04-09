@@ -6,6 +6,7 @@ import java.io.IOException;
 import net.querz.mca.Chunk;
 import net.querz.mca.MCAFile;
 import net.querz.mca.MCAUtil;
+import net.querz.nbt.tag.CompoundTag;
 
 /**
  * Represents a Minecraft region.
@@ -80,5 +81,19 @@ public record Region(int regionX, int regionZ, MCAFile file) {
      */
     public static Region load(String regionsDirectory, int regionX, int regionZ) throws IOException {
         return new Region(regionX, regionZ, MCAUtil.read(new File(regionsDirectory, MCAUtil.createNameFromRegionLocation(regionX, regionZ))));
+    }
+
+    /**
+     * Returns a block as a new {@link MCVoxelType}.
+     *
+     * @param blockX the in-game x-coordinate
+     * @param blockY the in-game y-coordinate
+     * @param blockZ the in-game z-coordinate
+     * @param world the {@code MCVoxelWorld} in which the voxel can be placed
+     * @return the corresponding voxel, or {@code null} if it doesn't exist
+     */
+    public MCVoxelType getBlock(int blockX, int blockY, int blockZ, MCVoxelWorld world) {
+        CompoundTag block = file().getBlockStateAt(blockX, blockY, blockZ);
+        return (block == null) ? null : MCVoxelType.fromBlockState(block, world);
     }
 }
