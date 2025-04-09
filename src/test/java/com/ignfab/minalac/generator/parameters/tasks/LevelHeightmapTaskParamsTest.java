@@ -10,14 +10,14 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LevelHeightmapTaskParamsTest {
     @Test
     public void testValidate() {
-        TestingVoxelTypeParams placeable = new TestingVoxelTypeParams("voxel");
+        TestingVoxelParams placeable = new TestingVoxelParams("voxel");
 
         LevelGroundTaskParams paramsWithoutType = new LevelGroundTaskParams(new ModelSelectionParams(""), new StoredHeightmapParams("ground"), placeable);
         assertThrows(IllegalArgumentException.class, paramsWithoutType::validate);
@@ -43,7 +43,7 @@ public class LevelHeightmapTaskParamsTest {
         """, mapper));
         assertEquals("building", params.models.type);
         assertEquals("ground", params.heightmap.stored);
-        assertEquals("voxel", assertInstanceOf(TestingVoxelTypeParams.class,  params.filling).name);
+        assertEquals("voxel", assertInstanceOf(TestingVoxelParams.class,  params.filling).name);
 
         assertThrows(MismatchedInputException.class, () -> ParamsTester.deserialize(LevelGroundTaskParams.class, """
         type: leveling

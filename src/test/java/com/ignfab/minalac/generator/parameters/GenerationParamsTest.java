@@ -7,11 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
-import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelTypeParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.TestingProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
@@ -26,8 +25,8 @@ public class GenerationParamsTest {
     @BeforeEach
     void setUp() {
         GenerationParams.Area.LatitudeLongitude center = new GenerationParams.Area.LatitudeLongitude(5.8, 2.4);
-        GenerationParams.Area area = new GenerationParams.Area(center, 500, 2500);
-        OutputFormat format = new OutputFormat(MTVoxelWorld::new, MTVoxelTypeParams.class, MTVoxelTypeParams::new);
+        GenerationParams.Area area = new GenerationParams.Area(center, 50, 75);
+        OutputFormat format = new OutputFormat(TestingVoxelWorld::new, TestingVoxelParams.class, TestingVoxelParams::new);
         params = new GenerationParams(area, format);
         params.heightmaps = new HashMap<>();
         params.forEachTile = new HashMap<>();
@@ -116,7 +115,7 @@ public class GenerationParamsTest {
         params.forEachTile.put("source1", new FetchDataTaskParams("models1", new TestingProviderParams("value3"), new TestingProcessorParams("value4")));
         params.forEachTile.put("source2", new FetchDataTaskParams("models2", new TestingProviderParams("value5"), new TestingProcessorParams("value6")));
 
-        TestingVoxelTypeParams placeable = new TestingVoxelTypeParams("voxel");
+        TestingVoxelParams placeable = new TestingVoxelParams("voxel");
         params.forEachTile.put("building", new RenderBuildingsTaskParams(
             new ModelSelectionParams("building"),
             new StoredHeightmapParams("ground"),
@@ -127,8 +126,8 @@ public class GenerationParamsTest {
         Generation generation = params.create();
 
         assertNotNull(generation);
-        assertEquals(500, generation.world().limits().sizeX());
-        assertEquals(2500, generation.world().limits().sizeY());
+        assertEquals(50, generation.world().limits().sizeX());
+        assertEquals(75, generation.world().limits().sizeY());
         assertEquals(3.0, generation.getVerticalScale(), 0.001);
 
         Heightmap ground = assertDoesNotThrow(() -> generation.heightmaps().get("ground"));

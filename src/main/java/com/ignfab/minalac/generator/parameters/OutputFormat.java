@@ -26,24 +26,24 @@ import com.ignfab.minalac.generator.world.VoxelWorld;
  */
 public class OutputFormat {
     private Supplier<VoxelWorld> worldCreator;
-    private Class<? extends PlaceableParams> voxelTypeParams;
-    private Function<String, PlaceableParams> shortcutVoxelTypeParams;
+    private Class<? extends PlaceableParams> voxelParams;
+    private Function<String, PlaceableParams> shortcutVoxelParams;
 
     /**
      * Creates a new {@code OutputFormat}.
      *
      * @param worldCreator A static method creating a new VoxelWorld for this format
-     * @param voxelTypeParams {@code PlaceableParams} class to use for deserialization when no {@code type} parameter given
-     * @param shortcutVoxelTypeParams Method creating a {@code PlaceableParams} from a String
+     * @param voxelParams {@code PlaceableParams} class to use for deserialization when no {@code type} parameter given
+     * @param shortcutVoxelParams Method creating a {@code PlaceableParams} from a String
      */
     public OutputFormat(
         Supplier<VoxelWorld> worldCreator,
-        Class<? extends PlaceableParams> voxelTypeParams,
-        Function<String, PlaceableParams> shortcutVoxelTypeParams
+        Class<? extends PlaceableParams> voxelParams,
+        Function<String, PlaceableParams> shortcutVoxelParams
     ) {
         this.worldCreator = worldCreator;
-        this.voxelTypeParams = voxelTypeParams;
-        this.shortcutVoxelTypeParams = shortcutVoxelTypeParams;
+        this.voxelParams = voxelParams;
+        this.shortcutVoxelParams = shortcutVoxelParams;
     }
 
     /**
@@ -56,32 +56,32 @@ public class OutputFormat {
     }
 
     /**
-     * Creates a new {@code PlaceableParams} out of a {@code String} if a {@code shortcutVoxelTypeParams} method have been given to constructor.
+     * Creates a new {@code PlaceableParams} out of a {@code String} if a {@code shortcutVoxelParams} method have been given to constructor.
      *
      * @param text String to interpret as {@code PlaceableParams}
      *
      * @return A new {@code PlaceableParams}
      */
-    public PlaceableParams createVoxelTypeParams(String text) {
-        if (shortcutVoxelTypeParams == null)
+    public PlaceableParams createVoxelParams(String text) {
+        if (shortcutVoxelParams == null)
             throw new IllegalArgumentException("Selected format does not allow deserialization from simple string");
 
-        return shortcutVoxelTypeParams.apply(text);
+        return shortcutVoxelParams.apply(text);
     }
 
     /**
-     * Creates a new {@code PlaceableParams} out of a {@code JsonNode} if a {@code voxelTypeParams} class have been given to constructor.
+     * Creates a new {@code PlaceableParams} out of a {@code JsonNode} if a {@code voxelParams} class have been given to constructor.
      *
      * @param node {@code JsonNode} to interpret as {@code PlaceableParams}
      * @param codec Codec to use for deserialization
      *
      * @return A new {@code PlaceableParams}
      */
-    public PlaceableParams createVoxelTypeParams(JsonNode node, ObjectCodec codec) throws JsonProcessingException {
-        if (voxelTypeParams == null)
+    public PlaceableParams createVoxelParams(JsonNode node, ObjectCodec codec) throws JsonProcessingException {
+        if (voxelParams == null)
             throw new IllegalArgumentException("Selected format does not have a default voxel type structure, add `type` attribute");
 
-        return codec.treeToValue(node, voxelTypeParams);
+        return codec.treeToValue(node, voxelParams);
     };
 
     /**
@@ -96,8 +96,8 @@ public class OutputFormat {
         mapper.registerModule(module);
 
         // Register base "voxel" type
-        if (voxelTypeParams != null)
-            mapper.registerSubtypes(new NamedType(voxelTypeParams, "voxel"));
+        if (voxelParams != null)
+            mapper.registerSubtypes(new NamedType(voxelParams, "voxel"));
     }
 
     /**

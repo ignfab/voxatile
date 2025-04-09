@@ -2,31 +2,30 @@ package com.ignfab.minalac.generator.parameters.placeables.voxels;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MTVoxelTypeParamsTest {
+public class MCVoxelParamsTest {
 
     @Test
     public void testConstructor() {
-        assertDoesNotThrow(() -> new MTVoxelTypeParams("toto"));
+        assertDoesNotThrow(() -> new MCVoxelParams("toto"));
     }
 
     @Test
     public void testValidate() {
-        MTVoxelTypeParams params;
-        params = new MTVoxelTypeParams("titi");
+        MCVoxelParams params;
+        params = new MCVoxelParams("titi");
         assertDoesNotThrow(params::validate);
 
-        params = new MTVoxelTypeParams("");
+        params = new MCVoxelParams("");
         assertThrows(IllegalArgumentException.class, params::validate);
     }
 
     @Test
     public void testCreate() {
-        MTVoxelTypeParams params = new MTVoxelTypeParams("tata");
-        assertDoesNotThrow(() -> params.create(TestingSeed.UNUSED, new MTVoxelWorld()));
+        MCVoxelParams params = new MCVoxelParams("tata");
+        assertDoesNotThrow(() -> params.create(TestingSeed.UNUSED));
     }
 }

@@ -71,6 +71,6 @@ public class RenderHeightmapTaskParams extends TileTaskParams {
             from = minimum.create(generation);
             to = maximum.create(generation);
         }
-        return new RenderHeightmapTask(from, to, place.create(generation.seed(), generation.world()));
+        return new RenderHeightmapTask(from, to, place.create(generation.seed()));
     }
 }

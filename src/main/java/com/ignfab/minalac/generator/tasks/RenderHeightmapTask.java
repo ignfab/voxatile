@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.tasks;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A {@link TileTask} placing things between a minimum and maximum heightmap.
@@ -27,13 +27,13 @@ public class RenderHeightmapTask implements TileTask {
     }
 
     @Override
-    public void run(WorldBBox3d bbox) {
+    public void run(VoxelTile tile) {
         if (minimum == maximum)
-            for (WorldCoords2d c : bbox.to2d().intersection(maximum.bbox()))
-                placeable.place(c.x(), c.y(), maximum.get(c));
+            for (WorldCoords2d c : tile.limits().to2d().intersection(maximum.bbox()))
+                placeable.place(tile, c.x(), c.y(), maximum.get(c));
         else
-            for (WorldCoords2d c : bbox.to2d().intersection(minimum.bbox()).intersection(maximum.bbox()))
+            for (WorldCoords2d c : tile.limits().to2d().intersection(minimum.bbox()).intersection(maximum.bbox()))
                 for (int z = minimum.get(c); z <= maximum.get(c); z++)
-                    placeable.place(c.x(), c.y(), z);
+                    placeable.place(tile, c.x(), c.y(), z);
     }
 }

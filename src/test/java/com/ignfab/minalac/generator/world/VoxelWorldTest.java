@@ -1,14 +1,13 @@
 package com.ignfab.minalac.generator.world;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelType;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
-import com.ignfab.minalac.generator.placeables.VoxelType;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
@@ -44,19 +43,19 @@ public class VoxelWorldTest {
 
     @Test
     public void testVoxelIterator() {
-        TestingVoxelWorld world = new TestingVoxelWorld(new WorldBBox3d(new WorldCoords3d(-1, -2, -5), new WorldCoords3d(2, 3, 6)));
-        VoxelType a = new TestingVoxelType(world, "aa");
-        VoxelType b = new TestingVoxelType(world, "b");
-        VoxelType c = new TestingVoxelType(world, "c");
+        TestingVoxelTile tile = new TestingVoxelTile(new WorldBBox3d(new WorldCoords3d(-1, -2, -5), new WorldCoords3d(2, 3, 6)));
+        Placeable a = new TestingVoxel("aa");
+        Placeable b = new TestingVoxel("b");
+        Placeable c = new TestingVoxel("c");
 
-        a.place(-1, 2, 6);
-        a.place(-1, 2, -4);
-        c.place(-1, 2, -5);
-        b.place(-1, 2, 2);
-        c.place(-1, 2, 0);
+        a.place(tile, -1, 2, 6);
+        a.place(tile, -1, 2, -4);
+        c.place(tile, -1, 2, -5);
+        b.place(tile, -1, 2, 2);
+        c.place(tile, -1, 2, 0);
 
-        b.place(1, -2, 1);
-        c.place(1, -2, -2);
+        b.place(tile, 1, -2, 1);
+        c.place(tile, 1, -2, -2);
 
         assertDoesNotThrow(() -> {
             assertIterableEquals(
@@ -67,7 +66,7 @@ public class VoxelWorldTest {
                     new PlacedVoxel(a, new WorldCoords3d(-1, 2, -4)),
                     new PlacedVoxel(c, new WorldCoords3d(-1, 2, -5))
                 ),
-                world.voxels(-1, 2)
+                tile.voxels(-1, 2)
             );
         });
 
@@ -77,14 +76,14 @@ public class VoxelWorldTest {
                     new PlacedVoxel(b, new WorldCoords3d(1, -2, 1)),
                     new PlacedVoxel(c, new WorldCoords3d(1, -2, -2))
                 ),
-                world.voxels(1, -2)
+                tile.voxels(1, -2)
             );
         });
 
         assertDoesNotThrow(() -> {
             assertIterableEquals(
                 Collections.emptyList(),
-                world.voxels(0, -2)
+                tile.voxels(0, -2)
             );
         });
     }
@@ -104,11 +103,14 @@ public class VoxelWorldTest {
         }
 
         @Override
-        public void save(File destination) throws MapWriteException {}
+        public void initialize() throws MapWriteException {}
 
         @Override
-        public VoxelType getVoxel(int x, int y, int z) {
-            return null;
+        public void finalizeAndSave() throws MapWriteException {}
+
+        @Override
+        public VoxelTile newTile(WorldBBox3d limits) {
+            throw new UnsupportedOperationException("Unimplemented method 'newTile'");
         }
     }
 }

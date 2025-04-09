@@ -1,18 +1,11 @@
 package com.ignfab.minalac.generator.world;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.Iterator;
-
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
-import com.ignfab.minalac.generator.placeables.VoxelType;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
- * The {@code VoxelWorld} abstract class represents a three-dimensional world with voxels as the fundamental unit.
- * Implementations of this abstract class are primary meant to create playable world for voxel-based games such as Minecraft or Minetest.
- *
- * @see com.ignfab.minalac.generator.placeables.VoxelType
+ * A three-dimensional world with voxels as the fundamental unit.
+ * Voxels are only accessible through {@link VoxelTile} created by {@code newTile} method.
+ * This is an abstract class meant to be extended into specific formats classes (Minecraft, Luanti, ...).
  */
 public abstract class VoxelWorld {
     /**
@@ -23,20 +16,10 @@ public abstract class VoxelWorld {
      * The metadata of the world.
      */
     protected final VoxelWorldMetadata metadata;
-    /**
-     * Heightmap representing the altitude of the highest voxels.
-     */
-    protected Heightmap minimum;
-    /**
-     * Heightmap representing the altitude of the lowest voxels.
-     */
-    protected Heightmap maximum;
 
     protected VoxelWorld(VoxelWorldMetadata metadata) {
         limits = WorldBBox3d.EMPTY;
         this.metadata = metadata;
-        minimum = Heightmap.EMPTY;
-        maximum = Heightmap.EMPTY;
     }
 
     /**
@@ -53,8 +36,6 @@ public abstract class VoxelWorld {
         if (!this.limits.isEmpty())
             throw new IllegalStateException("The limits have already been set");
         this.limits = limits;
-        minimum = new Heightmap(limits().to2d(), limits().maxZ());
-        maximum = new Heightmap(limits().to2d(), limits().minZ());
     }
 
     /**
@@ -67,7 +48,7 @@ public abstract class VoxelWorld {
     }
 
     /**
-     * Return the maximum limits of the world.
+     * Return the maximum limits of the world (hard limit of the format).
      *
      * @return the {@code WorldBBox3d} representing the maximum limits of the world
      */
@@ -82,63 +63,39 @@ public abstract class VoxelWorld {
         return metadata;
     }
 
-    // TODO: There is an inconsistency between the two implementations. When the folder does not exist MTVoxelWorld creates it whereas MCVoxelWorld throws a MapWriteException.
     /**
-     * Exports the {@code VoxelWorld} and saves it in the specified destination.
+     * Creates a new tile for this world (a smaller cubic part).
+     * World has to be initialized and not finalized.
      *
-     * @param destination the {@link File} where the output will be saved. It must represent a directory.
-     * @throws MapWriteException if an error occurs while writing to the specified destination.
+     * @param limits Limit of the new tile
+     * @return The resulting tile.
      */
-    public abstract void save(File destination) throws MapWriteException;
+    public abstract VoxelTile newTile(WorldBBox3d limits);
 
     /**
-     * Updates the internal minimum or maximum heightmap at the coordinate (x, y) based on the provided z-coordinate value.
+     * Initializes {@code VoxelWorld}.
+     * <p>
+     * Things that have to be done before working on tiles should be done here.
+     * Files and directories may be created here for example.
+     * <p>
+     * Must be called before saving tiles or finalizing world.
      *
-     * @param x x-coordinate
-     * @param y y-coordinate
-     * @param z z-coordinate
+     * @throws MapWriteException if an error occurs while writing to the destination.
      */
-    protected void updateHeightmaps(int x, int y, int z) {
-        if (z > maximum.get(x, y))
-            maximum.set(x, y, z);
-        if (z < minimum.get(x, y))
-            minimum.set(x, y, z);
-    }
+    public abstract void initialize() throws MapWriteException;
 
     /**
-     * Returns the voxel located at the given coordinates as a new {@code VoxelType}.
+     * Finalizes {@code VoxelWorld} so it can be used in game.
+     * <p>
+     * Things that have to be done after working on tiles should be done here.
+     * Files may be created here for example.
+     * <p>
+     * This method will not actually save map content (voxels),
+     * this is done by {@link VoxelTile#save()} which should be called first.
+     * <p>
+     * Must be called once world is initialized and all tiles saved.
      *
-     * @param x x-coordinate
-     * @param y y-coordinate
-     * @param z z-coordinate
-     * @return the corresponding voxel and {@code null} if the voxel doesn't exist.
+     * @throws MapWriteException if an error occurs while writing to the destination.
      */
-    public abstract VoxelType getVoxel(int x, int y, int z);
-
-    /**
-     * Returns a descending iterator over the voxels and associated coordinates of a column of this world.
-     *
-     * @param x x-coordinate of the column to iterate over
-     * @param y y-coordinate of the column to iterate over
-     * @return an iterator for the pair of voxels and coordinates
-     */
-    public Iterator<PlacedVoxel> voxelIterator(int x, int y) {
-        int minZ = minimum.get(x, y);
-        int maxZ = maximum.get(x, y);
-        if (maxZ < minZ)
-            return Collections.emptyIterator();
-
-        return new VoxelColumnIterator(this, x, y, minZ, maxZ);
-    }
-
-    /**
-     * Returns an iterable over the voxels and associated coordinates of a column of this world.
-     *
-     * @param x x-coordinate of the column to iterate over
-     * @param y y-coordinate of the column to iterate over
-     * @return an iterable for the pair of voxels and coordinates
-     */
-    public Iterable<PlacedVoxel> voxels(int x, int y) {
-        return () -> this.voxelIterator(x, y);
-    }
+    public abstract void finalizeAndSave() throws MapWriteException;
 }

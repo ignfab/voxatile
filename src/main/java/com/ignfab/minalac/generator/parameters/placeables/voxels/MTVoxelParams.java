@@ -5,18 +5,17 @@ import java.beans.ConstructorProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
-import com.ignfab.minalac.generator.outputs.minetest.MTVoxelType;
-import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+import com.ignfab.minalac.generator.outputs.minetest.MTVoxel;
+import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
- * A voxel type parameters for Minetest voxel types with only node type name.
+ * Parameters for Minetest voxels with only node name.
  */
-public class MTVoxelTypeParams extends VoxelParams {
+public class MTVoxelParams extends PlaceableParams {
     /**
-     * Node type name (required).
+     * Node name (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
     public String node;
@@ -32,12 +31,12 @@ public class MTVoxelTypeParams extends VoxelParams {
     public byte param2 = 0;
 
     /**
-     * Creates a new {@code MTVoxelTypeParams}.
+     * Creates a new {@code MTVoxelParams}.
      *
      * @param node Node type name
      */
     @ConstructorProperties({"node"})
-    public MTVoxelTypeParams(String node) {
+    public MTVoxelParams(String node) {
         this.node = node;
     }
 
@@ -48,9 +47,7 @@ public class MTVoxelTypeParams extends VoxelParams {
     }
 
     @Override
-    public Placeable create(Seed seed, VoxelWorld world) {
-        if (world instanceof MTVoxelWorld mtWorld)
-            return new MTVoxelType(mtWorld, node, param1, param2);
-        throw new IllegalArgumentException("Voxel type does not match voxel world format");
+    public Placeable create(Seed seed) {
+        return new MTVoxel(node, param1, param2);
     }
 }

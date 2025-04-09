@@ -5,7 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.placeables.CombinedPlaceable;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.placeables.TestingPlaceable;
@@ -39,9 +39,9 @@ public class CombinedPlaceableParamsTest {
         params.placeableParams.add(new TestingPlaceableParams(placeable));
         params.placeableParams.add(new TestingPlaceableParams(placeable));
 
-        Placeable result = assertDoesNotThrow(() -> params.create(TestingSeed.UNUSED, new TestingVoxelWorld(WorldBBox3d.ORIGIN)));
+        Placeable result = assertDoesNotThrow(() -> params.create(TestingSeed.UNUSED));
         CombinedPlaceable combined = assertInstanceOf(CombinedPlaceable.class, result);
-        combined.place(0, 0, 0);
+        combined.place(new TestingVoxelTile(WorldBBox3d.ORIGIN), 0, 0, 0);
         assertEquals(3, placeable.timesPlaced());
     }
 }

@@ -10,7 +10,7 @@ import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A {@link TileTask} fetching data from a provider, processing models with a processor applying a post-processor to each model.
@@ -61,10 +61,10 @@ public class FetchDataTask implements TileTask {
     /**
      * Fetches data from provider, and create and process models.
      *
-     * @param bbox bounding box of region to fetch data for
+     * @param tile tile for which data is fetched (it gives the wanted area)
      */
-    public void run(WorldBBox3d bbox) {
-        try (Provider.Result<?> result = provider.provide(bbox)) {
+    public void run(VoxelTile tile) {
+        try (Provider.Result<?> result = provider.provide(tile.limits())) {
             processor.initialize(result.crs());
             while (result.hasNext()) {
                 Object data = result.next();

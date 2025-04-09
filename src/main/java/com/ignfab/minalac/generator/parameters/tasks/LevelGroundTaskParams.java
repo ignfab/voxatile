@@ -66,7 +66,7 @@ public class LevelGroundTaskParams extends TileTaskParams {
         return new LevelGroundTask(
             models.create(generation.models()),
             heightmap.create(generation),
-            filling.create(generation.seed(), generation.world())
+            filling.create(generation.seed())
         );
     }
 }

@@ -2,21 +2,22 @@ package com.ignfab.minalac.generator.tasks;
 
 import java.util.function.Consumer;
 
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A task running on a generation tile.
  */
-public interface TileTask extends Consumer<WorldBBox3d> {
+public interface TileTask extends Consumer<VoxelTile> {
+
     /**
      * Runs task.
      *
-     * @param bbox generation tile limits
+     * @param tile tile to render into
      */
-    void run(WorldBBox3d bbox);
+    void run(VoxelTile tile);
 
     @Override
-    default void accept(WorldBBox3d bbox) {
-        run(bbox);
+    default void accept(VoxelTile tile) {
+        run(tile);
     }
 }

@@ -3,13 +3,13 @@ package com.ignfab.minalac.generator.tasks;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
-import com.ignfab.minalac.generator.placeables.NoVoxel;
+import com.ignfab.minalac.generator.placeables.Nothing;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LineVoxel2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
+import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A {@link TileTask} placing things on vector models.
@@ -40,15 +40,15 @@ public class RenderVectorsTask extends ModelTask<ShapesVoxelizable2d> {
     }
 
     @Override
-    protected void run(ShapesVoxelizable2d model, WorldBBox3d bbox) {
-        ShapesVoxelizer2d voxelizer = model.voxelize2d(bbox.to2d());
+    protected void run(ShapesVoxelizable2d model, VoxelTile tile) {
+        ShapesVoxelizer2d voxelizer = model.voxelize2d(tile.limits().to2d());
 
-        if (inside != NoVoxel.INSTANCE) {
+        if (inside != Nothing.INSTANCE) {
             // In case of same border & inside, don't perform two iterations
             if (inside == borders) {
                 for (Positioned2d voxel : voxelizer) {
                     WorldCoords2d c = voxel.coords();
-                    inside.place(c.x(), c.y(), heightmap.get(c));
+                    inside.place(tile, c.x(), c.y(), heightmap.get(c));
                 }
                 return;
             }
@@ -56,15 +56,15 @@ public class RenderVectorsTask extends ModelTask<ShapesVoxelizable2d> {
             // Iteration over inside voxels
             for (Positioned2d voxel : voxelizer.inside()) {
                 WorldCoords2d c = voxel.coords();
-                inside.place(c.x(), c.y(), heightmap.get(c));
+                inside.place(tile, c.x(), c.y(), heightmap.get(c));
             }
         }
 
-        if (borders != NoVoxel.INSTANCE)
+        if (borders != Nothing.INSTANCE)
             // Iteration over border voxels
             for (LineVoxel2d voxel : voxelizer.borders()) {
                 WorldCoords2d c = voxel.coords();
-                borders.place(c.x(), c.y(), heightmap.get(c));
+                borders.place(tile, c.x(), c.y(), heightmap.get(c));
             }
     }
 }

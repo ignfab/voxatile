@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,10 +16,7 @@ public class FloatMatrixProcessorParamsTest {
     public void testCreate() throws FactoryException {
         CoordinateReferenceSystem crs2154 = CRS.decode("EPSG:2154");
 
-        Generation generation = new Generation(
-            new TestingVoxelWorld(
-                new WorldBBox3d(-10, -10, -10, 20, 20, 20)
-            ), null, crs2154, 0, 0, 20, 20, 1, 1, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, crs2154, 0, 0, 20, 20, 1, 1, 0.0);
 
         // A simple OK test
         final FloatMatrixProcessorParams params = new FloatMatrixProcessorParams();

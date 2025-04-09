@@ -24,24 +24,29 @@ public class SQLiteMapWriter {
      * Constructs a new {@code SQLiteMapWriter}.
      * It also creates and initializes {@code map.sqlite}.
      *
-     * @param directory the {@link File} directory where {@code map.sqlite} will be placed
+     * @param file database file to connect to (or create).
      * @throws MapWriteException if the provided {@code File} is not a directory; doesn't exist, or if an {@link SQLException} occurs
      */
-    public SQLiteMapWriter(File directory) throws MapWriteException {
-        if (!directory.exists() || !directory.isDirectory())
-            throw new MapWriteException("The directory can not be accessed");
-        connection = createAndConnectToFileDB(new File(directory, "map.sqlite"));
+    public SQLiteMapWriter(File file) throws MapWriteException {
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:" + file.getAbsolutePath());
+            Statement statement = connection.createStatement();
+            statement.execute("PRAGMA synchronous=OFF");
+        } catch (SQLException e) {
+            throw new MapWriteException(e);
+        }
         serializer = new Serializer();
     }
 
-    private Connection createAndConnectToFileDB(File database) throws MapWriteException {
+    /**
+     * Creates a new database.
+     *
+     * Must be called once before any {@code insertBlock}.
+     */
+    public void createDatabase() throws MapWriteException {
         try {
-            String pathDBFile = "jdbc:sqlite:" + database.getAbsolutePath();
-            Connection connection = DriverManager.getConnection(pathDBFile);
             Statement statement = connection.createStatement();
-            statement.execute("PRAGMA synchronous=OFF");
             statement.execute("CREATE TABLE `blocks` (`pos` INT NOT NULL PRIMARY KEY,`data` BLOB)");
-            return connection;
         } catch (SQLException e) {
             throw new MapWriteException(e);
         }

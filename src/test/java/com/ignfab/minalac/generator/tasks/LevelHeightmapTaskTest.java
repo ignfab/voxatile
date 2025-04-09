@@ -8,8 +8,8 @@ import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
@@ -40,12 +40,12 @@ public class LevelHeightmapTaskTest {
 
     @Test
     void testLevelingRendering() {
-        TestingVoxelWorld world = new TestingVoxelWorld(bbox);
+        TestingVoxelTile tile = new TestingVoxelTile(bbox);
 
         String placeableName = "voxel";
-        TestingVoxelTypeParams placeable = new TestingVoxelTypeParams(placeableName);
+        TestingVoxelParams placeable = new TestingVoxelParams(placeableName);
 
-        Heightmap heightmap = new Heightmap(world.limits().to2d(), -7);
+        Heightmap heightmap = new Heightmap(tile.limits().to2d(), -7);
 
         // Prepare a non flat Heightmap
         for (WorldCoords2d pos : heightmap.bbox())
@@ -61,11 +61,11 @@ public class LevelHeightmapTaskTest {
         assertDoesNotThrow(() -> new LevelGroundTask(
             new ModelSelection(models, "model", null),
             heightmap,
-            placeable.create(TestingSeed.UNUSED, world)
-        ).run(bbox));
+            placeable.create(TestingSeed.UNUSED)
+        ).run(tile));
 
         // Verify Heightmap has been updated only where wanted
-        for (WorldCoords2d pos : world.limits().to2d()) {
+        for (WorldCoords2d pos : tile.limits().to2d()) {
             if (modelBbox.contains(pos)) {
                 // According to formula, max is at (4, 1) (bottom right corner of model) and is 1
                 assertEquals(expectedHeight, heightmap.get(pos), "%s: unexpected value".formatted(pos));
@@ -76,12 +76,12 @@ public class LevelHeightmapTaskTest {
         }
 
         // Verify world contents
-        for (WorldCoords3d pos : world.limits()) {
+        for (WorldCoords3d pos : tile.limits()) {
             // Renderers fills from ground (included) to leveled height (1 here)
             if (modelBbox.contains(pos.to2d()) && pos.z() >= heightFormula(pos.to2d()) && pos.z() <= expectedHeight) {
-                world.assertVoxel(placeableName, pos);
+                tile.assertVoxel(placeableName, pos);
             } else {
-                world.assertVoxelNull(pos);
+                tile.assertVoxelNull(pos);
             }
         }
     }

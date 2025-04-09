@@ -9,7 +9,6 @@ import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.placeables.Pattern;
 import com.ignfab.minalac.generator.placeables.RandomPattern;
 import com.ignfab.minalac.generator.utils.random.Seed;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * Parameters for {@link RandomPattern} placeable.
@@ -50,7 +49,7 @@ public class RandomPatternParams extends PatternParams {
     }
 
     @Override
-    public Pattern create(Seed seed, VoxelWorld world) {
-        return new RandomPattern(seed.salt(this.seed), place.create(seed, world), chance);
+    public Pattern create(Seed seed) {
+        return new RandomPattern(seed.salt(this.seed), place.create(seed), chance);
     }
 }

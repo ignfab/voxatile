@@ -2,7 +2,7 @@ package com.ignfab.minalac.generator.tasks;
 
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A {@link TileTask} running on a {@link ModelSelection}.
@@ -19,17 +19,17 @@ public abstract class ModelTask<M> implements TileTask {
     }
 
     @Override
-    public void run(WorldBBox3d bbox) {
+    public void run(VoxelTile tile) {
         for (Model model : selection)
             if (cls.isInstance(model))
-                run(cls.cast(model), bbox);
+                run(cls.cast(model), tile);
     }
 
     /**
      * Runs task for a given model.
      *
      * @param model concerned model
-     * @param bbox generation tile limits
+     * @param tile tile to render into
      */
-    protected abstract void run(M model, WorldBBox3d bbox);
+    protected abstract void run(M model, VoxelTile tile);
 }

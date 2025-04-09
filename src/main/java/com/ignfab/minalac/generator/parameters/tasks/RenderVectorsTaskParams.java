@@ -9,7 +9,7 @@ import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
-import com.ignfab.minalac.generator.placeables.NoVoxel;
+import com.ignfab.minalac.generator.placeables.Nothing;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.tasks.RenderVectorsTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
@@ -79,17 +79,17 @@ public class RenderVectorsTaskParams extends TileTaskParams {
 
     @Override
     public TileTask create(Generation generation) {
-        Placeable insidePlaceable = NoVoxel.INSTANCE;
-        Placeable bordersPlaceable = NoVoxel.INSTANCE;
+        Placeable insidePlaceable = Nothing.INSTANCE;
+        Placeable bordersPlaceable = Nothing.INSTANCE;
 
         if (place != null) {
-            insidePlaceable = place.create(generation.seed(), generation.world());
+            insidePlaceable = place.create(generation.seed());
             bordersPlaceable = insidePlaceable;
         } else {
             if (inside != null)
-                insidePlaceable = inside.create(generation.seed(), generation.world());
+                insidePlaceable = inside.create(generation.seed());
             if (borders != null)
-                bordersPlaceable = borders.create(generation.seed(), generation.world());
+                bordersPlaceable = borders.create(generation.seed());
         }
 
         return new RenderVectorsTask(

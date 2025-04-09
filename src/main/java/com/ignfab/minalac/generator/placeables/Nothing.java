@@ -1,19 +1,21 @@
 package com.ignfab.minalac.generator.placeables;
 
+import com.ignfab.minalac.generator.world.VoxelTile;
+
 /**
  * A placeable placing nothing.
- * Can be convenient to pass as a no-op voxel type to some operation.
+ * Can be convenient to pass this to some operation when not wanting place anything.
  */
-public final class NoVoxel implements Placeable {
+public final class Nothing implements Placeable {
     /**
      * NoVoxel singleton instance.
      */
-    public static final NoVoxel INSTANCE = new NoVoxel();
+    public static final Nothing INSTANCE = new Nothing();
 
     /**
      * NoVoxel private constructor (use INSTANCE instead).
      */
-    private NoVoxel() {}
+    private Nothing() {}
 
     /**
      * Does not place anything at x, y, z.
@@ -23,5 +25,5 @@ public final class NoVoxel implements Placeable {
      * @param z z-coordinate where to place nothing
      */
     @Override
-    public void place(int x, int y, int z) {}
+    public void place(VoxelTile tile, int x, int y, int z) {}
 }

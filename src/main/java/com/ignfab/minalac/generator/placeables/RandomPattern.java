@@ -29,6 +29,6 @@ public class RandomPattern implements Pattern {
         random.setSeed(x, y, z);
         if (random.nextDouble() < chance)
             return placeable;
-        return NoVoxel.INSTANCE;
+        return Nothing.INSTANCE;
     }
 }

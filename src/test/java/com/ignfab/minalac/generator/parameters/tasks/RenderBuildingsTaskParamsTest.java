@@ -11,14 +11,14 @@ import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RenderBuildingsTaskParamsTest {
     @Test
     public void testValidate() {
-        TestingVoxelTypeParams placeable = new TestingVoxelTypeParams("voxel");
+        TestingVoxelParams placeable = new TestingVoxelParams("voxel");
 
         RenderBuildingsTaskParams paramsWithoutType = new RenderBuildingsTaskParams(new ModelSelectionParams(""), TestingHeightmapParams.VALID, placeable, placeable, placeable);
         assertThrows(IllegalArgumentException.class, paramsWithoutType::validate);
@@ -47,9 +47,9 @@ public class RenderBuildingsTaskParamsTest {
         """, mapper));
         assertEquals("building", params.models.type);
         assertEquals("ground", assertInstanceOf(StoredHeightmapParams.class, params.heightmap).stored);
-        assertEquals("voxelA", assertInstanceOf(TestingVoxelTypeParams.class, params.roof).name);
-        assertEquals("voxelB", assertInstanceOf(TestingVoxelTypeParams.class, params.wall).name);
-        assertEquals("voxelC", assertInstanceOf(TestingVoxelTypeParams.class, params.window).name);
+        assertEquals("voxelA", assertInstanceOf(TestingVoxelParams.class, params.roof).name);
+        assertEquals("voxelB", assertInstanceOf(TestingVoxelParams.class, params.wall).name);
+        assertEquals("voxelC", assertInstanceOf(TestingVoxelParams.class, params.window).name);
 
         assertThrows(MismatchedInputException.class, () -> ParamsTester.deserialize(RenderBuildingsTaskParams.class, """
         type: building

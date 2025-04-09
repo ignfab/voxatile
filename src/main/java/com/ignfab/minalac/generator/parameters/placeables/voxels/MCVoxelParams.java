@@ -6,16 +6,15 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
-import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelType;
-import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
+import com.ignfab.minalac.generator.outputs.minecraft.MCVoxel;
+import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
- * A voxel type parameters for simple Minecraft voxel types with only block type name.
+ * Parameters for simple Minecraft voxel with only block type name.
  */
-public class MCVoxelTypeParams extends VoxelParams {
+public class MCVoxelParams extends PlaceableParams {
     /**
      * Block type name (required).
      */
@@ -29,12 +28,12 @@ public class MCVoxelTypeParams extends VoxelParams {
     public Map<String, String> properties = null;
 
     /**
-     * Creates a new {@code MCVoxelTypeParams}.
+     * Creates a new {@code MCVoxelParams}.
      *
      * @param block Block type name
      */
     @ConstructorProperties({"block"})
-    public MCVoxelTypeParams(String block) {
+    public MCVoxelParams(String block) {
         this.block = block;
     }
 
@@ -45,9 +44,7 @@ public class MCVoxelTypeParams extends VoxelParams {
     }
 
     @Override
-    public Placeable create(Seed seed, VoxelWorld world) {
-        if (world instanceof MCVoxelWorld mcWorld)
-            return new MCVoxelType(mcWorld, block, properties);
-        throw new IllegalArgumentException("Voxel type does not match voxel world format");
+    public Placeable create(Seed seed) {
+        return new MCVoxel(block, properties);
     }
 }
