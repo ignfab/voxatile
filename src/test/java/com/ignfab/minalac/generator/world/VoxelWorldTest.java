@@ -53,5 +53,10 @@ public class VoxelWorldTest {
 
         @Override
         public void save(File destination) throws MapWriteException {}
+
+        @Override
+        public VoxelWorldTile newTile(WorldBBox3d limits) {
+            throw new UnsupportedOperationException("Unimplemented method 'newTile'");
+        }
     }
 }

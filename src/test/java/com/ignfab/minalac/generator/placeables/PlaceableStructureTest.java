@@ -3,14 +3,14 @@ package com.ignfab.minalac.generator.placeables;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelType;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorldTile;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 public class PlaceableStructureTest {
 
     @Test
     public void testPlace() {
-        TestingVoxelWorld world = new TestingVoxelWorld(new WorldBBox3d(-1, -2, -3, 3, 3, 3));
+        TestingVoxelWorldTile tile = new TestingVoxelWorldTile(new WorldBBox3d(-1, -2, -3, 3, 3, 3));
 
         VoxelType vtA = new TestingVoxelType("A");
         VoxelType vtB = new TestingVoxelType("B");
@@ -18,7 +18,7 @@ public class PlaceableStructureTest {
         VoxelType vtD = new TestingVoxelType("D");
         VoxelType vtE = new TestingVoxelType("E");
 
-        // World voxel configuration
+        // Voxel configuration
         /* z :    -2   -1
                 +---+ +---+
         y       |AAA| |  A|
@@ -27,9 +27,9 @@ public class PlaceableStructureTest {
         + - > x +---+ +---+ */
         for (int x = -1; x <= 1; x++)
             for (int y = -2; y <= 0; y++)
-                vtA.place(world, x, y, -2); // layer of A at z = -2
-        vtA.place(world, 1, 0, -1); // |  A| at z = -1 & y = 0
-        vtA.place(world, 1, -2, -1); // |  A| at z = -1 & y = -2
+                vtA.place(tile, x, y, -2); // layer of A at z = -2
+        vtA.place(tile, 1, 0, -1); // |  A| at z = -1 & y = 0
+        vtA.place(tile, 1, -2, -1); // |  A| at z = -1 & y = -2
 
         // Structure voxel configuration
         /* z:     -1    0     1
@@ -60,7 +60,7 @@ public class PlaceableStructureTest {
         structure.set(-1, 1, 1, vtB);
 
         // Structure is placed at the center of the world
-        structure.place(world, 0, -1, -2);
+        structure.place(tile, 0, -1, -2);
 
         // Expected outcome
         /* z:     -3   -2    -1
@@ -72,65 +72,65 @@ public class PlaceableStructureTest {
 
         // z = -3
         // y = 0 : |BBB|
-        world.assertVoxel("B", -1, 0, -3);
-        world.assertVoxel("B", 0, 0, -3);
-        world.assertVoxel("B", 1, 0, -3);
+        tile.assertVoxel("B", -1, 0, -3);
+        tile.assertVoxel("B", 0, 0, -3);
+        tile.assertVoxel("B", 1, 0, -3);
 
         // y = -1 : |B B|
-        world.assertVoxel("B", -1, -1, -3);
-        world.assertVoxelNull(0, -1, -3);
-        world.assertVoxel("B", 1, -1, -3);
+        tile.assertVoxel("B", -1, -1, -3);
+        tile.assertVoxelNull(0, -1, -3);
+        tile.assertVoxel("B", 1, -1, -3);
 
         // y = -2 : |  B|
-        world.assertVoxelNull(-1, -2, -3);
-        world.assertVoxelNull(0, -2, -3);
-        world.assertVoxel("B", 1, -2, -3);
+        tile.assertVoxelNull(-1, -2, -3);
+        tile.assertVoxelNull(0, -2, -3);
+        tile.assertVoxel("B", 1, -2, -3);
 
         // z = -2
         // y = 0 : |AEA|
-        world.assertVoxel("A", -1, 0, -2);
-        world.assertVoxel("E", 0, 0, -2);
-        world.assertVoxel("A", 1, 0, -2);
+        tile.assertVoxel("A", -1, 0, -2);
+        tile.assertVoxel("E", 0, 0, -2);
+        tile.assertVoxel("A", 1, 0, -2);
 
         // y = -1 : |CDE|
-        world.assertVoxel("C", -1, -1, -2);
-        world.assertVoxel("D", 0, -1, -2);
-        world.assertVoxel("E", 1, -1, -2);
+        tile.assertVoxel("C", -1, -1, -2);
+        tile.assertVoxel("D", 0, -1, -2);
+        tile.assertVoxel("E", 1, -1, -2);
 
         // y = -2 : |ACA|
-        world.assertVoxel("A", -1, -2, -2);
-        world.assertVoxel("C", 0, -2, -2);
-        world.assertVoxel("A", 1, -2, -2);
+        tile.assertVoxel("A", -1, -2, -2);
+        tile.assertVoxel("C", 0, -2, -2);
+        tile.assertVoxel("A", 1, -2, -2);
 
         // z = -1
         // y = 0 : |B A|
-        world.assertVoxel("B", -1, 0, -1);
-        world.assertVoxelNull(0, 0, -1);
-        world.assertVoxel("A", 1, 0, -1);
+        tile.assertVoxel("B", -1, 0, -1);
+        tile.assertVoxelNull(0, 0, -1);
+        tile.assertVoxel("A", 1, 0, -1);
 
         // y = -1 : |   |
-        world.assertVoxelNull(-1, -1, -1);
-        world.assertVoxelNull(0, -1, -1);
-        world.assertVoxelNull(1, -1, -1);
+        tile.assertVoxelNull(-1, -1, -1);
+        tile.assertVoxelNull(0, -1, -1);
+        tile.assertVoxelNull(1, -1, -1);
 
         // y = -2 : |  A|
-        world.assertVoxelNull(-1, -2, -1);
-        world.assertVoxelNull(0, -2, -1);
-        world.assertVoxel("A", 1, -2, -1);
+        tile.assertVoxelNull(-1, -2, -1);
+        tile.assertVoxelNull(0, -2, -1);
+        tile.assertVoxel("A", 1, -2, -1);
     }
 
     @Test
     public void testPlaceWithEmptyStructure() {
-        TestingVoxelWorld world = new TestingVoxelWorld(new WorldBBox3d(3, 4, 5, 2, 1, 1));
+        TestingVoxelWorldTile tile = new TestingVoxelWorldTile(new WorldBBox3d(3, 4, 5, 2, 1, 1));
 
         VoxelType vt = new TestingVoxelType("*");
-        vt.place(world, 4, 4, 5);
+        vt.place(tile, 4, 4, 5);
 
         PlaceableStructure structure = new PlaceableStructure();
-        structure.place(world, 3, 4, 5);
-        structure.place(world, 4, 4, 5);
+        structure.place(tile, 3, 4, 5);
+        structure.place(tile, 4, 4, 5);
 
-        world.assertVoxelNull(3, 4, 5);
-        world.assertVoxel("*", 4, 4, 5);
+        tile.assertVoxelNull(3, 4, 5);
+        tile.assertVoxel("*", 4, 4, 5);
     }
 }

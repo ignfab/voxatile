@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
 import com.ignfab.minalac.generator.placeables.VoxelType;
-import com.ignfab.minalac.generator.world.VoxelWorld;
+import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
  * {@code MTVoxelType} is an abstract class to provide the necessary structure and mechanism in order to implement {@link VoxelType} for Minetest.
@@ -40,9 +40,9 @@ public class MTVoxelType implements VoxelType {
     }
 
     @Override
-    public void place(VoxelWorld world, int x, int y, int z)  {
+    public void place(VoxelWorldTile tile, int x, int y, int z)  {
         // The y-axis in Minetest corresponds, in our chosen coordinate system, to the z-axis, hence the inversion
-        ((MTVoxelWorld) world).set(x, z, y, this);
+        ((MTVoxelWorldTile) tile).set(x, z, y, this);
     }
 
     /**

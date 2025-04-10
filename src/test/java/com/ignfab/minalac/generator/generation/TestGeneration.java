@@ -19,6 +19,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
+import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -101,6 +102,11 @@ public class TestGeneration {
 
         @Override
         public void save(File destination) throws MapWriteException {
+        }
+
+        @Override
+        public VoxelWorldTile newTile(WorldBBox3d limits) {
+            throw new UnsupportedOperationException("Unimplemented method 'newTile'");
         }
     }
 }

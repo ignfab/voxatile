@@ -8,7 +8,7 @@ import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorldTile;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
@@ -44,7 +44,7 @@ public class CopyHeightmapRendererTest {
         ModelSelection selection = new ModelSelection(store, "square", null);
 
         Renderer copyRdr = new CopyHeightmapRenderer(selection, from, to);
-        copyRdr.render(new TestingVoxelWorld(bboxMap.to3d(0, 1)));
+        copyRdr.render(new TestingVoxelWorldTile(bboxMap.to3d(0, 1)));
 
         // Excepted outcome
         /*
@@ -105,7 +105,7 @@ public class CopyHeightmapRendererTest {
 
         Renderer copyRdr = new CopyHeightmapRenderer(selection, from, to);
         // Rendering area covers all BBOX
-        copyRdr.render(new TestingVoxelWorld(new WorldBBox3d(-1, -3, 0, 4, 6, 1)));
+        copyRdr.render(new TestingVoxelWorldTile(new WorldBBox3d(-1, -3, 0, 4, 6, 1)));
 
         // Excepted outcome (Replaced values should be where the "9" are located)
         /*

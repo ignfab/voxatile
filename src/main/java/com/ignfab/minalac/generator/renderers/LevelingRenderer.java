@@ -7,7 +7,7 @@ import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.Voxelizer2d;
-import com.ignfab.minalac.generator.world.VoxelWorld;
+import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
  * Alters floor level to guarantee flat surface under each model.
@@ -40,8 +40,8 @@ public class LevelingRenderer extends ModelRenderer<Voxelizable2d> {
     }
 
     @Override
-    protected void render(Voxelizable2d model, VoxelWorld world) {
-        Voxelizer2d voxelizer = model.voxelize2d(world.limits().to2d());
+    protected void render(Voxelizable2d model, VoxelWorldTile tile) {
+        Voxelizer2d voxelizer = model.voxelize2d(tile.limits().to2d());
 
         // The highest coordinate of the model.
         int zMax = Integer.MIN_VALUE;
@@ -52,7 +52,7 @@ public class LevelingRenderer extends ModelRenderer<Voxelizable2d> {
             WorldCoords2d c = voxel.coords();
             // Flatten the floor for the model by placing filling voxels up to zMax.
             for (int z = heightmap.get(c); z <= zMax; z++)
-                filling.place(world, c.x(), c.y(), z);
+                filling.place(tile, c.x(), c.y(), z);
 
             // Update the heightmap to reflect the leveling
             // and ensure the model is positioned above the new floor level.

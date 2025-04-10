@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.models.ModelImpl;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorldTile;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.world.VoxelWorld;
+import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,7 +20,7 @@ public class ModelRendererTest {
 
     @Test
     public void testRender() {
-        TestingVoxelWorld world = new TestingVoxelWorld(WorldBBox3d.EMPTY);
+        TestingVoxelWorldTile tile = new TestingVoxelWorldTile(new WorldBBox3d(0, 0, 0, 1, 1, 1));
         ModelStore modelStore = new ModelStore();
 
         modelStore.add("digit", new ModelImplTester('1'));
@@ -33,7 +33,7 @@ public class ModelRendererTest {
         assertEquals(0, renderer.modelsRendered.size());
 
         // Not testing rendering area
-        renderer.render(world);
+        renderer.render(tile);
 
         assertTrue(renderer.modelsRendered.contains(new ModelImplTester('1')));
         assertTrue(renderer.modelsRendered.contains(new ModelImplTester('2')));
@@ -44,7 +44,7 @@ public class ModelRendererTest {
         ModelRendererImpl idleRenderer = new ModelRendererImpl(modelStore, "specialCharacter");
         assertEquals(0, idleRenderer.modelsRendered.size());
 
-        idleRenderer.render(world);
+        idleRenderer.render(tile);
 
         assertEquals(0, idleRenderer.modelsRendered.size());
     }
@@ -57,7 +57,7 @@ public class ModelRendererTest {
         }
 
         @Override
-        protected void render(ModelImpl model, VoxelWorld world) {
+        protected void render(ModelImpl model, VoxelWorldTile tile) {
             modelsRendered.add(model);
         }
     }

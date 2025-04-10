@@ -4,7 +4,7 @@ import java.util.Map;
 
 import net.querz.nbt.tag.CompoundTag;
 
-import com.ignfab.minalac.generator.world.VoxelWorld;
+import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
  * {@code MCBlockEntityVoxelType} abstract class represents a Minecraft block with additional data associated with it.
@@ -37,8 +37,8 @@ public abstract class MCBlockEntityVoxelType extends MCVoxelType {
      * {@inheritDoc}
      */
     @Override
-    public void place(VoxelWorld world, int x, int y, int z)  {
-        super.place(world, x, y, z);
+    public void place(VoxelWorldTile tile, int x, int y, int z)  {
+        super.place(tile, x, y, z);
         CompoundTag block = new CompoundTag();
         block.putString("id", type);
         block.putBoolean("keepPacked", false);
@@ -47,6 +47,6 @@ public abstract class MCBlockEntityVoxelType extends MCVoxelType {
         block.putInt("y", z);
         block.putInt("z", -y - 1);
         serialize(block);
-        ((MCVoxelWorld) world).addBlockEntity(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
+        ((MCVoxelWorldTile) tile).addBlockEntity(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
     }
 }

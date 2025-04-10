@@ -13,21 +13,23 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MCVoxelTypeTest {
-    private WorldMock worldMock;
+    private WorldTileMock tileMock;
 
     @BeforeEach
     public void setUp() {
-        worldMock = new WorldMock();
-        worldMock.setLimits(new WorldBBox3d(new WorldCoords3d(-50, -10, 0), new WorldCoords3d(10, 0, 200)));
+        WorldBBox3d limits = new WorldBBox3d(new WorldCoords3d(-50, -10, 0), new WorldCoords3d(10, 0, 200));
+        MCVoxelWorld world = new MCVoxelWorld();
+        world.setLimits(limits);
+        tileMock = new WorldTileMock(world, limits);
     }
 
     @Test
     public void testPlace() {
         MCVoxelType air = new MCVoxelType("minecraft:air");
-        air.place(worldMock, 3, -7, 64);
+        air.place(tileMock, 3, -7, 64);
         CompoundTag expectedAir = new CompoundTag();
         expectedAir.putString("Name", "minecraft:air");
-        worldMock.assertBlockStateAt(3, 64, 6, expectedAir); // X/Y/Z => X/Z/-Y
+        tileMock.assertBlockStateAt(3, 64, 6, expectedAir); // X/Y/Z => X/Z/-Y
 
         MCVoxelType stairs = new MCVoxelType("minecraft:oak_stairs", Map.of(
             "facing", "north",
@@ -35,7 +37,7 @@ public class MCVoxelTypeTest {
             "shape", "straight",
             "waterlogged", "false"
         ));
-        stairs.place(worldMock, -43, 0, 192);
+        stairs.place(tileMock, -43, 0, 192);
         CompoundTag expectedStairs = new CompoundTag();
         expectedStairs.putString("Name", "minecraft:oak_stairs");
         CompoundTag properties = new CompoundTag();
@@ -44,11 +46,15 @@ public class MCVoxelTypeTest {
         properties.putString("shape", "straight");
         properties.putString("waterlogged", "false");
         expectedStairs.put("Properties", properties);
-        worldMock.assertBlockStateAt(-43, 192, -1, expectedStairs); // X/Y/Z => X/Z/-Y
+        tileMock.assertBlockStateAt(-43, 192, -1, expectedStairs); // X/Y/Z => X/Z/-Y
     }
 
-    private static final class WorldMock extends MCVoxelWorld {
+    private static final class WorldTileMock extends MCVoxelWorldTile {
         private final Map<String, CompoundTag> blockStates = new HashMap<>();
+
+        WorldTileMock(MCVoxelWorld world, WorldBBox3d limits) {
+            super(world, limits);
+        }
 
         @Override
         void setBlockState(int blockX, int blockY, int blockZ, CompoundTag block)  {

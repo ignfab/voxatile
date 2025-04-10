@@ -3,12 +3,9 @@ package com.ignfab.minalac.generator.outputs.minecraft;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import net.querz.mca.Chunk;
-import net.querz.mca.MCAUtil;
 import net.querz.nbt.io.NBTUtil;
 import net.querz.nbt.tag.CompoundTag;
 import net.querz.nbt.tag.DoubleTag;
@@ -28,7 +25,6 @@ import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
  * Implementation of {@link VoxelWorld} that creates a playable world specifically for Minecraft.
  */
 public class MCVoxelWorld extends VoxelWorld {
-    private final Map<Integer, Region> regions;
     // Note: The two z-component values aren't strictly hard-limits.
     // We can extends from -2032 to 2031 but the client
     // will need higher performances to play the game!
@@ -44,15 +40,16 @@ public class MCVoxelWorld extends VoxelWorld {
      */
     public MCVoxelWorld() {
         super(new VoxelWorldMetadata());
-        regions = new HashMap<>();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public WorldBBox3d maxLimits() {
         return MAX_LIMIT;
+    }
+
+    @Override
+    public MCVoxelWorldTile newTile(WorldBBox3d limits) {
+        return new MCVoxelWorldTile(this, limits);
     }
 
     /**
@@ -65,15 +62,6 @@ public class MCVoxelWorld extends VoxelWorld {
             NBTUtil.write(createLevelData(), new File(destination, "level.dat"), true);
         } catch (IOException e) {
             throw new MapWriteException("Unable to save level.dat", e);
-        }
-        File regionDirectory = new File(destination, "region");
-        regionDirectory.mkdir();
-        for (Region region : regions.values()) {
-            try {
-                region.save(regionDirectory);
-            } catch (IOException e) {
-                throw new MapWriteException("Unable to save region " + region.getFileName(), e);
-            }
         }
     }
 
@@ -458,54 +446,5 @@ public class MCVoxelWorld extends VoxelWorld {
             root.put("Data", data);
         }
         return root;
-    }
-
-    // In-Game coords
-    /* package-private */ synchronized void setBlockState(int blockX, int blockY, int blockZ, CompoundTag block) {
-        // This method is synchronized as a workaround because the Querz library is not thread-safe.
-        // This is a performance-killer!
-        // The only part that really needs synchronization is inside nbt.querz.mca.Section:
-        // During a palette update (adjustBlockStateBits), it should block, until operation
-        // is complete, any other thread trying to add a block to the palette (addToPalette,
-        // after the check for existing block inside palette).
-
-        if (isOutOfLimits(blockX, blockY, blockZ)) return;
-        getOrCreateRegion(blockX, blockZ).file().setBlockStateAt(blockX, blockY, blockZ, block, false);
-    }
-
-    // In-Game coords
-    /* package-private */ void addBlockEntity(int blockX, int blockY, int blockZ, CompoundTag block)  {
-        if (isOutOfLimits(blockX, blockY, blockZ)) return;
-        Chunk chunk = getOrCreateRegion(blockX, blockZ).getOrCreateChunk(MCAUtil.blockToChunk(blockX), MCAUtil.blockToChunk(blockZ));
-        ListTag<CompoundTag> blockEntities = chunk.getTileEntities();
-        if (blockEntities == null) {
-            blockEntities = new ListTag<>(CompoundTag.class);
-            chunk.setTileEntities(blockEntities);
-        }
-        blockEntities.add(block);
-    }
-
-    // In-Game coords
-    private Region getOrCreateRegion(int blockX, int blockZ)  {
-        int regionX = MCAUtil.blockToRegion(blockX);
-        int regionZ = MCAUtil.blockToRegion(blockZ);
-        int key = computeRegionKey(regionX, regionZ);
-        Region region = regions.get(key);
-        if (region == null) {
-            region = new Region(regionX, regionZ);
-            regions.put(key, region);
-        }
-        return region;
-    }
-
-    // In-Game coords
-    private int computeRegionKey(int regionX, int regionZ) {
-        return (regionX << 16) | (regionZ & 0xFFFF);
-    }
-
-    // In-Game coords
-    /* package-private */ boolean isOutOfLimits(int blockX, int blockY, int blockZ) {
-        // (In-Game coords to world coords) X/Z/-Y => X/Y/Z
-        return !limits().contains(blockX, -(blockZ + 1), blockY);
     }
 }

@@ -38,6 +38,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
+import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
  * Main class of Minalac project.
@@ -105,7 +106,9 @@ public final class MinalacGenerator {
         System.out.println("Creation of the map.");
         // Start generation duration
         Instant generationStart = Instant.now();
-        generation.scheduler().start();
+        // One unique tile for now
+        VoxelWorldTile tile = generation.world().newTile(generation.world().limits());
+        generation.scheduler().start(tile);
         try {
             generation.scheduler().waitUntilAllTasksFinished(5, TimeUnit.MINUTES);
         } finally {
@@ -128,6 +131,8 @@ public final class MinalacGenerator {
         metadata.setWorldName("Minalac");
 
         File directory = cli.outputPath().toFile();
+
+        tile.save(directory);
         generation.world().save(directory);
         System.out.println("Total: " + Duration.between(start, Instant.now()).toSeconds() + "s");
         System.out.println("Done");

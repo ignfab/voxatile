@@ -69,17 +69,19 @@ public final class GenerationCreator {
             DataSource dataSource = dataSourceParams.create(generation);
             generation.scheduler().schedule(
                 "source:" + name,
-                () -> dataSource.fetch(generation.world().limits()),
+                dataSource::fetch,
                 dataSourceParams.after
             );
         });
 
         // Renderers scheduling
         params.renderers.forEach((name, rendererParams) -> {
+            System.out.println(rendererParams);
             Renderer renderer = rendererParams.create(generation);
+            System.out.println(renderer);
             generation.scheduler().schedule(
                 "renderer:" + name,
-                () -> renderer.render(generation.world()),
+                renderer::render,
                 rendererParams.after
             );
         });

@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.placeables;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.VoxelWorld;
+import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 public class TestingPlaceable implements Placeable {
 
@@ -17,7 +17,7 @@ public class TestingPlaceable implements Placeable {
     }
 
     @Override
-    public void place(VoxelWorld world, int x, int y, int z) {
+    public void place(VoxelWorldTile tile, int x, int y, int z) {
         timesPlaced++;
         lastPlaced = new WorldCoords3d(x, y, z);
     }

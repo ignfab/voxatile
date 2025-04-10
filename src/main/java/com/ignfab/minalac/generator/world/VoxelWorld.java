@@ -51,7 +51,7 @@ public abstract class VoxelWorld {
     }
 
     /**
-     * Return the maximum limits of the world.
+     * Return the maximum limits of the world (hard limit of the format).
      *
      * @return the {@code WorldBBox3d} representing the maximum limits of the world
      */
@@ -65,6 +65,14 @@ public abstract class VoxelWorld {
     public VoxelWorldMetadata getMetadata() {
         return metadata;
     }
+
+    /**
+     * Creates a new tile for this world (a smaller cubic part).
+     *
+     * @param limits Limit of the new tile
+     * @return The resulting tile.
+     */
+    public abstract VoxelWorldTile newTile(WorldBBox3d limits);
 
     // TODO: There is an inconsistency between the two implementations. When the folder does not exist MTVoxelWorld creates it whereas MCVoxelWorld throws a MapWriteException.
     /**

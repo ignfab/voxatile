@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.placeables;
 
-import com.ignfab.minalac.generator.world.VoxelWorld;
+import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
  * A placeable placing nothing.
@@ -25,5 +25,5 @@ public final class NoVoxel implements Placeable {
      * @param z z-coordinate where to place nothing
      */
     @Override
-    public void place(VoxelWorld world, int x, int y, int z) {}
+    public void place(VoxelWorldTile tile, int x, int y, int z) {}
 }

@@ -12,7 +12,7 @@ import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
  * A data source with a provider, a processor and some (or no) post-processors.
@@ -67,10 +67,10 @@ public class DataSource {
     /**
      * Fetches data from provider, and create and process models.
      *
-     * @param bbox bounding box of region to fetch data for
+     * @param tile tile for which data is fetched (it gives the wanted area)
      */
-    public void fetch(WorldBBox3d bbox) {
-        try (Provider.Result<?> result = provider.provide(bbox)) {
+    public void fetch(VoxelWorldTile tile) {
+        try (Provider.Result<?> result = provider.provide(tile.limits())) {
             processor.initialize(result.crs());
             while (result.hasNext()) {
                 Object data = result.next();

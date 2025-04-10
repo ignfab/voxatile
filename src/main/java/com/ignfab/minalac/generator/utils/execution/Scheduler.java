@@ -8,6 +8,9 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
  * A scheduler is a service managing execution of tasks.
@@ -20,6 +23,8 @@ public class Scheduler {
     // This is important to ensure no problem occurs if two required tasks finishes at the same time
     private final List<ScheduledTask> tasks = Collections.synchronizedList(new ArrayList<>());
 
+    private VoxelWorldTile tile;
+
     // Stores the exception that occurred, if any.
     // Needed to pass the exception between threads
     private TaskFailedException error = null;
@@ -29,31 +34,31 @@ public class Scheduler {
 
     /**
      * Schedules the task to be executed when all conditions are fulfilled.
-     * If the task has no condition, it will be executed at {@link #start()}.
+     * If the task has no condition, it will be executed at {@link #start(VoxelWorldTile)}.
      *
      * @param id the ID of the task
      * @param task the task to be scheduled
      * @param conditions the conditions before the task may run
      */
-    public void schedule(String id, Runnable task, Collection<String> conditions) {
+    public void schedule(String id, Consumer<VoxelWorldTile> task, Collection<String> conditions) {
         schedule(new ScheduledTask(id, task, conditions));
     }
 
     /**
      * Schedules the task to be executed when all conditions are fulfilled.
-     * If the task has no condition, it will be executed at {@link #start()}.
+     * If the task has no condition, it will be executed at {@link #start(VoxelWorldTile)}.
      *
      * @param id the ID of the task
      * @param task the task to be scheduled
      * @param conditions the conditions before the task may run
      */
-    public void schedule(String id, Runnable task, String... conditions) {
+    public void schedule(String id, Consumer<VoxelWorldTile> task, String... conditions) {
         schedule(new ScheduledTask(id, task, conditions));
     }
 
     /**
      * Schedules the task to be executed when all conditions are fulfilled.
-     * If the task has no condition, it will be executed at {@link #start()}.
+     * If the task has no condition, it will be executed at {@link #start(VoxelWorldTile)}.
      *
      * @param task the task to be scheduled
      */
@@ -73,7 +78,7 @@ public class Scheduler {
                 // Name current thread according to task id
                 Thread.currentThread().setName(task.getId());
                 task.setState(ScheduledTaskState.RUNNING);
-                task.run();
+                task.run(tile);
                 task.setState(ScheduledTaskState.FINISHED);
                 // The synchronized block prevents ConcurrentModificationException
                 synchronized (tasks) {
@@ -126,8 +131,11 @@ public class Scheduler {
     /**
      * Starts this scheduler.
      * Any task scheduled without condition will be executed right now.
+     *
+     * @param tile {@link VoxelWorldTile} on which schedule is run
      */
-    public void start() {
+    public void start(VoxelWorldTile tile) {
+        this.tile = tile;
         // Simulates a condition fulfill to trigger tasks without any condition
         this.conditionFulfilled(null);
     }

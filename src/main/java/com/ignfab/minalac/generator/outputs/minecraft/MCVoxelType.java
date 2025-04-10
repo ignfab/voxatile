@@ -5,7 +5,7 @@ import java.util.Map;
 import net.querz.nbt.tag.CompoundTag;
 
 import com.ignfab.minalac.generator.placeables.VoxelType;
-import com.ignfab.minalac.generator.world.VoxelWorld;
+import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
  * {@code MCVoxelType} class provides the necessary structure and mechanism in order to implement {@link VoxelType} for Minecraft.
@@ -46,7 +46,7 @@ public class MCVoxelType implements VoxelType {
      * {@inheritDoc}
      */
     @Override
-    public void place(VoxelWorld world, int x, int y, int z)  {
+    public void place(VoxelWorldTile tile, int x, int y, int z)  {
         CompoundTag block = new CompoundTag();
         block.putString("Name", type);
         if (properties != null) {
@@ -54,6 +54,6 @@ public class MCVoxelType implements VoxelType {
             properties.forEach(state::putString);
             block.put("Properties", state);
         }
-        ((MCVoxelWorld) world).setBlockState(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
+        ((MCVoxelWorldTile) tile).setBlockState(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
     }
 }

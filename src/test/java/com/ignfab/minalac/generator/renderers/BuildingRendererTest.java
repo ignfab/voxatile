@@ -9,7 +9,7 @@ import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
 import com.ignfab.minalac.generator.models.filters.ModelFilterHasMetadata;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorldTile;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelTypeParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
@@ -21,15 +21,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BuildingRendererTest {
     private WorldBBox3d bbox;
-    private TestingVoxelWorld world;
+    private TestingVoxelWorldTile tile;
     private Heightmap heightmap;
     private ModelStore models;
 
     @BeforeEach
     void setUp() {
         bbox = new WorldBBox3d(0, 0, 0, 3, 3, 22);
-        world = new TestingVoxelWorld(bbox);
-        heightmap = new Heightmap(world.limits().to2d(), 0);
+        tile = new TestingVoxelWorldTile(bbox);
+        heightmap = new Heightmap(tile.limits().to2d(), 0);
         models = new ModelStore();
     }
 
@@ -54,9 +54,9 @@ public class BuildingRendererTest {
             new TestingVoxelTypeParams(voxelAName).create(TestingSeed.UNUSED),
             new TestingVoxelTypeParams(voxelBName).create(TestingSeed.UNUSED),
             new TestingVoxelTypeParams(voxelCName).create(TestingSeed.UNUSED)
-        ).render(world));
+        ).render(tile));
 
-        for (WorldCoords3d c : world.limits()) {
+        for (WorldCoords3d c : tile.limits()) {
             int x = c.x();
             int y = c.y();
             int z = c.z();
@@ -69,24 +69,24 @@ public class BuildingRendererTest {
 
             // Roof check
             if (z == expectedHeight)
-                world.assertVoxel(voxelAName, c);
+                tile.assertVoxel(voxelAName, c);
             // Air check
             if (z > expectedHeight)
-                world.assertVoxelNull(c);
+                tile.assertVoxelNull(c);
             // Checks here below the roof of the building
             if (z < expectedHeight) {
                 // Windows check
                 if (x != 1 && y != 1 && z % 4 == 0)
-                    world.assertVoxel(voxelCName, c);
+                    tile.assertVoxel(voxelCName, c);
                 // Floors check
                 if (x == 1 && y == 1 && z % 4 == 2)
-                    world.assertVoxel(voxelAName, c);
+                    tile.assertVoxel(voxelAName, c);
                 // Walls check
                 if (x != 1 && y != 1 && z % 4 != 0)
-                    world.assertVoxel(voxelBName, c);
+                    tile.assertVoxel(voxelBName, c);
                 // Air check between two floors
                 if (x == 1 && y == 1 && z % 4 != 2)
-                    world.assertVoxelNull(c);
+                    tile.assertVoxelNull(c);
             }
         }
     }
@@ -108,7 +108,7 @@ public class BuildingRendererTest {
             placeable,
             placeable,
             placeable
-        ).render(world));
+        ).render(tile));
     }
 
     /**
@@ -130,9 +130,9 @@ public class BuildingRendererTest {
             placeable,
             placeable,
             placeable
-        ).render(world));
+        ).render(tile));
 
-        for (WorldCoords3d c : world.limits())
-            world.assertVoxelNull(c);
+        for (WorldCoords3d c : tile.limits())
+            tile.assertVoxelNull(c);
     }
 }

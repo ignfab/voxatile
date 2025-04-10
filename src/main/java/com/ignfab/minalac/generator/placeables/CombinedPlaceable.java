@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.placeables;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.ignfab.minalac.generator.world.VoxelWorld;
+import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
  * A placeable that is a combination of placeables.
@@ -22,7 +22,7 @@ public class CombinedPlaceable implements Placeable {
     }
 
     @Override
-    public void place(VoxelWorld world, int x, int y, int z) {
-        placeables.forEach((placeable) -> placeable.place(world, x, y, z));
+    public void place(VoxelWorldTile tile, int x, int y, int z) {
+        placeables.forEach((placeable) -> placeable.place(tile, x, y, z));
     }
 }

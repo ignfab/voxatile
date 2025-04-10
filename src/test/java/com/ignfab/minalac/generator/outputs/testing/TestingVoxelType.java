@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.outputs.testing;
 
 import com.ignfab.minalac.generator.placeables.VoxelType;
-import com.ignfab.minalac.generator.world.VoxelWorld;
+import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
  * A dummy voxelType implementation for {@code TestingVoxelWorld}.
@@ -30,8 +30,8 @@ public class TestingVoxelType implements VoxelType {
      * @param z z-coordinate where to place voxel
      */
     @Override
-    public void place(VoxelWorld world, int x, int y, int z) {
-        ((TestingVoxelWorld) world).set(x, y, z, this);
+    public void place(VoxelWorldTile tile, int x, int y, int z) {
+        ((TestingVoxelWorldTile) tile).set(x, y, z, this);
     }
 
     /**

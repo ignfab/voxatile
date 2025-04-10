@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.renderers.Renderer;
+import com.ignfab.minalac.generator.renderers.TestingRenderer;
 
 /**
  * A RendererParams class for testing purposes.
@@ -34,6 +35,6 @@ public class TestingRendererParams extends RendererParams {
 
     @Override
     public Renderer create(Generation generation) {
-        return null;
+        return new TestingRenderer();
     }
 }

@@ -10,6 +10,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.world.VoxelWorldTile;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SchedulerTest {
@@ -24,11 +26,11 @@ public class SchedulerTest {
     public void testTasksWithoutCondition() {
         List<String> actual = Collections.synchronizedList(new ArrayList<>());
 
-        scheduler.schedule("a", () -> actual.add("a"));
-        scheduler.schedule("b", () -> actual.add("b"));
-        scheduler.schedule("c", () -> actual.add("c"));
+        scheduler.schedule("a", (VoxelWorldTile tile) -> actual.add("a"));
+        scheduler.schedule("b", (VoxelWorldTile tile) -> actual.add("b"));
+        scheduler.schedule("c", (VoxelWorldTile tile) -> actual.add("c"));
 
-        scheduler.start();
+        scheduler.start(null);
         assertDoesNotThrow(() -> scheduler.waitUntilAllTasksFinished(50, TimeUnit.MILLISECONDS));
         scheduler.shutdown();
 
@@ -41,11 +43,11 @@ public class SchedulerTest {
     public void testTasksWithCondition() {
         List<String> actual = Collections.synchronizedList(new ArrayList<>());
 
-        scheduler.schedule("1", () -> actual.add("1"));
-        scheduler.schedule("2", () -> actual.add("2"), "1");
-        scheduler.schedule("3", () -> actual.add("3"), "1", "2");
+        scheduler.schedule("1", (VoxelWorldTile tile) -> actual.add("1"));
+        scheduler.schedule("2", (VoxelWorldTile tile) -> actual.add("2"), "1");
+        scheduler.schedule("3", (VoxelWorldTile tile) -> actual.add("3"), "1", "2");
 
-        scheduler.start();
+        scheduler.start(null);
         assertDoesNotThrow(() -> scheduler.waitUntilAllTasksFinished(50, TimeUnit.MILLISECONDS));
         scheduler.shutdown();
 
@@ -55,12 +57,12 @@ public class SchedulerTest {
 
     @Test
     public void testFailingTask() {
-        ScheduledTask task = new ScheduledTask("id", () -> {
+        ScheduledTask task = new ScheduledTask("id", (VoxelWorldTile tile) -> {
             throw new RuntimeException("Boom!");
         });
         scheduler.schedule(task);
 
-        scheduler.start();
+        scheduler.start(null);
         TaskFailedException e = assertThrows(TaskFailedException.class, () -> scheduler.waitUntilAllTasksFinished(50, TimeUnit.MILLISECONDS));
         scheduler.shutdown();
 
@@ -70,7 +72,7 @@ public class SchedulerTest {
     @Test
     public void testLongTaskTimedOut() {
         AtomicBoolean executed = new AtomicBoolean(false);
-        scheduler.schedule("id", () -> {
+        scheduler.schedule("id", (VoxelWorldTile tile) -> {
             try {
                 Thread.sleep(10_000); // Completes after 10s
             } catch (InterruptedException e) {
@@ -79,7 +81,7 @@ public class SchedulerTest {
             executed.set(true); // Should never happen because timeout is 50ms
         });
 
-        scheduler.start();
+        scheduler.start(null);
         assertDoesNotThrow(() -> scheduler.waitUntilAllTasksFinished(50, TimeUnit.MILLISECONDS));
         scheduler.shutdown();
 

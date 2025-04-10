@@ -19,18 +19,23 @@ public class MCVoxelWorldTest {
 
     @Test
     public void testSave() {
-        MCVoxelWorld world = new MCVoxelWorld();
-        world.setLimits(new WorldBBox3d(
+        WorldBBox3d limits = new WorldBBox3d(
             new WorldCoords3d(-16, -16, 0),
-            new WorldCoords3d(15, 15, 255)));
+            new WorldCoords3d(15, 15, 255));
+        MCVoxelWorld world = new MCVoxelWorld();
+        world.setLimits(limits);
+        MCVoxelWorldTile tile = new MCVoxelWorldTile(world, limits);
+
         world.getMetadata().setWorldName("testSave");
         world.getMetadata().setSpawn(new WorldCoords3d(0, 64, 0));
         CompoundTag block = new CompoundTag();
         block.putString("Name", "minecraft:stone");
 
-        world.setBlockState(0, 64, 0, block); // Region (0, 0)
-        world.setBlockState(0, 64, -1, block); // Region (0, -1)
 
+        tile.setBlockState(0, 64, 0, block); // Region (0, 0)
+        tile.setBlockState(0, 64, -1, block); // Region (0, -1)
+
+        assertDoesNotThrow(() -> tile.save(dir));
         assertDoesNotThrow(() -> world.save(dir));
         File[] files = dir.listFiles();
         assertNotNull(files);
@@ -51,24 +56,5 @@ public class MCVoxelWorldTest {
                 default -> fail("Unexpected file: " + file.getName());
             }
         }
-    }
-
-    @Test
-    public void testIsOutOfLimits() {
-        MCVoxelWorld world = new MCVoxelWorld();
-        world.setLimits(new WorldBBox3d(new WorldCoords3d(-10, -20, 0), new WorldCoords3d(20, 30, 40)));
-
-        // X/Y/Z => X/Z/-Y
-        assertFalse(world.isOutOfLimits(-10, 0, 19));
-        assertFalse(world.isOutOfLimits(20, 40, -31));
-
-        assertFalse(world.isOutOfLimits(5, 5, -21));
-
-        assertTrue(world.isOutOfLimits(21, 40, -31));
-        assertTrue(world.isOutOfLimits(20, 41, -31));
-        assertTrue(world.isOutOfLimits(20, 40, -32));
-        assertTrue(world.isOutOfLimits(-11, 0, 19));
-        assertTrue(world.isOutOfLimits(-10, -1, 19));
-        assertTrue(world.isOutOfLimits(-10, 0, 20));
     }
 }
