@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.tasks.TileTask;
-import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A TileTaskParams class for testing purposes.
@@ -46,6 +46,6 @@ public class TestingTaskParams extends TileTaskParams {
      */
     static class Task implements TileTask {
         @Override
-        public void run(VoxelTile tile) {}
+        public void run(GenerationTile tile) {}
     }
 }

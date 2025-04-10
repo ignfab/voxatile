@@ -1,10 +1,8 @@
-package com.ignfab.minalac.generator.generation.heighmaps;
+package com.ignfab.minalac.generator.generation.heightmaps.computed.operators;
 
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
-import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
-import com.ignfab.minalac.generator.generation.heightmaps.SimpleBinaryOperatorHeightmap;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,12 +23,12 @@ public class SimpleBinaryOperatorHeightmapTest {
         first.set(0, 0, 7);
         first.set(0, 1, 8);
 
-        ReadableHeightmap map = new SimpleBinaryOperatorHeightmap(first, second, Integer::sum);
+        BinaryHeightmapOperator operator = new BinaryHeightmapOperator.Simple(Integer::sum);
 
         int expectedValue = 2;
         for (int x = -1; x <= 0; x++)
             for (int y = -2; y <= 1; y++) {
-                assertEquals(expectedValue, map.get(x, y));
+                assertEquals(expectedValue, operator.compute(x, y, first, second));
                 expectedValue++;
             }
     }

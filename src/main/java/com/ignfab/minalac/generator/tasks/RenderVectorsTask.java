@@ -1,6 +1,8 @@
 package com.ignfab.minalac.generator.tasks;
 
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.placeables.Nothing;
@@ -9,7 +11,6 @@ import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LineVoxel2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
-import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A {@link TileTask} placing things on vector models.
@@ -18,7 +19,7 @@ import com.ignfab.minalac.generator.world.VoxelTile;
  * Placement can be done on borders (for all sorts of geometry) and/or inside (for polygon geometries) or everywhere.
  */
 public class RenderVectorsTask extends ModelTask<ShapesVoxelizable2d> {
-    private final ReadableHeightmap heightmap;
+    private final ReadableHeightmapSpec heightmapSpec;
 
     // What to place inside and on borders of geometries
     private final Placeable inside;
@@ -32,15 +33,16 @@ public class RenderVectorsTask extends ModelTask<ShapesVoxelizable2d> {
      * @param inside What to place inside geometries
      * @param borders What to place on geometries borders
      */
-    public RenderVectorsTask(ModelSelection selection, ReadableHeightmap heightmap, Placeable inside, Placeable borders) {
+    public RenderVectorsTask(ModelSelection selection, ReadableHeightmapSpec heightmap, Placeable inside, Placeable borders) {
         super(ShapesVoxelizable2d.class, selection);
-        this.heightmap = heightmap;
+        heightmapSpec = heightmap;
         this.inside = inside;
         this.borders = borders;
     }
 
     @Override
-    protected void run(ShapesVoxelizable2d model, VoxelTile tile) {
+    protected void run(ShapesVoxelizable2d model, GenerationTile tile) {
+        ReadableHeightmap heightmap = tile.heightmaps().get(heightmapSpec);
         ShapesVoxelizer2d voxelizer = model.voxelize2d(tile.limits().to2d());
 
         if (inside != Nothing.INSTANCE) {
@@ -48,7 +50,7 @@ public class RenderVectorsTask extends ModelTask<ShapesVoxelizable2d> {
             if (inside == borders) {
                 for (Positioned2d voxel : voxelizer) {
                     WorldCoords2d c = voxel.coords();
-                    inside.place(tile, c.x(), c.y(), heightmap.get(c));
+                    inside.place(tile.voxels(), c.x(), c.y(), heightmap.get(c));
                 }
                 return;
             }
@@ -56,7 +58,7 @@ public class RenderVectorsTask extends ModelTask<ShapesVoxelizable2d> {
             // Iteration over inside voxels
             for (Positioned2d voxel : voxelizer.inside()) {
                 WorldCoords2d c = voxel.coords();
-                inside.place(tile, c.x(), c.y(), heightmap.get(c));
+                inside.place(tile.voxels(), c.x(), c.y(), heightmap.get(c));
             }
         }
 
@@ -64,7 +66,7 @@ public class RenderVectorsTask extends ModelTask<ShapesVoxelizable2d> {
             // Iteration over border voxels
             for (LineVoxel2d voxel : voxelizer.borders()) {
                 WorldCoords2d c = voxel.coords();
-                borders.place(tile, c.x(), c.y(), heightmap.get(c));
+                borders.place(tile.voxels(), c.x(), c.y(), heightmap.get(c));
             }
     }
 }

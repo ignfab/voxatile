@@ -2,13 +2,13 @@ package com.ignfab.minalac.generator.tasks;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
@@ -17,7 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CopyHeightmapTaskTest {
     @Test
     public void testRenderHeightmapSameBoundingBox() {
-        WorldBBox2d bboxMap = new WorldBBox2d(-1, -1, 3, 4);
+        WorldBBox3d bbox = new WorldBBox3d(-1, -1, 0, 3, 4, 1);
+        TestingGenerationTile tile = new TestingGenerationTile(bbox);
+        TestingHeightmap from = tile.newStoredHeightmap("from", 0);
+        TestingHeightmap to = tile.newStoredHeightmap("to", 0);
+
         /*
           ^
           y
@@ -28,7 +32,7 @@ public class CopyHeightmapTaskTest {
           |---------x>
             -1  0  1
         */
-        Heightmap from = new Heightmap(bboxMap, 0);
+
         int value = 1;
         for (int y = 2; y >= -1; y--)
             for (int x = -1; x <= 1; x++) {
@@ -36,15 +40,12 @@ public class CopyHeightmapTaskTest {
                 value++;
             }
 
-        Heightmap to = new Heightmap(bboxMap, 0);
-
         Model model = new TestingRectangleShapeVoxelizable2dModel(new WorldBBox2d(0, 1, 2, 2));
         ModelStore store = new ModelStore();
         store.add("square", model);
         ModelSelection selection = new ModelSelection(store, "square", null);
 
-        TileTask copyRdr = new CopyHeightmapTask(selection, from, to);
-        copyRdr.run(new TestingVoxelTile(bboxMap.to3d(0, 1)));
+        new CopyHeightmapTask(selection, from.spec(), to.spec()).run(tile);
 
         // Excepted outcome
         /*
@@ -74,8 +75,12 @@ public class CopyHeightmapTaskTest {
 
     @Test
     public void testRenderHeightmapDifferentBoundingBox() {
-        Heightmap from = new Heightmap(new WorldBBox2d(-1, -1, 3, 4), 1);
-        Heightmap to = new Heightmap(new WorldBBox2d(-1, -3, 3, 4), 2);
+        WorldBBox3d bbox = new WorldBBox3d(-1, -1, 0, 3, 4, 1);
+        TestingGenerationTile tile = new TestingGenerationTile(bbox);
+
+        TestingHeightmap from = tile.newStoredHeightmap("from", new WorldBBox2d(-1, -1, 3, 4), 1);
+
+        TestingHeightmap to = tile.newStoredHeightmap("to", new WorldBBox2d(-1, -3, 3, 4), 2);
 
         Model model = new TestingRectangleShapeVoxelizable2dModel(new WorldBBox2d(0, 0, 2, 3));
         ModelStore store = new ModelStore();
@@ -103,9 +108,7 @@ public class CopyHeightmapTaskTest {
             -1  0  1  2
         */
 
-        TileTask copyRdr = new CopyHeightmapTask(selection, from, to);
-        // Rendering area covers all BBOX
-        copyRdr.run(new TestingVoxelTile(new WorldBBox3d(-1, -3, 0, 4, 6, 1)));
+        new CopyHeightmapTask(selection, from.spec(), to.spec()).run(tile);
 
         // Excepted outcome (Replaced values should be where the "9" are located)
         /*

@@ -7,20 +7,20 @@ import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.generation.GenerationTile;
+import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.models.ModelImpl;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.world.VoxelTile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ModelTaskTest {
 
     @Test
-    public void testRender() {
-        TestingVoxelTile tile = new TestingVoxelTile(WorldBBox3d.ORIGIN);
+    public void testRun() {
+        GenerationTile tile = new TestingGenerationTile(WorldBBox3d.ORIGIN);
         ModelStore modelStore = new ModelStore();
 
         modelStore.add("digit", new ModelImplTester('1'));
@@ -57,7 +57,7 @@ public class ModelTaskTest {
         }
 
         @Override
-        protected void run(ModelImpl model, VoxelTile tile) {
+        protected void run(ModelImpl model, GenerationTile tile) {
             modelsRendered.add(model);
         }
     }

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
+import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.tasks.PopulateHeightmapTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
@@ -24,7 +24,7 @@ public class PopulateHeightmapTaskParams extends TileTaskParams {
      * The name of the heightmap to use (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public StoredHeightmapParams heightmap;
+    public WritableHeightmapParams heightmap;
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
@@ -33,7 +33,7 @@ public class PopulateHeightmapTaskParams extends TileTaskParams {
      * @param heightmap the name of the heightmap to use.
      */
     @ConstructorProperties({"models", "heightmap"})
-    public PopulateHeightmapTaskParams(ModelSelectionParams models, StoredHeightmapParams heightmap) {
+    public PopulateHeightmapTaskParams(ModelSelectionParams models, WritableHeightmapParams heightmap) {
         this.models = models;
         this.heightmap = heightmap;
     }
@@ -48,7 +48,7 @@ public class PopulateHeightmapTaskParams extends TileTaskParams {
     public TileTask create(Generation generation) {
         return new PopulateHeightmapTask(
             models.create(generation.models()),
-            heightmap.create(generation)
+            heightmap.create(generation.heightmaps())
         );
     }
 }

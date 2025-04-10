@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.util.AffineTransformation;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
 import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.models.FloatMatrixModel;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
@@ -20,6 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PopulateHeightmapTaskTest {
     @Test
     public void test() throws TransformException {
+        TestingGenerationTile tile = new TestingGenerationTile(new WorldBBox3d(-1, -2, 0, 3, 3, 1));
+        TestingHeightmap heightmap = tile.newStoredHeightmap("heightmap", 0);
+
         MapToWorldConverter converter = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
         // Beware, Y is upside down in this matrix
         float[] values = {
@@ -36,11 +39,7 @@ public class PopulateHeightmapTaskTest {
         store.add("matrix", model);
         ModelSelection selection = new ModelSelection(store, "matrix", null);
 
-        Heightmap heightmap = new Heightmap(-1, -2, 3, 3, 0);
-
-        PopulateHeightmapTask task = new PopulateHeightmapTask(selection, heightmap);
-
-        task.run(new TestingVoxelTile(new WorldBBox3d(-1, -2, 0, 3, 3, 1)));
+        new PopulateHeightmapTask(selection, heightmap.spec()).run(tile);
 
         assertValue(0, heightmap, -1, -2);
         assertValue(0, heightmap, 0, -2);

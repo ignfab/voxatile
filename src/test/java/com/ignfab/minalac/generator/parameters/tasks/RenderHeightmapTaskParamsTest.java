@@ -6,11 +6,11 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
-import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
+import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.placeables.TestingPlaceableParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
@@ -24,7 +24,7 @@ public class RenderHeightmapTaskParamsTest {
     @Test
     public void testDeserializeAt() {
         Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
-        generation.heightmaps().add("ground", new Heightmap(0, 0, 1, 1, 5));
+        generation.heightmaps().add(new HeightmapDeclaration("ground", 5));
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         mapper.registerSubtypes(new NamedType(RenderHeightmapTaskParams.class, "heightmapRenderer"));
@@ -38,7 +38,7 @@ public class RenderHeightmapTaskParamsTest {
             """,
             mapper
         ));
-        assertInstanceOf(StoredHeightmapParams.class, params.at);
+        assertInstanceOf(WritableHeightmapParams.class, params.at);
         assertEquals("somethingInvisible",  assertInstanceOf(TestingVoxelParams.class, params.place).name);
 
         assertDoesNotThrow(params::validate);
@@ -48,8 +48,8 @@ public class RenderHeightmapTaskParamsTest {
     @Test
     public void testDeserializeMinMax() {
         Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
-        generation.heightmaps().add("water", new Heightmap(0, 0, 1, 1, 5));
-        generation.heightmaps().add("ground", new Heightmap(0, 0, 1, 1, 25));
+        generation.heightmaps().add(new HeightmapDeclaration("water", 5));
+        generation.heightmaps().add(new HeightmapDeclaration("ground", 25));
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         mapper.registerSubtypes(new NamedType(RenderHeightmapTaskParams.class, "heightmapRenderer"));
@@ -64,8 +64,8 @@ public class RenderHeightmapTaskParamsTest {
             """,
             mapper
         ));
-        assertInstanceOf(StoredHeightmapParams.class, params.minimum);
-        assertInstanceOf(StoredHeightmapParams.class, params.maximum);
+        assertInstanceOf(WritableHeightmapParams.class, params.minimum);
+        assertInstanceOf(WritableHeightmapParams.class, params.maximum);
         assertEquals("somethingInvisible",  assertInstanceOf(TestingVoxelParams.class, params.place).name);
 
         assertDoesNotThrow(params::validate);

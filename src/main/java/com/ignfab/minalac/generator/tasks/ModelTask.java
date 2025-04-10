@@ -1,8 +1,8 @@
 package com.ignfab.minalac.generator.tasks;
 
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A {@link TileTask} running on a {@link ModelSelection}.
@@ -19,7 +19,7 @@ public abstract class ModelTask<M> implements TileTask {
     }
 
     @Override
-    public void run(VoxelTile tile) {
+    public void run(GenerationTile tile) {
         for (Model model : selection)
             if (cls.isInstance(model))
                 run(cls.cast(model), tile);
@@ -31,5 +31,5 @@ public abstract class ModelTask<M> implements TileTask {
      * @param model concerned model
      * @param tile tile to render into
      */
-    protected abstract void run(M model, VoxelTile tile);
+    protected abstract void run(M model, GenerationTile tile);
 }

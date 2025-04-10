@@ -8,8 +8,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.parameters.ParamsTester;
-import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
+import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 
@@ -46,7 +46,7 @@ public class RenderBuildingsTaskParamsTest {
         window: voxelC
         """, mapper));
         assertEquals("building", params.models.type);
-        assertEquals("ground", assertInstanceOf(StoredHeightmapParams.class, params.heightmap).stored);
+        assertEquals("ground", assertInstanceOf(WritableHeightmapParams.class, params.heightmap).stored);
         assertEquals("voxelA", assertInstanceOf(TestingVoxelParams.class, params.roof).name);
         assertEquals("voxelB", assertInstanceOf(TestingVoxelParams.class, params.wall).name);
         assertEquals("voxelC", assertInstanceOf(TestingVoxelParams.class, params.window).name);

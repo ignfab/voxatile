@@ -5,13 +5,10 @@ import java.beans.ConstructorProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
-
 /**
  * A {@code CustomHeightmapParams} and a {@code StoredHeightmapParams} for testing purposes.
  */
-public class TestingHeightmapParams extends StoredHeightmapParams {
+public class TestingHeightmapParams extends WritableHeightmapParams {
     /**
      * An invalid testing heightmap.
      */
@@ -41,10 +38,5 @@ public class TestingHeightmapParams extends StoredHeightmapParams {
     public void validate() {
         if (requiredField.isBlank())
             throw new IllegalArgumentException();
-    }
-
-    @Override
-    public Heightmap create(Generation generation) {
-        return null;
     }
 }

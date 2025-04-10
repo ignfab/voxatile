@@ -1,4 +1,6 @@
-package com.ignfab.minalac.generator.generation.heightmaps;
+package com.ignfab.minalac.generator.generation.heightmaps.computed.operators;
+
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 
 /**
  * Takes a heightmap and transforms its values to Manhattan distances.
@@ -6,39 +8,38 @@ package com.ignfab.minalac.generator.generation.heightmaps;
  * The value is capped at {@code maximumDistance}.
  * The provided heightmap remains unchanged and the transformation is done dynamically each time the get method is called.
  */
-public class CappedManhattanHeightmap extends UnaryOperatorHeightmap {
+public class CappedManhattanHeightmapOperator implements UnaryHeightmapOperator {
     private final int maximumDistance;
     private final int targetValue;
 
     /**
-     * Creates a new {@link CappedManhattanHeightmap}.
+     * Creates a new {@link CappedManhattanHeightmapOperator}.
      *
-     * @param base the base heightmap
      * @param maximumDistance the maximum allowed distance
      * @param targetValue the value used for distance calculations
      */
-    public CappedManhattanHeightmap(ReadableHeightmap base, int maximumDistance, int targetValue) {
-        super(base);
+    public CappedManhattanHeightmapOperator(int maximumDistance, int targetValue) {
         this.maximumDistance = maximumDistance;
         this.targetValue = targetValue;
     }
 
     @Override
-    public int get(int x, int y) {
-        if (isTargetValue(x, y))
+    public int compute(int x, int y, ReadableHeightmap operand) {
+        if (isTargetValue(x, y, operand))
             return 0;
         for (int distance = 1; distance < maximumDistance; distance++) {
             for (int i = 0; i < distance; i++)
-                if (isTargetValue(x + i, y + distance - i)
-                    || isTargetValue(x - i + distance, y - i)
-                    || isTargetValue(x - i, y - distance + i)
-                    || isTargetValue(x - distance + i, y + i))
+                if (isTargetValue(x + i, y + distance - i, operand)
+                    || isTargetValue(x - i + distance, y - i, operand)
+                    || isTargetValue(x - i, y - distance + i, operand)
+                    || isTargetValue(x - distance + i, y + i, operand))
                     return distance;
         }
         return maximumDistance;
     }
 
-    private boolean isTargetValue(int x, int y) {
-        return bbox().contains(x, y) && base.get(x, y) == targetValue;
+    private boolean isTargetValue(int x, int y, ReadableHeightmap operand) {
+        return operand.bbox().contains(x, y) && operand.get(x, y) == targetValue;
     }
 }
+

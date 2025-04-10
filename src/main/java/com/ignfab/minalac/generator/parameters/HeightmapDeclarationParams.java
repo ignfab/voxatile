@@ -2,17 +2,16 @@ package com.ignfab.minalac.generator.parameters;
 
 import java.beans.ConstructorProperties;
 
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
 
 /**
- * Represents the parameters of a type of {@link Heightmap}.
+ * Parameters for a {@link HeightmapDeclaration}.
  */
-public class HeightmapParams {
+public class HeightmapDeclarationParams {
     /**
      * The default value for all heightmap cells.
      * This field is required.
-     * When initialized by {@link HeightmapParams}:
+     * When initialized by {@link HeightmapDeclarationParams}:
      * <ul>
      *     <li>"minimal" and "min" are transformed to {@link Integer#MIN_VALUE}</li>
      *     <li>"maximal" and "max" are transformed to {@link Integer#MAX_VALUE}</li>
@@ -30,7 +29,7 @@ public class HeightmapParams {
      * @throws IllegalArgumentException if {@code defaultValue} is not a valid integer string or is not "minimal", "min", "maximal" or "max"
      */
     @ConstructorProperties({"default"})
-    public HeightmapParams(String defaultValue) throws ParseException {
+    public HeightmapDeclarationParams(String defaultValue) throws ParseException {
         this.defaultValue = switch (defaultValue) {
             case "minimal", "min" -> Integer.MIN_VALUE;
             case "maximal", "max" -> Integer.MAX_VALUE;
@@ -52,12 +51,12 @@ public class HeightmapParams {
     public void validate() throws IllegalArgumentException {}
 
     /**
-     * Creates the corresponding {@code Heightmap}.
+     * Creates the corresponding {@code Heightmap} declaration.
      *
-     * @param generation the generation context.
-     * @return the corresponding heightmap
+     * @param name name of the stored heightmap
+     * @return the corresponding heightmap declaration
      */
-    public Heightmap create(Generation generation) {
-        return new Heightmap(generation.world().limits().to2d(), defaultValue);
+    public HeightmapDeclaration create(String name) {
+        return new HeightmapDeclaration(name, defaultValue);
     }
 }

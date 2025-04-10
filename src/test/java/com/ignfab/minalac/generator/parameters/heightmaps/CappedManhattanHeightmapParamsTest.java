@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JacksonException;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
@@ -18,7 +18,7 @@ public class CappedManhattanHeightmapParamsTest {
     @Test
     public void testDeserialize() {
         Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
-        generation.heightmaps().add("ground", new Heightmap(0, 0, 1, 1, 0));
+        generation.heightmaps().add(new HeightmapDeclaration("ground", 0));
 
         CappedManhattanHeightmapParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(
             CappedManhattanHeightmapParams.class,
@@ -28,12 +28,12 @@ public class CappedManhattanHeightmapParamsTest {
             targetValue: 4
             """
         ));
-        assertInstanceOf(StoredHeightmapParams.class, params.manhattan);
+        assertInstanceOf(WritableHeightmapParams.class, params.manhattan);
         assertEquals(5, params.maximumDistance);
         assertEquals(4, params.targetValue);
 
         assertDoesNotThrow(params::validate);
-        assertDoesNotThrow(() -> params.create(generation));
+        assertDoesNotThrow(() -> params.create(generation.heightmaps()));
 
         assertThrows(JacksonException.class,
             () -> ParamsTester.deserialize(

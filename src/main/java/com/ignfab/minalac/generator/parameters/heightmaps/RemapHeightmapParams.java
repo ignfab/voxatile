@@ -12,14 +12,15 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.KeyDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
-import com.ignfab.minalac.generator.generation.heightmaps.SimpleUnaryOperatorHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationStore;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
+import com.ignfab.minalac.generator.generation.heightmaps.computed.UnaryOperationHeightmapSpec;
+import com.ignfab.minalac.generator.generation.heightmaps.computed.operators.UnaryHeightmapOperator;
 import com.ignfab.minalac.generator.parameters.utils.IntegerIntervalParams;
 import com.ignfab.minalac.generator.utils.IntegerInterval;
 
 /**
- * Remaps a heightmap value with a new value.
+ * Parameters for a {@link UnaryOperationHeightmapSpec} which remaps all heightmap values to a new one.
  * It returns the value associated with the first interval containing the original value.
  * If no match is found, the original value is returned.
  */
@@ -59,7 +60,7 @@ public class RemapHeightmapParams implements ReadableHeightmapParams {
     }
 
     @Override
-    public ReadableHeightmap create(Generation generation) {
+    public ReadableHeightmapSpec create(HeightmapDeclarationStore store) {
         LinkedHashMap<IntegerInterval, Integer> map = new LinkedHashMap<>();
         mapping.forEach(((intervalParams, integer) -> map.put(intervalParams.create(), integer)));
         IntUnaryOperator function = (i -> {
@@ -68,7 +69,7 @@ public class RemapHeightmapParams implements ReadableHeightmapParams {
                     return entry.getValue();
             return i;
         });
-        return new SimpleUnaryOperatorHeightmap(remap.create(generation), function);
+        return new UnaryOperationHeightmapSpec(remap.create(store), new UnaryHeightmapOperator.Simple(function));
     }
 
     static class ValuesKeyDeserializer extends KeyDeserializer {

@@ -10,14 +10,13 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.util.AffineTransformation;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationStore;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
 import com.ignfab.minalac.generator.utils.execution.Scheduler;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.world.VoxelTile;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
@@ -40,9 +39,9 @@ public class Generation {
 
     private final VoxelWorld world;
     private final ModelStore models = new ModelStore();
-    private final Store<Heightmap> heightmaps = new Store<>();
+    private final HeightmapDeclarationStore heightmaps = new HeightmapDeclarationStore();
 
-    private final Scheduler<VoxelTile> scheduler = new Scheduler<>();
+    private final Scheduler<GenerationTile> scheduler = new Scheduler<>();
 
     /**
      * Constructs a new generation context.
@@ -118,10 +117,11 @@ public class Generation {
     }
 
     /**
-     * Returns the {@link Store} for the heightmaps.
-     * @return the heightmaps.
+     * Returns the {@link HeightmapDeclarationStore} for the stored heightmaps declarations.
+     *
+     * @return the heightmap declaration store.
      */
-    public Store<Heightmap> heightmaps() {
+    public HeightmapDeclarationStore heightmaps() {
         return heightmaps;
     }
 
@@ -129,7 +129,7 @@ public class Generation {
      * Returns the generation scheduler.
      * @return the scheduler.
      */
-    public Scheduler<VoxelTile> scheduler() {
+    public Scheduler<GenerationTile> scheduler() {
         return scheduler;
     }
 
@@ -197,5 +197,4 @@ public class Generation {
     public CoordinateReferenceSystem crs() {
         return crs;
     }
-
 }

@@ -6,11 +6,15 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.GenerationTile;
+import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
+import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmap;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,11 +24,15 @@ public class MultiOperandsHeightmapParamsTest {
     @Test
     public void testDeserializeSum() {
         Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
-        Heightmap ground = new Heightmap(0, 0, 3, 1, 0);
+        HeightmapDeclaration heightmapSpec = (new HeightmapDeclaration("ground", 0));
+        generation.heightmaps().add(heightmapSpec);
+
+        GenerationTile tile = new GenerationTile(generation, new WorldBBox3d(0, 0, 0, 3, 1, 1));
+        WritableHeightmap ground = tile.heightmaps().get(heightmapSpec.spec());
+
         ground.set(0, 0, 0);
         ground.set(1, 0, 2);
         ground.set(2, 0, 3);
-        generation.heightmaps().add("ground", ground);
 
         MultiOperandsHeightmapParams.Sum params = assertDoesNotThrow(() -> ParamsTester.deserialize(
             MultiOperandsHeightmapParams.Sum.class,
@@ -36,7 +44,9 @@ public class MultiOperandsHeightmapParamsTest {
             """));
 
         assertDoesNotThrow(params::validate);
-        ReadableHeightmap result = assertDoesNotThrow(() -> params.create(generation));
+        ReadableHeightmapSpec spec = assertDoesNotThrow(() -> params.create(generation.heightmaps()));
+        ReadableHeightmap result = tile.heightmaps().get(spec);
+
         assertEquals(11, result.get(0, 0), "0 + 5 + 6");
         assertEquals(13, result.get(1, 0), "2 + 5 + 6");
         assertEquals(14, result.get(2, 0), "3 + 5 + 6");
@@ -45,11 +55,15 @@ public class MultiOperandsHeightmapParamsTest {
     @Test
     public void testDeserializeProduct() {
         Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
-        Heightmap ground = new Heightmap(0, 0, 3, 1, 0);
+        HeightmapDeclaration heightmapSpec = (new HeightmapDeclaration("ground", 0));
+        generation.heightmaps().add(heightmapSpec);
+
+        GenerationTile tile = new GenerationTile(generation, new WorldBBox3d(0, 0, 0, 3, 1, 1));
+        WritableHeightmap ground = tile.heightmaps().get(heightmapSpec.spec());
+
         ground.set(0, 0, 0);
         ground.set(1, 0, 2);
         ground.set(2, 0, 3);
-        generation.heightmaps().add("ground", ground);
 
         MultiOperandsHeightmapParams.Product params = assertDoesNotThrow(() -> ParamsTester.deserialize(
             MultiOperandsHeightmapParams.Product.class,
@@ -61,7 +75,9 @@ public class MultiOperandsHeightmapParamsTest {
             """));
 
         assertDoesNotThrow(params::validate);
-        ReadableHeightmap result = assertDoesNotThrow(() -> params.create(generation));
+        ReadableHeightmapSpec spec = assertDoesNotThrow(() -> params.create(generation.heightmaps()));
+        ReadableHeightmap result = tile.heightmaps().get(spec);
+
         assertEquals(0, result.get(0, 0), "0 * 5 * 7");
         assertEquals(70, result.get(1, 0), "2 * 5 * 7");
         assertEquals(105, result.get(2, 0), "3 * 5 * 7");

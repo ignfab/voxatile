@@ -55,12 +55,8 @@ public final class GenerationCreator {
             Math.toRadians(params.area.angle)
         );
 
-        // TODO: refactor when placeable deserialization is implemented
         params.heightmaps.forEach((name, heightmapParams) ->
-            generation.heightmaps().add(
-                name,
-                heightmapParams.create(generation)
-            )
+            generation.heightmaps().add(heightmapParams.create(name))
         );
 
         // ForEachTile scheduling

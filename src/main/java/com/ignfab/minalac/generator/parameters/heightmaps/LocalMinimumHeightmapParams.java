@@ -5,12 +5,13 @@ import java.beans.ConstructorProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.LocalMinimumHeightmap;
-import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationStore;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
+import com.ignfab.minalac.generator.generation.heightmaps.computed.UnaryOperationHeightmapSpec;
+import com.ignfab.minalac.generator.generation.heightmaps.computed.operators.LocalMinimumHeightmapOperator;
 
 /**
- * Parameters for a {@link LocalMinimumHeightmap}.
+ * Parameters for a {@link LocalMinimumHeightmapOperator} {@link UnaryOperationHeightmapSpec}.
  */
 public class LocalMinimumHeightmapParams implements ReadableHeightmapParams {
     /**
@@ -43,7 +44,10 @@ public class LocalMinimumHeightmapParams implements ReadableHeightmapParams {
     }
 
     @Override
-    public ReadableHeightmap create(Generation generation) {
-        return new LocalMinimumHeightmap(localMin.create(generation), range);
+    public ReadableHeightmapSpec create(HeightmapDeclarationStore store) {
+        return new UnaryOperationHeightmapSpec(
+            localMin.create(store),
+            new LocalMinimumHeightmapOperator(range)
+        );
     }
 }

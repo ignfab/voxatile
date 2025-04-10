@@ -7,7 +7,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
@@ -23,7 +23,7 @@ public class PopulateHeightmapTaskParamsTest {
     @Test
     public void testDeserialize() {
         Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
-        generation.heightmaps().add("ground", new Heightmap(0, 0, 1, 1, 5));
+        generation.heightmaps().add(new HeightmapDeclaration("ground", 5));
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         mapper.registerSubtypes(new NamedType(PopulateHeightmapTaskParams.class, "matrixToHeightmap"));

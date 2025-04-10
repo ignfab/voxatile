@@ -12,6 +12,7 @@ import org.geotools.api.referencing.FactoryException;
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.parameters.OutputFormat;
@@ -45,7 +46,6 @@ import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
-import com.ignfab.minalac.generator.world.VoxelTile;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
 /**
@@ -132,7 +132,7 @@ public final class MinalacGenerator {
         generation.world().initialize();
 
         // One unique tile for now
-        VoxelTile tile = generation.world().newTile(generation.world().limits());
+        GenerationTile tile = new GenerationTile(generation, generation.world().limits());
         try {
             generation.scheduler().run(tile, 5, TimeUnit.MINUTES);
         } finally {
@@ -146,7 +146,8 @@ public final class MinalacGenerator {
         WorldBBox3d limits = generation.world().limits();
         int spawnX = (limits.minX() + limits.maxX() + 1) / 2;
         int spawnY = (limits.minY() + limits.maxY() + 1) / 2;
-        metadata.setSpawn(new WorldCoords3d(spawnX, spawnY, generation.heightmaps().get("ground").get(spawnX, spawnY) + 1));
+        // TODO: Spawn height should now be computed by a task when tile includes spawnpoint (MINALAC-138)
+        metadata.setSpawn(new WorldCoords3d(spawnX, spawnY, 100));
         metadata.setWorldName("Minalac");
 
         tile.save();

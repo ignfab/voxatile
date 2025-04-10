@@ -5,12 +5,12 @@ import java.io.IOException;
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
-import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A {@link TileTask} fetching data from a provider, processing models with a processor applying a post-processor to each model.
@@ -63,7 +63,7 @@ public class FetchDataTask implements TileTask {
      *
      * @param tile tile for which data is fetched (it gives the wanted area)
      */
-    public void run(VoxelTile tile) {
+    public void run(GenerationTile tile) {
         try (Provider.Result<?> result = provider.provide(tile.limits())) {
             processor.initialize(result.crs());
             while (result.hasNext()) {

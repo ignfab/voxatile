@@ -4,18 +4,13 @@ import java.util.Arrays;
 
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldSize2d;
 
 /**
  * A 2d heightmap in voxel world units.
  */
-public class Heightmap implements ReadableHeightmap {
+public class Heightmap implements WritableHeightmap {
     private final WorldBBox2d bbox;
-    private int[] values;
-    /**
-     * A reusable instance of an empty {@link Heightmap}.
-     */
-    public static final Heightmap EMPTY = new Heightmap(WorldBBox2d.EMPTY, 0);
+    private final int[] values;
 
     /**
      * Creates a new {@link Heightmap}.
@@ -33,32 +28,25 @@ public class Heightmap implements ReadableHeightmap {
     /**
      * Creates a new {@link Heightmap}.
      *
-     * @param bbox Bounding box of heightmap
+     * @param bbox Bounding box of the heightmap
      * @param defaultValue Default value for all heightmap cells
      */
     public Heightmap(WorldBBox2d bbox, int defaultValue) {
         this.bbox = bbox;
-        values = new int[bbox.sizeX() * bbox.sizeY()];
+        values = new int[bbox.size().area()];
         if (defaultValue != 0)
             Arrays.fill(values, defaultValue);
     }
 
     /**
-     * Creates a new {@link Heightmap}.
+     * Creates a new {@link Heightmap} that is a copy of given {@link ReadableHeightmap}.
      *
-     * @param origin Origin point of heightmap
-     * @param size Size of heightmap
-     * @param defaultValue Default value for all heightmap cells
+     * @param other Heightmap to copy
      */
-    public Heightmap(WorldCoords2d origin, WorldSize2d size, int defaultValue) {
-        this(new WorldBBox2d(origin, size), defaultValue);
-    }
-
-    private Heightmap(WorldBBox2d bbox, int[] values) {
-        if (values.length != bbox.size().area())
-            throw new IllegalArgumentException("Provided array length doesn't match bbox area");
-        this.bbox = bbox;
-        this.values = Arrays.copyOf(values, values.length);
+    public Heightmap(ReadableHeightmap other) {
+        this.bbox = other.bbox();
+        values = new int[bbox.size().area()];
+        copyValues(other);
     }
 
     private int index(int x, int y) {
@@ -77,50 +65,26 @@ public class Heightmap implements ReadableHeightmap {
         return values[index(x, y)];
     }
 
-    /**
-     * Sets the height at a specified position.
-     *
-     * @param x the x-coordinate of the position
-     * @param y the y-coordinate of the position
-     * @param height the height to set at specified position
-     * @throws IndexOutOfBoundsException if position is outside the heightmap.
-     */
+    @Override
     public void set(int x, int y, int height) {
         values[index(x, y)] = height;
     }
 
-    /**
-     * Sets the height at a specified position.
-     *
-     * @param position the position
-     * @param height the height to set at specified position
-     * @throws IndexOutOfBoundsException if position is outside the heightmap.
-     */
-    public void set(WorldCoords2d position, int height) {
-        set(position.x(), position.y(), height);
+    @Override
+    public void copyValues(ReadableHeightmap other) {
+        if (other instanceof Heightmap hm && other.bbox().equals(bbox)) {
+            // If same bbox and same class, we can go faster
+            System.arraycopy(hm.values, 0, values, 0, values.length);
+            return;
+        }
+
+        WorldBBox2d intersection = other.bbox().intersection(bbox);
+        for (WorldCoords2d position : intersection)
+            set(position, other.get(position));
     }
 
-    /**
-     * Returns a copy of this heightmap.
-     *
-     * @return a copy of this heightmap.
-     */
+    @Override
     public Heightmap copy() {
-        return new Heightmap(bbox, values);
-    }
-
-    /**
-     * Replaces all height values of this heightmap with the heights of the provided heightmap.
-     * The provided heightmap must match this heightmap bounding box.
-     * The other heightmap will get the current values of this heightmap.
-     *
-     * @param other the heightmap
-     */
-    public void swap(Heightmap other) {
-        if (!other.bbox.equals(bbox))
-            throw new IllegalArgumentException("Bounding boxes are not equal");
-        int[] values = this.values;
-        this.values = other.values;
-        other.values = values;
+        return new Heightmap(this);
     }
 }
