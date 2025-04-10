@@ -3,13 +3,13 @@ package com.ignfab.minalac.generator.tasks;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.TestingGenerationTile;
+import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
 import com.ignfab.minalac.generator.models.filters.ModelFilterHasMetadata;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
@@ -21,15 +21,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RenderBuildingsTaskTest {
     private WorldBBox3d bbox;
-    private TestingVoxelTile tile;
-    private Heightmap heightmap;
+    private TestingGenerationTile tile;
+    private TestingHeightmap ground;
     private ModelStore models;
 
     @BeforeEach
     void setUp() {
         bbox = new WorldBBox3d(0, 0, 0, 3, 3, 22);
-        tile = new TestingVoxelTile(bbox);
-        heightmap = new Heightmap(tile.limits().to2d(), 0);
+        tile = new TestingGenerationTile(bbox);
+        ground = tile.newStoredHeightmap("ground", 0);
         models = new ModelStore();
     }
 
@@ -45,15 +45,12 @@ public class RenderBuildingsTaskTest {
         building.setMetadata("height", expectedHeight);
         models.add("building", building);
 
-        String voxelAName = "voxelA";
-        String voxelBName = "voxelB";
-        String voxelCName = "voxelC";
         assertDoesNotThrow(() -> new RenderBuildingsTask(
             new ModelSelection(models, "building", new ModelFilterHasMetadata("height")),
-            heightmap,
-            new TestingVoxelParams(voxelAName).create(TestingSeed.UNUSED),
-            new TestingVoxelParams(voxelBName).create(TestingSeed.UNUSED),
-            new TestingVoxelParams(voxelCName).create(TestingSeed.UNUSED)
+            ground.spec(),
+            new TestingVoxelParams("roof").create(TestingSeed.UNUSED),
+            new TestingVoxelParams("wall").create(TestingSeed.UNUSED),
+            new TestingVoxelParams("window").create(TestingSeed.UNUSED)
         ).run(tile));
 
         for (WorldCoords3d c : tile.limits()) {
@@ -69,24 +66,24 @@ public class RenderBuildingsTaskTest {
 
             // Roof check
             if (z == expectedHeight)
-                tile.assertVoxel(voxelAName, c);
+                tile.voxels().assertVoxel("roof", c);
             // Air check
             if (z > expectedHeight)
-                tile.assertVoxelNull(c);
+                tile.voxels().assertVoxelNull(c);
             // Checks here below the roof of the building
             if (z < expectedHeight) {
                 // Windows check
                 if (x != 1 && y != 1 && z % 4 == 0)
-                    tile.assertVoxel(voxelCName, c);
-                // Floors check
+                    tile.voxels().assertVoxel("window", c);
+                // Floors & roof check
                 if (x == 1 && y == 1 && z % 4 == 2)
-                    tile.assertVoxel(voxelAName, c);
+                    tile.voxels().assertVoxel("roof", c);
                 // Walls check
                 if (x != 1 && y != 1 && z % 4 != 0)
-                    tile.assertVoxel(voxelBName, c);
+                    tile.voxels().assertVoxel("wall", c);
                 // Air check between two floors
                 if (x == 1 && y == 1 && z % 4 != 2)
-                    tile.assertVoxelNull(c);
+                    tile.voxels().assertVoxelNull(c);
             }
         }
     }
@@ -104,7 +101,7 @@ public class RenderBuildingsTaskTest {
         Placeable placeable = new TestingVoxelParams("voxel").create(TestingSeed.UNUSED);
         assertDoesNotThrow(() -> new RenderBuildingsTask(
             new ModelSelection(models, "building", new ModelFilterHasMetadata("height")),
-            heightmap,
+            ground.spec(),
             placeable,
             placeable,
             placeable
@@ -126,13 +123,13 @@ public class RenderBuildingsTaskTest {
         Placeable placeable = new TestingVoxelParams("voxel").create(TestingSeed.UNUSED);
         assertDoesNotThrow(() -> new RenderBuildingsTask(
             new ModelSelection(models, "building", new ModelFilterHasMetadata("height")),
-            heightmap,
+            ground.spec(),
             placeable,
             placeable,
             placeable
         ).run(tile));
 
         for (WorldCoords3d c : tile.limits())
-            tile.assertVoxelNull(c);
+            tile.voxels().assertVoxelNull(c);
     }
 }

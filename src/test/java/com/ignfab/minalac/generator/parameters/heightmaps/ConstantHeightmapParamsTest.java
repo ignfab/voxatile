@@ -24,7 +24,7 @@ public class ConstantHeightmapParamsTest {
         assertEquals(4, chp.constant);
 
         assertDoesNotThrow(params::validate);
-        assertDoesNotThrow(() -> params.create(generation));
+        assertDoesNotThrow(() -> params.create(generation.heightmaps()));
 
         ReadableHeightmapParams cst = assertDoesNotThrow(() -> ParamsTester.deserialize(
             ReadableHeightmapParams.class,

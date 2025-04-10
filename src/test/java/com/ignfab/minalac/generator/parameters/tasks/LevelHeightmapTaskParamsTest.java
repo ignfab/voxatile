@@ -8,7 +8,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.parameters.ParamsTester;
-import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
+import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 
@@ -19,13 +19,13 @@ public class LevelHeightmapTaskParamsTest {
     public void testValidate() {
         TestingVoxelParams placeable = new TestingVoxelParams("voxel");
 
-        LevelGroundTaskParams paramsWithoutType = new LevelGroundTaskParams(new ModelSelectionParams(""), new StoredHeightmapParams("ground"), placeable);
+        LevelGroundTaskParams paramsWithoutType = new LevelGroundTaskParams(new ModelSelectionParams(""), new WritableHeightmapParams("ground"), placeable);
         assertThrows(IllegalArgumentException.class, paramsWithoutType::validate);
 
-        LevelGroundTaskParams paramsWithoutHeightmap = new LevelGroundTaskParams(new ModelSelectionParams("building"), new StoredHeightmapParams(""), placeable);
+        LevelGroundTaskParams paramsWithoutHeightmap = new LevelGroundTaskParams(new ModelSelectionParams("building"), new WritableHeightmapParams(""), placeable);
         assertThrows(IllegalArgumentException.class, paramsWithoutHeightmap::validate);
 
-        LevelGroundTaskParams params = new LevelGroundTaskParams(new ModelSelectionParams("building"), new StoredHeightmapParams("ground"), placeable);
+        LevelGroundTaskParams params = new LevelGroundTaskParams(new ModelSelectionParams("building"), new WritableHeightmapParams("ground"), placeable);
         assertDoesNotThrow(params::validate);
     }
 

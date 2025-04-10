@@ -56,7 +56,7 @@ public class MTVoxelTile extends VoxelTile {
     }
 
     /**
-     * Places the voxel into this world at the specified coordinates.
+     * Places the voxel into this world tile at the specified coordinates.
      * The specified coordinates must be in the coordinate system used by Minetest.
      *
      * @param x the x-coordinate value
@@ -76,7 +76,7 @@ public class MTVoxelTile extends VoxelTile {
 
     /**
      * {@inheritDoc}
-     * The world is exported in a format for Minetest.
+     * This tile is exported in a format for Minetest.
      */
     @Override
     public void save() throws MapWriteException {

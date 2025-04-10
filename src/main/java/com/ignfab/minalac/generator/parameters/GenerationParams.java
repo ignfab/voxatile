@@ -70,14 +70,14 @@ public class GenerationParams {
     public String seed;
 
     /**
-     * Heightmaps used during the generation, by name (optional).
+     * Declarations of stored heightmaps used during the generation, by name (optional).
      */
     @JsonSetter(
         nulls = Nulls.SKIP,
         // To prevent null values on required field of an element of the map.
         contentNulls = Nulls.FAIL
     )
-    public Map<String, HeightmapParams> heightmaps = new LinkedHashMap<>();
+    public Map<String, HeightmapDeclarationParams> heightmaps = new LinkedHashMap<>();
 
     /**
      * Description of the schedule that will run for each tile.
@@ -120,7 +120,7 @@ public class GenerationParams {
         if (area.extentY <= 0)
             throw new IllegalArgumentException("The field extentY must be greater than 0");
 
-        for (HeightmapParams params : heightmaps.values())
+        for (HeightmapDeclarationParams params : heightmaps.values())
             params.validate();
         for (TileTaskParams params : forEachTile.values())
             params.validate();

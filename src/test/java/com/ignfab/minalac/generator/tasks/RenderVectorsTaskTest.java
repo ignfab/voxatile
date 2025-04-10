@@ -4,12 +4,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.TestingGenerationTile;
+import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -18,19 +18,19 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RenderVectorsTaskTest {
-    private TestingVoxelTile tile;
-    private Heightmap heightmap;
     private WorldBBox3d bbox;
+    private TestingGenerationTile tile;
     private ModelStore store;
     private ModelSelection modelSelection;
+    private TestingHeightmap heightmap;
     private TestingVoxel inside;
     private TestingVoxel edge;
 
     @BeforeEach
     public void setUp() {
         bbox = new WorldBBox3d(-1, -2, -3, 4, 5, 6);
-        tile = new TestingVoxelTile(bbox);
-        heightmap = new Heightmap(bbox.to2d(), 0);
+        tile = new TestingGenerationTile(bbox);
+        heightmap = tile.newStoredHeightmap("altitude", 0);
         store = new ModelStore();
         modelSelection = new ModelSelection(store, "testing", null);
 
@@ -40,7 +40,7 @@ class RenderVectorsTaskTest {
 
     @Test
     public void testConstructor() {
-        assertDoesNotThrow(() -> new RenderVectorsTask(modelSelection, heightmap, inside, edge));
+        assertDoesNotThrow(() -> new RenderVectorsTask(modelSelection, heightmap.spec(), inside, edge));
     }
 
     @Test
@@ -53,13 +53,13 @@ class RenderVectorsTaskTest {
         // Add one model covering the whole map with INSIDE voxels
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(modelBbox));
 
-        new RenderVectorsTask(modelSelection, heightmap, inside, edge).run(tile);
+        new RenderVectorsTask(modelSelection, heightmap.spec(), inside, edge).run(tile);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == 0 && modelBbox.contains(pos.to2d()))
-                tile.assertVoxel("EDGE", pos);
+                tile.voxels().assertVoxel("EDGE", pos);
             else
-                tile.assertVoxelNull(pos);
+                tile.voxels().assertVoxelNull(pos);
         }
     }
 
@@ -70,12 +70,12 @@ class RenderVectorsTaskTest {
         WorldBBox2d modelBbox = new WorldBBox2d(0, -1, 3, 4);
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(modelBbox));
 
-        new RenderVectorsTask(modelSelection, heightmap, inside, edge).run(tile);
+        new RenderVectorsTask(modelSelection, heightmap.spec(), inside, edge).run(tile);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() != 0 || !modelBbox.contains(pos.to2d())) {
                 // Outside
-                tile.assertVoxelNull(pos);
+                tile.voxels().assertVoxelNull(pos);
                 continue;
             }
 
@@ -84,10 +84,10 @@ class RenderVectorsTaskTest {
                 || pos.y() == modelBbox.minY()
                 || pos.y() == modelBbox.maxY())
                 // Border
-                tile.assertVoxel("EDGE", pos);
+                tile.voxels().assertVoxel("EDGE", pos);
             else
                 // Inside
-                tile.assertVoxel("INSIDE", pos);
+                tile.voxels().assertVoxel("INSIDE", pos);
         }
     }
 
@@ -102,13 +102,13 @@ class RenderVectorsTaskTest {
         // Add one model covering the whole map
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(bbox.to2d()));
 
-        new RenderVectorsTask(modelSelection, heightmap, inside, edge).run(tile);
+        new RenderVectorsTask(modelSelection, heightmap.spec(), inside, edge).run(tile);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == (pos.x() + pos.y()) / 2)
-                tile.assertVoxelNotNull(pos);
+                tile.voxels().assertVoxelNotNull(pos);
             else
-                tile.assertVoxelNull(pos);
+                tile.voxels().assertVoxelNull(pos);
         }
     }
 
@@ -124,13 +124,13 @@ class RenderVectorsTaskTest {
         // Add one model covering the whole map with BORDER voxels
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(bbox.to2d()));
 
-        new RenderVectorsTask(modelSelection, heightmap, inside, edge).run(tile);
+        new RenderVectorsTask(modelSelection, heightmap.spec(), inside, edge).run(tile);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == pos.x() + pos.y() * 2)
-                tile.assertVoxelNotNull(pos);
+                tile.voxels().assertVoxelNotNull(pos);
             else
-                tile.assertVoxelNull(pos);
+                tile.voxels().assertVoxelNull(pos);
         }
     }
 
@@ -141,13 +141,13 @@ class RenderVectorsTaskTest {
         WorldBBox2d modelBbox = new WorldBBox2d(bbox.minX() - 1, bbox.minY() - 1, bbox.sizeX() + 2, bbox.sizeY() + 2);
         store.add("testing", new TestingRectangleShapeVoxelizable2dModel(modelBbox));
 
-        new RenderVectorsTask(modelSelection, heightmap, inside, edge).run(tile);
+        new RenderVectorsTask(modelSelection, heightmap.spec(), inside, edge).run(tile);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == 0)
-                tile.assertVoxel("INSIDE", pos);
+                tile.voxels().assertVoxel("INSIDE", pos);
             else
-                tile.assertVoxelNull(pos);
+                tile.voxels().assertVoxelNull(pos);
         }
     }
 }

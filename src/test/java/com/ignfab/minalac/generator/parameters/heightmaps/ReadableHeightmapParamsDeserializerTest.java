@@ -23,7 +23,7 @@ public class ReadableHeightmapParamsDeserializerTest {
     @DisplayName("Test heightmap deserialization using string shortcut")
     public void testReadableHeightmapParamsDeserializerStored() {
         ReadableHeightmapParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(ReadableHeightmapParams.class, "ground"));
-        StoredHeightmapParams shp = assertInstanceOf(StoredHeightmapParams.class, params);
+        WritableHeightmapParams shp = assertInstanceOf(WritableHeightmapParams.class, params);
         assertEquals("ground", shp.stored);
     }
 }

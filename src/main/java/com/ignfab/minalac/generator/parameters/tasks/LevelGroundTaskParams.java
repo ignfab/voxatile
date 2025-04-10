@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
+import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.tasks.LevelGroundTask;
@@ -26,7 +26,7 @@ public class LevelGroundTaskParams extends TileTaskParams {
      * Name of the ground heightmap to use (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public StoredHeightmapParams heightmap;
+    public WritableHeightmapParams heightmap;
 
     /**
      * {@code Placeable} used to fill the space beneath the model,
@@ -46,7 +46,7 @@ public class LevelGroundTaskParams extends TileTaskParams {
     @ConstructorProperties({ "models", "heightmap", "filling" })
     public LevelGroundTaskParams(
         ModelSelectionParams models,
-        StoredHeightmapParams heightmap,
+        WritableHeightmapParams heightmap,
         PlaceableParams filling
     ) {
         this.models = models;
@@ -65,7 +65,7 @@ public class LevelGroundTaskParams extends TileTaskParams {
     public TileTask create(Generation generation) {
         return new LevelGroundTask(
             models.create(generation.models()),
-            heightmap.create(generation),
+            heightmap.create(generation.heightmaps()),
             filling.create(generation.seed())
         );
     }

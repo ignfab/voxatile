@@ -6,12 +6,16 @@ import com.fasterxml.jackson.core.JacksonException;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.GenerationTile;
+import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
+import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmap;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.utils.IntegerIntervalParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,10 +26,14 @@ public class RemapHeightmapParamsTest {
     @Test
     public void testDeserialize() {
         Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
-        Heightmap base = new Heightmap(-3, 0, 8, 1, 0);
+        HeightmapDeclaration heightmapSpec = (new HeightmapDeclaration("lotad", 0));
+        generation.heightmaps().add(heightmapSpec);
+
+        GenerationTile tile = new GenerationTile(generation, new WorldBBox3d(-3, 0, 0, 8, 1, 0));
+        WritableHeightmap base = tile.heightmaps().get(heightmapSpec.spec());
+
         for (int i = -3; i <= 4; i++)
             base.set(i, 0, i);
-        generation.heightmaps().add("lotad", base);
 
         RemapHeightmapParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(
             RemapHeightmapParams.class,
@@ -37,7 +45,8 @@ public class RemapHeightmapParamsTest {
             """
         ));
 
-        ReadableHeightmap result = assertDoesNotThrow(() -> assertDoesNotThrow(() -> params.create(generation)));
+        ReadableHeightmapSpec spec = assertDoesNotThrow(() -> params.create(generation.heightmaps()));
+        ReadableHeightmap result = tile.heightmaps().get(spec);
         assertEquals(21, result.get(0, 0), "Should match first interval [0; 1] -> 21");
         assertEquals(34, result.get(2, 0), "Should match second interval [-3; 3] -> 34");
         assertEquals(34, result.get(-3, 0), "Should match second interval [-3; 3] -> 34");

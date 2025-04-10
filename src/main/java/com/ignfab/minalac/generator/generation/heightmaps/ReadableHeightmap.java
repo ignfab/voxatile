@@ -4,7 +4,9 @@ import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
 /**
- * Represents a 2d readable heightmap in voxel world units.
+ * Represents a 2d readable heightmap (in voxel world units).
+ * <p>
+ * A heightmap is an array associating a height (integer z) to each coordinate (x, y) in a heightmap bounding box.
  */
 public interface ReadableHeightmap {
 

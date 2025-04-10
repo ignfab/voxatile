@@ -7,11 +7,11 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
-import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
+import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
@@ -24,8 +24,8 @@ public class CopyHeightmapTaskParamsTest {
     @Test
     public void testDeserialize() {
         Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
-        generation.heightmaps().add("ground", new Heightmap(0, 0, 1, 1, 5));
-        generation.heightmaps().add("water", new Heightmap(0, 0, 1, 1, 1));
+        generation.heightmaps().add(new HeightmapDeclaration("ground", 5));
+        generation.heightmaps().add(new HeightmapDeclaration("water", 1));
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         mapper.registerSubtypes(new NamedType(CopyHeightmapTaskParams.class, "copyHeightmap"));
@@ -42,7 +42,7 @@ public class CopyHeightmapTaskParamsTest {
             mapper
         ));
         assertInstanceOf(ModelSelectionParams.class, params.models);
-        assertInstanceOf(StoredHeightmapParams.class, params.from);
+        assertInstanceOf(WritableHeightmapParams.class, params.from);
         assertEquals("ground", params.to.stored);
 
         assertDoesNotThrow(params::validate);

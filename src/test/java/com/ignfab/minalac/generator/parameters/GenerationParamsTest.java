@@ -6,9 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
-import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
+import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
@@ -16,6 +16,7 @@ import com.ignfab.minalac.generator.parameters.providers.TestingProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.TestingTaskParams;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -108,8 +109,8 @@ public class GenerationParamsTest {
         params.verticalScale = 3.0;
         params.horizontalScale = 4.0;
         params.crs = "EPSG:5643";
-        params.heightmaps.put("ground", new HeightmapParams("0"));
-        params.heightmaps.put("altitude", new HeightmapParams("minimal"));
+        params.heightmaps.put("ground", new HeightmapDeclarationParams("3"));
+        params.heightmaps.put("altitude", new HeightmapDeclarationParams("minimal"));
         params.forEachTile.put("renderer1", new TestingTaskParams("value1"));
         params.forEachTile.put("renderer2", new TestingTaskParams("value2"));
         params.forEachTile.put("source1", new FetchDataTaskParams("models1", new TestingProviderParams("value3"), new TestingProcessorParams("value4")));
@@ -118,7 +119,7 @@ public class GenerationParamsTest {
         TestingVoxelParams placeable = new TestingVoxelParams("voxel");
         params.forEachTile.put("building", new RenderBuildingsTaskParams(
             new ModelSelectionParams("building"),
-            new StoredHeightmapParams("ground"),
+            new WritableHeightmapParams("ground"),
             placeable,
             placeable,
             placeable
@@ -130,10 +131,10 @@ public class GenerationParamsTest {
         assertEquals(75, generation.world().limits().sizeY());
         assertEquals(3.0, generation.getVerticalScale(), 0.001);
 
-        Heightmap ground = assertDoesNotThrow(() -> generation.heightmaps().get("ground"));
-        assertEquals(0, ground.get(0, 0));
+        HeightmapDeclaration ground = assertDoesNotThrow(() -> generation.heightmaps().get("ground"));
+        assertEquals(3, ground.create(WorldBBox2d.ORIGIN).get(0, 0));
 
-        Heightmap altitude = assertDoesNotThrow(() -> generation.heightmaps().get("altitude"));
-        assertEquals(Integer.MIN_VALUE, altitude.get(0, 0));
+        HeightmapDeclaration altitude = assertDoesNotThrow(() -> generation.heightmaps().get("altitude"));
+        assertEquals(Integer.MIN_VALUE, altitude.create(WorldBBox2d.ORIGIN).get(0, 0));
     }
 }

@@ -5,20 +5,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.IntBinaryOperator;
 
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
-import com.ignfab.minalac.generator.generation.heightmaps.SimpleBinaryOperatorHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationStore;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
+import com.ignfab.minalac.generator.generation.heightmaps.computed.BinaryOperationHeightmapSpec;
+import com.ignfab.minalac.generator.generation.heightmaps.computed.operators.BinaryHeightmapOperator;
 
 /**
  * Abstract class for applying successive operation on a list of heightmaps.
  */
 public abstract class MultiOperandsHeightmapParams implements ReadableHeightmapParams {
     private final List<ReadableHeightmapParams> operands;
-    private final IntBinaryOperator operator;
+    private final BinaryHeightmapOperator operator;
 
     protected MultiOperandsHeightmapParams(List<ReadableHeightmapParams> operands, IntBinaryOperator operator) {
         this.operands = operands;
-        this.operator = operator;
+        this.operator = new BinaryHeightmapOperator.Simple(operator);
     }
 
     @Override
@@ -30,13 +31,13 @@ public abstract class MultiOperandsHeightmapParams implements ReadableHeightmapP
     }
 
     @Override
-    public ReadableHeightmap create(Generation generation) {
+    public ReadableHeightmapSpec create(HeightmapDeclarationStore store) {
         Iterator<ReadableHeightmapParams> iterator = operands.iterator();
 
-        ReadableHeightmap heightmap = iterator.next().create(generation);
+        ReadableHeightmapSpec heightmap = iterator.next().create(store);
 
         while (iterator.hasNext())
-            heightmap = new SimpleBinaryOperatorHeightmap(heightmap, iterator.next().create(generation), operator);
+            heightmap = new BinaryOperationHeightmapSpec(heightmap, iterator.next().create(store), operator);
 
         return heightmap;
     }

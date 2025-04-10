@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
-import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
+import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.tasks.CopyHeightmapTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
@@ -32,7 +32,7 @@ public class CopyHeightmapTaskParams extends TileTaskParams {
      * The name of the heightmap receiving the values (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public StoredHeightmapParams to;
+    public WritableHeightmapParams to;
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
@@ -42,7 +42,7 @@ public class CopyHeightmapTaskParams extends TileTaskParams {
      * @param to the name of the heightmap receiving the values.
      */
     @ConstructorProperties({"models", "from", "to"})
-    public CopyHeightmapTaskParams(ModelSelectionParams models, ReadableHeightmapParams from, StoredHeightmapParams to) {
+    public CopyHeightmapTaskParams(ModelSelectionParams models, ReadableHeightmapParams from, WritableHeightmapParams to) {
         this.models = models;
         this.from = from;
         this.to = to;
@@ -59,8 +59,8 @@ public class CopyHeightmapTaskParams extends TileTaskParams {
     public TileTask create(Generation generation) {
         return new CopyHeightmapTask(
             models.create(generation.models()),
-            from.create(generation),
-            to.create(generation)
+            from.create(generation.heightmaps()),
+            to.create(generation.heightmaps())
         );
     }
 }
