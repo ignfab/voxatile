@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.renderers;
 
-import com.ignfab.minalac.generator.world.VoxelWorldTile;
+import com.ignfab.minalac.generator.generation.GenerationTile;
 
 /**
  * A renderer capable of rendering something in an area.
@@ -11,5 +11,5 @@ public interface Renderer {
      *
      * @param tile tile to render into
      */
-    void render(VoxelWorldTile tile);
+    void render(GenerationTile tile);
 }

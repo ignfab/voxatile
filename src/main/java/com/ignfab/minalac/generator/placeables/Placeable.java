@@ -1,7 +1,6 @@
 package com.ignfab.minalac.generator.placeables;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
@@ -10,7 +9,7 @@ import com.ignfab.minalac.generator.world.VoxelWorldTile;
  */
 public interface Placeable {
     /**
-     * Places the placeable at given position in {@link VoxelWorld}.
+     * Places the placeable at given position in {@link VoxelWorldTile}.
      * Coordinates are expressed using the system used in {@link WorldCoords3d}.
      *
      * @param tile tile to place into
@@ -21,7 +20,7 @@ public interface Placeable {
     void place(VoxelWorldTile tile, int x, int y, int z);
 
     /**
-     * Places the placeable at given position in {@link VoxelWorld}.
+     * Places the placeable at given position in {@link VoxelWorldTile}.
      *
      * @param tile tile to place into
      * @param position position where to place the placeable

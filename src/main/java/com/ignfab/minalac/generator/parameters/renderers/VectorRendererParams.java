@@ -94,7 +94,7 @@ public class VectorRendererParams extends RendererParams {
 
         return new VectorRenderer(
             models.create(generation.models()),
-            heightmap.create(generation),
+            heightmap.create(generation.heightmaps()),
             insidePlaceable,
             bordersPlaceable
         );

@@ -5,9 +5,11 @@ import java.beans.ConstructorProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.CappedManhattanHeightmap;
-import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.Store;
+import com.ignfab.minalac.generator.generation.heightmaps.CappedManhattanHeightmapOperator;
+import com.ignfab.minalac.generator.generation.heightmaps.UnaryOperatorHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundReadableHeightmap;
 
 /**
  * Parameters for {@link CappedManhattanHeightmap}.
@@ -49,11 +51,13 @@ public class CappedManhattanHeightmapParams extends CustomReadableHeightmapParam
     }
 
     @Override
-    public ReadableHeightmap create(Generation generation) {
-        return new CappedManhattanHeightmap(
-            manhattan.create(generation),
-            maximumDistance,
-            targetValue
+    public UnboundReadableHeightmap create(Store<UnboundHeightmap> store) {
+        return new UnaryOperatorHeightmap(
+            manhattan.create(store),
+            new CappedManhattanHeightmapOperator(
+                maximumDistance,
+                targetValue
+            )
         );
     }
 }

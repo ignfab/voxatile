@@ -5,20 +5,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.IntBinaryOperator;
 
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
-import com.ignfab.minalac.generator.generation.heightmaps.SimpleBinaryOperatorHeightmap;
+import com.ignfab.minalac.generator.generation.Store;
+import com.ignfab.minalac.generator.generation.heightmaps.BinaryHeightmapOperator;
+import com.ignfab.minalac.generator.generation.heightmaps.BinaryOperatorHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundReadableHeightmap;
 
 /**
  * Abstract class for applying successive operation on a list of heightmaps.
  */
 public abstract class MultiOperandsHeightmapParams extends CustomReadableHeightmapParams {
     private final List<ReadableHeightmapParams> operands;
-    private final IntBinaryOperator operator;
+    private final BinaryHeightmapOperator operator;
 
     protected MultiOperandsHeightmapParams(List<ReadableHeightmapParams> operands, IntBinaryOperator operator) {
         this.operands = operands;
-        this.operator = operator;
+        this.operator = new BinaryHeightmapOperator.Simple(operator);
     }
 
     @Override
@@ -30,13 +32,13 @@ public abstract class MultiOperandsHeightmapParams extends CustomReadableHeightm
     }
 
     @Override
-    public ReadableHeightmap create(Generation generation) {
+    public UnboundReadableHeightmap create(Store<UnboundHeightmap> store) {
         Iterator<ReadableHeightmapParams> iterator = operands.iterator();
 
-        ReadableHeightmap heightmap = iterator.next().create(generation);
+        UnboundReadableHeightmap heightmap = iterator.next().create(store);
 
         while (iterator.hasNext())
-            heightmap = new SimpleBinaryOperatorHeightmap(heightmap, iterator.next().create(generation), operator);
+            heightmap = new BinaryOperatorHeightmap(heightmap, iterator.next().create(store), operator);
 
         return heightmap;
     }

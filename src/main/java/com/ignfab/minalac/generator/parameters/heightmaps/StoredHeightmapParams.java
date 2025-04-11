@@ -5,8 +5,9 @@ import java.beans.ConstructorProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.Store;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundHeightmap;
+
 
 /**
  * Parameter class for retrieving a stored heightmap by its name.
@@ -35,7 +36,7 @@ public class StoredHeightmapParams implements ReadableHeightmapParams {
     }
 
     @Override
-    public Heightmap create(Generation generation) {
-        return generation.heightmaps().get(name);
+    public UnboundHeightmap create(Store<UnboundHeightmap> store) {
+        return store.get(name);
     }
 }

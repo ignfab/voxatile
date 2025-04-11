@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundReadableHeightmap;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.renderers.HeightmapRenderer;
@@ -62,14 +62,14 @@ public class HeightmapRendererParams extends RendererParams {
 
     @Override
     public Renderer create(Generation generation) {
-        ReadableHeightmap from;
-        ReadableHeightmap to;
+        UnboundReadableHeightmap from;
+        UnboundReadableHeightmap to;
         if (at != null) {
-            from = at.create(generation);
+            from = at.create(generation.heightmaps());
             to = from;
         } else {
-            from = minimum.create(generation);
-            to = maximum.create(generation);
+            from = minimum.create(generation.heightmaps());
+            to = maximum.create(generation.heightmaps());
         }
         return new HeightmapRenderer(from, to, place.create(generation.seed()));
     }

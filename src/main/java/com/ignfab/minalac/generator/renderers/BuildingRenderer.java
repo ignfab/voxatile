@@ -1,6 +1,8 @@
 package com.ignfab.minalac.generator.renderers;
 
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundReadableHeightmap;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.placeables.Placeable;
@@ -8,7 +10,6 @@ import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LineVoxel2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
-import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
  * Rendering of buildings.
@@ -19,7 +20,7 @@ public class BuildingRenderer extends ModelRenderer<ShapesVoxelizable2d> {
     /**
      * Heightmap of the ground.
      */
-    private final ReadableHeightmap heightmap;
+    private final UnboundReadableHeightmap heightmap;
 
     /**
      * {@code Placeable} representing the roof of the building.
@@ -47,7 +48,7 @@ public class BuildingRenderer extends ModelRenderer<ShapesVoxelizable2d> {
      */
     public BuildingRenderer(
         ModelSelection selection,
-        ReadableHeightmap heightmap,
+        UnboundReadableHeightmap heightmap,
         Placeable roof,
         Placeable wall,
         Placeable window
@@ -60,12 +61,14 @@ public class BuildingRenderer extends ModelRenderer<ShapesVoxelizable2d> {
     }
 
     @Override
-    protected void render(ShapesVoxelizable2d model, VoxelWorldTile tile) {
+    protected void render(ShapesVoxelizable2d model, GenerationTile tile) {
         // TODO: Implement a post-processor for value rounding to rollback this change
         int height = (int) Math.round(
             /* Casting to Number is needed to avoid a cast exception in BuildingRendererTest */
             ((Number) model.getMetadata("height")).doubleValue()
         );
+
+        ReadableHeightmap heightmap = this.heightmap.bind(tile);
 
         ShapesVoxelizer2d voxelizer = model.voxelize2d(tile.limits().to2d());
         // Build walls and place windows of the building
@@ -74,9 +77,9 @@ public class BuildingRenderer extends ModelRenderer<ShapesVoxelizable2d> {
             int zMin = heightmap.get(c);
 
             for (int z = 1; z < height; z++)
-                ((z % 4 == 0) ? window : wall).place(tile, c.x(), c.y(), zMin + z);
+                ((z % 4 == 0) ? window : wall).place(tile.worldTile(), c.x(), c.y(), zMin + z);
             // Build the border of the roof of the building
-            roof.place(tile, c.x(), c.y(), zMin + height);
+            roof.place(tile.worldTile(), c.x(), c.y(), zMin + height);
         }
 
         // Build the floors of the building
@@ -85,9 +88,9 @@ public class BuildingRenderer extends ModelRenderer<ShapesVoxelizable2d> {
             int zMin = heightmap.get(c);
 
             for (int z = 2; z < height; z = z + 4)
-                roof.place(tile, c.x(), c.y(), zMin + z);
+                roof.place(tile.worldTile(), c.x(), c.y(), zMin + z);
             // Build the inside of the roof of the building
-            roof.place(tile, c.x(), c.y(), zMin + height);
+            roof.place(tile.worldTile(), c.x(), c.y(), zMin + height);
         }
     }
 }

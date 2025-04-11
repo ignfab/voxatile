@@ -10,6 +10,7 @@ import org.geotools.api.referencing.FactoryException;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.parameters.OutputFormat;
@@ -38,7 +39,6 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
-import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
  * Main class of Minalac project.
@@ -107,7 +107,7 @@ public final class MinalacGenerator {
         // Start generation duration
         Instant generationStart = Instant.now();
         // One unique tile for now
-        VoxelWorldTile tile = generation.world().newTile(generation.world().limits());
+        GenerationTile tile = new GenerationTile(generation, generation.world().limits());
         generation.scheduler().start(tile);
         try {
             generation.scheduler().waitUntilAllTasksFinished(5, TimeUnit.MINUTES);
@@ -127,13 +127,16 @@ public final class MinalacGenerator {
         WorldBBox3d limits = generation.world().limits();
         int spawnX = (limits.minX() + limits.maxX() + 1) / 2;
         int spawnY = (limits.minY() + limits.maxY() + 1) / 2;
-        metadata.setSpawn(new WorldCoords3d(spawnX, spawnY, generation.heightmaps().get("ground").get(spawnX, spawnY) + 1));
+        // On va avoir un problème ici avec le spawn (on n'a probablement plus la heightmap de 0,0 une fois ici) !
+        metadata.setSpawn(new WorldCoords3d(spawnX, spawnY, 100));
+//        metadata.setSpawn(new WorldCoords3d(spawnX, spawnY, generation.heightmaps().get("ground").get(spawnX, spawnY) + 1));
         metadata.setWorldName("Minalac");
 
         File directory = cli.outputPath().toFile();
 
-        tile.save(directory);
+        tile.worldTile().save(directory);
         generation.world().save(directory);
+
         System.out.println("Total: " + Duration.between(start, Instant.now()).toSeconds() + "s");
         System.out.println("Done");
     }

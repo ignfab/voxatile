@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.generation.heighmaps;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
-import com.ignfab.minalac.generator.generation.heightmaps.LocalMinimumHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.LocalMinimumHeightmapOperator;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,17 +12,17 @@ public class LocalMinimumHeightmapTest {
 
     @Test
     public void testConstructor() {
-        assertThrows(IllegalArgumentException.class, () -> new LocalMinimumHeightmap(
+        assertThrows(IllegalArgumentException.class, () -> new LocalMinimumHeightmapOperator(
             new Heightmap(-1, 2, 3, 4, 1),
             -1
         ));
 
-        assertDoesNotThrow(() -> new LocalMinimumHeightmap(
+        assertDoesNotThrow(() -> new LocalMinimumHeightmapOperator(
             new Heightmap(-1, 2, 3, 4, 1),
             0
         ));
 
-        assertDoesNotThrow(() -> new LocalMinimumHeightmap(
+        assertDoesNotThrow(() -> new LocalMinimumHeightmapOperator(
             new Heightmap(-1, 2, 3, 4, 1),
             3
         ));
@@ -47,13 +47,13 @@ public class LocalMinimumHeightmapTest {
         v
         */
 
-        ReadableHeightmap rangeOne = new LocalMinimumHeightmap(heightmap, 1);
+        ReadableHeightmap rangeOne = new LocalMinimumHeightmapOperator(heightmap, 1);
         assertEquals(0, rangeOne.get(-4, 0));
         assertEquals(1, rangeOne.get(-3, -1));
         assertEquals(-1, rangeOne.get(-2, 0));
         assertEquals(7, rangeOne.get(-2, -1));
 
-        ReadableHeightmap rangeTwo = new LocalMinimumHeightmap(heightmap, 2);
+        ReadableHeightmap rangeTwo = new LocalMinimumHeightmapOperator(heightmap, 2);
         assertEquals(-1, rangeTwo.get(-4, -1));
         assertEquals(1, rangeTwo.get(-5, -2));
     }

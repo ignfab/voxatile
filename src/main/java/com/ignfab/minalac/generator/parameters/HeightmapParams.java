@@ -2,11 +2,10 @@ package com.ignfab.minalac.generator.parameters;
 
 import java.beans.ConstructorProperties;
 
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundHeightmap;
 
 /**
- * Represents the parameters of a type of {@link Heightmap}.
+ * Represents the parameters of a type of {@link HeightmapSpecs}.
  */
 public class HeightmapParams {
     /**
@@ -54,10 +53,10 @@ public class HeightmapParams {
     /**
      * Creates the corresponding {@code Heightmap}.
      *
-     * @param generation the generation context.
+     * @param name name of the stored heightmap
      * @return the corresponding heightmap
      */
-    public Heightmap create(Generation generation) {
-        return new Heightmap(generation.world().limits().to2d(), defaultValue);
+    public UnboundHeightmap create(String name) {
+        return new UnboundHeightmap(name, defaultValue);
     }
 }

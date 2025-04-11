@@ -60,7 +60,7 @@ public final class GenerationCreator {
         params.heightmaps.forEach((name, heightmapParams) ->
             generation.heightmaps().add(
                 name,
-                heightmapParams.create(generation)
+                heightmapParams.create(name)
             )
         );
 

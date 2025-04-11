@@ -10,8 +10,9 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.Store;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundReadableHeightmap;
 
 /**
  * Base interface for all {@code ReadableHeightmap} parameters.
@@ -25,15 +26,13 @@ public interface ReadableHeightmapParams {
      */
     void validate() throws IllegalArgumentException;
 
-    // TODO: The parameter of this method should be the heightmap store instead of Generation
-    //  (See MINALAC-115)
     /**
      * Creates or gets the corresponding {@code ReadableHeightmap}.
      *
-     * @param generation the generation context.
+     * @param store the unbounded heightmap store to use to get subsequent heightmaps
      * @return the corresponding heightmap
      */
-    ReadableHeightmap create(Generation generation);
+    UnboundReadableHeightmap create(Store<UnboundHeightmap> store);
 
     /**
      * Deserializer for {@code ReadableHeightmap}.

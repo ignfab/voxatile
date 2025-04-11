@@ -59,8 +59,8 @@ public class CopyHeightmapRendererParams extends RendererParams {
     public Renderer create(Generation generation) {
         return new CopyHeightmapRenderer(
             models.create(generation.models()),
-            from.create(generation),
-            to.create(generation)
+            from.create(generation.heightmaps()),
+            to.create(generation.heightmaps())
         );
     }
 }

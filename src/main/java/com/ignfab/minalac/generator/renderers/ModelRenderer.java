@@ -1,8 +1,8 @@
 package com.ignfab.minalac.generator.renderers;
 
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
  * The abstract {@code ModelRenderer} class represents a type of {@link Renderer} that renders a selection of models.
@@ -18,11 +18,8 @@ public abstract class ModelRenderer<M> implements Renderer {
         this.selection = selection;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void render(VoxelWorldTile tile) {
+    public void render(GenerationTile tile) {
         for (Model model : selection)
             if (cls.isInstance(model))
                 render(cls.cast(model), tile);
@@ -34,5 +31,5 @@ public abstract class ModelRenderer<M> implements Renderer {
      * @param model the model to render
      * @param tile tile to render into
      */
-    protected abstract void render(M model, VoxelWorldTile tile);
+    protected abstract void render(M model, GenerationTile tile);
 }

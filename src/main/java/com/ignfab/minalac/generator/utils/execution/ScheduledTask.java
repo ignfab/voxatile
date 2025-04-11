@@ -7,14 +7,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.ignfab.minalac.generator.world.VoxelWorldTile;
+import com.ignfab.minalac.generator.generation.GenerationTile;
 
 /**
  * A task registered in the {@link Scheduler}.
  */
 public class ScheduledTask {
     private final String id;
-    private final Consumer<VoxelWorldTile> task;
+    private final Consumer<GenerationTile> task;
     private final Set<String> conditions;
     private ScheduledTaskState state = ScheduledTaskState.WAITING;
 
@@ -25,7 +25,7 @@ public class ScheduledTask {
      * @param task the runnable to execute
      * @param conditions the IDs of the tasks that need to complete before this one can run
      */
-    public ScheduledTask(String id, Consumer<VoxelWorldTile> task, String... conditions) {
+    public ScheduledTask(String id, Consumer<GenerationTile> task, String... conditions) {
         this(id, task, Arrays.asList(conditions));
     }
 
@@ -36,7 +36,7 @@ public class ScheduledTask {
      * @param task the runnable to execute
      * @param conditions the IDs of the tasks that need to complete before this one can run
      */
-    public ScheduledTask(String id, Consumer<VoxelWorldTile> task, Collection<String> conditions) {
+    public ScheduledTask(String id, Consumer<GenerationTile> task, Collection<String> conditions) {
         this.id = id;
         this.task = task;
         if (conditions == null)
@@ -62,7 +62,7 @@ public class ScheduledTask {
      *
      * @param tile Tile on which task is run
      */
-    public void run(VoxelWorldTile tile) {
+    public void run(GenerationTile tile) {
         System.out.printf("[%s] %s%n", Thread.currentThread().getName(), "Starting " + id);
         task.accept(tile);
         System.out.printf("[%s] %s%n", Thread.currentThread().getName(), id + " finished");

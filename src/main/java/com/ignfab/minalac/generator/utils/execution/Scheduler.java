@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import com.ignfab.minalac.generator.world.VoxelWorldTile;
+import com.ignfab.minalac.generator.generation.GenerationTile;
 
 /**
  * A scheduler is a service managing execution of tasks.
@@ -23,7 +23,7 @@ public class Scheduler {
     // This is important to ensure no problem occurs if two required tasks finishes at the same time
     private final List<ScheduledTask> tasks = Collections.synchronizedList(new ArrayList<>());
 
-    private VoxelWorldTile tile;
+    private GenerationTile tile;
 
     // Stores the exception that occurred, if any.
     // Needed to pass the exception between threads
@@ -40,7 +40,7 @@ public class Scheduler {
      * @param task the task to be scheduled
      * @param conditions the conditions before the task may run
      */
-    public void schedule(String id, Consumer<VoxelWorldTile> task, Collection<String> conditions) {
+    public void schedule(String id, Consumer<GenerationTile> task, Collection<String> conditions) {
         schedule(new ScheduledTask(id, task, conditions));
     }
 
@@ -52,7 +52,7 @@ public class Scheduler {
      * @param task the task to be scheduled
      * @param conditions the conditions before the task may run
      */
-    public void schedule(String id, Consumer<VoxelWorldTile> task, String... conditions) {
+    public void schedule(String id, Consumer<GenerationTile> task, String... conditions) {
         schedule(new ScheduledTask(id, task, conditions));
     }
 
@@ -132,9 +132,9 @@ public class Scheduler {
      * Starts this scheduler.
      * Any task scheduled without condition will be executed right now.
      *
-     * @param tile {@link VoxelWorldTile} on which schedule is run
+     * @param tile {@link GenerationTile} on which schedule is run
      */
-    public void start(VoxelWorldTile tile) {
+    public void start(GenerationTile tile) {
         this.tile = tile;
         // Simulates a condition fulfill to trigger tasks without any condition
         this.conditionFulfilled(null);

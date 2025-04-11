@@ -26,6 +26,12 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
     public static final WorldBBox2d EMPTY = new WorldBBox2d(0, 0, 0, 0);
 
     /**
+     * A reusable instance of {@link WorldBBox2d} that is huge enough to be considered as infinite.
+     */
+    // TODO: A proper INFINITE implementation should be written.
+    public static final WorldBBox2d INFINITE = new WorldBBox2d(-1_000_000, -1_000_000, 2_000_000, 2_000_000);
+
+    /**
      * Creates a new {@code WorldBBox2d} by providing a starting position and the desired size of the bounding box.
      *
      * @param origin the starting position's coordinates (minimum point).

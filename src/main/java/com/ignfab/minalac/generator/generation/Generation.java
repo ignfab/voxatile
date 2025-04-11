@@ -10,7 +10,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.util.AffineTransformation;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
-import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundHeightmap;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
@@ -39,7 +39,7 @@ public class Generation {
 
     private final VoxelWorld world;
     private final ModelStore models = new ModelStore();
-    private final Store<Heightmap> heightmaps = new Store<>();
+    private final Store<UnboundHeightmap> heightmaps = new Store<>();
 
     private final Scheduler scheduler = new Scheduler();
 
@@ -118,9 +118,11 @@ public class Generation {
 
     /**
      * Returns the {@link Store} for the heightmaps.
+     * Before being used, heightmaps have to be bounded to a generation tile.
+     *
      * @return the heightmaps.
      */
-    public Store<Heightmap> heightmaps() {
+    public Store<UnboundHeightmap> heightmaps() {
         return heightmaps;
     }
 
@@ -196,5 +198,4 @@ public class Generation {
     public CoordinateReferenceSystem crs() {
         return crs;
     }
-
 }

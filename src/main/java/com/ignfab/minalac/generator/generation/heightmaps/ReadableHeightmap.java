@@ -4,7 +4,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
 /**
- * Represents a 2d readable heightmap in voxel world units.
+ * Represents a 2d readable heightmap (in voxel world units) bound to a generation tile.
  */
 public interface ReadableHeightmap {
 

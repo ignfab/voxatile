@@ -48,7 +48,7 @@ public class MatrixToHeightmapRendererParams extends RendererParams {
     public Renderer create(Generation generation) {
         return new MatrixToHeightmapRenderer(
             models.create(generation.models()),
-            heightmap.create(generation)
+            heightmap.create(generation.heightmaps())
         );
     }
 }

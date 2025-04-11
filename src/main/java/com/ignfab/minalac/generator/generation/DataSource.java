@@ -12,7 +12,6 @@ import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
-import com.ignfab.minalac.generator.world.VoxelWorldTile;
 
 /**
  * A data source with a provider, a processor and some (or no) post-processors.
@@ -69,7 +68,7 @@ public class DataSource {
      *
      * @param tile tile for which data is fetched (it gives the wanted area)
      */
-    public void fetch(VoxelWorldTile tile) {
+    public void fetch(GenerationTile tile) {
         try (Provider.Result<?> result = provider.provide(tile.limits())) {
             processor.initialize(result.crs());
             while (result.hasNext()) {

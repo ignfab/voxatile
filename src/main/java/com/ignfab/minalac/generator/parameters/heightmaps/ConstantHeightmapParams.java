@@ -2,9 +2,10 @@ package com.ignfab.minalac.generator.parameters.heightmaps;
 
 import java.beans.ConstructorProperties;
 
-import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.generation.Store;
 import com.ignfab.minalac.generator.generation.heightmaps.ConstantHeightmap;
-import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundReadableHeightmap;
 
 /**
  * Parameters for a {@link ConstantHeightmap}.
@@ -29,7 +30,7 @@ public class ConstantHeightmapParams extends CustomReadableHeightmapParams {
     public void validate() {}
 
     @Override
-    public ReadableHeightmap create(Generation generation) {
-        return new ConstantHeightmap(constant, generation.world().limits().to2d());
+    public UnboundReadableHeightmap create(Store<UnboundHeightmap> store) {
+        return new ConstantHeightmap(constant);
     }
 }

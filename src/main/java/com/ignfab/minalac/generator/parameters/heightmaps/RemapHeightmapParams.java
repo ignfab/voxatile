@@ -12,9 +12,11 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.KeyDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
-import com.ignfab.minalac.generator.generation.heightmaps.SimpleUnaryOperatorHeightmap;
+import com.ignfab.minalac.generator.generation.Store;
+import com.ignfab.minalac.generator.generation.heightmaps.UnaryHeightmapOperator;
+import com.ignfab.minalac.generator.generation.heightmaps.UnaryOperatorHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.UnboundReadableHeightmap;
 import com.ignfab.minalac.generator.parameters.utils.IntegerIntervalParams;
 import com.ignfab.minalac.generator.utils.IntegerInterval;
 
@@ -59,7 +61,7 @@ public class RemapHeightmapParams extends CustomReadableHeightmapParams {
     }
 
     @Override
-    public ReadableHeightmap create(Generation generation) {
+    public UnboundReadableHeightmap create(Store<UnboundHeightmap> store) {
         LinkedHashMap<IntegerInterval, Integer> map = new LinkedHashMap<>();
         mapping.forEach(((intervalParams, integer) -> map.put(intervalParams.create(), integer)));
         IntUnaryOperator function = (i -> {
@@ -68,7 +70,7 @@ public class RemapHeightmapParams extends CustomReadableHeightmapParams {
                     return entry.getValue();
             return i;
         });
-        return new SimpleUnaryOperatorHeightmap(remap.create(generation), function);
+        return new UnaryOperatorHeightmap(remap.create(store), new UnaryHeightmapOperator.Simple(function));
     }
 
     static class ValuesKeyDeserializer extends KeyDeserializer {

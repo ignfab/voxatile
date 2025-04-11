@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.generation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * This class is a store for {@code T} elements.
@@ -38,5 +39,14 @@ public class Store<T> {
         if (object == null)
             throw new NoSuchElementException("The element " + name + " does not exist");
         return object;
+    }
+
+    /**
+     * Returns the set of existing keys in store.
+     *
+     * @return the set of existing keys
+     */
+    public Set<String> keys() {
+        return store.keySet();
     }
 }
