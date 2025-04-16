@@ -15,27 +15,27 @@ public class MetadataParsePostProcessor<T> extends PostProcessor.Generic {
     private final String name;
     private final Class<T> type;
     private final Function<Object, ? extends T> parser;
-    private final ParsingFailurePolicy ifMissingMetadata;
-    private final ParsingFailurePolicy ifParserFails;
+    private final FailurePolicy ifMissingMetadata;
+    private final FailurePolicy ifParserFails;
 
     /**
      * Creates a new post-processor parsing metadata {@code name} as a {@code type}.
      *
-     * @param name name of the metadata to parse
      * @param type type of parsed value
+     * @param name name of the metadata to parse
      * @param parser parsing function to use
      * @param ifMissingMetadata policy to apply when the metadata is absent
      * @param ifParserFails policy to apply when the {@code parser} return error
      */
     public MetadataParsePostProcessor(
-        String name,
         Class<T> type,
+        String name,
         Function<Object, ? extends T> parser,
-        ParsingFailurePolicy ifMissingMetadata,
-        ParsingFailurePolicy ifParserFails
+        FailurePolicy ifMissingMetadata,
+        FailurePolicy ifParserFails
     ) {
-        this.name = name;
         this.type = type;
+        this.name = name;
         this.parser = parser;
         this.ifMissingMetadata = ifMissingMetadata;
         this.ifParserFails = ifParserFails;
@@ -68,27 +68,5 @@ public class MetadataParsePostProcessor<T> extends PostProcessor.Generic {
             }
         }
         return model;
-    }
-
-    /**
-     * Policies about how to handle parsing failure.
-     */
-    public enum ParsingFailurePolicy {
-        /**
-         * Ignores the failure, leaving everything untouched.
-         */
-        IGNORE,
-        /**
-         * Removes the metadata that caused the failure.
-         */
-        REMOVE_METADATA,
-        /**
-         * Throws an {@link IgnorableException} to discard the model.
-         */
-        DISCARD_MODEL,
-        /**
-         * Throws an {@link GenerationFailedException} causing a fatal error.
-         */
-        ERROR
     }
 }

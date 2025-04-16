@@ -13,6 +13,7 @@ Each post-processor has a field `type` which is used to identify it.
   * [Metadata copy](#metadata-copy)
   * [Metadata default](#metadata-default)
   * [Metadata parse](#metadata-parse)
+  * [Metadata remap](#metadata-remap)
 * [Geometry post-processors](#geometry-post-processors)
   * [Geometry buffer](#geometry-buffer)
 
@@ -134,6 +135,66 @@ Post-processor parsing a metadata value in-place.
 | `removeMetadata` | The metadata is removed.                   |
 | `ignore`         | Failure is ignored, nothing is done.       |
 | `error`          | An error occurs, and the generation stops. |
+
+### Metadata remap
+
+Post-processor that remaps metadata values.
+
+The metadata value is always considered as a String before comparaison.
+The matched value is parsed according to the `as` attribute.
+
+**Type**: `remap`
+
+**Extra parameters**
+- `metadata` (required): Name of the metadata to remap.
+- `ifMissing` (optional, default `error`): Policy to apply if metadata is missing:
+
+| Policy           | Explanation                                |
+|:-----------------|:-------------------------------------------|
+| `discardModel`   | The model is discarded.                    |
+| `ignore`         | Nothing is done.                           |
+| `error`          | An error occurs, and the generation stops. |
+
+- `fromTo` (optional, required if `toFrom` is not set): Mapping table telling, for each found value, what to put instead.
+- `toFrom` (optional, required if `fromTo` is not set): Reverse mapping table telling, for each desired output value, what input values are replaced. Several input values (as list) can be given for an output value.
+- `default` (optional): Default value if no match found.
+- `as` (optional, default `text`): Wanted type of remapped values: `integer`, `decimal`, `boolean`, `text`.
+- `ifNoMatchFound` (optional, only when `default` is not set, default `error`): Policy to apply when no match found:
+
+| Policy           | Explanation                                |
+|:-----------------|:-------------------------------------------|
+| `discardModel`   | The model is discarded.                    |
+| `removeMetadata` | The metadata is removed.                   |
+| `ignore`         | Metadata is not modified.                  |
+| `error`          | An error occurs, and the generation stops. |
+
+**Examples**:
+Here's basic exemple of one to one mapping:
+```yaml
+type: remap
+metadata: nature
+fromTo:
+  Haie: hedge
+  Mangrove: mangrove
+default: grass
+```
+
+Here many different metadata values are mapped to same output values:
+```yaml
+type: remap
+metadata: nature
+toFrom:
+  forest:
+     - Forêt fermée de conifères
+     - Forêt fermée de feuillus
+     - Peupleraie
+     - Forêt ouverte
+     - Zone arborée
+     - Bois
+  heathland: [ Lande herbacée, Lande ligneuse ]
+  vine: Vigne
+default: grass
+```
 
 ## Geometry post-processors
 
