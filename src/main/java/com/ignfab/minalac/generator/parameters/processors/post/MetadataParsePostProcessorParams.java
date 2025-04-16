@@ -63,8 +63,8 @@ public class MetadataParsePostProcessorParams extends PostProcessorParams {
         ValueParser<Object> parser = (ValueParser<Object>) as;
 
         return new MetadataParsePostProcessor<>(
-            metadata,
             parser.type(),
+            metadata,
             parser.parser(),
             ifMissing.create(),
             ifNotParsable.create()

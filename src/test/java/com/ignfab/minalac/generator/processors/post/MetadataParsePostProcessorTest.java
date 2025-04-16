@@ -32,12 +32,12 @@ public class MetadataParsePostProcessorTest {
     @Test
     public void testSimpleParse() {
         TestingModel processed = getProcessed(new MetadataParsePostProcessor<>(
-            "int",
             String.class,
+            "int",
             Objects::toString,
             // Failure policy is irrelevant for this test as there is no failure
-            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR,
-            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR
+            FailurePolicy.ERROR,
+            FailurePolicy.ERROR
         ));
         processed.assertMetadata("int", "7");
         processed.assertMetadata("string", "value", "Unrelated metadata untouched");
@@ -46,24 +46,24 @@ public class MetadataParsePostProcessorTest {
     @Test
     public void testParsingError() {
         assertThrows(GenerationFailedException.class, () -> new MetadataParsePostProcessor<>(
-            "int",
             String.class,
+            "int",
             obj -> {
                 throw new RuntimeException();
             },
-            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR,
-            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR
+            FailurePolicy.ERROR,
+            FailurePolicy.ERROR
         ).process(model));
     }
 
     @Test
     public void testMissingAllowed() {
         TestingModel processed = getProcessed(new MetadataParsePostProcessor<>(
-            "missing",
             String.class,
+            "missing",
             Objects::toString,
-            MetadataParsePostProcessor.ParsingFailurePolicy.IGNORE,
-            MetadataParsePostProcessor.ParsingFailurePolicy.IGNORE
+            FailurePolicy.IGNORE,
+            FailurePolicy.IGNORE
         ));
         processed.assertMetadataAbsent("missing", "Metadata still absent");
     }
@@ -71,22 +71,22 @@ public class MetadataParsePostProcessorTest {
     @Test
     public void testMissingForbidden() {
         assertThrows(GenerationFailedException.class, () -> new MetadataParsePostProcessor<>(
-            "missing",
             String.class,
+            "missing",
             Objects::toString,
-            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR,
-            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR
+            FailurePolicy.ERROR,
+            FailurePolicy.ERROR
         ).process(model));
     }
 
     @Test
     public void testNullAllowed() {
         TestingModel processed = getProcessed(new MetadataParsePostProcessor<>(
-            "int",
             String.class,
+            "int",
             obj -> null,
-            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR,
-            MetadataParsePostProcessor.ParsingFailurePolicy.REMOVE_METADATA
+            FailurePolicy.ERROR,
+            FailurePolicy.REMOVE_METADATA
         ));
         processed.assertMetadataAbsent("int", "Metadata removed");
     }
@@ -94,13 +94,13 @@ public class MetadataParsePostProcessorTest {
     @Test
     public void testFailurePolicyIgnore() {
         TestingModel processed = getProcessed(new MetadataParsePostProcessor<>(
-            "int",
             String.class,
+            "int",
             obj -> {
                 throw new RuntimeException();
             },
-            MetadataParsePostProcessor.ParsingFailurePolicy.IGNORE,
-            MetadataParsePostProcessor.ParsingFailurePolicy.IGNORE
+            FailurePolicy.IGNORE,
+            FailurePolicy.IGNORE
         ));
         processed.assertMetadata("int", 7, "Original value kept");
     }
@@ -108,13 +108,13 @@ public class MetadataParsePostProcessorTest {
     @Test
     public void testFailurePolicyRemove() {
         TestingModel processed = getProcessed(new MetadataParsePostProcessor<>(
-            "int",
             String.class,
+            "int",
             obj -> {
                 throw new RuntimeException();
             },
-            MetadataParsePostProcessor.ParsingFailurePolicy.REMOVE_METADATA,
-            MetadataParsePostProcessor.ParsingFailurePolicy.REMOVE_METADATA
+            FailurePolicy.REMOVE_METADATA,
+            FailurePolicy.REMOVE_METADATA
         ));
         processed.assertMetadataAbsent("int", "Original value cleared");
     }
@@ -122,26 +122,26 @@ public class MetadataParsePostProcessorTest {
     @Test
     public void testFailurePolicySkip() {
         assertThrows(IgnorableException.class, () -> new MetadataParsePostProcessor<>(
-            "int",
             String.class,
+            "int",
             obj -> {
                 throw new RuntimeException();
             },
-            MetadataParsePostProcessor.ParsingFailurePolicy.DISCARD_MODEL,
-            MetadataParsePostProcessor.ParsingFailurePolicy.DISCARD_MODEL
+            FailurePolicy.DISCARD_MODEL,
+            FailurePolicy.DISCARD_MODEL
         ).process(model));
     }
 
     @Test
     public void testFailurePolicyError() {
         assertThrows(GenerationFailedException.class, () -> new MetadataParsePostProcessor<>(
-            "int",
             String.class,
+            "int",
             obj -> {
                 throw new RuntimeException();
             },
-            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR,
-            MetadataParsePostProcessor.ParsingFailurePolicy.ERROR
+            FailurePolicy.ERROR,
+            FailurePolicy.ERROR
         ).process(model));
     }
 }

@@ -2,51 +2,51 @@ package com.ignfab.minalac.generator.parameters.processors.post;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.ignfab.minalac.generator.processors.post.MetadataParsePostProcessor.ParsingFailurePolicy;
+import com.ignfab.minalac.generator.processors.post.FailurePolicy;
 
 /**
- * Parameters for {@link ParsingFailurePolicy}.
+ * Parameters for {@link FailurePolicy}.
  *
  * Avoids scattering configuration-specific names
- * for {@link ParsingFailurePolicy} across the codebase.
+ * for {@link FailurePolicy} across the codebase.
  */
 public enum FailurePolicyParams {
     /**
-     * Maps the "ignore" JSON value to {@link ParsingFailurePolicy}.
+     * Maps the "ignore" JSON value to {@link FailurePolicy}.
      */
     @JsonProperty("ignore")
-    IGNORE(ParsingFailurePolicy.IGNORE),
+    IGNORE(FailurePolicy.IGNORE),
 
     /**
-     * Maps the "removeMetadata" JSON value to {@link ParsingFailurePolicy}.
+     * Maps the "removeMetadata" JSON value to {@link FailurePolicy}.
      */
     @JsonProperty("removeMetadata")
-    REMOVE_METADATA(ParsingFailurePolicy.REMOVE_METADATA),
+    REMOVE_METADATA(FailurePolicy.REMOVE_METADATA),
 
     /**
-     * Maps the "discardModel" JSON value to {@link ParsingFailurePolicy}.
+     * Maps the "discardModel" JSON value to {@link FailurePolicy}.
      */
     @JsonProperty("discardModel")
-    DISCARD_MODEL(ParsingFailurePolicy.DISCARD_MODEL),
+    DISCARD_MODEL(FailurePolicy.DISCARD_MODEL),
 
     /**
-     * Maps the "error" JSON value to {@link ParsingFailurePolicy}.
+     * Maps the "error" JSON value to {@link FailurePolicy}.
      */
     @JsonProperty("error")
-    ERROR(ParsingFailurePolicy.ERROR);
+    ERROR(FailurePolicy.ERROR);
 
-    private final ParsingFailurePolicy parsingFailurePolicy;
+    private final FailurePolicy failurePolicy;
 
-    FailurePolicyParams(ParsingFailurePolicy parsingFailurePolicy) {
-        this.parsingFailurePolicy = parsingFailurePolicy;
+    FailurePolicyParams(FailurePolicy failurePolicy) {
+        this.failurePolicy = failurePolicy;
     }
 
     /**
-     * Returns the associated {@link ParsingFailurePolicy}.
+     * Returns the associated {@link FailurePolicy}.
      *
-     * @return the corresponding {@link ParsingFailurePolicy}
+     * @return the corresponding {@link FailurePolicy}
      */
-    public ParsingFailurePolicy create() {
-        return parsingFailurePolicy;
+    public FailurePolicy create() {
+        return failurePolicy;
     }
 }
