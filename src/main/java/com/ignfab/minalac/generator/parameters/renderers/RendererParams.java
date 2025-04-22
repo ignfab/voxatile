@@ -1,6 +1,10 @@
 package com.ignfab.minalac.generator.parameters.renderers;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.PolymorphicParams;
@@ -13,7 +17,8 @@ public abstract class RendererParams extends PolymorphicParams {
     /**
      * Dependencies (optional).
      */
-    public List<String> after;
+    @JsonSetter(nulls = Nulls.SKIP)
+    public List<String> after = new ArrayList<>();
 
     /**
      * Creates the corresponding {@code Renderer}.

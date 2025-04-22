@@ -4,10 +4,12 @@ import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.geotools.api.referencing.FactoryException;
 
+import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
@@ -57,7 +59,7 @@ public final class MinalacGenerator {
      * @param args command line arguments
      * @throws JsonProcessingException
      */
-    public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException, JsonProcessingException {
+    public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException, JsonProcessingException, TimeoutException, GenerationFailedException {
         // Execution duration start
         Instant start = Instant.now();
         HttpTrustAllSSL.applyGlobally();
@@ -113,9 +115,8 @@ public final class MinalacGenerator {
         System.out.println("Creation of the map.");
         // Start generation duration
         Instant generationStart = Instant.now();
-        generation.scheduler().start();
         try {
-            generation.scheduler().waitUntilAllTasksFinished(5, TimeUnit.MINUTES);
+            generation.scheduler().run(5, TimeUnit.MINUTES);
         } finally {
             generation.scheduler().shutdown();
         }

@@ -13,7 +13,7 @@ public class TaskFailedException extends Exception {
      * @param cause the exception causing the failure
      */
     public TaskFailedException(ScheduledTask task, Throwable cause) {
-        super("Task failed: " + task.getId(), cause);
+        super("Task failed: " + task.id(), cause);
         this.task = task;
     }
 

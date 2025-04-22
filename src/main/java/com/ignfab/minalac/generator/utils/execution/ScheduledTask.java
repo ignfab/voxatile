@@ -1,10 +1,9 @@
 package com.ignfab.minalac.generator.utils.execution;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * A task registered in the {@link Scheduler}.
@@ -12,36 +11,90 @@ import java.util.Set;
 public class ScheduledTask {
     private final String id;
     private final Runnable task;
-    private final Set<String> conditions;
-    private ScheduledTaskState state = ScheduledTaskState.WAITING;
+    private final Set<ScheduledTask> dependencies;
+    private ScheduledTaskState state;
+    private TaskFailedException error;
+    private Future<?> future;
 
     /**
      * Creates a new task with the given characteristics.
      *
      * @param id the ID of the task
      * @param task the runnable to execute
-     * @param conditions the IDs of the tasks that need to complete before this one can run
      */
-    public ScheduledTask(String id, Runnable task, String... conditions) {
-        this(id, task, Arrays.asList(conditions));
+    public ScheduledTask(String id, Runnable task) {
+        this.id = id;
+        this.task = task;
+        this.dependencies = new HashSet<>();
+        reset();
     }
 
     /**
-     * Creates a new task with the given characteristics.
-     *
-     * @param id the ID of the task
-     * @param task the runnable to execute
-     * @param conditions the IDs of the tasks that need to complete before this one can run
+     * Resets this task so it can be re-executed.
      */
-    public ScheduledTask(String id, Runnable task, Collection<String> conditions) {
-        this.id = id;
-        this.task = task;
-        if (conditions == null)
-            conditions = Collections.emptyList();
+    public void reset() {
+        state = ScheduledTaskState.WAITING;
+        error = null;
+        future = null;
+    }
 
-        // Synchronized collections are thread-safe equivalent of regular collections
-        // This is important to ensure no problem occurs if two required tasks finishes at the same time
-        this.conditions = Collections.synchronizedSet(new HashSet<>(conditions));
+    /**
+     * Tries to submit this task for execution.
+     * The lock is used as a way to communicate to a potential main thread the end or failure of this task.
+     *
+     * @param executor the service where tasks are submitted for execution
+     * @param lock the lock used for communication
+     * @return true if the task was submitted for execution.
+     */
+    public boolean tryExecute(ExecutorService executor, Object lock) {
+        // Check if task can run
+        if (state != ScheduledTaskState.WAITING)
+            return false;
+        for (ScheduledTask task : dependencies)
+            if (task.state() != ScheduledTaskState.FINISHED)
+                return false;
+
+        // It can, let's go!
+        state = ScheduledTaskState.LAUNCHING;
+        future = executor.submit(() -> {
+            try {
+                Thread.currentThread().setName(id);
+                System.out.printf("Starting task %s%n", id);
+                state = ScheduledTaskState.RUNNING;
+                task.run();
+                state = ScheduledTaskState.FINISHED;
+                System.out.printf("Task %s finished%n", id);
+            } catch (RuntimeException e) {
+                // If an error occurs, we take note of the task failure
+                System.out.printf("Error in task %s%n", id);
+                error = new TaskFailedException(this, e);
+                state = ScheduledTaskState.FAILED;
+            } finally {
+                // On both cases, we wake up the main thread
+                // The synchronized block is mandatory to take ownership of the lock
+                synchronized (lock) {
+                    lock.notifyAll();
+                }
+            }
+        });
+        return true;
+    }
+
+    /**
+     * Interrupts this task if it is running.
+     */
+    public void cancel() {
+        if (future != null)
+            future.cancel(true);
+    }
+
+    /**
+     * Adds a task that needs to be completed before this task can be run.
+     *
+     * @param dependency the dependency task
+     */
+    protected void addDependency(ScheduledTask dependency) {
+        this.dependencies.add(dependency);
     }
 
     /**
@@ -49,27 +102,8 @@ public class ScheduledTask {
      *
      * @return the ID of the task
      */
-    public String getId() {
+    public String id() {
         return id;
-    }
-
-    /**
-     * Runs this task's runnable.
-     * This method will return when the runnable returns.
-     */
-    public void run() {
-        System.out.printf("[%s] %s%n", Thread.currentThread().getName(), "Starting " + id);
-        task.run();
-        System.out.printf("[%s] %s%n", Thread.currentThread().getName(), id + " finished");
-    }
-
-    /**
-     * Returns the IDs of the tasks that need to complete before this one can run.
-     *
-     * @return the conditions of this task
-     */
-    public Set<String> getConditions() {
-        return conditions;
     }
 
     /**
@@ -77,16 +111,17 @@ public class ScheduledTask {
      *
      * @return the state of this task
      */
-    public ScheduledTaskState getState() {
+    public ScheduledTaskState state() {
         return state;
     }
 
     /**
-     * Sets the state of this task.
+     * If an error occurred during execution of this task, returns the associated {@code TaskFailedException}.
      *
-     * @param state the new state of the task
+     * @return the associated {@code TaskFailedException}, {@code null} otherwise
      */
-    public void setState(ScheduledTaskState state) {
-        this.state = state;
+    public TaskFailedException error() {
+        return error;
     }
+
 }
