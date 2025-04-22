@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.parameters;
 
 import java.beans.ConstructorProperties;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -42,7 +43,8 @@ public class DataSourceParams {
     /**
      * Dependencies (optional).
      */
-    public List<String> after;
+    @JsonSetter(nulls = Nulls.SKIP)
+    public List<String> after = new ArrayList<>();
 
    /**
      * Constructor used to ensure that the required fields are present during deserialization.

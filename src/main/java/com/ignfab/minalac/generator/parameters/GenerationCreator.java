@@ -69,9 +69,13 @@ public final class GenerationCreator {
             DataSource dataSource = dataSourceParams.create(generation);
             generation.scheduler().schedule(
                 "source:" + name,
-                () -> dataSource.fetch(generation.world().limits()),
-                dataSourceParams.after
+                () -> dataSource.fetch(generation.world().limits())
             );
+        });
+
+        params.sources.forEach((name, dataSourceParams) -> {
+            for (String depName : dataSourceParams.after)
+                generation.scheduler().addDependency("source:" + name, depName);
         });
 
         // Renderers scheduling
@@ -79,9 +83,13 @@ public final class GenerationCreator {
             Renderer renderer = rendererParams.create(generation);
             generation.scheduler().schedule(
                 "renderer:" + name,
-                () -> renderer.render(generation.world().limits()),
-                rendererParams.after
+                () -> renderer.render(generation.world().limits())
             );
+        });
+
+        params.renderers.forEach((name, rendererParams) -> {
+            for (String depName : rendererParams.after)
+                generation.scheduler().addDependency("renderer:" + name, depName);
         });
 
         return generation;

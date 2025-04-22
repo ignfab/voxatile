@@ -6,23 +6,27 @@ package com.ignfab.minalac.generator.utils.execution;
 public enum ScheduledTaskState {
     /**
      * The task is waiting for other tasks to complete.
-     * It will be launched once all conditions are fulfilled.
+     * It will be launched once all of its dependencies are finished.
      */
     WAITING,
     /**
-     * All conditions have been fulfilled, the task is being launched.
+     * All dependencies have been finished, the task is being launched.
      * It will be running once the execution service has a thread ready.
      */
     LAUNCHING,
     /**
      * The task is running.
      * It will be finished once the task's runnable returns.
-     * If an error occurs, it will stop everything and the state won't be updated.
+     * If this task is interrupted following {@link ScheduledTask#cancel()} the state won't be updated.
      */
     RUNNING,
     /**
      * The task has finished.
-     * It ran without error, and will be removed from the scheduler.
      */
-    FINISHED
+    FINISHED,
+
+    /**
+     * The task execution failed.
+     */
+    FAILED
 }
