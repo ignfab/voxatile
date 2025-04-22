@@ -21,15 +21,14 @@ public class SchedulerTest {
     }
 
     @Test
-    public void testTasksWithoutCondition() {
+    public void testTasksWithoutDependency() {
         List<String> actual = Collections.synchronizedList(new ArrayList<>());
 
         scheduler.schedule("a", () -> actual.add("a"));
         scheduler.schedule("b", () -> actual.add("b"));
         scheduler.schedule("c", () -> actual.add("c"));
 
-        scheduler.start();
-        assertDoesNotThrow(() -> scheduler.waitUntilAllTasksFinished(50, TimeUnit.MILLISECONDS));
+        assertDoesNotThrow(() -> scheduler.runThenReset(50, TimeUnit.MILLISECONDS));
         scheduler.shutdown();
 
         List<String> expected = Arrays.asList("a", "b", "c");
@@ -37,20 +36,44 @@ public class SchedulerTest {
             () -> "List elements expected to be the same (ignoring order). Expected: " + expected + ", actual: " + actual);
     }
 
+
     @Test
-    public void testTasksWithCondition() {
+    public void testTasksWithDependency() {
         List<String> actual = Collections.synchronizedList(new ArrayList<>());
 
         scheduler.schedule("1", () -> actual.add("1"));
-        scheduler.schedule("2", () -> actual.add("2"), "1");
-        scheduler.schedule("3", () -> actual.add("3"), "1", "2");
+        scheduler.schedule("2", () -> actual.add("2"));
+        scheduler.schedule("3", () -> actual.add("3"));
+        scheduler.addDependency("2", "1");
+        scheduler.addDependency("3", "1");
+        scheduler.addDependency("3", "2");
 
-        scheduler.start();
-        assertDoesNotThrow(() -> scheduler.waitUntilAllTasksFinished(50, TimeUnit.MILLISECONDS));
+        assertDoesNotThrow(() -> scheduler.runThenReset(50, TimeUnit.MILLISECONDS));
         scheduler.shutdown();
 
         List<String> expected = Arrays.asList("1", "2", "3");
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testResetTasks() {
+        List<String> actual = Collections.synchronizedList(new ArrayList<>());
+
+        scheduler.schedule("x", () -> actual.add("x"));
+        scheduler.schedule("y", () -> actual.add("y"));
+        scheduler.schedule("z", () -> actual.add("z"));
+        scheduler.addDependency("y", "x");
+        scheduler.addDependency("z", "y");
+
+        List<String> expected = Arrays.asList("x", "y", "z");
+
+        for (int i = 1; i <= 3; i++) {
+            assertDoesNotThrow(() -> scheduler.runThenReset(50, TimeUnit.MILLISECONDS));
+            assertEquals(expected, actual, "Iteration " + i);
+            actual.clear();
+        }
+
+        scheduler.shutdown();
     }
 
     @Test
@@ -60,8 +83,7 @@ public class SchedulerTest {
         });
         scheduler.schedule(task);
 
-        scheduler.start();
-        TaskFailedException e = assertThrows(TaskFailedException.class, () -> scheduler.waitUntilAllTasksFinished(50, TimeUnit.MILLISECONDS));
+        TaskFailedException e = assertThrows(TaskFailedException.class, () -> scheduler.runThenReset(50, TimeUnit.MILLISECONDS));
         scheduler.shutdown();
 
         assertEquals(task, e.getTask());
@@ -79,8 +101,7 @@ public class SchedulerTest {
             executed.set(true); // Should never happen because timeout is 50ms
         });
 
-        scheduler.start();
-        assertDoesNotThrow(() -> scheduler.waitUntilAllTasksFinished(50, TimeUnit.MILLISECONDS));
+        assertDoesNotThrow(() -> scheduler.runThenReset(50, TimeUnit.MILLISECONDS));
         scheduler.shutdown();
 
         assertFalse(executed.get());

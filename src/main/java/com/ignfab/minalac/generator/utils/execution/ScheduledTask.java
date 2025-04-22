@@ -1,8 +1,5 @@
 package com.ignfab.minalac.generator.utils.execution;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,36 +9,22 @@ import java.util.Set;
 public class ScheduledTask {
     private final String id;
     private final Runnable task;
-    private final Set<String> conditions;
+    private final Set<ScheduledTask> dependencies;
+    private final Set<ScheduledTask> dependents;
     private ScheduledTaskState state = ScheduledTaskState.WAITING;
 
-    /**
-     * Creates a new task with the given characteristics.
-     *
-     * @param id the ID of the task
-     * @param task the runnable to execute
-     * @param conditions the IDs of the tasks that need to complete before this one can run
-     */
-    public ScheduledTask(String id, Runnable task, String... conditions) {
-        this(id, task, Arrays.asList(conditions));
-    }
 
     /**
      * Creates a new task with the given characteristics.
      *
      * @param id the ID of the task
      * @param task the runnable to execute
-     * @param conditions the IDs of the tasks that need to complete before this one can run
      */
-    public ScheduledTask(String id, Runnable task, Collection<String> conditions) {
+    public ScheduledTask(String id, Runnable task) {
         this.id = id;
         this.task = task;
-        if (conditions == null)
-            conditions = Collections.emptyList();
-
-        // Synchronized collections are thread-safe equivalent of regular collections
-        // This is important to ensure no problem occurs if two required tasks finishes at the same time
-        this.conditions = Collections.synchronizedSet(new HashSet<>(conditions));
+        this.dependencies = new HashSet<>();
+        this.dependents = new HashSet<>();
     }
 
     /**
@@ -61,15 +44,35 @@ public class ScheduledTask {
         System.out.printf("[%s] %s%n", Thread.currentThread().getName(), "Starting " + id);
         task.run();
         System.out.printf("[%s] %s%n", Thread.currentThread().getName(), id + " finished");
+
     }
 
     /**
-     * Returns the IDs of the tasks that need to complete before this one can run.
+     * Returns the tasks that need to be completed before this task can be run.
      *
-     * @return the conditions of this task
+     * @return the dependencies tasks
      */
-    public Set<String> getConditions() {
-        return conditions;
+    public Set<ScheduledTask> getDependencies() {
+        return dependencies;
+    }
+
+    /**
+     * Returns the tasks that can only be executed if the task is completed.
+     *
+     * @return tasks that depends on this task
+     */
+    public Set<ScheduledTask> getDependents() {
+        return dependents;
+    }
+
+    /**
+     * Adds a task that needs to be completed before this task can be run.
+     *
+     * @param dependency the dependency task
+     */
+    protected void addDependency(ScheduledTask dependency) {
+        this.dependencies.add(dependency);
+        dependency.dependents.add(this);
     }
 
     /**

@@ -1,10 +1,8 @@
 package com.ignfab.minalac.generator.utils.execution;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -16,10 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class Scheduler {
     // An executor using a thread pool to run tasks
     private final ExecutorService executor = Executors.newCachedThreadPool();
-    // Synchronized collections are thread-safe equivalent of regular collections
-    // This is important to ensure no problem occurs if two required tasks finishes at the same time
-    private final List<ScheduledTask> tasks = Collections.synchronizedList(new ArrayList<>());
-
+    private final Map<String, ScheduledTask> tasks = new HashMap<>();
     // Stores the exception that occurred, if any.
     // Needed to pass the exception between threads
     private TaskFailedException error = null;
@@ -28,108 +23,106 @@ public class Scheduler {
     private final Object lock = new Object();
 
     /**
-     * Schedules the task to be executed when all conditions are fulfilled.
-     * If the task has no condition, it will be executed at {@link #start()}.
+     * Schedules the task to be executed when all dependencies are finished.
+     * If the task has no dependency, it will be executed at {@link #runThenReset(long, TimeUnit)}.
      *
      * @param id the ID of the task
      * @param task the task to be scheduled
-     * @param conditions the conditions before the task may run
      */
-    public void schedule(String id, Runnable task, Collection<String> conditions) {
-        schedule(new ScheduledTask(id, task, conditions));
+    public void schedule(String id, Runnable task) {
+        schedule(new ScheduledTask(id, task));
     }
 
     /**
-     * Schedules the task to be executed when all conditions are fulfilled.
-     * If the task has no condition, it will be executed at {@link #start()}.
-     *
-     * @param id the ID of the task
-     * @param task the task to be scheduled
-     * @param conditions the conditions before the task may run
-     */
-    public void schedule(String id, Runnable task, String... conditions) {
-        schedule(new ScheduledTask(id, task, conditions));
-    }
-
-    /**
-     * Schedules the task to be executed when all conditions are fulfilled.
-     * If the task has no condition, it will be executed at {@link #start()}.
+     * Schedules the task to be executed when all dependencies are finished.
+     * If the task has no condition, it will be executed at {@link #runThenReset(long, TimeUnit)}.
      *
      * @param task the task to be scheduled
      */
     public void schedule(ScheduledTask task) {
-        tasks.add(task);
+        if (tasks.containsKey(task.getId()))
+            throw new IllegalArgumentException("Task %s already scheduled".formatted(task.getId()));
+        tasks.put(task.getId(), task);
     }
 
-    // This method is synchronized to prevent multiple concurrent trigger of the same task
-    private synchronized void execute(ScheduledTask task) {
-        // Only a waiting task can be executed
-        if (task.getState() != ScheduledTaskState.WAITING)
-            return;
-        task.setState(ScheduledTaskState.LAUNCHING);
-        // The .execute() method asks for execution but real execution can be delayed if no thread is currently available
-        executor.execute(() -> {
-            try {
-                // Name current thread according to task id
-                Thread.currentThread().setName(task.getId());
-                task.setState(ScheduledTaskState.RUNNING);
-                task.run();
-                task.setState(ScheduledTaskState.FINISHED);
-                // The synchronized block prevents ConcurrentModificationException
-                synchronized (tasks) {
-                    // Once the task has been run, we remove it from our list
-                    // This is not strictly necessary, but avoid the need to loop on every
-                    // task and check their state to find out whether some task remains or not
-                    tasks.remove(task);
-                }
-                // Signals that the task finished to trigger any dependent task
-                conditionFulfilled(task.getId());
-                // If this was the last task, we wake up the main thread
-                // The synchronized block is mandatory to take ownership of the lock
-                synchronized (lock) {
-                    // The synchronized block prevents ConcurrentModificationException
-                    synchronized (tasks) {
-                        if (tasks.isEmpty())
+    private void tryExecute(ScheduledTask task) {
+        synchronized (task) {
+            // Only a waiting task that has all of its dependencies finished can be executed
+            if (task.getState() != ScheduledTaskState.WAITING || !areTasksDone(task.getDependencies())) return;
+            task.setState(ScheduledTaskState.LAUNCHING);
+            // The .execute() method asks for execution but real execution can be delayed if no thread is currently available
+            executor.execute(() -> {
+                try {
+                    Thread.currentThread().setName(task.getId());
+                    task.setState(ScheduledTaskState.RUNNING);
+                    task.run();
+                    task.setState(ScheduledTaskState.FINISHED);
+                    for (ScheduledTask dependent : task.getDependents())
+                        tryExecute(dependent);
+                    // If this was the last task, we wake up the main thread
+                    // The synchronized block is mandatory to take ownership of the lock
+                    synchronized (lock) {
+                        if (areTasksDone(tasks.values()))
                             lock.notifyAll();
                     }
+                } catch (RuntimeException e) {
+                    // If an error occurs, we take note of the task failure and wake up the main thread
+                    // The synchronized block is mandatory to take ownership of the lock
+                    synchronized (lock) {
+                        error = new TaskFailedException(task, e);
+                        lock.notifyAll();
+                    }
                 }
-            } catch (RuntimeException e) {
-                // If an error occurs, we take note of the task failure and wake up the main thread
-                // The synchronized block is mandatory to take ownership of the lock
-                synchronized (lock) {
-                    error = new TaskFailedException(task, e);
-                    lock.notifyAll();
-                }
-            }
-        });
-    }
-
-    /**
-     * Signals the fulfillment of a condition.
-     * If this condition was the last one of the task, it will be executed.
-     *
-     * @param condition the fulfilled condition
-     */
-    public void conditionFulfilled(String condition) {
-        // The synchronized block prevents ConcurrentModificationException
-        synchronized (tasks) {
-            for (ScheduledTask task : tasks) {
-                Set<String> conditions = task.getConditions();
-                conditions.remove(condition);
-                // If this was the last condition, the task may now run
-                if (conditions.isEmpty())
-                    execute(task);
-            }
+            });
         }
     }
 
     /**
-     * Starts this scheduler.
-     * Any task scheduled without condition will be executed right now.
+     * Makes {@code idTask} dependent on the completion of the specified {@code idDependency} task.
+     *
+     * @param idTask the id of the task
+     * @param idDependency the id the dependency
      */
-    public void start() {
-        // Simulates a condition fulfill to trigger tasks without any condition
-        this.conditionFulfilled(null);
+    public void addDependency(String idTask, String idDependency) {
+        getTask(idTask).addDependency(getTask(idDependency));
+    }
+
+    // Checking the state of tasks should be thread-safe, however
+    // since FINISHED is the final state it is not strictly necessary to make this method synchronized.
+    private static boolean areTasksDone(Collection<ScheduledTask> tasks) {
+        for (ScheduledTask task : tasks)
+            if (task.getState() != ScheduledTaskState.FINISHED)
+                return false;
+        return true;
+    }
+
+    /**
+     * Starts this scheduler and waits for the completion of all tasks.
+     * Once all tasks are completed, resets this scheduler so the same set of tasks can be re-executed, this method can hence be used multiple times.
+     * When waiting for task completion, this thread is paused until all tasks are over, or a single task fails.
+     *
+     * @param timeout the maximum amount of time before timing out
+     * @param unit the unit of time for the timeout
+     * @throws InterruptedException if the thread is interrupted
+     * @throws TaskFailedException if a task fails
+     */
+    public void runThenReset(long timeout, TimeUnit unit) throws InterruptedException, TaskFailedException {
+        // Reset the exception in the case there was any task failure in the precedent execution of this method
+        error = null;
+        tasks.values().forEach(task -> task.setState(ScheduledTaskState.WAITING));
+
+        tasks.values().forEach(this::tryExecute);
+
+        // Pause this thread by sleeping until being waked up by the end / failure of tasks
+        // The synchronized block is mandatory to take ownership of the lock
+        synchronized (lock) {
+            // TODO Spurious wakeup guard
+            lock.wait(unit.toMillis(timeout));
+        }
+
+        // Propagates the task failure, if any
+        if (error != null)
+            throw error;
     }
 
     /**
@@ -141,23 +134,9 @@ public class Scheduler {
         executor.shutdown();
     }
 
-    /**
-     * Pauses this thread until all tasks are over, or a single task fails.
-     *
-     * @param timeout the maximum amount of time before timing out
-     * @param unit the unit of time for the timeout
-     * @throws InterruptedException if the thread is interrupted
-     * @throws TaskFailedException if a task fails
-     */
-    public void waitUntilAllTasksFinished(long timeout, TimeUnit unit) throws InterruptedException, TaskFailedException {
-        // Pause this thread by sleeping until being waked up by the end / failure of tasks
-        // The synchronized block is mandatory to take ownership of the lock
-        synchronized (lock) {
-            // TODO Spurious wakeup guard
-            lock.wait(unit.toMillis(timeout));
-        }
-        // Propagates the task failure, if any
-        if (error != null)
-            throw error;
+    private ScheduledTask getTask(String id) {
+        if (!tasks.containsKey(id))
+            throw new IllegalArgumentException("Task %s doesn't exist".formatted(id));
+        return tasks.get(id);
     }
 }

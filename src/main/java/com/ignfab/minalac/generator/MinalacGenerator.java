@@ -113,9 +113,8 @@ public final class MinalacGenerator {
         System.out.println("Creation of the map.");
         // Start generation duration
         Instant generationStart = Instant.now();
-        generation.scheduler().start();
         try {
-            generation.scheduler().waitUntilAllTasksFinished(5, TimeUnit.MINUTES);
+            generation.scheduler().runThenReset(5, TimeUnit.MINUTES);
         } finally {
             generation.scheduler().shutdown();
         }
