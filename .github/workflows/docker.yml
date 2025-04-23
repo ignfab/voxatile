@@ -26,9 +26,6 @@ jobs:
 
     steps:
 
-    - name: Extract repository name
-      run: echo "REPO_NAME=${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}" >> $GITHUB_ENV
-
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -79,10 +76,22 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha, mode=max
 
+  cleanup:
+    name: registry-cleanup
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+
+    steps:
+
+    - name: Extract repository name
+      run: echo "REPO_NAME=${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}" >> $GITHUB_ENV
+
     # Remove all untagged images
     # https://github.com/actions/delete-package-versions/
     - name: Remove untagged images from registry
-      if: github.event_name != 'pull_request'
       uses: actions/delete-package-versions@v5
       with:
         package-name: ${{ env.REPO_NAME }}
