@@ -1,6 +1,5 @@
 name: Build and publish docker image.
-
-run-name: "🚀 ${{ github.actor }} building docker image on ${{ github.ref }} triggered by ${{ github.event_name }} event"
+run-name: ${{ github.actor }} building docker image on ${{ github.ref }} triggered by ${{ github.event_name }} event
 
 on:
   push:
