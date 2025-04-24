@@ -10,8 +10,17 @@ import com.ignfab.minalac.generator.models.filters.TestingModelFilter;
  * filter (it says ok to models equals to model given in constructor).
  */
 public class TestingModelFilterParams extends ModelFilterParams {
-    boolean valid;
-    Model model;
+    private final boolean valid;
+    private final Model model;
+
+    /**
+     * A valid testing model filter params.
+     */
+    public static final TestingModelFilterParams VALID = new TestingModelFilterParams();
+    /**
+     * An invalid testing model filter params.
+     */
+    public static final TestingModelFilterParams INVALID = new TestingModelFilterParams(false);
 
     public TestingModelFilterParams(boolean valid, Model model) {
         this.valid = valid;
@@ -20,20 +29,17 @@ public class TestingModelFilterParams extends ModelFilterParams {
 
     // Simplified constructor for validate() only tests
     public TestingModelFilterParams(boolean valid) {
-        this.valid = valid;
-        this.model = null;
+        this(valid, null);
     }
 
     // Simplified constructor for create() only tests
     public TestingModelFilterParams(Model model) {
-        this.valid = true;
-        this.model = model;
+        this(true, model);
     }
 
     // The yolo constructor for constructors tests
     public TestingModelFilterParams() {
-        this.valid = true;
-        this.model = null;
+        this(true, null);
     }
 
     @Override

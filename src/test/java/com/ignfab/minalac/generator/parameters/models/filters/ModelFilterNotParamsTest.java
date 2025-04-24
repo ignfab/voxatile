@@ -13,13 +13,13 @@ public class ModelFilterNotParamsTest {
 
     @Test
     public void testConstructor() {
-        assertDoesNotThrow(() -> new ModelFilterNotParams(new TestingModelFilterParams(true, null)));
+        assertDoesNotThrow(() -> new ModelFilterNotParams(TestingModelFilterParams.VALID));
     }
 
     @Test
     public void testValidate() {
-        ModelFilterParams valid = new ModelFilterNotParams(new TestingModelFilterParams(true, null));
-        ModelFilterParams invalid = new ModelFilterNotParams(new TestingModelFilterParams(false, null));
+        ModelFilterParams valid = new ModelFilterNotParams(TestingModelFilterParams.VALID);
+        ModelFilterParams invalid = new ModelFilterNotParams(TestingModelFilterParams.INVALID);
 
         assertThrows(IllegalArgumentException.class, invalid::validate);
         assertDoesNotThrow(valid::validate);
@@ -27,10 +27,10 @@ public class ModelFilterNotParamsTest {
 
     @Test
     public void testCreate() {
-        Model model1 = new TestingModel();
-        Model model2 = new TestingModel();
+        Model model1 = new TestingModel("1");
+        Model model2 = new TestingModel("2");
 
-        ModelFilterParams params = new ModelFilterNotParams(new TestingModelFilterParams(true, model1));
+        ModelFilterParams params = new ModelFilterNotParams(new TestingModelFilterParams(model1));
 
         Predicate<Model> filter = assertDoesNotThrow(params::create);
 
