@@ -24,10 +24,10 @@ public class ModelSelectionParamsTest {
 
         // Testing validation of filter is done and exception transmitted to caller
 
-        params.filter = new TestingModelFilterParams(false);
+        params.filter = TestingModelFilterParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params.filter = new TestingModelFilterParams(true);
+        params.filter = TestingModelFilterParams.VALID;
         assertDoesNotThrow(params::validate);
     }
 
@@ -39,7 +39,7 @@ public class ModelSelectionParamsTest {
         params = new ModelSelectionParams("aa");
         assertInstanceOf(ModelSelection.class, assertDoesNotThrow(() -> params.create(store)));
 
-        params.filter = new TestingModelFilterParams();
+        params.filter = TestingModelFilterParams.VALID;
         assertInstanceOf(ModelSelection.class, assertDoesNotThrow(() -> params.create(store)));
     }
 }

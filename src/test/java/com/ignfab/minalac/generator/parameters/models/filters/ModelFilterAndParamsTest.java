@@ -16,8 +16,8 @@ public class ModelFilterAndParamsTest {
     public void testConstructor() {
         assertDoesNotThrow(() -> new ModelFilterAndParams(List.of()));
         assertDoesNotThrow(() -> new ModelFilterAndParams(List.of(
-            new TestingModelFilterParams(),
-            new TestingModelFilterParams()
+            TestingModelFilterParams.VALID,
+            TestingModelFilterParams.VALID
         )));
     }
 
@@ -26,14 +26,14 @@ public class ModelFilterAndParamsTest {
         ModelFilterParams params;
 
         params = new ModelFilterAndParams(List.of(
-            new TestingModelFilterParams(true)
+            TestingModelFilterParams.VALID
         ));
         assertDoesNotThrow(params::validate);
 
         params = new ModelFilterAndParams(List.of(
-            new TestingModelFilterParams(true),
-            new TestingModelFilterParams(false),
-            new TestingModelFilterParams(false)
+            TestingModelFilterParams.VALID,
+            TestingModelFilterParams.INVALID,
+            TestingModelFilterParams.INVALID
         ));
         assertThrows(IllegalArgumentException.class, params::validate);
 
@@ -44,13 +44,13 @@ public class ModelFilterAndParamsTest {
 
     @Test
     public void testCreate() {
-        Model model1 = new TestingModel();
-        Model model2 = new TestingModel();
+        Model model1 = new TestingModel("1");
+        Model model2 = new TestingModel("2");
 
         ModelFilterParams params;
         Predicate<Model> filter;
 
-        // Check we realy have a "AND" at the end
+        // Check we really have an "AND" at the end
 
         params = new ModelFilterAndParams(List.of(
             new TestingModelFilterParams(model1),
@@ -76,7 +76,7 @@ public class ModelFilterAndParamsTest {
         // Check we have same predicate if it is the only element in list
 
         params = new ModelFilterAndParams(List.of(
-            new TestingModelFilterParams(true, model1)
+            new TestingModelFilterParams(model1)
         ));
         filter = assertDoesNotThrow(params::create);
 
