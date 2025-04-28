@@ -1,0 +1,26 @@
+name: Cleanup GitHub registry
+run-name: "[docker-delete-branch-image] ${{ github.actor }} from ${{ github.ref }} triggered by ${{ github.event_name }} event"
+
+on:
+  workflow_call:
+    inputs:
+      branch_name:
+        type: string
+        required: true
+
+jobs:
+
+  delete-image-from-branch:
+    name: delete-image-from-branch
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+    - name: Sanitize branch name manually to create tag name
+      env:
+        RAW_BRANCH_NAME: ${{ inputs.branch_name }}
+      run: echo "TAG_NAME=$(echo $RAW_BRANCH_NAME | sed 's/[^[:alnum:]\.\_\-]/-/g')" >> $GITHUB_ENV
+    - name: Remove deleted branch image from GitHub registry
+      uses: dataaxiom/ghcr-cleanup-action@v1
+      with:
+        delete-tags: "${{ env.TAG_NAME }}"

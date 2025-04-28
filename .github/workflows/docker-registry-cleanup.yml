@@ -1,0 +1,18 @@
+name: Cleanup GitHub registry
+run-name: "[docker-registry-cleanup] ${{ github.actor }} triggered by ${{ github.event_name }} event"
+
+on:
+  workflow_call:
+
+
+jobs:
+  remove-untagged-images:
+    name: remove-untagged-images
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+    - name: Remove all untagged images from GitHub registry
+      uses: dataaxiom/ghcr-cleanup-action@v1
+      with:
+        delete-untagged: true
