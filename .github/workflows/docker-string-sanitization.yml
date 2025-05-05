@@ -1,0 +1,40 @@
+name: String sanitization
+run-name: "[docker-sanitize] ${{ github.actor }} from ${{ github.ref }} triggered by ${{ github.event_name }} event"
+
+on:
+  workflow_call:
+    inputs:
+      repository:
+        description: "raw repository name"
+        type: string
+        default: "placeholder_repository"
+      tag:
+        description: "raw tag"
+        type: string
+        default: "placeholder_tag"
+    outputs:
+      repository:
+        description: "Sanitized repository name"
+        value: ${{ jobs.sanitization.outputs.sanitized_repository }}
+      tag:
+        description: "Sanitized tag name"
+        value: ${{ jobs.sanitization.outputs.sanitized_tag }}
+
+jobs:
+  sanitization:
+    name: Generate sanitized outputs
+    runs-on: ubuntu-latest
+    outputs:
+      sanitized_repository: ${{ steps.sanitize_repo.outputs.SAFE_REPO_NAME }}
+      sanitized_tag: ${{ steps.sanitize_tag.outputs.SAFE_TAG_NAME }}
+    steps:
+    - name: Sanitize repository name
+      id: sanitize_repo
+      env:
+        RAW_REPO_NAME: ${{ inputs.repository }}
+      run: echo "SAFE_REPO_NAME=$(echo ${RAW_REPO_NAME,,})" >> $GITHUB_OUTPUT
+    - name: Sanitize tag name
+      id: sanitize_tag
+      env:
+        RAW_BRANCH_NAME: ${{ inputs.tag }}
+      run: echo "SAFE_TAG_NAME=$(echo ${RAW_BRANCH_NAME,,} | sed 's/[^[:alnum:]\.\_\-]/-/g')" >> $GITHUB_OUTPUT

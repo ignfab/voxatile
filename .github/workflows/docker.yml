@@ -18,29 +18,40 @@ jobs:
   build-and-push:
     if: github.event_name == 'push'
     uses: ./.github/workflows/docker-build-push.yml
+    permissions:
+      packages: write
+      contents: read
     with:
-      registry: "ghcr.io"
-      image_name: "${{ github.repository }}"
-      branch_name: "${{ github.ref_name }}"
+      namespace: "${{ github.repository_owner }}"
+      repository: "${{ github.event.repository.name }}"
+      tag: "${{ github.ref_name }}"
 
   build:
     if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
     uses: ./.github/workflows/docker-build.yml
 
   delete-branch-image:
     if: |
       github.event_name == 'delete' &&
       github.event.ref_type == 'branch'
+    permissions:
+      packages: write
     uses: ./.github/workflows/docker-delete-branch-image.yml
     with:
-      branch_name: ${{ github.event.ref }}
+      repository: "${{ github.event.repository.name }}"
+      tag: ${{ github.event.ref }}
 
   create-branch-image:
     if: |
       github.event_name == 'create' &&
       github.event.ref_type == 'branch'
+    permissions:
+      contents: read
+      packages: write
     uses: ./.github/workflows/docker-build-push.yml
     with:
-      registry: "ghcr.io"
-      image_name: "${{ github.repository }}"
-      branch_name: "${{ github.event.ref }}"
+      namespace: "${{ github.repository_owner }}"
+      repository: "${{ github.event.repository.name }}"
+      tag: "${{ github.event.ref }}"
