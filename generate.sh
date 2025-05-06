@@ -19,9 +19,11 @@ list_yaml_files() {
 usage() {
     echo "$0 [options] <format> <process> <place> [<outputdir>]"
     echo "available options:"
+    echo "-h Displays this help message only"
     echo "-g Stops before generation"
     echo "-s Stops before saving"
-    echo "-y Display Yaml configuration only"
+    echo "-y Displays Yaml configuration only"
+    echo "-l (formats|processes|places) Lists available formats/processes/places only"
     echo "formats:"
     list_yaml_files $FORMATS_DIR "\t"
     echo "processes:"
@@ -38,6 +40,10 @@ while [[ "$1" == "-"* ]]; do
     opt=$1
     shift
     case $opt in
+        -h)
+            usage
+            exit 0
+            ;;
         -g)
             generator_opt="$generator_opt --generation-disabled"
             unset output_dir_needed
@@ -62,7 +68,7 @@ while [[ "$1" == "-"* ]]; do
                     list_yaml_files $PLACES_DIR
                     ;;
                 *)
-                    echo "Unknown -l option $1"
+                    echo "Unknown -l option '$1'"
                     usage
                     exit 1
                     ;;
@@ -70,7 +76,7 @@ while [[ "$1" == "-"* ]]; do
             exit 0 
             ;;
         *)
-            echo "Unknown option $opt"
+            echo "Unknown option '$opt'"
             usage
             exit 1
             ;;
@@ -84,6 +90,7 @@ else
 fi
 
 if [[ $# -ne $nargs ]]; then
+    echo "Wrong number of arguments, expected $nargs given $#"
     usage
     exit 1
 fi
@@ -113,16 +120,16 @@ if [ $output_dir_needed ]; then
     output_dir="$4"
     if [ -d "$output_dir" ]; then
         if ! rm -r "$output_dir"; then
-            echo "Could not delete directory $output_dir"
+            echo "Could not delete directory '$output_dir'"
             exit 1
         fi
     fi
     if [ -e "$output_dir" ]; then
-        echo "$output_dir is not a directory"
+        echo "'$output_dir' is not a directory"
         exit 1
     fi
     if ! mkdir -p "$output_dir"; then
-        echo "Could create directory $output_dir"
+        echo "Could not create directory '$output_dir'"
         exit 1
     fi
     output_dir=$(realpath "$output_dir")

@@ -11,7 +11,7 @@ Generation involves too many parameters to be passed on command line. They are p
 
 Refer to [generation parameters documentation](parameters/Parameters.md) for further information.
 
-To avoid useless efforts building a parameter file, you can use provided `generate.sh` script (see [Run.md](Run.md#generatesh)).
+To avoid useless efforts building a parameter file, you can use provided `generate.sh` script (see [Run.md](Run.md#generatesh-unix)).
 
 ## Command line arguments
 Usage:
