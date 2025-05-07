@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.utils.execution;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 /**
  * A task registered in the {@link Scheduler}.
@@ -10,9 +11,8 @@ public class ScheduledTask {
     private final String id;
     private final Runnable task;
     private final Set<ScheduledTask> dependencies;
-    private final Set<ScheduledTask> dependents;
-    private ScheduledTaskState state = ScheduledTaskState.WAITING;
-
+    private ScheduledTaskState state;
+    private TaskFailedException error;
 
     /**
      * Creates a new task with the given characteristics.
@@ -24,7 +24,7 @@ public class ScheduledTask {
         this.id = id;
         this.task = task;
         this.dependencies = new HashSet<>();
-        this.dependents = new HashSet<>();
+        reset();
     }
 
     /**
@@ -36,33 +36,44 @@ public class ScheduledTask {
         return id;
     }
 
-    /**
-     * Runs this task's runnable.
-     * This method will return when the runnable returns.
-     */
-    public void run() {
-        System.out.printf("[%s] %s%n", Thread.currentThread().getName(), "Starting " + id);
-        task.run();
-        System.out.printf("[%s] %s%n", Thread.currentThread().getName(), id + " finished");
-
+    public void reset() {
+        state = ScheduledTaskState.WAITING;
+        error = null;
     }
 
-    /**
-     * Returns the tasks that need to be completed before this task can be run.
-     *
-     * @return the dependencies tasks
-     */
-    public Set<ScheduledTask> getDependencies() {
-        return dependencies;
-    }
+    public boolean tryExecute(ExecutorService executor, SchedulerLock lock) {
+        // Check if task can run
+        if (state != ScheduledTaskState.WAITING)
+            return false;
+        for (ScheduledTask task : dependencies)
+            if (task.getState() != ScheduledTaskState.FINISHED)
+                return false;
 
-    /**
-     * Returns the tasks that can only be executed if the task is completed.
-     *
-     * @return tasks that depends on this task
-     */
-    public Set<ScheduledTask> getDependents() {
-        return dependents;
+        // It can, let's go!
+        state = ScheduledTaskState.LAUNCHING;
+        executor.execute(() -> {
+            try {
+                Thread.currentThread().setName(id);
+                System.out.printf("[%s] %s%n", Thread.currentThread().getName(), "Starting " + id);
+                state = ScheduledTaskState.RUNNING;
+                task.run();
+                state = ScheduledTaskState.FINISHED;
+                System.out.printf("[%s] %s%n", Thread.currentThread().getName(), id + " finished");
+                lock.notifyDone();
+
+            } catch (RuntimeException e) {
+                // If an error occurs, we take note of the task failure and wake up the main thread
+                // The synchronized block is mandatory to take ownership of the lock
+                System.out.printf("[%s] %s%n", Thread.currentThread().getName(), "Error in task " + id);
+
+                synchronized (lock) {
+                    state = ScheduledTaskState.ERROR;
+                    error = new TaskFailedException(this, e);
+                    lock.notifyDone();
+                }
+            }
+        });
+        return true;
     }
 
     /**
@@ -72,7 +83,6 @@ public class ScheduledTask {
      */
     protected void addDependency(ScheduledTask dependency) {
         this.dependencies.add(dependency);
-        dependency.dependents.add(this);
     }
 
     /**
@@ -84,12 +94,8 @@ public class ScheduledTask {
         return state;
     }
 
-    /**
-     * Sets the state of this task.
-     *
-     * @param state the new state of the task
-     */
-    public void setState(ScheduledTaskState state) {
-        this.state = state;
+    public TaskFailedException getError() {
+        return error;
     }
+
 }

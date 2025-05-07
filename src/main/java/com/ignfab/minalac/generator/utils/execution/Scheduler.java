@@ -1,6 +1,5 @@
 package com.ignfab.minalac.generator.utils.execution;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -15,12 +14,9 @@ public class Scheduler {
     // An executor using a thread pool to run tasks
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final Map<String, ScheduledTask> tasks = new HashMap<>();
-    // Stores the exception that occurred, if any.
-    // Needed to pass the exception between threads
-    private TaskFailedException error = null;
     // Object used for synchronized blocks, like a mutex.
     // .wait() / .notify() operations are performed on this object
-    private final Object lock = new Object();
+    private SchedulerLock lock = new SchedulerLock();
 
     /**
      * Schedules the task to be executed when all dependencies are finished.
@@ -45,38 +41,6 @@ public class Scheduler {
         tasks.put(task.getId(), task);
     }
 
-    private void tryExecute(ScheduledTask task) {
-        synchronized (task) {
-            // Only a waiting task that has all of its dependencies finished can be executed
-            if (task.getState() != ScheduledTaskState.WAITING || !areTasksDone(task.getDependencies())) return;
-            task.setState(ScheduledTaskState.LAUNCHING);
-            // The .execute() method asks for execution but real execution can be delayed if no thread is currently available
-            executor.execute(() -> {
-                try {
-                    Thread.currentThread().setName(task.getId());
-                    task.setState(ScheduledTaskState.RUNNING);
-                    task.run();
-                    task.setState(ScheduledTaskState.FINISHED);
-                    for (ScheduledTask dependent : task.getDependents())
-                        tryExecute(dependent);
-                    // If this was the last task, we wake up the main thread
-                    // The synchronized block is mandatory to take ownership of the lock
-                    synchronized (lock) {
-                        if (areTasksDone(tasks.values()))
-                            lock.notifyAll();
-                    }
-                } catch (RuntimeException e) {
-                    // If an error occurs, we take note of the task failure and wake up the main thread
-                    // The synchronized block is mandatory to take ownership of the lock
-                    synchronized (lock) {
-                        error = new TaskFailedException(task, e);
-                        lock.notifyAll();
-                    }
-                }
-            });
-        }
-    }
-
     /**
      * Makes {@code idTask} dependent on the completion of the specified {@code idDependency} task.
      *
@@ -85,15 +49,6 @@ public class Scheduler {
      */
     public void addDependency(String idTask, String idDependency) {
         getTask(idTask).addDependency(getTask(idDependency));
-    }
-
-    // Checking the state of tasks should be thread-safe, however
-    // since FINISHED is the final state it is not strictly necessary to make this method synchronized.
-    private static boolean areTasksDone(Collection<ScheduledTask> tasks) {
-        for (ScheduledTask task : tasks)
-            if (task.getState() != ScheduledTaskState.FINISHED)
-                return false;
-        return true;
     }
 
     /**
@@ -106,23 +61,42 @@ public class Scheduler {
      * @throws InterruptedException if the thread is interrupted
      * @throws TaskFailedException if a task fails
      */
-    public void runThenReset(long timeout, TimeUnit unit) throws InterruptedException, TaskFailedException {
-        // Reset the exception in the case there was any task failure in the precedent execution of this method
-        error = null;
-        tasks.values().forEach(task -> task.setState(ScheduledTaskState.WAITING));
+    public void run(long timeout, TimeUnit unit) throws InterruptedException, TaskFailedException {
+        tasks.values().forEach(ScheduledTask::reset);
 
-        tasks.values().forEach(this::tryExecute);
+        while (true) {
+            boolean started = false;
+            boolean waiting = false;
+            boolean remaining = false;
+            for (ScheduledTask task : tasks.values()) {
+                switch(task.getState()) {
+                    case FINISHED:
+                        break;
+                    case ERROR:
+                        throw task.getError();
+                    case WAITING:
+                        remaining = true;
+                        if (task.tryExecute(executor, lock))
+                            started = true;
+                        else
+                            waiting = true;
+                        break;
+                    case LAUNCHING :
+                    case RUNNING:
+                        started = true;
+                        remaining = true;
+                }
+            }
 
-        // Pause this thread by sleeping until being waked up by the end / failure of tasks
-        // The synchronized block is mandatory to take ownership of the lock
-        synchronized (lock) {
-            // TODO Spurious wakeup guard
-            lock.wait(unit.toMillis(timeout));
+            if (waiting && !started)
+                throw new  IllegalStateException("Deadlocked!");
+
+            if (!remaining)
+                break;
+
+            if (!lock.waitDone(timeout))
+                return;
         }
-
-        // Propagates the task failure, if any
-        if (error != null)
-            throw error;
     }
 
     /**

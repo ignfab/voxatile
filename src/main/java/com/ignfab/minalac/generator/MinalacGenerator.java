@@ -114,7 +114,7 @@ public final class MinalacGenerator {
         // Start generation duration
         Instant generationStart = Instant.now();
         try {
-            generation.scheduler().runThenReset(5, TimeUnit.MINUTES);
+            generation.scheduler().run(5, TimeUnit.MINUTES);
         } finally {
             generation.scheduler().shutdown();
         }

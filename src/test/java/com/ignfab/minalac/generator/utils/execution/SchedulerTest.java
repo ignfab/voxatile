@@ -28,7 +28,7 @@ public class SchedulerTest {
         scheduler.schedule("b", () -> actual.add("b"));
         scheduler.schedule("c", () -> actual.add("c"));
 
-        assertDoesNotThrow(() -> scheduler.runThenReset(50, TimeUnit.MILLISECONDS));
+        assertDoesNotThrow(() -> scheduler.run(50, TimeUnit.MILLISECONDS));
         scheduler.shutdown();
 
         List<String> expected = Arrays.asList("a", "b", "c");
@@ -48,7 +48,7 @@ public class SchedulerTest {
         scheduler.addDependency("3", "1");
         scheduler.addDependency("3", "2");
 
-        assertDoesNotThrow(() -> scheduler.runThenReset(50, TimeUnit.MILLISECONDS));
+        assertDoesNotThrow(() -> scheduler.run(50, TimeUnit.MILLISECONDS));
         scheduler.shutdown();
 
         List<String> expected = Arrays.asList("1", "2", "3");
@@ -68,7 +68,7 @@ public class SchedulerTest {
         List<String> expected = Arrays.asList("x", "y", "z");
 
         for (int i = 1; i <= 3; i++) {
-            assertDoesNotThrow(() -> scheduler.runThenReset(50, TimeUnit.MILLISECONDS));
+            assertDoesNotThrow(() -> scheduler.run(50, TimeUnit.MILLISECONDS));
             assertEquals(expected, actual, "Iteration " + i);
             actual.clear();
         }
@@ -83,7 +83,7 @@ public class SchedulerTest {
         });
         scheduler.schedule(task);
 
-        TaskFailedException e = assertThrows(TaskFailedException.class, () -> scheduler.runThenReset(50, TimeUnit.MILLISECONDS));
+        TaskFailedException e = assertThrows(TaskFailedException.class, () -> scheduler.run(50, TimeUnit.MILLISECONDS));
         scheduler.shutdown();
 
         assertEquals(task, e.getTask());
@@ -101,7 +101,7 @@ public class SchedulerTest {
             executed.set(true); // Should never happen because timeout is 50ms
         });
 
-        assertDoesNotThrow(() -> scheduler.runThenReset(50, TimeUnit.MILLISECONDS));
+        assertDoesNotThrow(() -> scheduler.run(50, TimeUnit.MILLISECONDS));
         scheduler.shutdown();
 
         assertFalse(executed.get());

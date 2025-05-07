@@ -24,5 +24,7 @@ public enum ScheduledTaskState {
      * The task has finished.
      * It ran without error, and will be removed from the scheduler.
      */
-    FINISHED
+    FINISHED,
+
+    ERROR
 }
