@@ -1,4 +1,4 @@
-name: Build Docker image for checkcing purposes
+name: Build Docker image for checking purposes
 run-name: "[docker-build] ${{ github.actor }} from ${{ github.ref }} triggered by ${{ github.event_name }} event"
 
 on:
