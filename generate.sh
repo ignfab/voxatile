@@ -1,8 +1,10 @@
 #!/bin/bash
 
 # Place ourselves in script directory
-cd "${0%/*}"
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd "$SCRIPT_DIR" || exit
 
+# Check if JAVA_CMD is set, if not, set it to java
 JAVA_CMD=${JAVA_CMD:-java}
 JAR_PATH=./target/Generator.jar
 PARAMS_DIR=./examples
@@ -11,7 +13,7 @@ PROCESSES_DIR=$PARAMS_DIR/processes
 PLACES_DIR=$PARAMS_DIR/places
 
 list_yaml_files() {
-    ls -1 $1 | grep '.yaml$' | sed -r "s/(.*)\.yaml$/$2\1/"
+    find "$1" -name '*.yaml' -exec basename {} ".yaml" \; |  sed -r "s/^/$2/"
 }
 
 usage() {
@@ -110,8 +112,7 @@ fi
 if [ $output_dir_needed ]; then
     output_dir="$4"
     if [ -d "$output_dir" ]; then
-        rm -r "$output_dir"
-        if [ $? -ne 0 ]; then
+        if ! rm -r "$output_dir"; then
             echo "Could not delete directory $output_dir"
             exit 1
         fi
@@ -120,8 +121,7 @@ if [ $output_dir_needed ]; then
         echo "$output_dir is not a directory"
         exit 1
     fi
-    mkdir -p "$output_dir"
-    if [ $? -ne 0 ]; then
+    if ! mkdir -p "$output_dir"; then
         echo "Could create directory $output_dir"
         exit 1
     fi
@@ -132,7 +132,7 @@ params=$({
   cat "$format"; echo; cat "$process"; echo; cat "$place"
 })
 
-if [ $display_only ]; then
+if [ "$display_only" ]; then
     echo "$params"
     exit 0
 fi
