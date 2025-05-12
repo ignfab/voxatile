@@ -37,4 +37,16 @@ jobs:
       id: sanitize_tag
       env:
         RAW_BRANCH_NAME: ${{ inputs.tag }}
-      run: echo "SAFE_TAG_NAME=$(echo ${RAW_BRANCH_NAME,,} | sed 's/[^[:alnum:]\.\_\-]/-/g')" >> $GITHUB_OUTPUT
+      # Docker tag name syntax specified by https://pkg.go.dev/github.com/distribution/reference is [\w][\w.-]{0,127}
+      # Golang \w only matches [0-9A-Za-z_] limited to ASCII printable characters
+      # Here we are using a regex to match the allowed characters and replacing all other characters with '_'
+      run: echo "SAFE_TAG_NAME=$(TMP=${RAW_BRANCH_NAME,,}; echo "${TMP//[^a-zA-Z0-9_\.-]/_}")" >> $GITHUB_OUTPUT
+    - name: Verify tag name
+      env:
+        CANDIDATE_TAG_NAME: ${{ steps.sanitize_tag.outputs.SAFE_TAG_NAME }}
+        RAW_BRANCH_NAME: ${{ inputs.tag }}
+      run: |
+        if [[ ! ${CANDIDATE_TAG_NAME} =~ ^[a-zA-Z0-9_][a-zA-Z0-9_\.-]{0,127}$ ]]; then
+          echo "Tag name '${CANDIDATE_TAG_NAME}' is invalid. It must obey '[\w][\w.-]{0,127}'. Please review branch '${RAW_BRANCH_NAME}' naming"
+          exit 1
+        fi
