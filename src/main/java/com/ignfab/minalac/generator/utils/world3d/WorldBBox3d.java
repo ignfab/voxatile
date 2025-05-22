@@ -61,26 +61,32 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
     }
 
     /**
-     * Creates a new {@link WorldBBox3d} containing all given coordinates.
+     * Creates a new {@link WorldBBox3d} containing all given positions.
      *
-     * @param first a first mandatory coordinate that should be in resulting box
-     * @param others a list of coordinate that should be in resulting box
+     * @param positions a list of position coordinates that should be in resulting box
      */
-    public WorldBBox3d(WorldCoords3d first, WorldCoords3d... others) {
-        int minX = first.x();
-        int minY = first.y();
-        int minZ = first.z();
-        int maxX = first.x();
-        int maxY = first.y();
-        int maxZ = first.z();
+    public WorldBBox3d(WorldCoords3d... positions) {
+        if (positions.length == 0) {
+            size = new WorldSize3d(0, 0, 0);
+            min = new WorldCoords3d(0, 0, 0);
+            max = new WorldCoords3d(0, 0, 0);
+            return;
+        }
 
-        for (WorldCoords3d coord : others) {
-            minX = Math.min(minX, coord.x());
-            minY = Math.min(minY, coord.y());
-            minZ = Math.min(minZ, coord.z());
-            maxX = Math.max(maxX, coord.x());
-            maxY = Math.max(maxY, coord.y());
-            maxZ = Math.max(maxZ, coord.z());
+        int minX = positions[0].x();
+        int minY = positions[0].y();
+        int minZ = positions[0].z();
+        int maxX = positions[0].x();
+        int maxY = positions[0].y();
+        int maxZ = positions[0].z();
+
+        for (int index = 1; index < positions.length; index++) {
+            minX = Math.min(minX, positions[index].x());
+            minY = Math.min(minY, positions[index].y());
+            minZ = Math.min(minZ, positions[index].z());
+            maxX = Math.max(maxX, positions[index].x());
+            maxY = Math.max(maxY, positions[index].y());
+            maxZ = Math.max(maxZ, positions[index].z());
         }
 
         min = new WorldCoords3d(minX, minY, minZ);

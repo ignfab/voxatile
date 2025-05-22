@@ -6,6 +6,8 @@ import com.ignfab.minalac.generator.outputs.testing.TestingVoxelType;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class PlaceableStructureTest {
 
     @Test
@@ -133,5 +135,49 @@ public class PlaceableStructureTest {
 
         world.assertVoxelNull(3, 4, 5);
         world.assertVoxel("*", 4, 4, 5);
+    }
+
+    @Test
+    public void testGet() {
+        TestingVoxelWorld world = new TestingVoxelWorld(WorldBBox3d.ORIGIN);
+
+        Placeable vtA = new TestingVoxelType(world, "A");
+        Placeable vtB = new TestingVoxelType(world, "B");
+
+        PlaceableStructure structure = new PlaceableStructure();
+        structure.set(1, 2, 3, vtA);
+        structure.set(3, 2, 1, vtB);
+
+        assertEquals(vtA, structure.get(1, 2, 3));
+        assertEquals(vtB, structure.get(3, 2, 1));
+        assertEquals(NoVoxel.INSTANCE, structure.get(10, 20, 30));
+    }
+
+    @Test
+    public void testLimits() {
+        TestingVoxelWorld world = new TestingVoxelWorld(WorldBBox3d.ORIGIN);
+
+        Placeable vt = new TestingVoxelType(world, "X");
+        PlaceableStructure structure = new PlaceableStructure();
+
+        // Basic checks
+        structure.set(1, 2, 3, vt);
+        assertEquals(new WorldBBox3d(1, 2, 3, 1, 1, 1), structure.limits());
+
+        structure.set(0, 0, 0, vt);
+        assertEquals(new WorldBBox3d(0, 0, 0, 2, 3, 4), structure.limits());
+
+        // Check adding novoxel extends limits
+        structure.set(6, 7, 8, NoVoxel.INSTANCE);
+        assertEquals(new WorldBBox3d(0, 0, 0, 7, 8, 9), structure.limits());
+
+        // Check remove shrinks limits
+        structure.remove(0, 0, 0);
+        assertEquals(new WorldBBox3d(1, 2, 3, 6, 6, 6), structure.limits());
+
+        // Check underlying placeable does not extend limits
+        PlaceableStructure superStructure = new PlaceableStructure();
+        superStructure.set(3, 2, 1, structure);
+        assertEquals(new WorldBBox3d(3, 2, 1, 1, 1, 1), superStructure.limits());
     }
 }
