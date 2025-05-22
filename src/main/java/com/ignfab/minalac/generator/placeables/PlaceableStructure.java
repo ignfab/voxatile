@@ -12,6 +12,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
  */
 public class PlaceableStructure implements Placeable {
     private final Map<WorldCoords3d, Placeable> placeables = new HashMap<>();
+    private WorldBBox3d limits = null;
 
     /**
      * {@inheritDoc}
@@ -31,9 +32,12 @@ public class PlaceableStructure implements Placeable {
      */
     public void set(WorldCoords3d coords, Placeable placeable) {
         if (placeable == null)
-            remove(coords);
+            placeables.remove(coords);
         else
             placeables.put(coords, placeable);
+
+        // Force limits recompute
+        limits = null;
     }
 
     /**
@@ -71,7 +75,7 @@ public class PlaceableStructure implements Placeable {
      * @param coords the relative {@code WorldCoords3d}
      */
     public void remove(WorldCoords3d coords) {
-        placeables.remove(coords);
+        set(coords, null);
     }
 
     /**
@@ -93,5 +97,38 @@ public class PlaceableStructure implements Placeable {
     public void remove(WorldBBox3d bbox) {
         for (WorldCoords3d coords : bbox)
             remove(coords);
+    }
+
+    /**
+     * Returns the placable at the specified coordinates.
+     *
+     * @param x relative x-coordinate
+     * @param y relative y-coordinate
+     * @param z relative z-coordinate
+     *
+     * @return placeable at relative structure coordinates or {@code NoVoxel.INSTANCE} if none
+     */
+    public Placeable get(int x, int y, int z) {
+        Placeable placeable = placeables.get(new WorldCoords3d(x, y, z));
+        return placeable == null ? NoVoxel.INSTANCE : placeable;
+    }
+
+    /**
+     * Tells the limits of this structure in relative coordinates.
+     * <p>
+     * This is not the bounding box of all that would be placed.
+     * Limits will only contain origin coordinates of contained placeables.
+     * <p>
+     * In other words, limits contains every position for which {@code get} returns something else than {@code NoVoxel.INSTANCE}.
+     * This may be used to know how to repeat this structure.
+     *
+     * @return limits of the structure in relative coordinates.
+     */
+    public WorldBBox3d limits() {
+        if (limits == null)
+            limits =  placeables.isEmpty() ? WorldBBox3d.EMPTY
+                : new WorldBBox3d(placeables.keySet().toArray(new WorldCoords3d[0]));
+
+        return limits;
     }
 }

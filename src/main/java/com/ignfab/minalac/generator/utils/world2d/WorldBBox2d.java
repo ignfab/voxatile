@@ -55,20 +55,26 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
     /**
      * Creates a new {@link WorldBBox2d} containing all given coordinates.
      *
-     * @param first a first mandatory coordinate that should be in resulting box
-     * @param others a list of coordinate that should be in resulting box
+     * @param positions a list of position coordinates that should be in resulting box
      */
-    public WorldBBox2d(WorldCoords2d first, WorldCoords2d... others) {
-        int minX = first.x();
-        int minY = first.y();
-        int maxX = first.x();
-        int maxY = first.y();
+    public WorldBBox2d(WorldCoords2d... positions) {
+        if (positions.length == 0) {
+            size = new WorldSize2d(0, 0);
+            min = new WorldCoords2d(0, 0);
+            max = new WorldCoords2d(0, 0);
+            return;
+        }
 
-        for (WorldCoords2d coord : others) {
-            minX = Math.min(minX, coord.x());
-            minY = Math.min(minY, coord.y());
-            maxX = Math.max(maxX, coord.x());
-            maxY = Math.max(maxY, coord.y());
+        int minX = positions[0].x();
+        int minY = positions[0].y();
+        int maxX = positions[0].x();
+        int maxY = positions[0].y();
+
+        for (int index = 1; index < positions.length; index++) {
+            minX = Math.min(minX, positions[index].x());
+            minY = Math.min(minY, positions[index].y());
+            maxX = Math.max(maxX, positions[index].x());
+            maxY = Math.max(maxY, positions[index].y());
         }
 
         min = new WorldCoords2d(minX, minY);
