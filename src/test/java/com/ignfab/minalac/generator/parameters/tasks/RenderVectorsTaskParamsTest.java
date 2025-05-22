@@ -8,7 +8,7 @@ import com.ignfab.minalac.generator.parameters.placeables.TestingPlaceableParams
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class VectorRendererParamsTest {
+public class RenderVectorsTaskParamsTest {
     @Test
     public void testValidate() {
         ModelSelectionParams selection = new ModelSelectionParams("building");

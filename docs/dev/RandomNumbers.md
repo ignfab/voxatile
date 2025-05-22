@@ -1,6 +1,6 @@
 # Random numbers in map generation
 ## TL;DR
-If you need random numbers in a renderer:
+If you need random numbers in a task:
 * Add a `Seed` argument to your constructor;
 * *Salt* your seed with each `Model` before usage;
 * use `createRandom()` to get a random number generator;
@@ -36,7 +36,7 @@ Solution is:
 `Seed.createRandom` will provide a `java.util.Random` object to be used to get
 needed sequence of random numbers. `Seed` should be *salted* with `Model` (so
 each model has its own sequence) and eventually with extra salt if two
-renderers working on same models need to have different randomness.
+tasks working on same models need to have different randomness.
 
 
 ## Technically speaking
@@ -64,22 +64,22 @@ The way sequences of random number could be generated for such models is not
 yet decided. It will probably be something like a spatial grid with a cell
 based salt.
 
-### Renderers
+### Tasks
 
-Whenever a renderer needs random number, its constructor should have a `Seed`
+Whenever a task needs random number, its constructor should have a `Seed`
 parameter. The generation's main `Seed` will be passed to this constructor. It
 must be salted with rendered model before use.
 
-Example of a renderer using random numbers:
+Example of a task using random numbers:
 ```java
-    public MyRandomRenderer(Seed seed, ...) {
-        this.seed = seed.salt("myrenderer"); // Salt seed with a custom salt (ensure we have our own randomness)
+    public MyRandomTask(Seed seed, ...) extends ModelTask<Model> {
+        this.seed = seed.salt("mytask"); // Salt seed with a custom salt (ensure we have our own randomness)
         ...
     }
 
     ...
 
-    public void render(Model model) {
+    public void run(Model model, WorldBBox3d bbox) {
         // Seed MUST be salted with model we render
         Random random = seed.salt(model).createRandom();
 

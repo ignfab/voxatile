@@ -286,7 +286,7 @@ Which gives that result:
 ## Patterns
 
 Patterns are sets of voxels but unlike structures, they are not placed at once from given position. Also unlike structures, they are unbounded.
-Instead a pattern may tell to a renderer what to place at a given position according to it. For example it can be used to draw stripes or place trees randomly.
+Instead a pattern may tell to a rendering task what to place at a given position according to it. For example it can be used to draw stripes or place trees randomly.
 
 ### Random Patterns
 

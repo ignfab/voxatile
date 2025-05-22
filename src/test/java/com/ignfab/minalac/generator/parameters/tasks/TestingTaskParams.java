@@ -9,7 +9,7 @@ import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.tasks.TileTask;
 
 /**
- * A RendererParams class for testing purposes.
+ * A TileTaskParams class for testing purposes.
  */
 public class TestingTaskParams extends TileTaskParams {
     /**

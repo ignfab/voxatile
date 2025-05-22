@@ -37,7 +37,7 @@ public class RenderBuildingsTask extends ModelTask<ShapesVoxelizable2d> {
     private final Placeable window;
 
     /**
-     * Creates a new {@code BuildingRenderer}.
+     * Creates a new {@code RenderBuildingsTask}.
      *
      * @param selection building models selection
      * @param heightmap heightmap of the ground (on which features will be placed)
@@ -63,7 +63,7 @@ public class RenderBuildingsTask extends ModelTask<ShapesVoxelizable2d> {
     protected void run(ShapesVoxelizable2d model, WorldBBox3d bbox) {
         // TODO: Implement a post-processor for value rounding to rollback this change
         int height = (int) Math.round(
-            /* Casting to Number is needed to avoid a cast exception in BuildingRendererTest */
+            /* Casting to Number is needed to avoid a cast exception in RenderBuildingsTask */
             ((Number) model.getMetadata("height")).doubleValue()
         );
 
