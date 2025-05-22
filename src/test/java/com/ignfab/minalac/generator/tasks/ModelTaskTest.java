@@ -14,7 +14,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ModelRendererTest {
+public class ModelTaskTest {
 
     @Test
     public void testRender() {
@@ -26,30 +26,30 @@ public class ModelRendererTest {
         modelStore.add("letter", new ModelImplTester('b'));
         modelStore.add("letter", new ModelImplTester('a'));
 
-        ModelRendererImpl renderer = new ModelRendererImpl(modelStore, "digit");
-        assertEquals(0, renderer.modelsRendered.size());
+        ModelTaksImpl task = new ModelTaksImpl(modelStore, "digit");
+        assertEquals(0, task.modelsRendered.size());
 
         // Not testing rendering area
-        renderer.run(WorldBBox3d.EMPTY);
+        task.run(WorldBBox3d.EMPTY);
 
-        assertTrue(renderer.modelsRendered.contains(new ModelImplTester('1')));
-        assertTrue(renderer.modelsRendered.contains(new ModelImplTester('2')));
-        assertEquals(2, Collections.frequency(renderer.modelsRendered, new ModelImplTester('1')));
-        assertEquals(1, Collections.frequency(renderer.modelsRendered, new ModelImplTester('2')));
-        assertEquals(3, renderer.modelsRendered.size());
+        assertTrue(task.modelsRendered.contains(new ModelImplTester('1')));
+        assertTrue(task.modelsRendered.contains(new ModelImplTester('2')));
+        assertEquals(2, Collections.frequency(task.modelsRendered, new ModelImplTester('1')));
+        assertEquals(1, Collections.frequency(task.modelsRendered, new ModelImplTester('2')));
+        assertEquals(3, task.modelsRendered.size());
 
-        ModelRendererImpl idleRenderer = new ModelRendererImpl(modelStore, "specialCharacter");
-        assertEquals(0, idleRenderer.modelsRendered.size());
+        ModelTaksImpl idleTask = new ModelTaksImpl(modelStore, "specialCharacter");
+        assertEquals(0, idleTask.modelsRendered.size());
 
-        idleRenderer.run(WorldBBox3d.EMPTY);
+        idleTask.run(WorldBBox3d.EMPTY);
 
-        assertEquals(0, idleRenderer.modelsRendered.size());
+        assertEquals(0, idleTask.modelsRendered.size());
     }
 
-    private static class ModelRendererImpl extends ModelTask<ModelImpl> {
+    private static class ModelTaksImpl extends ModelTask<ModelImpl> {
         private final List<ModelImpl> modelsRendered = new ArrayList<>();
 
-        ModelRendererImpl(ModelStore store, String modelType) {
+        ModelTaksImpl(ModelStore store, String modelType) {
             super(ModelImpl.class, new ModelSelection(store, modelType, null));
         }
 

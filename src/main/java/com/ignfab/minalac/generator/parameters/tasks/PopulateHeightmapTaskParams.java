@@ -16,7 +16,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
  */
 public class PopulateHeightmapTaskParams extends TileTaskParams {
     /**
-     * The type of models to render (required).
+     * The type of models to get data from (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
     public ModelSelectionParams models;
@@ -29,7 +29,7 @@ public class PopulateHeightmapTaskParams extends TileTaskParams {
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
-     * @param models models selection to render.
+     * @param models models selection to get data from.
      * @param heightmap the name of the heightmap to use.
      */
     @ConstructorProperties({"models", "heightmap"})

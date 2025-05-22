@@ -1,6 +1,6 @@
 # Post-processing
 
-During [fetch data task](FetchDataTask.md), post-processing can be applied to models to alter them so they can comply with renderers requirements. This can be particularly useful to mix two heterogeneous data sources to later use them indifferently.
+During [fetch data task](FetchDataTask.md), post-processing can be applied to models to alter them so they can comply with tasks requirements. This can be particularly useful to mix two heterogeneous data sources to later use them indifferently.
 Each post-processor has a field `type` which is used to identify it.
 
 ## Table of contents

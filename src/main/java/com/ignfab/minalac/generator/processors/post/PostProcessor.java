@@ -6,7 +6,7 @@ import com.ignfab.minalac.generator.models.Model;
 
 /**
  * A post-processor is responsible for altering models
- * so they can comply with renderers' requirements.
+ * so they can comply with tasks' requirements.
  * <p>
  * Its main method is {@link #process(Model)}, which take a
  * model and return the altered model.

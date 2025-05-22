@@ -37,9 +37,9 @@ public class PopulateHeightmapTaskTest {
 
         Heightmap heightmap = new Heightmap(-1, -2, 3, 3, 0);
 
-        PopulateHeightmapTask renderer = new PopulateHeightmapTask(selection, heightmap);
+        PopulateHeightmapTask task = new PopulateHeightmapTask(selection, heightmap);
 
-        renderer.run(new WorldBBox3d(-1, -2, 0, 3, 3, 1));
+        task.run(new WorldBBox3d(-1, -2, 0, 3, 3, 1));
 
         assertValue(0, heightmap, -1, -2);
         assertValue(0, heightmap, 0, -2);

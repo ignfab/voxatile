@@ -18,7 +18,7 @@ public class CopyHeightmapTask extends ModelTask<ShapesVoxelizable2d> {
     /**
      * Creates a new {@code CopyHeightmapTask}.
      *
-     * @param selection the model selection containing the wanted models to render
+     * @param selection the model selection containing the wanted models to use
      * @param from the giving heightmap
      * @param to the receiving heightmap
      */

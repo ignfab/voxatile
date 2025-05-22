@@ -21,10 +21,10 @@ public abstract class TileTaskParams extends PolymorphicParams {
     public List<String> after = new ArrayList<>();
 
     /**
-     * Creates the corresponding {@code Renderer}.
+     * Creates the corresponding {@code TileTask}.
      *
      * @param generation the generation context.
-     * @return the corresponding renderer
+     * @return the corresponding task
      */
     public abstract TileTask create(Generation generation);
 }

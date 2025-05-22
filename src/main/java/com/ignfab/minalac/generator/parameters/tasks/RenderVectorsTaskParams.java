@@ -15,7 +15,7 @@ import com.ignfab.minalac.generator.tasks.RenderVectorsTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
 
 /**
- * Parameters for creating a {@link RenderVectorsTaskParams}.
+ * Parameters for creating a {@link RenderVectorsTask}.
  */
 public class RenderVectorsTaskParams extends TileTaskParams {
     /**

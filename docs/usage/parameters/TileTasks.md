@@ -18,6 +18,7 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`copyHeightmap`](#copyheightmap)
 
 ## Tasks fetching data
+
 ### `fetchData`
 
 Fetches data to be processed. Data may be fetched from various sources.
@@ -25,8 +26,12 @@ Fetches data to be processed. Data may be fetched from various sources.
 Parameters for `fetchData` task are described in [FetchDataTask.md](FetchDataTask.md) file.
 
 ## Tasks operating on world
+
+These tasks may sometimes be referred as *renderers* as they render voxels (usually from models).
+
 ### `renderHeightmap`
-This renderer places [placeables](Placeables.md) on one heightmap (`at`) or between two (`minimum` and `maximum`).
+
+Places [placeables](Placeables.md) on one heightmap (`at`) or between two (`minimum` and `maximum`).
 
 #### Extra parameters
 - `minimum`: The minimum [heightmap](Heightmaps.md) to use.
@@ -37,6 +42,7 @@ This renderer places [placeables](Placeables.md) on one heightmap (`at`) or betw
 **NOTE**: `at` cannot be used with `minimum` or `maximum` (when `at` is absent, `minimum` and `maximum` must be used together).
 
 #### Example
+
 This will place grass voxels at the height of the specified heightmap. For better rendering, place voxel structure instead of a single voxel.
 
 ```yaml
@@ -55,7 +61,7 @@ place: default:water
 
 ### `renderVectors`
 
-This renderer draws 2-D geometries (points, linear things and surfaces) on a given heightmap.
+Renders 2-D geometries (points, linear things and surfaces) with [placeables](Placeables.md) on a given [heightmap](Heightmaps.md).
 
 #### Extra parameters
 
@@ -95,6 +101,7 @@ Levels a heightmap under selected models.
 If `heightmap` is not flat under a model, it will be risen enough to be flat under model surface. `filling` voxels will be added to world and `heightmap` will be updated accordingly.
 
 #### Extra parameters
+
 - `models`: [Selection of models](ModelSelection.md) to render (required, models must be voxelizable in 2d)
 - `heightmap`: Ground [heightmap](Heightmaps.md), should be a [stored heightmap](Heightmaps.md#stored-heightmap), will be updated according to leveling (required)
 - `filling`: [Placeable](Placeables.md) placed beneath the model, ensuring it connects to the ground and does not appear to float.
@@ -113,7 +120,7 @@ filling: default:cobble
 
 Renders buildings using selected models as buildings footprint.
 
-Building height is given by `height` metadata (the behavior of this renderer is undefined if value is missing, negative or zero).
+Building height is given by `height` metadata (the behavior of this task is undefined if value is missing, negative or zero).
 
 #### Extra parameters
 
@@ -147,7 +154,7 @@ Populates a heightmap with models data. Existing data is overwritten.
 
 #### Extra parameters
 
-- `models`: [Selection of models](ModelSelection.md) to render (required, models must be float matrices)
+- `models`: [Selection of models](ModelSelection.md) to use (required, models must be float matrices)
 - `heightmap`: [Heightmap](Heightmaps.md) to populate, should be a [stored heightmap](Heightmaps.md#stored-heightmap) as it will be updated (required)
 
 #### Example
@@ -164,11 +171,13 @@ heightmap: ground
 Copies the values of a heightmap to another at all coordinates within the model's shape.
 
 ##### Extra parameters
-- `models`: [Selection of models](ModelSelection.md) to use as a filter  (required, models must be voxelizable in 2d).
+
+- `models`: [Selection of models](ModelSelection.md) to use as a filter (required, models must be voxelizable in 2d).
 - `from`: [Heightmap](Heightmaps.md) to use.
 - `to`: [Heightmap](Heightmaps.md) receiving the values. It should be a [stored heightmap](Heightmaps.md#stored-heightmap).
 
 ##### Example
+
 ```yaml
 type: copyHeightmap
 models:

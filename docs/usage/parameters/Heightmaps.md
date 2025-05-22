@@ -41,7 +41,7 @@ There are two ways to do it: one is by simply providing the value and the other 
 On the example below, `minimum` and `maximum` are both expecting a heightmap. The first syntax was used for `minimum`, and the second was used for `maximum`.
 ```yaml
 ground:
-  type: heightmapRenderer
+  type: renderHeightmap
   minimum: 2
   maximum:
     constant: 5
