@@ -100,7 +100,7 @@ public class PlaceableStructure implements Placeable {
     }
 
     /**
-     * Returns the placable at the specified coordinates.
+     * Returns the placeable at the specified coordinates.
      *
      * @param x relative x-coordinate
      * @param y relative y-coordinate
@@ -119,14 +119,14 @@ public class PlaceableStructure implements Placeable {
      * This is not the bounding box of all that would be placed.
      * Limits will only contain origin coordinates of contained placeables.
      * <p>
-     * In other words, limits contains every position for which {@code get} returns something else than {@code NoVoxel.INSTANCE}.
+     * In other words, limits contains every position for which {@link #get} returns something other than {@link NoVoxel#INSTANCE}.
      * This may be used to know how to repeat this structure.
      *
      * @return limits of the structure in relative coordinates.
      */
     public WorldBBox3d limits() {
         if (limits == null)
-            limits =  placeables.isEmpty() ? WorldBBox3d.EMPTY
+            limits = placeables.isEmpty() ? WorldBBox3d.EMPTY
                 : new WorldBBox3d(placeables.keySet().toArray(new WorldCoords3d[0]));
 
         return limits;
