@@ -35,6 +35,9 @@ forEachTile:
         as: decimal
         ifMissing: ignore
         ifNotParsable: removeMetadata
+      - type: truncate
+        metadata: height
+        method: round
       - type: default
         metadata: height
         value: 5

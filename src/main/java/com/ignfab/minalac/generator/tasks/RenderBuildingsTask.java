@@ -62,11 +62,8 @@ public class RenderBuildingsTask extends ModelTask<ShapesVoxelizable2d> {
 
     @Override
     protected void run(ShapesVoxelizable2d model, GenerationTile tile) {
-        // TODO: Implement a post-processor for value rounding to rollback this change
-        int height = (int) Math.round(
-            /* Casting to Number is needed to avoid a cast exception in RenderBuildingsTask */
-            ((Number) model.getMetadata("height")).doubleValue()
-        );
+        if (!(model.getMetadata("height") instanceof Integer height) || height <= 0)
+            return;
 
         ReadableHeightmap heightmap = tile.heightmaps().get(heightmapSpec);
         ShapesVoxelizer2d voxelizer = model.voxelize2d(tile.limits().to2d());
