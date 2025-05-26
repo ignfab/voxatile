@@ -13,7 +13,7 @@ import com.ignfab.minalac.generator.models.TestingModel;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MetadataParsePostProcessorTest {
+public class MetadataFunctionPostProcessorTest {
     private Model model;
 
     @BeforeEach
@@ -24,14 +24,14 @@ public class MetadataParsePostProcessorTest {
         ));
     }
 
-    private TestingModel getProcessed(MetadataParsePostProcessor<?> postProcessor) {
+    private TestingModel getProcessed(MetadataFunctionPostProcessor<?> postProcessor) {
         Model processedModel = assertDoesNotThrow(() -> postProcessor.process(model));
         return assertInstanceOf(TestingModel.class, processedModel);
     }
 
     @Test
     public void testSimpleParse() {
-        TestingModel processed = getProcessed(new MetadataParsePostProcessor<>(
+        TestingModel processed = getProcessed(new MetadataFunctionPostProcessor<>(
             String.class,
             "int",
             Objects::toString,
@@ -45,7 +45,7 @@ public class MetadataParsePostProcessorTest {
 
     @Test
     public void testParsingError() {
-        assertThrows(GenerationFailedException.class, () -> new MetadataParsePostProcessor<>(
+        assertThrows(GenerationFailedException.class, () -> new MetadataFunctionPostProcessor<>(
             String.class,
             "int",
             obj -> {
@@ -58,7 +58,7 @@ public class MetadataParsePostProcessorTest {
 
     @Test
     public void testMissingAllowed() {
-        TestingModel processed = getProcessed(new MetadataParsePostProcessor<>(
+        TestingModel processed = getProcessed(new MetadataFunctionPostProcessor<>(
             String.class,
             "missing",
             Objects::toString,
@@ -70,7 +70,7 @@ public class MetadataParsePostProcessorTest {
 
     @Test
     public void testMissingForbidden() {
-        assertThrows(GenerationFailedException.class, () -> new MetadataParsePostProcessor<>(
+        assertThrows(GenerationFailedException.class, () -> new MetadataFunctionPostProcessor<>(
             String.class,
             "missing",
             Objects::toString,
@@ -81,7 +81,7 @@ public class MetadataParsePostProcessorTest {
 
     @Test
     public void testNullAllowed() {
-        TestingModel processed = getProcessed(new MetadataParsePostProcessor<>(
+        TestingModel processed = getProcessed(new MetadataFunctionPostProcessor<>(
             String.class,
             "int",
             obj -> null,
@@ -93,7 +93,7 @@ public class MetadataParsePostProcessorTest {
 
     @Test
     public void testFailurePolicyIgnore() {
-        TestingModel processed = getProcessed(new MetadataParsePostProcessor<>(
+        TestingModel processed = getProcessed(new MetadataFunctionPostProcessor<>(
             String.class,
             "int",
             obj -> {
@@ -107,7 +107,7 @@ public class MetadataParsePostProcessorTest {
 
     @Test
     public void testFailurePolicyRemove() {
-        TestingModel processed = getProcessed(new MetadataParsePostProcessor<>(
+        TestingModel processed = getProcessed(new MetadataFunctionPostProcessor<>(
             String.class,
             "int",
             obj -> {
@@ -121,7 +121,7 @@ public class MetadataParsePostProcessorTest {
 
     @Test
     public void testFailurePolicySkip() {
-        assertThrows(IgnorableException.class, () -> new MetadataParsePostProcessor<>(
+        assertThrows(IgnorableException.class, () -> new MetadataFunctionPostProcessor<>(
             String.class,
             "int",
             obj -> {
@@ -134,7 +134,7 @@ public class MetadataParsePostProcessorTest {
 
     @Test
     public void testFailurePolicyError() {
-        assertThrows(GenerationFailedException.class, () -> new MetadataParsePostProcessor<>(
+        assertThrows(GenerationFailedException.class, () -> new MetadataFunctionPostProcessor<>(
             String.class,
             "int",
             obj -> {

@@ -14,6 +14,7 @@ Each post-processor has a field `type` which is used to identify it.
   * [Metadata default](#metadata-default)
   * [Metadata parse](#metadata-parse)
   * [Metadata remap](#metadata-remap)
+  * [Metadata truncate](#metadata-truncate)
 * [Geometry post-processors](#geometry-post-processors)
   * [Geometry buffer](#geometry-buffer)
 
@@ -195,6 +196,33 @@ toFrom:
   vine: Vigne
 default: grass
 ```
+
+### Metadata truncate
+
+Post-processor that truncates metadata values to integers.
+
+**Type**: `truncate`
+
+**Extra parameters**
+- `metadata` (required): Name of the metadata whose value will be truncated.
+- `method` (required): How value is truncated.
+
+| Method           | Explanation                                                      |
+|:-----------------|:-----------------------------------------------------------------|
+| `round`          | Round to nearest integer.                                        |
+| `ceil`           | Round up to the smallest integer greater than or equal to value. |
+| `floor`          | Round down to the largest integer less than or equal to value.   |
+
+- `ifMissing` (optional, default `error`): Policy to apply if metadata is missing (see below).
+- `ifTruncationFail` (optional, default `error`): Policy to apply if truncation fails (see below).
+Avaliable policies:
+
+| Policy           | Explanation                                          |
+|:-----------------|:-----------------------------------------------------|
+| `discardModel`   | The model is discarded.                              |
+| `removeMetadata` | The metadata is removed (no effect for `ifMissing`). |
+| `ignore`         | Metadata is not modified.                            |
+| `error`          | An error occurs, and the generation stops.           |
 
 ## Geometry post-processors
 

@@ -7,15 +7,15 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.parameters.ValueParser;
-import com.ignfab.minalac.generator.processors.post.MetadataParsePostProcessor;
+import com.ignfab.minalac.generator.processors.post.MetadataFunctionPostProcessor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
 
 /**
- * Parameters for {@link MetadataParsePostProcessor}.
+ * Parameters for parsing post processor.
  */
 public class MetadataParsePostProcessorParams extends PostProcessorParams {
     /**
-     * Name of the metadata to parse (required).
+     * Name of metadata to parse (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
     public final String metadata;
@@ -27,13 +27,13 @@ public class MetadataParsePostProcessorParams extends PostProcessorParams {
     public final ValueParser<?> as;
 
     /**
-     * Parsing function to use when the metadata is absent (optional).
+     * Policy to apply when the metadata is absent (optional).
      */
     @JsonSetter(nulls = Nulls.SKIP)
     public FailurePolicyParams ifMissing = FailurePolicyParams.ERROR;
 
     /**
-     * Parsing function to use when the {@code parser} return null (optional).
+     * Policy to apply when the {@code parser} returns null (optional).
      */
     @JsonSetter(nulls = Nulls.SKIP)
     public FailurePolicyParams ifNotParsable = FailurePolicyParams.ERROR;
@@ -62,7 +62,7 @@ public class MetadataParsePostProcessorParams extends PostProcessorParams {
         @SuppressWarnings("unchecked")
         ValueParser<Object> parser = (ValueParser<Object>) as;
 
-        return new MetadataParsePostProcessor<>(
+        return new MetadataFunctionPostProcessor<>(
             parser.type(),
             metadata,
             parser.parser(),

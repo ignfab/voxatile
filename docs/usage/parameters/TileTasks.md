@@ -121,7 +121,7 @@ filling: default:cobble
 
 Renders buildings using selected models as buildings footprint.
 
-Building height is given by `height` metadata (the behavior of this task is undefined if value is missing, negative or zero).
+Building height is given by `height` metadata (This task does nothing if the value is not an integer, missing, negative, or zero).
 
 #### Extra parameters
 
