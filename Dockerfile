@@ -4,7 +4,7 @@ ARG REGISTRY="docker.io"
 # Build stage
 #
 
-FROM $REGISTRY/library/maven:3-eclipse-temurin-17 AS builder
+FROM $REGISTRY/library/maven:3-eclipse-temurin-21 AS builder
 
 #  Corporate proxy definition when necessary
 ARG http_proxy_protocol
@@ -42,7 +42,7 @@ RUN mvn -Dmaven.test.skip=true clean package
 # Package stage
 #
 
-FROM $REGISTRY/library/eclipse-temurin:17-jre-jammy
+FROM $REGISTRY/library/eclipse-temurin:21-jre-jammy
 
 # User and group definition
 ENV USER=minalac
