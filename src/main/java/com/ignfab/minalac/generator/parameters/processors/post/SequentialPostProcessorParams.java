@@ -31,7 +31,7 @@ public class SequentialPostProcessorParams extends PostProcessorParams {
         if (sequence.isEmpty())
             return IdentityPostProcessor.INSTANCE;
         if (sequence.size() == 1)
-            return sequence.get(0).create();
+            return sequence.getFirst().create();
         return new SequentialPostProcessor<>(sequence.stream().map(PostProcessorParams::create).toList());
     }
 }

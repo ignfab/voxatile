@@ -20,12 +20,7 @@ public class ModelStore {
      * @param model Model to be stored
      */
     public void add(String type, Model model) {
-        List<Model> list = byType.get(type);
-        if (list == null) {
-            list = new LinkedList<>();
-            byType.put(type, list);
-        }
-        list.add(model);
+        byType.computeIfAbsent(type, k -> new LinkedList<>()).add(model);
     }
 
     /**
@@ -35,6 +30,6 @@ public class ModelStore {
      * @return List of models of the given type
      */
     public List<Model> getByType(String type) {
-        return byType.containsKey(type) ? byType.get(type) : Collections.emptyList();
+        return byType.getOrDefault(type, Collections.emptyList());
     }
 }

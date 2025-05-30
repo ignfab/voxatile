@@ -9,24 +9,9 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
  *
  * {@code Point3d} does have neither inside nor border voxels (no line information).
  * Its only voxel will be accessible through {@code allVoxels()} iterable.
+ * @param coords the coordinate of the point.
  */
-public class Point3d implements Positioned3d, Shape3d {
-    private final WorldCoords3d coords;
-
-    /**
-     * Creates a new point at the given coordinate.
-     *
-     * @param coords the coordinate of the point.
-     */
-    public Point3d(WorldCoords3d coords) {
-        this.coords = coords;
-    }
-
-    @Override
-    public WorldCoords3d coords() {
-        return coords;
-    }
-
+public record Point3d(WorldCoords3d coords) implements Positioned3d, Shape3d {
     @Override
     public Iterable<Positioned3d> allVoxels() {
         return Iterables.iterable(this);
