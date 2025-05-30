@@ -20,16 +20,14 @@ public record MapCoordinates(double x, double y) {
         this(coordinate.x, coordinate.y);
     }
 
-    private static Position check2d(Position position) {
-        if (position.getDimension() != 2) throw new MismatchedDimensionException();
-        return position;
-    }
     /**
      * Creates a {@code MapCoordinates} from {@code org.geotools.geometry.Position}.
      *
      * @param pos {@code Position} to create {@code MapCoordinates} from
      */
     public MapCoordinates(Position pos) {
-        this(check2d(pos).getOrdinate(0), pos.getOrdinate(1));
+        if (pos.getDimension() != 2)
+            throw new MismatchedDimensionException();
+        this(pos.getOrdinate(0), pos.getOrdinate(1));
     }
 }

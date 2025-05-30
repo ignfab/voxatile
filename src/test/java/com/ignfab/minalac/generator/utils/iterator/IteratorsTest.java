@@ -43,14 +43,14 @@ public class IteratorsTest {
         assertEmpty(
             Iterators.filter(
                 Iterators.iterator("a", "b", "c"),
-                item -> false
+                _ -> false
             )
         );
 
         assertEmpty(
             Iterators.filter(
                 Iterators.iterator(),
-                item -> true
+                _ -> true
             )
         );
     }

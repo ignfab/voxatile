@@ -48,7 +48,7 @@ public class MetadataParsePostProcessorTest {
         assertThrows(GenerationFailedException.class, () -> new MetadataParsePostProcessor<>(
             String.class,
             "int",
-            obj -> {
+            _ -> {
                 throw new RuntimeException();
             },
             FailurePolicy.ERROR,
@@ -84,7 +84,7 @@ public class MetadataParsePostProcessorTest {
         TestingModel processed = getProcessed(new MetadataParsePostProcessor<>(
             String.class,
             "int",
-            obj -> null,
+            _ -> null,
             FailurePolicy.ERROR,
             FailurePolicy.REMOVE_METADATA
         ));
@@ -96,7 +96,7 @@ public class MetadataParsePostProcessorTest {
         TestingModel processed = getProcessed(new MetadataParsePostProcessor<>(
             String.class,
             "int",
-            obj -> {
+            _ -> {
                 throw new RuntimeException();
             },
             FailurePolicy.IGNORE,
@@ -110,7 +110,7 @@ public class MetadataParsePostProcessorTest {
         TestingModel processed = getProcessed(new MetadataParsePostProcessor<>(
             String.class,
             "int",
-            obj -> {
+            _ -> {
                 throw new RuntimeException();
             },
             FailurePolicy.REMOVE_METADATA,
@@ -124,7 +124,7 @@ public class MetadataParsePostProcessorTest {
         assertThrows(IgnorableException.class, () -> new MetadataParsePostProcessor<>(
             String.class,
             "int",
-            obj -> {
+            _ -> {
                 throw new RuntimeException();
             },
             FailurePolicy.DISCARD_MODEL,
@@ -137,7 +137,7 @@ public class MetadataParsePostProcessorTest {
         assertThrows(GenerationFailedException.class, () -> new MetadataParsePostProcessor<>(
             String.class,
             "int",
-            obj -> {
+            _ -> {
                 throw new RuntimeException();
             },
             FailurePolicy.ERROR,

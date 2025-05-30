@@ -62,7 +62,7 @@ public final class MinalacGenerator {
      * @param args command line arguments
      * @throws JsonProcessingException
      */
-    public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException, JsonProcessingException, TimeoutException, GenerationFailedException {
+    static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException, JsonProcessingException, TimeoutException, GenerationFailedException {
         // Execution duration start
         Instant start = Instant.now();
         HttpTrustAllSSL.applyGlobally();

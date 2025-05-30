@@ -43,14 +43,14 @@ public class IterablesTest {
         assertEmpty(
             Iterables.filter(
                 Arrays.asList("a", "b", "c"),
-                item -> false
+                _ -> false
             )
         );
 
         assertEmpty(
             Iterables.filter(
                 Collections.emptyList(),
-                item -> true
+                _ -> true
             )
         );
     }

@@ -31,9 +31,9 @@ public class SchedulerTest {
     public void testTasksWithoutDependency() {
         List<String> actual = Collections.synchronizedList(new ArrayList<>());
 
-        scheduler.schedule("testWithoutDependency:a", (context) -> actual.add("a"));
-        scheduler.schedule("testWithoutDependency:b", (context) -> actual.add("b"));
-        scheduler.schedule("testWithoutDependency:c", (context) -> actual.add("c"));
+        scheduler.schedule("testWithoutDependency:a", _ -> actual.add("a"));
+        scheduler.schedule("testWithoutDependency:b", _ -> actual.add("b"));
+        scheduler.schedule("testWithoutDependency:c", _ -> actual.add("c"));
 
         assertDoesNotThrow(() -> scheduler.run(null, 1, TimeUnit.MINUTES));
 
@@ -47,9 +47,9 @@ public class SchedulerTest {
     public void testTasksWithDependency() {
         List<String> actual = Collections.synchronizedList(new ArrayList<>());
 
-        scheduler.schedule("testWithDependency:1", (context) -> actual.add("1"));
-        scheduler.schedule("testWithDependency:2", (context) -> actual.add("2"));
-        scheduler.schedule("testWithDependency:3", (context) -> actual.add("3"));
+        scheduler.schedule("testWithDependency:1", _ -> actual.add("1"));
+        scheduler.schedule("testWithDependency:2", _ -> actual.add("2"));
+        scheduler.schedule("testWithDependency:3", _ -> actual.add("3"));
         scheduler.addDependency("testWithDependency:2", "testWithDependency:1");
         scheduler.addDependency("testWithDependency:3", "testWithDependency:1");
         scheduler.addDependency("testWithDependency:3", "testWithDependency:2");
@@ -64,9 +64,9 @@ public class SchedulerTest {
     public void testResetTasks() {
         List<String> actual = Collections.synchronizedList(new ArrayList<>());
 
-        scheduler.schedule("testReset:x", (context) -> actual.add("x"));
-        scheduler.schedule("testReset:y", (context) -> actual.add("y"));
-        scheduler.schedule("testReset:z", (context) -> actual.add("z"));
+        scheduler.schedule("testReset:x", _ -> actual.add("x"));
+        scheduler.schedule("testReset:y", _ -> actual.add("y"));
+        scheduler.schedule("testReset:z", _ -> actual.add("z"));
         scheduler.addDependency("testReset:y", "testReset:x");
         scheduler.addDependency("testReset:z", "testReset:y");
 
@@ -81,7 +81,7 @@ public class SchedulerTest {
 
     @Test
     public void testFailingTask() {
-        ScheduledTask<Void> task = new ScheduledTask<>("testFailingTask:id", (context) -> {
+        ScheduledTask<Void> task = new ScheduledTask<>("testFailingTask:id", _ -> {
             throw new RuntimeException("Boom!");
         });
         scheduler.schedule(task);
@@ -94,7 +94,7 @@ public class SchedulerTest {
     @Test
     public void testLongTaskTimedOut() {
         AtomicBoolean executed = new AtomicBoolean(false);
-        scheduler.schedule("testLongTaskTimeout:id", (context) -> {
+        scheduler.schedule("testLongTaskTimeout:id", _ -> {
             try {
                 Thread.sleep(10_000); // Completes after 10s
             } catch (InterruptedException e) {
@@ -109,8 +109,8 @@ public class SchedulerTest {
 
     @Test
     public void testDeadLock() {
-        scheduler.schedule("testDeadLock:A", (context) -> {});
-        scheduler.schedule("testDeadLock:B", (context) -> {});
+        scheduler.schedule("testDeadLock:A", _ -> {});
+        scheduler.schedule("testDeadLock:B", _ -> {});
         scheduler.addDependency("testDeadLock:A", "testDeadLock:B");
         scheduler.addDependency("testDeadLock:B", "testDeadLock:A");
 
@@ -119,7 +119,7 @@ public class SchedulerTest {
 
     @Test
     public void testCancel() {
-        ScheduledTask<Void> cancelled = new ScheduledTask<>("testCancel:cancelled", (context) -> {
+        ScheduledTask<Void> cancelled = new ScheduledTask<>("testCancel:cancelled", _ -> {
             try {
                 Thread.sleep(3_000); // Completes after 3s
             } catch (InterruptedException e) {
@@ -127,7 +127,7 @@ public class SchedulerTest {
             }
         });
 
-        ScheduledTask<Void> failed = new ScheduledTask<>("testCancel:fail", (context) -> {
+        ScheduledTask<Void> failed = new ScheduledTask<>("testCancel:fail", _ -> {
             try {
                 Thread.sleep(500); // Completes after 0.5s
             } catch (InterruptedException e) {
@@ -136,7 +136,7 @@ public class SchedulerTest {
             throw new RuntimeException("Boom!");
         });
 
-        ScheduledTask<Void> success = new ScheduledTask<>("testCancel:success", (context) -> {});
+        ScheduledTask<Void> success = new ScheduledTask<>("testCancel:success", _ -> {});
 
         scheduler.schedule(cancelled);
         scheduler.schedule(failed);

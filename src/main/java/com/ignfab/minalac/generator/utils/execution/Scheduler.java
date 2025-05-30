@@ -20,8 +20,8 @@ import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
  * @param <T> tasks execution context type
  */
 public class Scheduler<T> {
-    // An executor using a thread pool to run tasks
-    private final ExecutorService executor = Executors.newCachedThreadPool();
+    // An executor using virtual threads to run tasks
+    private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
     private final Map<String, ScheduledTask<T>> tasks = new HashMap<>();
     // Object used for communication between the main thread and task threads.
     // .wait() / .notify() operations are performed on this object
@@ -80,11 +80,12 @@ public class Scheduler<T> {
         try {
             future.get(timeout, unit);
         } catch (ExecutionException e) {
-            if (e.getCause() instanceof RuntimeException re)
-                throw re;
-            if (e.getCause() instanceof TaskFailedException tfe)
-                throw tfe;
-            throw new GenerationFailedException(e.getCause());
+            switch (e.getCause()) {
+                case RuntimeException re -> throw re;
+                case TaskFailedException tfe -> throw tfe;
+                case Throwable cause -> throw new GenerationFailedException(cause);
+                case null -> throw new GenerationFailedException(e);
+            }
         } finally {
             // Attempt to interrupt any ongoing task in case of an error
             tasks.values().forEach(ScheduledTask::cancel);

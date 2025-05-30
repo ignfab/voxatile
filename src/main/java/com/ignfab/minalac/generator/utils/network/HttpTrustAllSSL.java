@@ -49,7 +49,7 @@ public class HttpTrustAllSSL extends X509ExtendedTrustManager {
             sc.init(null, trustAllCerts, new SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
             // Create & install the all-trusting host verifier
-            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
+            HttpsURLConnection.setDefaultHostnameVerifier((_, _) -> true);
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             throw new RuntimeException("Unable to apply all-trusting policy", e);
         }
