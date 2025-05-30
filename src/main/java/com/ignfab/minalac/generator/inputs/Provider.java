@@ -34,16 +34,18 @@ public interface Provider<T> {
     /**
      * Provides elements. The returned result can be iterated over
      * and then closed at the end. A typical usage may be:
-     * <pre>{@code
-     *  Provider<Elem> provider = ...;
-     *  try (Provider.Result<Elem> result = provider.provide(limits)) {
-     *      for (Elem element : result) {
-     *          // Code using element here...
-     *      }
-     *  } catch (...) {
-     *      // Handle exceptions here...
-     *  }
-     * }</pre>
+     * {@snippet lang="java" :
+     * Provider<Elem> provider; // @highlight type="italic"
+     *
+     * try (Provider.Result<Elem> result = provider.provide()) { // @highlight substring="provider.provide()"
+     *     for (Elem element : result) {
+     *         // Code using element here...
+     *         IO.println(element);
+     *     }
+     * } catch (...) {
+     *     // Handle exceptions here...
+     * }
+     * }
      *
      * @param bbox limits of the area to provide elements from
      * @return A result wrapping elements and close method

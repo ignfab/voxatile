@@ -32,7 +32,7 @@ public class MTVoxelTile extends VoxelTile {
 
     // Retrieves or creates the mapblock corresponding to given voxel position.
     private Block getOrCreateBlock(int blockX, int blockY, int blockZ) {
-        return blocks.computeIfAbsent(coordsToPos(blockX, blockY, blockZ), k -> new Block());
+        return blocks.computeIfAbsent(coordsToPos(blockX, blockY, blockZ), _ -> new Block());
     }
 
     private Block getBlock(int blockX, int blockY, int blockZ) {

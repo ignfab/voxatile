@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.generation;
 
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -59,7 +59,7 @@ public class SquareUnitsTileGeneratorTest {
                 }
 
             // Sort tiles on X axis now
-            Collections.sort(tilesSelection, (b1, b2) -> b1.minX() - b2.minX());
+            tilesSelection.sort(Comparator.comparingInt(WorldBBox2d::minX));
 
             // Check that the whole given Y axis is covered
             // ie: tiles starts at minX, touches each other and ends at maxX
@@ -100,7 +100,7 @@ public class SquareUnitsTileGeneratorTest {
         SquareUnitsTileGenerator tileGenerator = new SquareUnitsTileGenerator(16, bbox);
         List<WorldBBox2d> tiles = tileGenerator.getTiles(30);
         assertEquals(1, tiles.size());
-        assertEquals(bbox, tiles.get(0));
+        assertEquals(bbox, tiles.getFirst());
     }
 
     @Test

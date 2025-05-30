@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.inputs;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -62,7 +63,7 @@ public final class ParameterizedURL {
             .append(URLEncoder.encode(key, StandardCharsets.UTF_8))
             .append('=')
             .append(URLEncoder.encode(value, StandardCharsets.UTF_8)));
-        return new URL(url + suffix);
+        return URI.create(url + suffix).toURL();
     }
 
     /**

@@ -7,10 +7,7 @@ import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.geotools.api.referencing.FactoryException;
-
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
-import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
@@ -68,7 +65,7 @@ public final class MinalacGenerator {
      *
      * @param args command line arguments
      */
-    public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException, TimeoutException, GenerationFailedException {
+    static void main(String[] args) throws InterruptedException, MapWriteException, ParseException, TaskFailedException, TimeoutException, GenerationFailedException {
         // Execution duration start
         Instant start = Instant.now();
         HttpTrustAllSSL.applyGlobally();

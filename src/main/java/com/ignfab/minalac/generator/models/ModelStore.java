@@ -23,12 +23,7 @@ public class ModelStore {
         if (type == null || type.isEmpty())
             throw new IllegalArgumentException("Type must be a non empty string");
 
-        List<Model> list = byType.get(type);
-        if (list == null) {
-            list = new LinkedList<>();
-            byType.put(type, list);
-        }
-        list.add(model);
+        byType.computeIfAbsent(type, _ -> new LinkedList<>()).add(model);
     }
 
     /**
@@ -38,6 +33,6 @@ public class ModelStore {
      * @return List of models of the given type
      */
     public List<Model> getByType(String type) {
-        return byType.containsKey(type) ? byType.get(type) : Collections.emptyList();
+        return byType.getOrDefault(type, Collections.emptyList());
     }
 }

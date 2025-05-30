@@ -17,20 +17,20 @@ import com.ignfab.minalac.generator.utils.IntegerInterval;
  * A notation for an integer interval.
  * <p>
  * Interval can be written in various ways. Canonical way:
- * {@code
- * interval:
+ * {@snippet lang="yaml" :
+ * intervalA:
  *   from: 2
  *   to: 5
  * }
  * For a single value interval:
- * {@code
- * interval:
+ * {@snippet lang="yaml" :
+ * intervalB:
  *   value: 4
 *  }
  * Same intervals but with shortened notation:
- * {@code
- * interval: 2..5
- * interval: 4
+ * {@snippet lang="yaml" :
+ * intervalA: 2..5
+ * intervalB: 4
  * }
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION, defaultImpl = IntegerIntervalParams.FallbackParams.class)
