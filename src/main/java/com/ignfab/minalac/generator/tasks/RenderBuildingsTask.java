@@ -13,7 +13,7 @@ import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
 
 /**
  * A {@link TileTask} rendering a {@link ModelSelection} as buildings.
- *
+ * <p>
  * The generated buildings have a custom height, floors and windows.
  */
 public class RenderBuildingsTask extends ModelTask<ShapesVoxelizable2d> {

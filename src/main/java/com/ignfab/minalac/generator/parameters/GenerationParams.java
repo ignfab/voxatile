@@ -14,12 +14,14 @@ import com.ignfab.minalac.generator.parameters.tasks.TileTaskParams;
 
 /**
  * GenerationParams represents the parameters used during the generation.
- * This class mirrors the structure of the object to be deserialized.
+ * <p>
  * Required fields are initialized by the constructor.
- * The verification of their presence is done by the constructor via the {@code @ConstructorProperties} annotation, as it is currently the only supported method by the library.
- * @see <a href="https://github.com/FasterXML/jackson-dataformat-xml/issues/625">GitHub issue about required fields during deserialization</a>.
- *
+ * The verification of their presence is done by the constructor via
+ * the {@link ConstructorProperties} annotation, as it is currently
+ * the only supported method by the library.
+ * <p>
  * Refer to docs/usage/parameters/Parameters.md for parameters format.
+ * @see <a href="https://github.com/FasterXML/jackson-dataformat-xml/issues/625">GitHub issue about required fields during deserialization</a>.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GenerationParams {

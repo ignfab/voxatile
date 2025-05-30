@@ -29,18 +29,18 @@ public class Scheduler<T> {
 
     /**
      * Schedules the task to be executed when all dependencies are finished.
-     * If the task has no dependency, it will be executed at {@link #run(context, long, TimeUnit)}.
+     * If the task has no dependency, it will be executed at {@link #run(T, long, TimeUnit)}.
      *
      * @param id the ID of the task
      * @param task the task to be scheduled
      */
     public void schedule(String id, Consumer<T> task) {
-        schedule(new ScheduledTask<T>(id, task));
+        schedule(new ScheduledTask<>(id, task));
     }
 
     /**
      * Schedules the task to be executed when all dependencies are finished.
-     * If the task has no condition, it will be executed at {@link #run(context, long, TimeUnit)}.
+     * If the task has no condition, it will be executed at {@link #run(T, long, TimeUnit)}.
      *
      * @param task the task to be scheduled
      */

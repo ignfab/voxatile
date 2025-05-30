@@ -34,7 +34,7 @@ public record WorldCoords3d(int x, int y, int z) implements Positioned3d {
 
    /**
      * Creates a new {@link WorldCoords3d} from double floating point coordinates.
-     * Given coordinates are rounded using {@code Math.round}.
+     * Given coordinates are rounded using {@link Math#round}.
      *
      * @param x x-component of coordinates
      * @param y y-component of coordinates
@@ -45,7 +45,7 @@ public record WorldCoords3d(int x, int y, int z) implements Positioned3d {
     }
     /**
      * Creates a new {@link WorldCoords3d} from double floating point coordinates.
-     * Given coordinates are floored using {@code Math.floor}.
+     * Given coordinates are floored using {@link Math#floor}.
      *
      * @param x x-component of coordinates
      * @param y y-component of coordinates
@@ -59,7 +59,7 @@ public record WorldCoords3d(int x, int y, int z) implements Positioned3d {
 
     /**
      * Creates a new {@link WorldCoords3d} from double floating point coordinates.
-     * Given coordinates are ceiled using {@code Math.ceil}.
+     * Given coordinates are ceiled using {@link Math#ceil}.
      *
      * @param x x-component of coordinates
      * @param y y-component of coordinates
@@ -74,9 +74,9 @@ public record WorldCoords3d(int x, int y, int z) implements Positioned3d {
     /**
      * Returns addition result with given coordinates.
      *
-     * @param x x-commponent of value to add
-     * @param y y-commponent of value to add
-     * @param z z-commponent of value to add
+     * @param x x-component of value to add
+     * @param y y-component of value to add
+     * @param z z-component of value to add
      * @return a new {@code WorldCoords3d} resulting of the addition.
      */
     public WorldCoords3d add(int x, int y, int z) {

@@ -34,7 +34,7 @@ public class OutputFormatTest {
 
         PlaceableParams params = assertDoesNotThrow(() -> format.createVoxelParams("test"));
         TestingVoxelParams testingParams = assertInstanceOf(TestingVoxelParams.class, params);
-        assertEquals(testingParams.name, "test");
+        assertEquals("test", testingParams.name);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class OutputFormatTest {
 
         PlaceableParams params = assertDoesNotThrow(() -> format.createVoxelParams(node, mapper));
         TestingVoxelParams testingParams = assertInstanceOf(TestingVoxelParams.class, params);
-        assertEquals(testingParams.name, "test");
+        assertEquals("test", testingParams.name);
     }
 
     @Test

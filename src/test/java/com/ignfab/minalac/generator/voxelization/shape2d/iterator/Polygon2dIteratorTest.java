@@ -79,7 +79,7 @@ public class Polygon2dIteratorTest {
             new WorldCoords2d(1, 1)
         ));
 
-        // Interface does not imply that iterator must browse voxels once but it actually does
+        // Interface does not imply that iterator must browse voxels once, but it actually does
         assertBrowsesAllOnce(sandbox.voxels("-"), new Polygon2dIterator(polygon, false));
         assertBrowsesAllOnce(sandbox.voxels("-+"), new Polygon2dIterator(polygon, true));
     }
@@ -126,7 +126,7 @@ public class Polygon2dIteratorTest {
             )
         );
 
-        // Interface does not imply that iterator must browse voxels once but it actually does
+        // Interface does not imply that iterator must browse voxels once, but it actually does
         assertBrowsesAllOnce(sandbox.voxels("-"), new Polygon2dIterator(polygon, false));
         assertBrowsesAllOnce(sandbox.voxels("-+"), new Polygon2dIterator(polygon, true));
     }

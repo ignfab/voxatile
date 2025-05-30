@@ -44,8 +44,8 @@ public class ShapesVoxelizer3d implements Voxelizer3d {
 
     /**
      * Returns an iterable over voxels on the border of shapes.
-     * Additional information is given in {@code LineVoxel3d} about border line
-     * and position in it.
+     * Additional information is available in {@code LineVoxel3d} about lines
+     * and position on them.
      *
      * @return an iterable over border voxels
      */
@@ -68,7 +68,7 @@ public class ShapesVoxelizer3d implements Voxelizer3d {
     }
 
     /**
-     * A empty {@code ShapeVoxelizer3d} for conveniance.
+     * An empty {@code ShapeVoxelizer3d} for convenience.
      */
     public static final ShapesVoxelizer3d EMPTY = new Empty();
 

@@ -4,7 +4,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldSize2d;
 
 /**
  * The {@code WorldSize3d} subclass represents the size along the three axes in the voxel world.
- * The each component represents the size along the corresponding axis.
+ * Each component represents the size along the corresponding axis.
  * Size is always greater than zero.
  *
  * @param x The size along the x-axis

@@ -2,8 +2,8 @@ package com.ignfab.minalac.generator.utils.random;
 
 /**
  * A seed for a sequence of random numbers.
- *
- * See docs/development/RandomNumbers.md for further documentation.
+ * <p>
+ * See docs/dev/RandomNumbers.md for further documentation.
  */
 public class Seed {
     /**
@@ -43,7 +43,7 @@ public class Seed {
     }
 
     /**
-     * Returns seed reprensentation as long integer.
+     * Returns seed representation as long integer.
      *
      * @return seed as long integer.
      */
@@ -77,7 +77,6 @@ public class Seed {
     public Random createRandom(String salt) {
         return salt(salt).createRandom();
     }
-
 
     /**
      * Creates a {@code Random} object from this seed with salt.

@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import com.ignfab.minalac.generator.utils.IntegerInterval;
@@ -122,14 +121,13 @@ public abstract class IntegerIntervalParams {
 
      /**
      * A custom deserializer for {@code CustomParams}s.
-     *
+     * <p>
      * It maps format name to a {@code CustomParams} object.
      */
     public static class Deserializer extends JsonDeserializer<FallbackParams> {
 
         @Override
-        public FallbackParams deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException, JsonMappingException {
+        public FallbackParams deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
             return stringToFallbackParams(jp.readValueAs(String.class));
         }
 

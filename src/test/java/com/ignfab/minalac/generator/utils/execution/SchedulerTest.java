@@ -1,7 +1,6 @@
 package com.ignfab.minalac.generator.utils.execution;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +36,7 @@ public class SchedulerTest {
 
         assertDoesNotThrow(() -> scheduler.run(null, 1, TimeUnit.MINUTES));
 
-        List<String> expected = Arrays.asList("a", "b", "c");
+        List<String> expected = List.of("a", "b", "c");
         assertTrue(expected.size() == actual.size() && expected.containsAll(actual) && actual.containsAll(expected),
             () -> "List elements expected to be the same (ignoring order). Expected: " + expected + ", actual: " + actual);
     }
@@ -56,7 +55,7 @@ public class SchedulerTest {
 
         assertDoesNotThrow(() -> scheduler.run(null, 1, TimeUnit.MINUTES));
 
-        List<String> expected = Arrays.asList("1", "2", "3");
+        List<String> expected = List.of("1", "2", "3");
         assertEquals(expected, actual);
     }
 
@@ -70,7 +69,7 @@ public class SchedulerTest {
         scheduler.addDependency("testReset:y", "testReset:x");
         scheduler.addDependency("testReset:z", "testReset:y");
 
-        List<String> expected = Arrays.asList("x", "y", "z");
+        List<String> expected = List.of("x", "y", "z");
 
         for (int i = 1; i <= 3; i++) {
             assertDoesNotThrow(() -> scheduler.run(null, 1, TimeUnit.MINUTES));

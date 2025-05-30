@@ -3,7 +3,6 @@ package com.ignfab.minalac.generator.parameters.placeables;
 import java.io.IOException;
 import java.util.Map.Entry;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.exc.InputCoercionException;
@@ -24,12 +23,12 @@ public abstract class PlaceableParams {
 
     /**
      * Deserializer for PlaceableParams.
-     *
+     * <p>
      * This deserializer is able to deserialize various forms of {@link PlaceableParams}, depending on {@link OutputFormat}:
      * Nothing, Voxels (short and long description), Structures.
      */
     public static class Deserializer extends JsonDeserializer<PlaceableParams> {
-        private OutputFormat format;
+        private final OutputFormat format;
 
         /**
          * Creates a custom deserializer for given output format.
@@ -41,8 +40,7 @@ public abstract class PlaceableParams {
         }
 
         @Override
-        public PlaceableParams deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException, JacksonException {
+        public PlaceableParams deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
 
             ObjectCodec codec = jp.getCodec();
             JsonNode node = codec.readTree(jp);
@@ -86,7 +84,7 @@ public abstract class PlaceableParams {
 
     /**
      * Validates parameters.
-     *
+     * <p>
      * Should be called wherever used from another {@code validate} method.
      *
      * @throws IllegalArgumentException if parameters are not valid.

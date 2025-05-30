@@ -154,7 +154,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
         /**
          * Fetches more results from URL.
          */
-        private void fetchmore() throws RetryableException, GenerationFailedException {
+        private void fetchMore() throws RetryableException, GenerationFailedException {
             InputStream stream;
 
             try {
@@ -197,7 +197,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             if (iterator != null)
                 iterator.close();
         }
@@ -208,7 +208,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
                 return;
 
             if (iterator == null || !iterator.hasNext())
-                fetchmore();
+                fetchMore();
         }
 
         @Override
@@ -242,7 +242,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
         private int count = -1;
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        public void startElement(String uri, String localName, String qName, Attributes attributes) {
             count = Integer.parseInt(attributes.getValue("numberMatched"));
         }
 
@@ -263,7 +263,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
     // as template for all feature types. So if a metadata is absent from this first feature, it will be removed
     // from all features of the response set.
     //
-    // Using GML::decodeFeatureCollection with an aditional parameter set to `true` is supposed to build a type
+    // Using GML::decodeFeatureCollection with an additional parameter set to `true` is supposed to build a type
     // covering all encountered feature metadata (if a metadata appears once, it will be set for all features).
     // But this gives an exception about "retyping" features.
     //
@@ -273,9 +273,9 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
 
     /**
      * This is a hack to circumvent Geotools problem with variable type features.
-     *
+     * <p>
      * This version of SimpleFeatureCollection will return features with heterogeneous set of metadata.
-     *
+     * <p>
      * For simplicity, it has been narrowed down to SimpleFeatureCollection and SimpleFeature cases
      * and will not work if parser returns something else.
      *
@@ -300,7 +300,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
 
     /**
      * A feature type cache customizer that does no caching.
-     *
+     * <p>
      * If lack of type caching causes performances issue, `DynamicFeatureTypeCacheCustomizer` from `GML.class`
      * could be used instead (as it is private, it will have to be copied here).
      */

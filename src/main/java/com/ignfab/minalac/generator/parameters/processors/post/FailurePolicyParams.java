@@ -6,7 +6,7 @@ import com.ignfab.minalac.generator.processors.post.FailurePolicy;
 
 /**
  * Parameters for {@link FailurePolicy}.
- *
+ * <p>
  * Avoids scattering configuration-specific names
  * for {@link FailurePolicy} across the codebase.
  */

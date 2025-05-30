@@ -10,8 +10,8 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
  * @param <T> type of value associated to voxels
  */
 public class Matrix2dIterator<T> implements Iterator<Matrix2d.Value<T>> {
-    private Matrix2d<T> matrix;
-    private Iterator<WorldCoords2d> iterator;
+    private final Matrix2d<T> matrix;
+    private final Iterator<WorldCoords2d> iterator;
     private Matrix2d.Value<T> current;
 
     /**
@@ -33,7 +33,7 @@ public class Matrix2dIterator<T> implements Iterator<Matrix2d.Value<T>> {
             value = matrix.get(coords);
 
             if (value != null) {
-                current = new Matrix2d.Value<T>(coords, value);
+                current = new Matrix2d.Value<>(coords, value);
                 return;
             }
         }

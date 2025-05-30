@@ -1,6 +1,5 @@
 package com.ignfab.minalac.generator.utils.world3d;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -121,13 +120,13 @@ public class WorldBBox3dTest {
     }
 
     @Test
-    @DisplayName("Test interects() method")
+    @DisplayName("Test intersects() method")
     public void testIntersects() {
         WorldBBox3d box;
 
         box = new WorldBBox3d(-2, 3, -1, 5, 7, 6);
 
-        // Various non intersecting boxes
+        // Various non-intersecting boxes
         assertFalse(box.intersects(new WorldBBox3d(3, -2, 5, 3, 3, 3)));
         assertFalse(box.intersects(new WorldBBox3d(-2, -2, -1, 3, 3, 3)));
         assertFalse(box.intersects(new WorldBBox3d(3, 3, -1, 3, 3, 3)));
@@ -163,13 +162,13 @@ public class WorldBBox3dTest {
         assertEquals(box, box.intersection(box2));
         assertEquals(box, box2.intersection(box));
 
-        // Various non intersecting boxes
+        // Various non-intersecting boxes
         assertTrue(box.intersection(new WorldBBox3d(3, -2, 5, 3, 3, 3)).isEmpty());
         assertTrue(box.intersection(new WorldBBox3d(-2, -2, -1, 3, 3, 3)).isEmpty());
         assertTrue(box.intersection(new WorldBBox3d(3, 3, -1, 3, 3, 3)).isEmpty());
         assertTrue(box.intersection(new WorldBBox3d(3, -2, 3, 3, 3, 3)).isEmpty());
 
-        // Various intersectig boxes
+        // Various intersecting boxes
         box = new WorldBBox3d(-2, -2, -2, 5, 5, 5);
         assertEquals(new WorldBBox3d(-2, -2, -2, 3, 3, 3), box.intersection(new WorldBBox3d(-3, -3, -3, 4, 4, 4)));
         assertEquals(new WorldBBox3d(0, -2, -2, 3, 3, 3), box.intersection(new WorldBBox3d(0, -3, -3, 4, 4, 4)));
@@ -193,14 +192,14 @@ public class WorldBBox3dTest {
         assertTrue(box.isEmpty());
 
         // Single Bounded collection
-        box = WorldBBox3d.surrounding(Arrays.asList(
+        box = WorldBBox3d.surrounding(List.of(
             new WorldBBox3d(1, 2, 3, 4, 5, 6)
         ));
 
         assertEquals(new WorldBBox3d(1, 2, 3, 4, 5, 6), box);
 
         // Multiple Bounded collection
-        box = WorldBBox3d.surrounding(Arrays.asList(
+        box = WorldBBox3d.surrounding(List.of(
             new WorldBBox3d(1, 2, 3, 4, 5, 6),
             new WorldBBox3d(-1, -2, -3, 1, 2, 3)
         ));
@@ -208,7 +207,7 @@ public class WorldBBox3dTest {
         assertEquals(new WorldBBox3d(-1, -2, -3, 6, 9, 12), box);
 
         // Empty boxes
-        box = WorldBBox3d.surrounding(Arrays.asList(
+        box = WorldBBox3d.surrounding(List.of(
             new WorldBBox3d(-10, -8, -6, 5, 4, 2),
             WorldBBox3d.EMPTY
         ));
@@ -216,7 +215,7 @@ public class WorldBBox3dTest {
         assertEquals(new WorldBBox3d(-10, -8, -6, 5, 4, 2), box);
 
         // Empty boxes only
-        box = WorldBBox3d.surrounding(Arrays.asList(
+        box = WorldBBox3d.surrounding(List.of(
             WorldBBox3d.EMPTY,
             WorldBBox3d.EMPTY,
             WorldBBox3d.EMPTY
@@ -228,7 +227,7 @@ public class WorldBBox3dTest {
     @Test
     @DisplayName("Test crop() method")
     void testCrop() {
-        List<WorldCoords3d> list = Arrays.asList(
+        List<WorldCoords3d> list = List.of(
             new WorldCoords3d(2, 3, 4),
             new WorldCoords3d(0, 1, 2),
             new WorldCoords3d(6, 7, 8),
@@ -236,7 +235,7 @@ public class WorldBBox3dTest {
             new WorldCoords3d(8, 9, 10)
         );
         assertBrowsesAllOnce(
-            Arrays.asList(
+            List.of(
                 new WorldCoords3d(4, 5, 6),
                 new WorldCoords3d(6, 7, 8)
             ),

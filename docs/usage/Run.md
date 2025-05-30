@@ -33,9 +33,9 @@ Where:
    - `-y` do nothing but displaying resulting parameters (in Yaml format).
    - `-g` do not perform generation.
    - `-s` do not save generated map to disk.
-- `<format>` is the wanted generation format, refering to yaml file (without extension) in `examples/formats`.
-- `<process>` is the wanted generation process, refering to yaml file (without extension) in `examples/processes`.
-- `<places>` is the wanted generation area, refering to yaml file (without extension) in `examples/places`.
+- `<format>` is the wanted generation format, referring to yaml file (without extension) in `examples/formats`.
+- `<process>` is the wanted generation process, referring to yaml file (without extension) in `examples/processes`.
+- `<places>` is the wanted generation area, referring to yaml file (without extension) in `examples/places`.
 - `<outputPath>` is where world files will be generated, only required if no option set (if directory exists, it will be emptied).
 
 While many places are available, there are only two formats (`minecraft`, `minetest`) and one process (`full`) for now.

@@ -33,7 +33,7 @@ public record WorldCoords2d(int x, int y) implements Positioned2d {
 
     /**
      * Creates a new {@link WorldCoords2d} from double floating point coordinates.
-     * Given coordinates are rounded using {@code Math.round}.
+     * Given coordinates are rounded using {@link Math#round}.
      *
      * @param x x-component of coordinates
      * @param y y-component of coordinates
@@ -46,7 +46,7 @@ public record WorldCoords2d(int x, int y) implements Positioned2d {
 
     /**
      * Creates a new {@link WorldCoords2d} from double floating point coordinates.
-     * Given coordinates are floored using {@code Math.floor}.
+     * Given coordinates are floored using {@link Math#floor}.
      *
      * @param x x-component of coordinates
      * @param y y-component of coordinates
@@ -59,7 +59,7 @@ public record WorldCoords2d(int x, int y) implements Positioned2d {
 
     /**
      * Creates a new {@link WorldCoords2d} from double floating point coordinates.
-     * Given coordinates are ceiled using {@code Math.ceil}.
+     * Given coordinates are ceiled using {@link Math#ceil}.
      *
      * @param x x-component of coordinates
      * @param y y-component of coordinates

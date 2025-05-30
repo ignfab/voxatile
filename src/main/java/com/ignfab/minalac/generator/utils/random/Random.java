@@ -31,18 +31,18 @@ public class Random extends java.util.Random {
     @Override
     public void setSeed(long s) {
         super.setSeed(seed ^ s);
-        // Ensures a good shuffle and divergeance between random sequences even for close sub-seeds.
+        // Ensures a good shuffle and divergence between random sequences even for close sub-seeds.
         super.setSeed(nextLong());
     }
 
     /**
-     * Sets the seed of this random number generator using three dimensional coordinates seed.
+     * Sets the seed of this random number generator using three-dimensional coordinates seed.
      *
      * @param x Coordinate on x-axis
      * @param y Coordinate on y-axis
      * @param z Coordinate on z-axis
      */
     public void setSeed(int x, int y, int z) {
-        setSeed(x ^ y << 8 ^ z << 16);
+        setSeed(x ^ (long) y << 8 ^ (long) z << 16);
     }
 }

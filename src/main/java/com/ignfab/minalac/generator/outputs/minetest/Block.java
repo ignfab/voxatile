@@ -15,11 +15,11 @@ public class Block {
      */
     public static final int SIZE = 16;
 
-    private short[] param0;
-    private byte[] param1;
-    private byte[] param2;
-    private HashMap<Integer, String> nameIdMapping;
-    private HashMap<String, Integer> idNameMapping;
+    private final short[] param0;
+    private final byte[] param1;
+    private final byte[] param2;
+    private final HashMap<Integer, String> nameIdMapping;
+    private final HashMap<String, Integer> idNameMapping;
 
     /**
      * Constructs a new {@code Block}.
@@ -53,10 +53,10 @@ public class Block {
 
     /**
      * Gets or creates a new id for given type name.
-     * This ensure a threadsafe id creation.
+     * This ensures a threadsafe id creation.
      *
      * @param name type name
-     * @return identfier for the given type name
+     * @return identifier for the given type name
      */
     private short getOrCreateIdForType(String name) {
         // Search first in case we already have that name (most likely)
@@ -68,7 +68,7 @@ public class Block {
             if (idNameMapping.containsKey(name))
                 return idNameMapping.get(name).shortValue();
 
-            // Create a new Id for that name
+            // Create a new ID for that name
             int newId = nameIdMapping.size();
             nameIdMapping.put(newId, name);
             idNameMapping.put(name, newId);

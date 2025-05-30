@@ -48,7 +48,7 @@ fetchBuildings:
 - `postProcessing` (optional): Additional post-processing steps.
     - [Post-processing](PostProcessing.md) definition
 
-Not all processors are compatible with all provider. See [providers](#provider-parameters) and [processors](#processor-parameters) documentation for compatibility.
+Not all processors are compatible with all provider. See [providers](#providers) and [processors](#processors) documentation for compatibility.
 
 ## Providers
 

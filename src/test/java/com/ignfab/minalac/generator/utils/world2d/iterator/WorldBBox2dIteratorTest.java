@@ -27,7 +27,7 @@ public class WorldBBox2dIteratorTest {
             count++;
         }
 
-        assertThrows(NoSuchElementException.class, () -> iterator.next());
+        assertThrows(NoSuchElementException.class, iterator::next);
 
         // Check if the iterator has visited every place exactly once.
         assertEquals(12, count, "Unexpected number of iterated element");
@@ -41,6 +41,6 @@ public class WorldBBox2dIteratorTest {
         WorldBBox2d bbox = new WorldBBox2d(1, 2, 0, 0);
         WorldBBox2dIterator iterator = new WorldBBox2dIterator(bbox);
         assertFalse(iterator.hasNext());
-        assertThrows(NoSuchElementException.class, () -> iterator.next());
+        assertThrows(NoSuchElementException.class, iterator::next);
     }
 }

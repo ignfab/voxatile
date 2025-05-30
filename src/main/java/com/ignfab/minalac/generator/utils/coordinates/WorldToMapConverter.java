@@ -7,7 +7,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
 /**
  * A world (game) to map (real) coordinates converter.
- *
+ * <p>
  * This wraps a {@link Converter} and provide method with adapted types.
  */
 public class WorldToMapConverter {

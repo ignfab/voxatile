@@ -1,6 +1,6 @@
 # Parameters
 
-By parameters we mean input Yaml or Json data describing desired generation.
+Parameters are the input YAML or JSON data describing desired generation.
 
 ## Typed value
 
@@ -32,7 +32,7 @@ class MyStuffParams {
 Built in parsers are:
 
 | Name      | Java class |
-| --------- | ---------- |
+|-----------|------------|
 | `integer` | `Integer`  |
 | `decimal` | `Double`   |
 | `text`    | `String`   |

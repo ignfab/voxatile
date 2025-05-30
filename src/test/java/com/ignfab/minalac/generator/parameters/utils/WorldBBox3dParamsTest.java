@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class WorldBBox3dParamsTest {
 
-    private ObjectReader reader = new ObjectMapper(new YAMLFactory()).readerFor(WorldBBox3dParams.class);
+    private final ObjectReader reader = new ObjectMapper(new YAMLFactory()).readerFor(WorldBBox3dParams.class);
 
     @Test
     void testDeserialization() {

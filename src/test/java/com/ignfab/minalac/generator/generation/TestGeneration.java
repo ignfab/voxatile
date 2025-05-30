@@ -18,7 +18,6 @@ import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelTile;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
@@ -40,14 +39,14 @@ public class TestGeneration {
     }
 
     // 657_781, 6_860_729 (EPSG:2154) IGN Saint Mandé
-    private final int x2154 = 657_781;
-    private final int y2154 = 6_860_729;
+    private static final int X_2154 = 657_781;
+    private static final int Y_2154 = 6_860_729;
 
     @Test
     public void testGeneration() throws FactoryException, TransformException {
         VoxelWorld world = new EmptyVoxelWorld(500, 500);
 
-        Generation generation = new Generation(world, seed, crs2154, x2154, y2154, 500, 500, 2.0, 3.0, 0.5 * Math.PI, 500);
+        Generation generation = new Generation(world, seed, crs2154, X_2154, Y_2154, 500, 500, 2.0, 3.0, 0.5 * Math.PI, 500);
 
         assertEquals(seed, generation.seed());
         WorldBBox3d box = generation.world().limits();
@@ -73,7 +72,7 @@ public class TestGeneration {
 
         // Check rotation
         converter = generation.makeCoordsConverter(crs2154);
-        geometry = new GeometryFactory().createPoint(new Coordinate(x2154 + 10, y2154 + 20));
+        geometry = new GeometryFactory().createPoint(new Coordinate(X_2154 + 10, Y_2154 + 20));
         geometry = converter.convert(geometry);
         assertEquals(10.0, geometry.getCoordinate().x, 0.01); // (We have a 2m per voxel scale factor)
         assertEquals(-5.0, geometry.getCoordinate().y, 0.01);
@@ -92,8 +91,8 @@ public class TestGeneration {
     }
 
     private static class EmptyVoxelWorld extends VoxelWorld {
-        private int extentX;
-        private int extentY;
+        private final int extentX;
+        private final int extentY;
 
         protected EmptyVoxelWorld(int extentX, int extentY) {
             super(new VoxelWorldMetadata());
@@ -107,12 +106,10 @@ public class TestGeneration {
         }
 
         @Override
-        public void initialize() throws MapWriteException {
-        }
+        public void initialize() {}
 
         @Override
-        public void finalizeAndSave() throws MapWriteException {
-        }
+        public void finalizeAndSave() {}
 
         @Override
         public VoxelTile newTile(WorldBBox3d limits) {

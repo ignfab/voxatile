@@ -23,8 +23,8 @@ public class CombinedPlaceableParams extends PlaceableParams {
 
     /**
      * Creates a new {@code CombinedPlaceableParams}.
-     *
-     * This class is suposed to be instantiated only from {@link PlaceableParams} custom deserializer.
+     * <p>
+     * This class is supposed to be instantiated only from {@link PlaceableParams} custom deserializer.
      *
      * @param array Array of {@code JsonNode} deserializable into {@code Placeable}
      * @param codec Codec to use to deserialize placeables

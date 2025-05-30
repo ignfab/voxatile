@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.exc.InputCoercionException;
@@ -55,8 +54,7 @@ public final class PlaceableStructureParams extends PlaceableParams {
     public static class Deserializer extends JsonDeserializer<PlaceableStructureParams> {
 
         @Override
-        public PlaceableStructureParams deserialize(JsonParser jp, DeserializationContext ctxt)
-                throws IOException, JacksonException {
+        public PlaceableStructureParams deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
 
             ObjectCodec codec = jp.getCodec();
             JsonNode node = codec.readTree(jp);
@@ -96,7 +94,7 @@ public final class PlaceableStructureParams extends PlaceableParams {
 
         /**
          * Applies this parameters content to the given structure.
-         *
+         * <p>
          * It is used rather than a {@code create} method to allow merging several parameters into one structure.
          *
          * @param seed Random seed to use for this {@code PlaceableStructure}.

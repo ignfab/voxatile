@@ -35,7 +35,7 @@ public class ParamsParser {
      * @param serialized A string containing the generation parameters data in Json or Yaml format
      * @return the corresponding generation parameters object.
      * @throws ParseException if an error occurs during deserialization such as an invalid structure
-     * @throws JsonProcessingException
+     * @throws JsonProcessingException if the parameters cannot be processed due to an I/O error
      */
     public GenerationParams parse(String serialized) throws ParseException, JsonProcessingException {
         GenerationParams params;

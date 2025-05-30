@@ -45,7 +45,7 @@ public class TestingSeed extends Seed {
      *
      * @param seed testing seed to test
      *
-     * @return True if seed is desendant of (and not same as) given seed
+     * @return True if seed is descendant of (and not same as) given seed
      */
     public boolean isDescendantOf(Seed seed) {
         return parent != null && (parent == seed || parent.isDescendantOf(seed));

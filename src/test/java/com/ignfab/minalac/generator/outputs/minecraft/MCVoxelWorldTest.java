@@ -51,7 +51,7 @@ public class MCVoxelWorldTest {
                     File[] regions = file.listFiles();
                     assertNotNull(regions);
                     assertEquals(2, regions.length);
-                    List<String> expected = Arrays.asList("r.0.0.mca", "r.0.-1.mca");
+                    List<String> expected = List.of("r.0.0.mca", "r.0.-1.mca");
                     List<String> actual = Arrays.stream(regions).map(File::getName).toList();
                     assertTrue(expected.size() == actual.size() && expected.containsAll(actual) && actual.containsAll(expected));
                 }

@@ -44,8 +44,8 @@ public class ShapesVoxelizer2d implements Voxelizer2d {
 
     /**
      * Returns an iterable over voxels on the border of shapes.
-     * Additional information is given in {@code LineVoxel2d} about border line
-     * and position in it.
+     * Additional information is available in {@code LineVoxel2d} about lines
+     * and position on them.
      *
      * @return an iterable over border voxels
      */
@@ -64,7 +64,7 @@ public class ShapesVoxelizer2d implements Voxelizer2d {
 
     /**
      * This is the global iterator over all voxels of shapes.
-     * This is the only iterator containing Points. These are exluded from
+     * This is the only iterator containing Points. These are excluded from
      * {@code inside()} or {@code borders()}.
      *
      * @return iterator over all shapes voxels.
@@ -75,7 +75,7 @@ public class ShapesVoxelizer2d implements Voxelizer2d {
     }
 
     /**
-     * A empty {@code ShapeVoxelizer2d} for conveniance.
+     * An empty {@code ShapeVoxelizer2d} for convenience.
      */
     public static final ShapesVoxelizer2d EMPTY = new Empty();
 

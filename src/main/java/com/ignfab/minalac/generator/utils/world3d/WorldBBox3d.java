@@ -200,7 +200,7 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
      *
      * @param other Other bounding box to intersect with
      *
-     * @return A new bounding box representing the intersection (may be empty)
+     * @return A new bounding box representing the intersection (which may be empty)
      */
     public WorldBBox3d intersection(WorldBBox3d other) {
         int minX = Math.max(minX(), other.minX());
