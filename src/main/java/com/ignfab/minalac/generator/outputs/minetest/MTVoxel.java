@@ -15,17 +15,17 @@ public class MTVoxel implements Placeable {
      * The node type string.
      * @see <a href="https://wiki.minetest.net/Games/Minetest_Game/Nodes">List of node types (Minetest Wiki)</a>
      */
-    protected String type;
+    protected final String type;
     /**
      * The param1 data of the node.
      * This parameter usually contains information about the node's light intensity.
      */
-    protected byte param1;
+    protected final byte param1;
     /**
      * The param2 data of the node.
      * This parameter usually contains information about the node's spacial orientation.
      */
-    protected byte param2;
+    protected final byte param2;
 
     /**
      * Constructs a new {@code MTVoxel}.

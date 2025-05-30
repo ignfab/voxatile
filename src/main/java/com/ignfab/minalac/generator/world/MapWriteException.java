@@ -4,7 +4,7 @@ package com.ignfab.minalac.generator.world;
  * Exception thrown if a problem occurs when initializing or finalizing a {@link VoxelWorld} or saving a {@link VoxelTile}.
  *
  * @see VoxelWorld#initialize()
- * @see VoxelWorld#finalize()
+ * @see VoxelWorld#finalizeAndSave()
  * @see VoxelTile#save()
  */
 public class MapWriteException extends Exception {

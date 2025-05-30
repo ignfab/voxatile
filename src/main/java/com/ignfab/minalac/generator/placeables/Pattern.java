@@ -4,7 +4,7 @@ import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A pattern of placeables.
- *
+ * <p>
  * Pattern is an unbounded set of voxels covering the entire world.
  */
 public interface Pattern extends Placeable {

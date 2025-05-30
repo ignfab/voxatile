@@ -77,7 +77,7 @@ public class TestingRandom extends Random {
     }
 
     /**
-     * Sets next logn values.
+     * Sets next long values.
      *
      * @param value value to set
      */

@@ -76,7 +76,8 @@ public class Generation {
         double horizontalScale,
         double verticalScale,
         double angle,
-        int maxTileSize) {
+        int maxTileSize
+    ) {
 
         this.seed = seed;
 

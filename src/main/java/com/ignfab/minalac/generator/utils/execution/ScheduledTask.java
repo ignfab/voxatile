@@ -70,7 +70,7 @@ public class ScheduledTask<T> {
                 System.out.printf("Task %s finished%n", id);
             } catch (RuntimeException e) {
                 // If an error occurs, we take note of the task failure
-                System.out.printf("Error in task %s%n", id);
+                System.err.printf("Error in task %s%n", id);
                 error = new TaskFailedException(this, e);
                 state = ScheduledTaskState.FAILED;
             } finally {

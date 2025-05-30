@@ -162,7 +162,7 @@ public class PlaceableStructureTest {
         structure.set(0, 0, 0, vt);
         assertEquals(new WorldBBox3d(0, 0, 0, 2, 3, 4), structure.limits());
 
-        // Check adding novoxel extends limits
+        // Check adding no voxel extends limits
         structure.set(6, 7, 8, Nothing.INSTANCE);
         assertEquals(new WorldBBox3d(0, 0, 0, 7, 8, 9), structure.limits());
 

@@ -61,7 +61,7 @@ public class TestingHeightmap extends Heightmap {
     /**
      * Mocking class for {@link WritableHeightmapSpec}.
      */
-    public class Spec extends WritableHeightmapSpec {
+    public static class Spec extends WritableHeightmapSpec {
         private final TestingHeightmap created;
 
         Spec(TestingHeightmap created) {
@@ -78,7 +78,7 @@ public class TestingHeightmap extends Heightmap {
     /**
      * Mocking class for {@link HeightmapDeclaration}.
      */
-    public class Declaration extends HeightmapDeclaration {
+    public static class Declaration extends HeightmapDeclaration {
         private final TestingHeightmap created;
 
         Declaration(TestingHeightmap created, int defaultValue) {

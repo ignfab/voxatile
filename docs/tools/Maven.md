@@ -54,7 +54,7 @@ Depending on what you want to do, you may use one of the following command. It i
 
 ### Compile without JAR
 
-To quickly check that the project compiles (after refactoring a variable name, for example), you can run the `compile` phase. However, it won't [produce an executable JAR](#create-an-executable-jar) file, and will only allow you to [run the project using Maven](../usage/Run.md#run-using-maven)!
+To quickly check that the project compiles (after refactoring a variable name, for example), you can run the `compile` phase. However, it won't [produce an executable JAR](#create-an-executable-jar) file, and will only allow you to [run the project using Maven](../usage/Generator.md#run-using-maven)!
 
 ```shell
 mvn clean compile

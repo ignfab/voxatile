@@ -26,7 +26,7 @@ public class MyHeightmapTask extends TiledTask {
 
     @Override
     protected void run(GenerationTile tile) {
-        // Now we got a tile, we can acces heightmaps:
+        // Now we got a tile, we can access heightmaps:
         ReadableHeightmap readable = tile.heightmaps().get(readableSpec);
         WritableHeightmap writable = tile.heightmaps().get(writableSpec);
 

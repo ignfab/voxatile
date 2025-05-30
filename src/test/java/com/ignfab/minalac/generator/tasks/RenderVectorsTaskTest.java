@@ -92,7 +92,7 @@ class RenderVectorsTaskTest {
     @DisplayName("Test rendering on a non flat heightmap")
     public void testRenderHeightmap() {
 
-        // Prepare a non flat Heightmap
+        // Prepare a non-flat Heightmap
         for (WorldCoords2d pos : bbox.to2d())
             heightmap.set(pos, (pos.x() + pos.y()) / 2);
 

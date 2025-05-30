@@ -6,7 +6,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
 /**
  * An iterable 2d voxel matrix that eventually holds generic typed values.
- *
+ * <p>
  * A voxel with no value is usually skipped (iterator takes that in charge).
  *
  * @param <T> type of value associated to voxels

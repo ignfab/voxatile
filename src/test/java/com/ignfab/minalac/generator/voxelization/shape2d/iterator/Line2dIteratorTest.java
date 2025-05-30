@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.voxelization.shape2d.iterator;
 
-import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ public class Line2dIteratorTest {
         );
 
         assertBrowsesAllOnce(
-            Arrays.asList(0, 1, 2, 3, 4, 5),
+            List.of(0, 1, 2, 3, 4, 5),
             Iterators.remap(line.borderVoxels().iterator(), LineVoxel2d::index)
         );
     }

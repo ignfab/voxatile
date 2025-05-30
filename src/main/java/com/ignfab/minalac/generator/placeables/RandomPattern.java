@@ -21,7 +21,7 @@ public class RandomPattern implements Pattern {
     public RandomPattern(Seed seed, Placeable placeable, double chance) {
         this.placeable = placeable;
         this.chance = chance;
-        this.random = seed.createRandom();
+        random = seed.createRandom();
     }
 
     @Override

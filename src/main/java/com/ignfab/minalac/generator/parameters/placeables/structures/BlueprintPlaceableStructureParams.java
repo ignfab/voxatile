@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.exc.InputCoercionException;
@@ -219,23 +218,22 @@ public class BlueprintPlaceableStructureParams extends PlaceableStructureParams.
      * <p>
      * Only one of {@code data1d}, {@code data2d} or {@code data3d} should be given, others should be null.
      *
-     * @param data1d One dimensional blueprint data as string
-     * @param data2d Two dimensional blueprint data as list of strings
-     * @param data3d Three dimensional blueprint data as list of lists of strings
+     * @param data1d One-dimensional blueprint data as string
+     * @param data2d Two-dimensional blueprint data as list of strings
+     * @param data3d Three-dimensional blueprint data as list of lists of strings
      */
     public record Blueprint(String data1d, LinkedList<String> data2d, LinkedList<LinkedList<String>> data3d) {}
 
     /**
      * Custom deserializer for blueprint field.
-     *
-     * This deserializer ensures that we can have only : a string, a list of strings or a list of lists of strings.
+     * <p>
+     * This deserializer ensures that we can have only: a string, a list of strings or a list of lists of strings.
      * A list mixing strings and lists of strings will be rejected.
      */
     private static final class BlueprintDeserializer extends JsonDeserializer<Blueprint> {
 
         @Override
-        public Blueprint deserialize(JsonParser jp, DeserializationContext ctxt)
-                throws IOException, JacksonException {
+        public Blueprint deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
 
             ObjectCodec codec = jp.getCodec();
             JsonNode node = codec.readTree(jp);
@@ -248,12 +246,12 @@ public class BlueprintPlaceableStructureParams extends PlaceableStructureParams.
             if (node.isTextual())
                 return new Blueprint(node.asText(), null, null);
 
-            // Two or three dimensional: should be a non empty array
+            // Two or three-dimensional: should be a non-empty array
             if (node.isArray() && node.elements().hasNext()) {
                 // Inspect first element to tell how many dimensions we have
                 JsonNode first = node.elements().next();
 
-                // Two dimensional blueprint (list of strings)
+                // Two-dimensional blueprint (list of strings)
                 if (first.isTextual()) {
                     LinkedList<String> list = new LinkedList<>();
                     for (JsonNode text : node) {
@@ -264,7 +262,7 @@ public class BlueprintPlaceableStructureParams extends PlaceableStructureParams.
                     return new Blueprint(null, list, null);
                 }
 
-                // Three dimensional blueprint (list of lists of strings)
+                // Three-dimensional blueprint (list of lists of strings)
                 if (first.isArray()) {
                     LinkedList<LinkedList<String>> result = new LinkedList<>();
                     for (JsonNode array : node) {

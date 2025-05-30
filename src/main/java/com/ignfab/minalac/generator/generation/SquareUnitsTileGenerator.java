@@ -20,7 +20,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
  * Map units are minimal parts of the world that shouldn't be generated separately
  * (i.e. map blocks or regions depending on output format terminology).
  * In this tile generator, map units are fixed size squares, aligned at (0, 0).
- *
+ * <p>
  * It is suitable for both Luanti and Minecraft output formats.
  */
 public class SquareUnitsTileGenerator {

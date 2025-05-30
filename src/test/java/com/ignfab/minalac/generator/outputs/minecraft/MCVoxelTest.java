@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.MapWriteException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,11 +16,11 @@ public class MCVoxelTest {
     private TileMock tileMock;
 
     @BeforeEach
-    public void setUp() throws MapWriteException {
-        WorldBBox3d limits = new WorldBBox3d(new WorldCoords3d(-50, -10, 0), new WorldCoords3d(10, 0, 200));
-        MCVoxelWorld world = new MCVoxelWorld(null);
-        world.setLimits(limits);
-        tileMock = new TileMock(world, limits);
+    public void setUp() {
+        tileMock = new TileMock(new WorldBBox3d(
+            new WorldCoords3d(-50, -10, 0),
+            new WorldCoords3d(10, 0, 200)
+        ));
     }
 
     @Test
@@ -53,7 +52,7 @@ public class MCVoxelTest {
     private static final class TileMock extends MCVoxelTile {
         private final Map<String, CompoundTag> blockStates = new HashMap<>();
 
-        TileMock(MCVoxelWorld world, WorldBBox3d limits) {
+        TileMock(WorldBBox3d limits) {
             super(null, limits);
         }
 

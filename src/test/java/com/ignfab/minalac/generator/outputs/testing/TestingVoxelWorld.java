@@ -6,7 +6,6 @@ import java.util.Collections;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelTile;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
@@ -33,14 +32,14 @@ public class TestingVoxelWorld extends VoxelWorld {
     }
 
     @Override
-    public void initialize() throws MapWriteException {}
+    public void initialize() {}
 
     @Override
-    public void finalizeAndSave() throws MapWriteException {}
+    public void finalizeAndSave() {}
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Beware: Avoid large limits!
      * Each voxel is stored in memory as a string, which could be very large.
      */

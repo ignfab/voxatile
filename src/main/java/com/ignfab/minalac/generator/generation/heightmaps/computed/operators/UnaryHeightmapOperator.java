@@ -21,14 +21,14 @@ public interface UnaryHeightmapOperator {
     int compute(int x, int y, ReadableHeightmap operand);
 
     /**
-     * Computes bounding box resuling of the operation.
+     * Computes bounding box resulting of the operation.
      *
      * @param operand heightmap operand
      * @return 2D bounding box of the result
      */
     default WorldBBox2d bbox(ReadableHeightmap operand) {
         return operand.bbox();
-    };
+    }
 
    /**
      * A simple {@code UnaryHeightmapOperator} based on an {@code IntUnaryOperator}.

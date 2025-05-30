@@ -30,29 +30,29 @@ public class MapToMapConverterTest {
         result = new Converter(ATID, mtid, ATID)
             .convert(FACTORY.createPoint(new Coordinate(1.0, -2.0)));
 
-        assertEquals(result.getCoordinate().getX(),  1.0, 0.0001);
-        assertEquals(result.getCoordinate().getY(), -2.0, 0.0001);
+        assertEquals(1.0, result.getCoordinate().getX(), 0.0001);
+        assertEquals(-2.0, result.getCoordinate().getY(), 0.0001);
 
         // Verify 180° rotation transformation
         result = new Converter(ATID, mtid, AffineTransformation.rotationInstance(Math.PI))
             .convert(FACTORY.createPoint(new Coordinate(1.0, -2.0)));
 
-        assertEquals(result.getCoordinate().getX(), -1.0, 0.0001);
-        assertEquals(result.getCoordinate().getY(),  2.0, 0.0001);
+        assertEquals(-1.0, result.getCoordinate().getX(), 0.0001);
+        assertEquals(2.0, result.getCoordinate().getY(), 0.0001);
 
         // Verify 90° rotation transformation
         result = new Converter(ATID, mtid, AffineTransformation.rotationInstance(Math.PI / 2))
             .convert(FACTORY.createPoint(new Coordinate(1.0, -2.0)));
 
-        assertEquals(result.getCoordinate().getX(), 2.0, 0.0001);
-        assertEquals(result.getCoordinate().getY(), 1.0, 0.0001);
+        assertEquals(2.0, result.getCoordinate().getX(), 0.0001);
+        assertEquals(1.0, result.getCoordinate().getY(), 0.0001);
 
         // Verify translation transformation
         result = new Converter(ATID, mtid, AffineTransformation.translationInstance(-2.0, 1.0))
             .convert(FACTORY.createPoint(new Coordinate(1.0, -2.0)));
 
-        assertEquals(result.getCoordinate().getX(), -1.0, 0.0001);
-        assertEquals(result.getCoordinate().getY(), -1.0, 0.0001);
+        assertEquals(-1.0, result.getCoordinate().getX(), 0.0001);
+        assertEquals(-1.0, result.getCoordinate().getY(), 0.0001);
     }
 
     @Test
@@ -132,7 +132,7 @@ public class MapToMapConverterTest {
         assertEquals(0.0, result.getCoordinate().getX(), 0.1);
         assertEquals(0.0, result.getCoordinate().getY(), 0.1);
 
-        // Pre and post transformations
+        // Pre- and post-transformations
         result = new Converter(
             AffineTransformation.translationInstance(48.8452222, 2.4247222),
             crsTransform,

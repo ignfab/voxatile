@@ -34,5 +34,5 @@ public interface Shape2d {
      */
     default Iterable<Positioned2d> insideVoxels() {
         return Collections::emptyIterator;
-    };
+    }
 }

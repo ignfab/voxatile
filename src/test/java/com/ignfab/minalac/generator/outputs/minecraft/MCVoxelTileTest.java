@@ -6,14 +6,13 @@ import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.MapWriteException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MCVoxelTileTest {
 
     @Test
-    public void testIsOutOfLimits() throws MapWriteException {
+    public void testIsOutOfLimits() {
         WorldBBox3d limits = new WorldBBox3d(new WorldCoords3d(-10, -20, 0), new WorldCoords3d(20, 30, 40));
         MCVoxelWorld world = new MCVoxelWorld(null);
         world.setLimits(limits);
@@ -34,7 +33,7 @@ public class MCVoxelTileTest {
     }
 
     @Test
-    public void testGetVoxel() throws MapWriteException {
+    public void testGetVoxel() {
         WorldBBox3d limits = new WorldBBox3d(new WorldCoords3d(-20, -20, 0), new WorldCoords3d(50, 50, 255));
         MCVoxelWorld world = new MCVoxelWorld(null);
         world.setLimits(limits);

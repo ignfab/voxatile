@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.generation.heightmaps;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
@@ -11,7 +12,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 public class HeightmapStore {
     /**
      * Known heightmaps indexed by their specs.
-     *
+     * <p>
      * (protected visibility required for tests)
      */
     protected final Map<ReadableHeightmapSpec, ReadableHeightmap> heightmaps = new HashMap<>();
@@ -23,9 +24,8 @@ public class HeightmapStore {
      * @param bbox The 2d bbox of created heightmaps
      */
     public HeightmapStore(HeightmapDeclarationStore heightmaps, WorldBBox2d bbox) {
-        heightmaps.declarations().forEach((declaration) -> {
+        for (HeightmapDeclaration declaration : heightmaps.declarations())
             this.heightmaps.put(declaration.spec(), declaration.create(bbox));
-        });
     }
 
     /**
@@ -53,7 +53,7 @@ public class HeightmapStore {
     public WritableHeightmap get(WritableHeightmapSpec spec) {
         ReadableHeightmap heightmap = heightmaps.get(spec);
         if (heightmap == null)
-            throw new IndexOutOfBoundsException("Writable heightmap not found");
+            throw new NoSuchElementException("Writable heightmap not found");
 
         // ReadableHeightmap associated to a WritableHeightmapSpec is always a WritableHeightmap
         return (WritableHeightmap) heightmap;

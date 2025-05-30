@@ -4,7 +4,6 @@ package com.ignfab.minalac.generator.outputs.testing;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Testing purpose {@link VoxelTile} intended to be used in unit tests.
  */
 public class TestingVoxelTile extends VoxelTile {
-    private String[] voxels;
+    private final String[] voxels;
 
     /**
      * A default {@code TestingVoxelTile} instance to pass as argument where it won't actually be used.
@@ -22,12 +21,12 @@ public class TestingVoxelTile extends VoxelTile {
 
     /**
      * Constructs a new TestingVoxelTile.
+     * <p>
+     * Beware: Avoid large limits!
+     * Each voxel is stored in memory as a string, which could be very large.
      *
      * @param world World of which this tile is a part
      * @param limits Limits of the voxel world to create
-     *
-     * Beware: Avoid large limits!
-     * Each voxel is stored in memory as a string, which could be very large.
      */
     public TestingVoxelTile(TestingVoxelWorld world, WorldBBox3d limits) {
         super(limits);
@@ -36,18 +35,18 @@ public class TestingVoxelTile extends VoxelTile {
 
     /**
      * Constructs a new TestingVoxelTile and its corresponding world.
-     *
-     * @param limits Limits of the voxel world to create
-     *
+     * <p>
      * Beware: Avoid large limits!
      * Each voxel is stored in memory as a string, which could be very large.
+     *
+     * @param limits Limits of the voxel world to create
      */
     public TestingVoxelTile(WorldBBox3d limits) {
         this(new TestingVoxelWorld(), limits);
     }
 
     @Override
-    public void save() throws MapWriteException {}
+    public void save() {}
 
     // This method should not be called with out of bounds coordinate
     private int index(int x, int y, int z) {

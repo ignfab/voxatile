@@ -56,7 +56,7 @@ public class ModelFilterMetadataInParams extends ModelFilterParams {
 
     @Override
     public Predicate<Model> create() {
-        List<? extends Object> inParsed = in.stream().map(as::parse).toList();
+        List<?> inParsed = in.stream().map(as::parse).toList();
         return new ModelFilterOnMetadataValue<>(as.type(), metadata, inParsed::contains);
     }
 }

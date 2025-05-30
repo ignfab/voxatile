@@ -5,8 +5,8 @@ package com.ignfab.minalac.generator.utils.random;
  */
 public interface Salting {
     /**
-     * Returns a object dependant salt.
-     *
+     * Returns an object dependant salt.
+     * <p>
      * Salt string should be enough unique to this object so two objects
      * may not share the same randomness.
      *

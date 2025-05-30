@@ -31,7 +31,7 @@ It consists of a first job, [building the JAR](Maven.md#create-an-executable-jar
 
 If the project fails to build (compilation failure, missing dependency, packaging issue...), the workflow will fail, but the status will still be reported, with the build logs to help troubleshooting the problem.
 
-Otherwise, the workflow will upload the `Generator.jar` file as an artifact, and include the download URL in the report message. You can [download and run the JAR](../usage/Run.md#download-workflow-artifact) to test it locally.
+Otherwise, the workflow will upload the `Generator.jar` file as an artifact, and include the download URL in the report message. You can [download and run the JAR](../usage/Generator.md#download-workflow-artifact) to test it locally.
 
 ### checkstyle
 

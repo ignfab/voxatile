@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MetadataValueMappingPostProcessorParamsTest {
 
     @Test
-    public void testDeserialize() throws JsonProcessingException {
+    public void testDeserialize() {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         mapper.registerSubtypes(new NamedType(MetadataValueMappingPostProcessorParams.class, "remap"));
 

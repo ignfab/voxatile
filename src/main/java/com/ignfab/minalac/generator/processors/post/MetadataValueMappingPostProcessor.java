@@ -21,7 +21,6 @@ public class MetadataValueMappingPostProcessor<T> extends PostProcessor.Generic 
     /**
      * Creates a new post-processor to remap a metadata value to another.
      *
-     * @param type type of parsed value
      * @param name name of the metadata to remap
      * @param valueMapping maps each input value to a single output value
      * @param defaultValue value to be applied by default
@@ -29,7 +28,6 @@ public class MetadataValueMappingPostProcessor<T> extends PostProcessor.Generic 
      * @param ifNoMatchFound define the behavior when have no match with the metadata value in the mappings
      */
     public MetadataValueMappingPostProcessor(
-        Class<? extends T> type,
         String name,
         Map<String, T> valueMapping,
         T defaultValue,

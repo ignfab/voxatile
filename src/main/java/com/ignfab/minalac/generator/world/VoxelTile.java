@@ -14,15 +14,15 @@ public abstract class VoxelTile {
     /**
      * The limits of the tile.
      */
-    private WorldBBox3d limits;
+    private final WorldBBox3d limits;
     /**
      * Heightmap representing the altitude of the highest voxels.
      */
-    protected Heightmap minimum;
+    protected final Heightmap minimum;
     /**
      * Heightmap representing the altitude of the lowest voxels.
      */
-    protected Heightmap maximum;
+    protected final Heightmap maximum;
 
     /**
      * Creates a new {@code VoxelTile}.

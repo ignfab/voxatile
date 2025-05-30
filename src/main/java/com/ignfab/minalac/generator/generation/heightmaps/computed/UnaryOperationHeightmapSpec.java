@@ -34,7 +34,7 @@ public class UnaryOperationHeightmapSpec extends ReadableHeightmapSpec {
      *
      * @see ReadableHeightmapSpec
      */
-    private final class Created implements ReadableHeightmap {
+    private static final class Created implements ReadableHeightmap {
         private final ReadableHeightmap operand;
         private final UnaryHeightmapOperator operator;
 

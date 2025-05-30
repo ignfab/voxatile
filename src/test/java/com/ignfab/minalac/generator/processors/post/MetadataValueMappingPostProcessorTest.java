@@ -21,7 +21,6 @@ public class MetadataValueMappingPostProcessorTest {
 
         Map<String, String> simpleCorrespondanceValue = Map.of("a", "b", "c", "d");
         PostProcessor<Model, Model> processorWithDefault = new MetadataValueMappingPostProcessor<>(
-            String.class,
             "metadata",
             simpleCorrespondanceValue,
             "z",
@@ -43,7 +42,6 @@ public class MetadataValueMappingPostProcessorTest {
         result.assertMetadata("metadata", "z");
 
         PostProcessor<Model, Model> processorWithoutDefault = new MetadataValueMappingPostProcessor<>(
-            String.class,
             "metadata",
             simpleCorrespondanceValue,
             null,
@@ -58,7 +56,6 @@ public class MetadataValueMappingPostProcessorTest {
 
         // Testing policies
         PostProcessor<Model, Model> processorDiscardIgnorePolicy = new MetadataValueMappingPostProcessor<>(
-            String.class,
             "metadata",
             simpleCorrespondanceValue,
             null,
@@ -74,7 +71,6 @@ public class MetadataValueMappingPostProcessorTest {
         result.assertMetadata("metadata", "e");
 
         PostProcessor<Model, Model> processorIgnoreDiscardPolicy = new MetadataValueMappingPostProcessor<>(
-            String.class,
             "metadata",
             simpleCorrespondanceValue,
             null,
@@ -86,7 +82,6 @@ public class MetadataValueMappingPostProcessorTest {
         assertThrows(IgnorableException.class, () -> processorIgnoreDiscardPolicy.process(new TestingModel(Map.of("metadata", "e", "metadata2", "d"))));
 
         PostProcessor<Model, Model> processorRemoveMetadataPolicy = new MetadataValueMappingPostProcessor<>(
-            String.class,
             "metadata",
             simpleCorrespondanceValue,
             null,

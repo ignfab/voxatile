@@ -63,7 +63,7 @@ Registration consists in making new task available in Yaml/Json parameter file. 
 ParamsParser parser = new ParamsParser();
 ...
 
-/// Register FooTaskParams with "foo" type
+// Register FooTaskParams with "foo" type
 parser.registerParams("foo", FooTaskParams.class);
 ...
 

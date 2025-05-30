@@ -15,34 +15,34 @@ public class IterablesTest {
     void testArray() {
         assertEmpty(Iterables.array(new String[0]));
 
-        assertBrowsesAllOnce(Arrays.asList("Disco"),
+        assertBrowsesAllOnce(List.of("Disco"),
             Iterables.iterable("Disco"));
 
-        assertBrowsesAllOnce(Arrays.asList("Upside", "down", "round", "round"),
+        assertBrowsesAllOnce(List.of("Upside", "down", "round", "round"),
             Iterables.iterable("Upside", "down", "round", "round"));
     }
 
     @Test
     void testFilter() {
         assertBrowsesAllOnce(
-            Arrays.asList(1, 3, 5, 7, 9),
+            List.of(1, 3, 5, 7, 9),
             Iterables.filter(
-                Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+                List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
                 item -> item % 2 != 0
             )
         );
 
         assertBrowsesAllOnce(
-            Arrays.asList(0, 2, 4, 6, 8, 10),
+            List.of(0, 2, 4, 6, 8, 10),
             Iterables.filter(
-                Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
+                List.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
                 item -> item % 2 == 0
             )
         );
 
         assertEmpty(
             Iterables.filter(
-                Arrays.asList("a", "b", "c"),
+                List.of("a", "b", "c"),
                 _ -> false
             )
         );
@@ -58,12 +58,12 @@ public class IterablesTest {
     @Test
     void testSingleton() {
         assertBrowsesAllOnce(
-            Arrays.asList("The One Ring"),
+            List.of("The One Ring"),
             Iterables.singleton("The One Ring")
         );
 
         assertBrowsesAllOnce(
-            Arrays.asList((Object) null),
+            Collections.singletonList(null),
             Iterables.singleton(null)
         );
     }
@@ -71,41 +71,38 @@ public class IterablesTest {
     @Test
     void testRemap() {
         assertBrowsesAllOnce(
-            Arrays.asList(3, 5, 5, 6, 6, 6, 7),
+            List.of(3, 5, 5, 6, 6, 6, 7),
             Iterables.remap(
-                Arrays.asList("Doc", "Grumpy", "Happy", "Sleepy", "Bashful", "Sneezy", "Dopey"),
+                List.of("Doc", "Grumpy", "Happy", "Sleepy", "Bashful", "Sneezy", "Dopey"),
                 String::length
             )
         );
 
-        assertBrowsesAllOnce(
-            Collections.emptyList(),
-            Iterables.remap(Collections.emptyList(), String::length)
-        );
+        assertEmpty(Iterables.remap(Collections.emptyList(), String::length));
     }
 
     @Test
     void testUnion() {
         assertBrowsesAllOnce(
-            Arrays.asList("Heads", "Tails"),
+            List.of("Heads", "Tails"),
             Iterables.union(
-                Arrays.asList("Heads", "Tails")
+                List.of("Heads", "Tails")
             )
         );
 
         assertBrowsesAllOnce(
-            Arrays.asList("Clover", "Diamond", "Heart", "Spade"),
+            List.of("Clover", "Diamond", "Heart", "Spade"),
             Iterables.union(
-                Arrays.asList("Heart", "Diamond"),
-                Arrays.asList("Clover", "Spade")
+                List.of("Heart", "Diamond"),
+                List.of("Clover", "Spade")
             )
         );
 
         assertBrowsesAllOnce(
-            Arrays.asList("Odd", "Even"),
+            List.of("Odd", "Even"),
             Iterables.union(
                 Collections.emptyList(),
-                Arrays.asList("Odd", "Even")
+                List.of("Odd", "Even")
             )
         );
     }
@@ -115,37 +112,34 @@ public class IterablesTest {
         List<Iterable<String>> list;
 
         list = new LinkedList<>();
+        assertEmpty(Iterables.unwrap(list));
+
+        list = new LinkedList<>();
+        list.add(List.of("Frodo", "Sam", "Merry", "Pippin"));
+
         assertBrowsesAllOnce(
-            Collections.emptyList(),
+            List.of("Frodo", "Sam", "Merry", "Pippin"),
             Iterables.unwrap(list)
         );
 
         list = new LinkedList<>();
-        list.add(Arrays.asList("Frodo", "Sam", "Merry", "Pippin"));
+        list.add(List.of("Frodo", "Sam", "Merry", "Pippin"));
+        list.add(List.of("Gandalf"));
+        list.add(List.of("Boromir", "Aragorn"));
+        list.add(List.of("Gimli", "Legolas"));
 
         assertBrowsesAllOnce(
-            Arrays.asList("Frodo", "Sam", "Merry", "Pippin"),
+            List.of("Frodo", "Gandalf", "Sam", "Merry", "Gimli", "Legolas", "Pippin", "Boromir", "Aragorn"),
             Iterables.unwrap(list)
         );
 
         list = new LinkedList<>();
-        list.add(Arrays.asList("Frodo", "Sam", "Merry", "Pippin"));
-        list.add(Arrays.asList("Gandalf"));
-        list.add(Arrays.asList("Boromir", "Aragorn"));
-        list.add(Arrays.asList("Gimli", "Legolas"));
-
-        assertBrowsesAllOnce(
-            Arrays.asList("Frodo", "Gandalf", "Sam", "Merry", "Gimli", "Legolas", "Pippin", "Boromir", "Aragorn"),
-            Iterables.unwrap(list)
-        );
-
-        list = new LinkedList<>();
-        list.add(Arrays.asList("Frodo", "Sam"));
+        list.add(List.of("Frodo", "Sam"));
         list.add(Collections::emptyIterator);
-        list.add(Arrays.asList("Gollum"));
+        list.add(List.of("Gollum"));
 
         assertBrowsesAllOnce(
-            Arrays.asList("Frodo", "Sam", "Gollum"),
+            List.of("Frodo", "Sam", "Gollum"),
             Iterables.unwrap(list)
         );
     }

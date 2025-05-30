@@ -24,12 +24,12 @@ public class Converter {
 
     /**
      * Creates a new {@code CoordsConverter}.
-     *
+     * <p>
      * This is up to the caller to give proper transformations:
      * @param preTransform Affine transformation applied before CRS transformation (usually for translation).
      * @param crsTransform Transformation from source CRS to world CRS.
      * @param postTransform Affine transformation applied after CRS transformation (usually for scale and rotation).
-     * @throws IllegalArgumentException if crsTransformation is not two dimensional or any transformation is null.
+     * @throws IllegalArgumentException if crsTransformation is not two-dimensional or any transformation is null.
      */
     protected Converter(AffineTransformation preTransform, MathTransform crsTransform, AffineTransformation postTransform) {
         if (preTransform == null || crsTransform == null || postTransform == null)
@@ -45,7 +45,7 @@ public class Converter {
 
     /**
      * Constructs a new {@code CoordsConverter} from another, adding a preTransformation.
-     *
+     * <p>
      * This is up to the caller to give proper transformations:
      * @param preTransform Affine transformation applied before CRS transformation (usually for translation).
      * @param converter Converter to start from
@@ -57,8 +57,8 @@ public class Converter {
     /**
      * Creates a new {@code CoordinatesConverter} performing inverse transformation.
      *
-     * @return inverse coverter
-     * @throws TransformException if coverter cannot be inverted
+     * @return inverse converter
+     * @throws TransformException if converter cannot be inverted
      */
     protected Converter inverse() throws TransformException {
         try {
@@ -73,7 +73,7 @@ public class Converter {
      *
      * @param coords Coordinates to convert
      *
-     * @return converted coordiantes
+     * @return converted coordinates
      *
      * @throws TransformException if conversion cannot be performed
      */

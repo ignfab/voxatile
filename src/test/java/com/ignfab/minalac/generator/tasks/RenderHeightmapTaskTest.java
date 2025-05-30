@@ -73,7 +73,7 @@ public class RenderHeightmapTaskTest {
         tile.voxels().assertVoxelNull(-1, -1, 0);
         tile.voxels().assertVoxelNull(-1, -1, 1);
 
-        // Checking that no voxels were placed outside of the intersection of the two heightmaps bbox.
+        // Checking that no voxels were placed outside the intersection of the two heightmaps bbox.
         for (int x = -1; x <= 1; x++)
             for (int z = -1; z <= 1; z++) {
                 tile.voxels().assertVoxelNull(x, -2, z);

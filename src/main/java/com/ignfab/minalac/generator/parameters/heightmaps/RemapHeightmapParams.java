@@ -1,7 +1,6 @@
 package com.ignfab.minalac.generator.parameters.heightmaps;
 
 import java.beans.ConstructorProperties;
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.IntUnaryOperator;
@@ -74,8 +73,8 @@ public class RemapHeightmapParams implements ReadableHeightmapParams {
 
     static class ValuesKeyDeserializer extends KeyDeserializer {
         @Override
-        public Object deserializeKey(String s, DeserializationContext deserializationContext) throws IOException {
-            return IntegerIntervalParams.FallbackParams.Deserializer.stringToFallbackParams(s);
+        public Object deserializeKey(String key, DeserializationContext ctxt) {
+            return IntegerIntervalParams.FallbackParams.Deserializer.stringToFallbackParams(key);
         }
     }
 }

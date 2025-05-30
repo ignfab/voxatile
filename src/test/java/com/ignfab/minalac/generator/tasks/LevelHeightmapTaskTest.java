@@ -41,7 +41,7 @@ public class LevelHeightmapTaskTest {
         TestingHeightmap ground = tile.newStoredHeightmap("ground", 0);
         TestingVoxelParams placeable = new TestingVoxelParams("voxel");
 
-        // Prepare a non flat Heightmap
+        // Prepare a non-flat Heightmap
         for (WorldCoords2d pos : ground.bbox())
             ground.set(pos, heightFormula(pos));
 

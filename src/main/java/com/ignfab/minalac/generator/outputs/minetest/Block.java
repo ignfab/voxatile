@@ -15,24 +15,24 @@ public class Block {
      */
     public static final int SIZE = 16;
 
-    private short[] param0;
-    private byte[] param1;
-    private byte[] param2;
-    private HashMap<Integer, String> nameIdMapping;
-    private HashMap<String, Integer> idNameMapping;
+    private final short[] param0;
+    private final byte[] param1;
+    private final byte[] param2;
+    private final HashMap<Integer, String> nameIdMapping;
+    private final HashMap<String, Integer> idNameMapping;
 
     /**
      * Constructs a new {@code Block}.
      */
     public Block() {
         // Array length defined by map version (https://github.com/minetest/minetest/blob/master/doc/world_format.md#node-data)
-        this.param0 = new short[4096];
-        this.param1 = new byte[4096];
-        this.param2 = new byte[4096];
-        this.nameIdMapping = new HashMap<>();
-        this.idNameMapping = new HashMap<>();
-        this.nameIdMapping.put(0, "air");
-        this.idNameMapping.put("air", 0);
+        param0 = new short[4096];
+        param1 = new byte[4096];
+        param2 = new byte[4096];
+        nameIdMapping = new HashMap<>();
+        idNameMapping = new HashMap<>();
+        nameIdMapping.put(0, "air");
+        idNameMapping.put("air", 0);
     }
 
     /**
@@ -53,10 +53,10 @@ public class Block {
 
     /**
      * Gets or creates a new id for given type name.
-     * This ensure a threadsafe id creation.
+     * This ensures a threadsafe id creation.
      *
      * @param name type name
-     * @return identfier for the given type name
+     * @return identifier for the given type name
      */
     private short getOrCreateIdForType(String name) {
         // Search first in case we already have that name (most likely)
@@ -68,7 +68,7 @@ public class Block {
             if (idNameMapping.containsKey(name))
                 return idNameMapping.get(name).shortValue();
 
-            // Create a new Id for that name
+            // Create a new ID for that name
             int newId = nameIdMapping.size();
             nameIdMapping.put(newId, name);
             idNameMapping.put(name, newId);

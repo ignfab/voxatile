@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestingVoxelTileTest {
     @Test
-    @DisplayName("Ensure that everything that is stored in the world can be retreived")
+    @DisplayName("Ensure that everything that is stored in the world can be retrieved")
     public void testSetAndGet() {
         TestingVoxelTile tile = new TestingVoxelTile(new WorldBBox3d(-1, -2, -3, 5, 4, 3));
         // Fill the world with unique values
@@ -47,6 +47,6 @@ public class TestingVoxelTileTest {
     @DisplayName("Just ensure save throws no exception")
     public void testSave() {
         TestingVoxelTile tile = new TestingVoxelTile(new WorldBBox3d(0, 0, 0, 1, 1, 1));
-        assertDoesNotThrow(() -> tile.save());
+        assertDoesNotThrow(tile::save);
     }
 }

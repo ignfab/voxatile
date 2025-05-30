@@ -1,7 +1,5 @@
 package com.ignfab.minalac.generator.processors.post;
 
-import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
-import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.models.JTSGeometryModel;
 
 /**
@@ -26,7 +24,7 @@ public class JTSGeometryBufferPostProcessor extends PostProcessor.Simple<JTSGeom
     }
 
     @Override
-    public JTSGeometryModel process(JTSGeometryModel model) throws GenerationFailedException, IgnorableException {
+    public JTSGeometryModel process(JTSGeometryModel model) {
         if (buffer != 0)
             model.setGeometry(model.getGeometry().buffer(buffer));
         return model;

@@ -13,7 +13,7 @@ public class TestingVoxel implements Placeable {
     /**
      * Name of the voxel.
      */
-    protected String name;
+    protected final String name;
 
     /**
      * Creates a new {@code TestingVoxel}.

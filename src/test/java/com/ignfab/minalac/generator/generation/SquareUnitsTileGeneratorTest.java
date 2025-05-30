@@ -17,7 +17,7 @@ public class SquareUnitsTileGeneratorTest {
         SquareUnitsTileGenerator tileGenerator = new SquareUnitsTileGenerator(blocksize, bbox);
         List<WorldBBox2d> tiles = tileGenerator.getTiles(maxTileSize);
 
-        // All tiles shoud be inside bbox
+        // All tiles should be inside bbox
         for (WorldBBox2d tile : tiles)
             assertTrue(bbox.contains(tile), "%s: %s should be contained in bbox(%s)".formatted(name, tile, bbox));
 
@@ -36,13 +36,13 @@ public class SquareUnitsTileGeneratorTest {
         // No tile boundary inside a mapblock (except edges)
         for (WorldBBox2d tile : tiles) {
             if (tile.minX() != bbox.minX())
-                assertTrue(tile.minX() % blocksize == 0, "%s: %s minX should be aligned to block".formatted(name, tile));
+                assertEquals(0, tile.minX() % blocksize, "%s: %s minX should be aligned to block".formatted(name, tile));
             if (tile.minY() != bbox.minY())
-                assertTrue(tile.minY() % blocksize == 0, "%s: %s minY should be aligned to block".formatted(name, tile));
+                assertEquals(0, tile.minY() % blocksize, "%s: %s minY should be aligned to block".formatted(name, tile));
             if (tile.maxX() != bbox.maxX())
-                assertTrue((tile.maxX() + 1) % blocksize == 0, "%s: %s maxX should be aligned to block".formatted(name, tile));
+                assertEquals(0, (tile.maxX() + 1) % blocksize, "%s: %s maxX should be aligned to block".formatted(name, tile));
             if (tile.maxY() != bbox.maxY())
-                assertTrue((tile.maxY() + 1) % blocksize == 0, "%s: %s maxY should be aligned to block".formatted(name, tile));
+                assertEquals(0, (tile.maxY() + 1) % blocksize, "%s: %s maxY should be aligned to block".formatted(name, tile));
         }
 
         // The whole box should be covered

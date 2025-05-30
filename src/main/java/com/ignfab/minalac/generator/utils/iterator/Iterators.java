@@ -36,7 +36,7 @@ public final class Iterators {
      *
      * @param iterator iterator to cast
      *
-     * @return an iterator with same results but casted to super type
+     * @return an iterator with same results but cast to super type
      *
      * @param <From> type returned by iterator
      * @param <To> super type to cast results to

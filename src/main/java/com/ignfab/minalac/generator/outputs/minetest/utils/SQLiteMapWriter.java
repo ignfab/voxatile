@@ -41,7 +41,7 @@ public class SQLiteMapWriter implements AutoCloseable {
 
     /**
      * Creates a new database.
-     *
+     * <p>
      * Must be called once before any {@code insertBlock}.
      */
     public void createDatabase() throws MapWriteException {

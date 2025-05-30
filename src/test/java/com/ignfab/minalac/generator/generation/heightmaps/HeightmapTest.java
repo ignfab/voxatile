@@ -111,7 +111,7 @@ public class HeightmapTest {
         setValues(other, new int[]{ -1, -2, -3, -4, -5, -6 });
 
         // [] = heightmap, {} = other
-        ///   x: -2 -1  0
+        //    x: -2 -1  0
         //  y:
         // -3   {-1 -2}
         // -2   {-3[-4} 2]

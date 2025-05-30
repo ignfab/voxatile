@@ -12,18 +12,14 @@ public class SeedTest {
     // Number of random numbers to test in sequences
     static final int NUMBER = 10;
 
-    private static void assertArrayNotEquals(int[] expecteds, int[] actuals) {
-        assertFalse(Arrays.equals(expecteds, actuals));
+    private static void assertArrayNotEquals(int[] expected, int[] actual) {
+        assertFalse(Arrays.equals(expected, actual));
     }
 
     @Test
     public void testConstructor() {
-        assertDoesNotThrow(() -> {
-            new Seed("1234");
-        });
-        assertDoesNotThrow(() -> {
-            new Seed("");
-        });
+        assertDoesNotThrow(() -> new Seed("1234"));
+        assertDoesNotThrow(() -> new Seed(""));
     }
 
     @Test

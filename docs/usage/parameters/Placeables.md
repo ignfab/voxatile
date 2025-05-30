@@ -40,7 +40,7 @@ Example of a simple voxel value for `place` field:
 place: default:stone # Stone node in Minetest
 ```
 
-When parameters others than block/node type has to be provided, voxel description must be an object with fields. These fields depends on the game format.
+When parameters others than block/node type has to be provided, voxel description must be an object with fields. These fields depend on the game format.
 
 ### Minecraft voxel description
 
@@ -88,7 +88,7 @@ place:
 
 ## Nothing
 
-Places nothing. This convenient if placeable is required but you want to place nothing:
+Places nothing. This convenient if placeable is required, but you want to place nothing:
 
 ```yaml
 place:
@@ -134,7 +134,7 @@ place:
 
 Fields:
 - `put`: Placeable to put at given position(s)
-- `at`: Where to put that placeable. Can be a single postion, or a box.
+- `at`: Where to put that placeable. Can be a single position, or a box.
 
 Boxes are noted as `[x, y, z]` where `x`, `y` and `z` can be an interval noted `start..end` where `start` and `end` are starting and ending value of the interval, or a single coordinate (`5` is equivalent to `5..5`). All values are integers.
 
@@ -286,7 +286,7 @@ Which gives that result:
 ## Patterns
 
 Patterns are sets of voxels but unlike structures, they are not placed at once from given position. Also unlike structures, they are unbounded.
-Instead a pattern may tell to a rendering task what to place at a given position according to it. For example it can be used to draw stripes or place trees randomly.
+Instead, a pattern may tell to a rendering task what to place at a given position according to it. For example, it can be used to draw stripes or place trees randomly.
 
 ### Random Patterns
 

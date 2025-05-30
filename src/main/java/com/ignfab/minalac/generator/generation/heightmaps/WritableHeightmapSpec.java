@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.generation.heightmaps;
 
+import java.util.NoSuchElementException;
+
 /**
  * Spec for a writable {@link Heightmap}.
  * <p>
@@ -15,6 +17,6 @@ public class WritableHeightmapSpec extends ReadableHeightmapSpec {
     @Override
     protected WritableHeightmap create(HeightmapStore store) {
         // We will get here if we try to reach an unknown readable stored heightmap
-        throw new IndexOutOfBoundsException("Stored heightmap not found");
+        throw new NoSuchElementException("Stored heightmap not found");
     }
 }

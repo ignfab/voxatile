@@ -13,17 +13,17 @@ import com.ignfab.minalac.generator.voxelization.Matrix2d;
  * A model based on a matrix of floats (usually a heightmap model).
  */
 public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
-    private FloatGeographicDataMatrix2d data;
-    private MapToWorldConverter mapToWorld;
-    private WorldToMapConverter worldToMap;
-    private WorldBBox2d bbox;
+    private final FloatGeographicDataMatrix2d data;
+    private final MapToWorldConverter mapToWorld;
+    private final WorldToMapConverter worldToMap;
+    private final WorldBBox2d bbox;
 
     /**
      * Creates a new {@code FloatMatrixModel}.
      *
      * @param data underlying geographic data
      * @param converter coordinates converter from matrix to world
-     * @throws TransformException
+     * @throws TransformException if the converter is not invertible
      */
     public FloatMatrixModel(FloatGeographicDataMatrix2d data, MapToWorldConverter converter) throws TransformException {
         mapToWorld = converter;
@@ -38,7 +38,7 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
         double maxX = data.offsetX() + data.sizeX() * data.cellSizeX() - 1.0;
         double maxY = data.offsetY() + data.sizeY() * data.cellSizeY() - 1.0;
 
-        this.bbox = new WorldBBox2d(
+        bbox = new WorldBBox2d(
             mapToWorld.convert(new MapCoordinates(data.offsetX(), data.offsetY())),
             mapToWorld.convert(new MapCoordinates(data.offsetX(), maxY)),
             mapToWorld.convert(new MapCoordinates(maxX, data.offsetY())),

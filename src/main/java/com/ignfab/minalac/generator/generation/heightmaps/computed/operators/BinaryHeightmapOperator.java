@@ -22,7 +22,7 @@ public interface BinaryHeightmapOperator {
     int compute(int x, int y, ReadableHeightmap firstOperand, ReadableHeightmap secondOperand);
 
     /**
-     * Computes bounding box resuling of the operation.
+     * Computes bounding box resulting of the operation.
      *
      * @param firstOperand first heightmap operand
      * @param secondOperand second heightmap operand
@@ -30,7 +30,7 @@ public interface BinaryHeightmapOperator {
      */
     default WorldBBox2d bbox(ReadableHeightmap firstOperand, ReadableHeightmap secondOperand) {
         return firstOperand.bbox().intersection(secondOperand.bbox());
-    };
+    }
 
     /**
      * A simple {@code BinaryHeightmapOperator} based on an {@code IntBinaryOperator}.

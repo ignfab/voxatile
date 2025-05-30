@@ -29,7 +29,7 @@ import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
  */
 public class MCVoxelWorld extends VoxelWorld {
     // Note: The two z-component values aren't strictly hard-limits.
-    // We can extends from -2032 to 2031 but the client
+    // We can extend from -2032 to 2031 but the client
     // will need higher performances to play the game!
     // The Querz library does not support extended limits...
     private static final WorldBBox3d MAX_LIMIT = new WorldBBox3d(

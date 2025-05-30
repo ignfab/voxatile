@@ -5,7 +5,7 @@ import org.geotools.api.geometry.Position;
 import org.locationtech.jts.geom.Coordinate;
 
 /**
- * The {@code MapCoordinates} class represents two dimensional decimal (double float) coordinates.
+ * The {@code MapCoordinates} class represents two-dimensional decimal (double float) coordinates.
  *
  * @param x The x-component value
  * @param y The y-component value

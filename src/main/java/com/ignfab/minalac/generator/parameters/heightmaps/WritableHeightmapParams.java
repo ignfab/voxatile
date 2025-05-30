@@ -6,6 +6,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.std.DelegatingDeserializer;
@@ -67,10 +68,9 @@ public class WritableHeightmapParams implements ReadableHeightmapParams {
 
         @Override
         public Object deserializeWithType(JsonParser jsonParser, DeserializationContext deserializationContext, TypeDeserializer typeDeserializer) throws IOException {
-            return switch (jsonParser.currentToken()) {
-                case VALUE_STRING -> new WritableHeightmapParams(jsonParser.getText());
-                default -> super.deserializeWithType(jsonParser, deserializationContext, typeDeserializer);
-            };
+            if (jsonParser.currentToken() == JsonToken.VALUE_STRING)
+                return new WritableHeightmapParams(jsonParser.getText());
+            return super.deserializeWithType(jsonParser, deserializationContext, typeDeserializer);
         }
     }
 }

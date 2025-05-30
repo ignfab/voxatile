@@ -104,7 +104,6 @@ public class MetadataValueMappingPostProcessorParams extends PostProcessorParams
             defaultValue = as.parse(defaultValue);
 
         return new MetadataValueMappingPostProcessor<>(
-            as.type(),
             metadata,
             valueMapping,
             defaultValue,

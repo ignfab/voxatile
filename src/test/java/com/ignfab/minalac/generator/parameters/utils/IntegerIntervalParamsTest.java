@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class IntegerIntervalParamsTest {
 
-    private ObjectReader reader = new ObjectMapper(new YAMLFactory()).readerFor(IntegerIntervalParams.class);
+    private final ObjectReader reader = new ObjectMapper(new YAMLFactory()).readerFor(IntegerIntervalParams.class);
 
     @Test
     void testFromToParams() {

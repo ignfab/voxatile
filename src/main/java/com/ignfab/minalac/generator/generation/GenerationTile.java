@@ -27,7 +27,7 @@ public class GenerationTile {
         // Create voxel tile
         voxels = generation.world().newTile(limits);
 
-        // Create heightmap store populated with stored heigthmaps
+        // Create heightmap store populated with stored heightmaps
         heightmaps = new HeightmapStore(generation.heightmaps(), limits.to2d());
     }
 
@@ -67,7 +67,7 @@ public class GenerationTile {
     }
 
     /**
-     * Saves tile undelying data to its final destination so tile could be freed.
+     * Saves underlying tile data to its final destination so tile could be freed.
      *
      * @throws MapWriteException if an error occurs while writing to destination.
      */

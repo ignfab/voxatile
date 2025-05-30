@@ -8,7 +8,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 /**
  * Parameters describing a {@link WorldBBox3d}.
  * <p>
- * A BBox can be described as an array of tree coordinates or coorinates intervals (in x, y, z order).
+ * A BBox can be described as an array of tree coordinates or coordinates intervals (in x, y, z order).
  */
 public class WorldBBox3dParams extends ArrayList<IntegerIntervalParams> {
 

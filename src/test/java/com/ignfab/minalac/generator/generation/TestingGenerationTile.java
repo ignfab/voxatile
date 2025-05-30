@@ -10,7 +10,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * A fake GenerationTile over a {@link TestingVoxelWorld}.
- *
+ * <p>
  * For now, used {@link TestingVoxelWorld} has no seed nor CRS.
  */
 public class TestingGenerationTile extends GenerationTile {
@@ -33,7 +33,7 @@ public class TestingGenerationTile extends GenerationTile {
                 limits.sizeX(), // extentX
                 limits.sizeY(), // extentY
                 1.0, // Horizontal scale
-                1.0, // Vertical sclae
+                1.0, // Vertical scale
                 0, // Angle
                 Math.max(limits.sizeX(), limits.sizeY())
             ),
@@ -82,7 +82,7 @@ public class TestingGenerationTile extends GenerationTile {
         return heightmaps;
     }
 
-    private class TestingHeightmapStore extends HeightmapStore {
+    private static class TestingHeightmapStore extends HeightmapStore {
         TestingHeightmapStore(HeightmapDeclarationStore heightmaps, WorldBBox2d bbox) {
             super(heightmaps, bbox);
         }

@@ -25,9 +25,9 @@ import com.ignfab.minalac.generator.world.VoxelWorld;
  * Actually, deserialized from a string containing the registered format name.
  */
 public class OutputFormat {
-    private Supplier<VoxelWorld> worldCreator;
-    private Class<? extends PlaceableParams> voxelParams;
-    private Function<String, PlaceableParams> shortcutVoxelParams;
+    private final Supplier<VoxelWorld> worldCreator;
+    private final Class<? extends PlaceableParams> voxelParams;
+    private final Function<String, PlaceableParams> shortcutVoxelParams;
 
     /**
      * Creates a new {@code OutputFormat}.
@@ -82,7 +82,7 @@ public class OutputFormat {
             throw new IllegalArgumentException("Selected format does not have a default voxel type structure, add `type` attribute");
 
         return codec.treeToValue(node, voxelParams);
-    };
+    }
 
     /**
      * Register stuff needed for format deserialization.
@@ -102,7 +102,7 @@ public class OutputFormat {
 
     /**
      * A custom deserializer for {@code OutputFormat}s.
-     *
+     * <p>
      * It maps format name to a {@code OutputFormat} object.
      */
     static class Deserializer extends JsonDeserializer<OutputFormat> {
@@ -114,8 +114,7 @@ public class OutputFormat {
         }
 
         @Override
-        public OutputFormat deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException, JsonMappingException {
+        public OutputFormat deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
 
             String name = jp.readValueAs(String.class);
             if (!formats.containsKey(name))

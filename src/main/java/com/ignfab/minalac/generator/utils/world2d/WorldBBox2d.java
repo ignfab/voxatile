@@ -46,8 +46,8 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
         this.size = size;
         min = origin;
         max = new WorldCoords2d(
-                min.x() + size.x() - 1,
-                min.y() + size.y() - 1
+            min.x() + size.x() - 1,
+            min.y() + size.y() - 1
         );
     }
 
@@ -204,7 +204,7 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
      *
      * @param other Other bounding box to intersect with
      *
-     * @return A new bounding box representing the intersection (may be empty)
+     * @return A new bounding box representing the intersection (which may be empty)
      */
     public WorldBBox2d intersection(WorldBBox2d other) {
         int minX = Math.max(minX(), other.minX());
@@ -219,7 +219,7 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
      *
      * @param other Other bounding box to intersect with
      *
-     * @return A new bounding box representing the intersection (may be empty)
+     * @return A new bounding box representing the intersection (which may be empty)
      */
     public WorldBBox2d intersection(WorldBBox3d other) {
         return intersection(other.to2d());
