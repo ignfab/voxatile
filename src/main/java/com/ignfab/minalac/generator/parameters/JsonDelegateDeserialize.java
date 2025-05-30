@@ -45,12 +45,13 @@ public @interface JsonDelegateDeserialize {
     /**
      * Jackson handler to wrap deserializer of annotated beans with the requested one.
      * This should be registered in the {@link com.fasterxml.jackson.databind.ObjectMapper}:
-     * <pre>{@code
-     *  ObjectMapper mapper = ...;
-     *  SimpleModule module = new SimpleModule("MyModule");
-     *  module.setDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
-     *  mapper.registerModule(module);
-     * }</pre>
+     * {@snippet lang="java" :
+     * ObjectMapper mapper; // @highlight type="italic"
+     *
+     * SimpleModule module = new SimpleModule("MyModule");
+     * module.setDeserializerModifier(new JsonDelegateDeserialize.BeanModifier()); // @highlight substring="BeanModifier"
+     * mapper.registerModule(module);
+     * }
      */
     class BeanModifier extends BeanDeserializerModifier {
         @Override

@@ -11,11 +11,11 @@ import com.ignfab.minalac.generator.voxelization.shape3d.iterator.Line3dIterator
  * to compute values needed during voxelization.
  * <p>
  * The line is modelled using a parametric equation:
- * <pre>{@code
- *  x = slopeX * index + start.x
- *  y = slopeY * index + start.y
- *  z = slopeZ * index + start.z
- * }</pre>
+ * {@snippet :
+ * x = slopeX * index + start.x
+ * y = slopeY * index + start.y
+ * z = slopeZ * index + start.z
+ * }
  * With {@code 0 <= index <= maxIndex}.
  *
  * @see #maxIndex() maxIndex
