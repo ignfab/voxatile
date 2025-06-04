@@ -281,6 +281,7 @@ place:
 ```
 
 Which gives that result:
+
 ![A wooden base with lamp posts at each corner floating in the air](img/structure-composite.png)
 
 ## Patterns
