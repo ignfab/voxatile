@@ -1,10 +1,14 @@
 package com.ignfab.minalac.generator.placeables;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,6 +23,8 @@ public class PlaceableStructureTest {
         TestingVoxel vtC = new TestingVoxel("C");
         TestingVoxel vtD = new TestingVoxel("D");
         TestingVoxel vtE = new TestingVoxel("E");
+
+        Map<WorldCoords3d, Placeable> mapStructure = new HashMap<>();
 
         // Voxel configuration
         /* z :    -2   -1
@@ -40,28 +46,31 @@ public class PlaceableStructureTest {
         ^       |B B| |CDE| |   |
         |       |  B| | C | |   |
         + - > x +---+ +---+ +---+ */
-        PlaceableStructure structure = new PlaceableStructure();
 
         // z = -1 : fill with B
-        structure.set(new WorldBBox3d(-1, -1, -1, 3, 3, 1), vtB);
+        for (WorldCoords3d c : new WorldBBox3d(-1, -1, -1, 3, 3, 1))
+            mapStructure.put(c, vtB);
         // z = -1 : remove the voxel at the middle -> |B B|
-        structure.set(0, 0, -1, null);
+        mapStructure.remove(new WorldCoords3d(0, 0, -1));
         // z = -1 : remove the two voxels -> |  B|
-        structure.remove(new WorldBBox3d(-1, -1, -1, 2, 1, 1));
+        for (WorldCoords3d c : new WorldBBox3d(-1, -1, -1, 2, 1, 1))
+            mapStructure.remove(c);
 
         // z = 0 | E |
-        structure.set(0, 1, 0, vtE);
+        mapStructure.put(new WorldCoords3d(0, 1, 0), vtE);
         // z = 0 |CDE|
-        structure.set(-1, 0, 0, vtC);
-        structure.set(0, 0, 0, vtD);
-        structure.set(1, 0, 0, vtE);
+        mapStructure.put(new WorldCoords3d(-1, 0, 0), vtC);
+        mapStructure.put(new WorldCoords3d(0, 0, 0), vtD);
+        mapStructure.put(new WorldCoords3d(1, 0, 0), vtE);
         // z = 0 | C |
-        structure.set(0, -1, 0, vtC);
+        mapStructure.put(new WorldCoords3d(0, -1, 0), vtC);
 
         // z = 1 |B  |
-        structure.set(-1, 1, 1, vtB);
+        mapStructure.put(new WorldCoords3d(-1, 1, 1), vtB);
 
-        // Structure is placed at the center of the world
+        PlaceableStructure structure = new PlaceableStructure(mapStructure);
+
+        // Structure is placed at the center of the tile
         structure.place(tile, 0, -1, -2);
 
         // Expected outcome
@@ -128,7 +137,7 @@ public class PlaceableStructureTest {
         TestingVoxel vt = new TestingVoxel("*");
         vt.place(tile, 4, 4, 5);
 
-        PlaceableStructure structure = new PlaceableStructure();
+        PlaceableStructure structure = new PlaceableStructure(new HashMap<>());
         structure.place(tile, 3, 4, 5);
         structure.place(tile, 4, 4, 5);
 
@@ -141,9 +150,11 @@ public class PlaceableStructureTest {
         Placeable vtA = new TestingVoxel("A");
         Placeable vtB = new TestingVoxel("B");
 
-        PlaceableStructure structure = new PlaceableStructure();
-        structure.set(1, 2, 3, vtA);
-        structure.set(3, 2, 1, vtB);
+        Map<WorldCoords3d, Placeable> mapStructure = new HashMap<>();
+
+        mapStructure.put(new WorldCoords3d(1, 2, 3), vtA);
+        mapStructure.put(new WorldCoords3d(3, 2, 1), vtB);
+        PlaceableStructure structure = new PlaceableStructure(mapStructure);
 
         assertEquals(vtA, structure.get(1, 2, 3));
         assertEquals(vtB, structure.get(3, 2, 1));
@@ -153,26 +164,25 @@ public class PlaceableStructureTest {
     @Test
     public void testLimits() {
         Placeable vt = new TestingVoxel("X");
-        PlaceableStructure structure = new PlaceableStructure();
+        Map<WorldCoords3d, Placeable> mapStructure = new HashMap<>();
 
         // Basic checks
-        structure.set(1, 2, 3, vt);
-        assertEquals(new WorldBBox3d(1, 2, 3, 1, 1, 1), structure.limits());
+        mapStructure.put(new WorldCoords3d(1, 2, 3), vt);
+        mapStructure.put(new WorldCoords3d(0, 0, 0), vt);
+        PlaceableStructure structure = new PlaceableStructure(mapStructure);
 
-        structure.set(0, 0, 0, vt);
-        assertEquals(new WorldBBox3d(0, 0, 0, 2, 3, 4), structure.limits());
+        assertEquals(new WorldBBox3d(0, 0, 0, 2, 3, 4), (new PlaceableStructure(mapStructure)).limits());
 
-        // Check adding novoxel extends limits
-        structure.set(6, 7, 8, Nothing.INSTANCE);
-        assertEquals(new WorldBBox3d(0, 0, 0, 7, 8, 9), structure.limits());
-
-        // Check remove shrinks limits
-        structure.remove(0, 0, 0);
-        assertEquals(new WorldBBox3d(1, 2, 3, 6, 6, 6), structure.limits());
+        // Check adding nothing placeable extends limits
+        mapStructure.put(new WorldCoords3d(6, 7, 8), Nothing.INSTANCE);
+        assertEquals(new WorldBBox3d(0, 0, 0, 7, 8, 9), (new PlaceableStructure(mapStructure)).limits());
 
         // Check underlying placeable does not extend limits
-        PlaceableStructure superStructure = new PlaceableStructure();
-        superStructure.set(3, 2, 1, structure);
-        assertEquals(new WorldBBox3d(3, 2, 1, 1, 1, 1), superStructure.limits());
+        Map<WorldCoords3d, Placeable> superMapStructure = new HashMap<>();
+        superMapStructure.put(new WorldCoords3d(3, 2, 1), structure);
+        assertEquals(new WorldBBox3d(3, 2, 1, 1, 1, 1), (new PlaceableStructure(superMapStructure)).limits());
+
+        // Empty
+        assertEquals(WorldBBox3d.EMPTY, (new PlaceableStructure(new HashMap<>())).limits());
     }
 }

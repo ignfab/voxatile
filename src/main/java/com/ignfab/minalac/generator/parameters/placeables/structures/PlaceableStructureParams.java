@@ -1,8 +1,10 @@
 package com.ignfab.minalac.generator.parameters.placeables.structures;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -16,8 +18,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.utils.random.Seed;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 /**
  * Main parameter class for {@link PlaceableStructure}.
@@ -42,11 +46,11 @@ public final class PlaceableStructureParams extends PlaceableParams {
 
     @Override
     public PlaceableStructure create(Seed seed) {
-        PlaceableStructure structure = new PlaceableStructure();
+        Map<WorldCoords3d, Placeable>  structure = new HashMap<>();
         for (Variant param : params)
             param.apply(seed, structure);
 
-        return structure;
+        return new PlaceableStructure(structure);
     }
 
     /**
@@ -100,8 +104,8 @@ public final class PlaceableStructureParams extends PlaceableParams {
          * It is used rather than a {@code create} method to allow merging several parameters into one structure.
          *
          * @param seed Random seed to use for this {@code PlaceableStructure}.
-         * @param structure Structure which put created voxels into
+         * @param placeables Structure which put created voxels into
          */
-        public abstract void apply(Seed seed, PlaceableStructure structure);
+        public abstract void apply(Seed seed, Map<WorldCoords3d, Placeable> placeables);
     }
 }

@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.parameters.placeables.structures;
 
 import java.beans.ConstructorProperties;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -10,6 +11,7 @@ import com.ignfab.minalac.generator.parameters.utils.WorldBBox3dParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.utils.random.Seed;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 /**
  * A parameters class variant for {@link PlaceableStructure}.
@@ -51,8 +53,9 @@ public class BoxPlaceableStructureParams extends PlaceableStructureParams.Varian
     }
 
     @Override
-    public void apply(Seed seed, PlaceableStructure structure) {
+    public void apply(Seed seed, Map<WorldCoords3d, Placeable> placeables) {
         Placeable placeable = put.create(seed);
-        structure.set(at.create(), placeable);
+        for (WorldCoords3d c : at.create())
+            placeables.put(c, placeable);
     }
 }

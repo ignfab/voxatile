@@ -162,27 +162,27 @@ public class BlueprintPlaceableStructureParams extends PlaceableStructureParams.
     }
 
     @Override
-    public void apply(Seed seed, PlaceableStructure structure) {
+    public void apply(Seed seed, Map<WorldCoords3d, Placeable> placeables) {
         // Prepare translation form chars to placeables
-        placeables = new HashMap<>();
+        this.placeables = new HashMap<>();
         // Default space char for no voxel
-        placeables.put(' ', Nothing.INSTANCE);
+        this.placeables.put(' ', Nothing.INSTANCE);
         // Create placeables for each `with` keys
-        with.forEach((key, value) -> placeables.put(key, value.create(seed)));
+        with.forEach((key, value) -> this.placeables.put(key, value.create(seed)));
 
         WorldCoords3d position = new WorldCoords3d(xOffset, yOffset, zOffset);
 
         switch (axes.size()) {
             // Process string along first axis
-            case 1 -> process1d(structure, position, axes.get(0), blueprint.data1d());
+            case 1 -> process1d(placeables, position, axes.get(0), blueprint.data1d());
             // Process list of strings along first axis for list items and second axis for strings chars
-            case 2 -> process2d(structure, position, axes.get(0), axes.get(1), blueprint.data2d());
+            case 2 -> process2d(placeables, position, axes.get(0), axes.get(1), blueprint.data2d());
             // Process list of lists of strings, along first axis first,
             // then second and third axes for child list items and final strings chars.
             // We process lines upside down for a more natural reading
             case 3 -> {
                 for (Iterator<LinkedList<String>> it = blueprint.data3d().descendingIterator(); it.hasNext();) {
-                    process2d(structure, position, axes.get(1), axes.get(2), it.next());
+                    process2d(placeables, position, axes.get(1), axes.get(2), it.next());
                     position = position.add(axes.get(0).direction);
                 }
             }
@@ -196,16 +196,16 @@ public class BlueprintPlaceableStructureParams extends PlaceableStructureParams.
         return placeable;
     }
 
-    private void process1d(PlaceableStructure structure, WorldCoords3d position, Axis axis, String data1d) {
+    private void process1d(Map<WorldCoords3d, Placeable> structure, WorldCoords3d position, Axis axis, String data1d) {
         WorldCoords3d direction = axis.direction;
 
         for (char c : data1d.toCharArray()) {
-            structure.set(position, getPlaceable(c));
+            structure.put(position, getPlaceable(c));
             position = position.add(direction);
         }
     }
 
-    private void process2d(PlaceableStructure structure, WorldCoords3d position, Axis listAxis, Axis stringAxis, LinkedList<String> data2d) {
+    private void process2d(Map<WorldCoords3d, Placeable> structure, WorldCoords3d position, Axis listAxis, Axis stringAxis, LinkedList<String> data2d) {
         WorldCoords3d direction = listAxis.direction;
         // We process lines upside down for a more natural reading
         for (Iterator<String> it = data2d.descendingIterator(); it.hasNext();) {
