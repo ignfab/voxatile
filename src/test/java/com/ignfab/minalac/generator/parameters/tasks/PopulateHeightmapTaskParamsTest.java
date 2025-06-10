@@ -12,6 +12,7 @@ import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
+import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -72,15 +73,14 @@ public class PopulateHeightmapTaskParamsTest {
     @Test
     public void testValidate() {
         PopulateHeightmapTaskParams paramsWithInvalidModels = new PopulateHeightmapTaskParams(
-            // Invalid ModelSelectionParams
-            new ModelSelectionParams(""),
+            TestingModelSelectionParams.INVALID,
             TestingHeightmapParams.VALID
         );
 
         assertThrows(IllegalArgumentException.class, paramsWithInvalidModels::validate);
 
         PopulateHeightmapTaskParams paramsWithInvalidHeightmap = new PopulateHeightmapTaskParams(
-            new ModelSelectionParams("again"),
+            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.INVALID
         );
 

@@ -11,12 +11,13 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
 * [Tasks operating on world](#tasks-operating-on-world)
   * [`renderHeightmap`](#renderheightmap)
   * [`renderVectors`](#rendervectors)
-  * [`levelGround`](#levelground)
+  * [`fillBetweenHeightmapAndMetadata`](#fillbetweenheightmapandmetadata)
   * [`renderBuildings`](#renderbuildings)
   * [`setSpawn`](#setspawn)
 * [Tasks operating on heightmaps](#tasks-operating-on-heightmaps)
   * [`populateHeightmap`](#populateheightmap)
   * [`copyHeightmap`](#copyheightmap)
+  * [`computeHeightmapStats`](#computeheightmapstats)
 
 ## Tasks fetching data
 
@@ -95,26 +96,32 @@ borders: default:wood
 inside: default:glass
 ```
 
-### `levelGround`
+### `fillBetweenHeightmapAndMetadata`
 
-Levels a heightmap under selected models.
+For each model in [selection](ModelSelection.md), fills the gap between a heightmap and an altitude (given by a model metadata) within the model's boundaries.
 
-If `heightmap` is not flat under a model, it will be risen enough to be flat under model surface. `filling` voxels will be added to world and `heightmap` will be updated accordingly.
+If the heightmap value is lower than or equal to the altitude, the placeable used to fill is `placeBelow`, otherwise it is `placeAbove`.
 
 #### Extra parameters
 
-- `models`: [Selection of models](ModelSelection.md) to render (required, models must be voxelizable in 2d)
-- `heightmap`: Ground [heightmap](Heightmaps.md), should be a [stored heightmap](Heightmaps.md#stored-heightmap), will be updated according to leveling (required)
-- `filling`: [Placeable](Placeables.md) placed beneath the model, ensuring it connects to the ground and does not appear to float.
+- `models` (required, models must be voxelizable in 2d): [Selection of models](ModelSelection.md) to use.
+- `heightmap` (required): [Heightmap](Heightmaps.md) to use.
+- `altitudeMetadata` (required): Name of the model metadata containing the altitude value.
+- `placeAbove` (optional, default [`Nothing`](Placeables.md#nothing)): [Placeable](Placeables.md) placed above the altitude value.
+- `placeBelow` (optional, default [`Nothing`](Placeables.md#nothing)): [Placeable](Placeables.md) placed below the altitude value.
+
+**NOTE**: It must have at least the `placeBelow` or `placeAbove` field specified
 
 #### Example
 
 ```yaml
-type: levelGround
+type: fillBetweenHeightmapAndMetadata
 models:
   type: buildings
 heightmap: ground
-filling: default:cobble
+altitudeMetadata: maximum-ground-altitude
+placeAbove: air
+placeBelow: default:cobble
 ```
 
 ### `renderBuildings`
@@ -125,15 +132,16 @@ Building height is given by `height` metadata (the behavior of this task is unde
 
 #### Extra parameters
 
-- `models`: [Selection of models](ModelSelection.md) to render (required, models must be voxelizable in 2d)
-- `heightmap`: [Heightmap](Heightmaps.md) to use (required).
+- `models`: [Selection of models](ModelSelection.md) to render (required, models must be voxelizable in 2d).
 - `roof`: [Placeable](Placeables.md) used to render roofs.
 - `wall`: [Placeable](Placeables.md) used to render walls.
 - `window`: [Placeable](Placeables.md) used to render windows.
 
 #### Required model metadata
 
-- `height`: Height of building to render (must be a positive integer)
+- `height`: Height of the building to render (must be a positive integer). The height is defined as the distance between the minimum ground altitude and the gutter altitude.
+- `minimum-ground-altitude`: Minimum altitude inside the shape of the model.
+- `ground-floor-altitude`: Ground floor altitude of the model.
 
 #### Example
 
@@ -141,7 +149,6 @@ Building height is given by `height` metadata (the behavior of this task is unde
 type: renderBuildings
 models:
   type: buildings
-heightmap: ground
 roof: default:cobble
 wall: default:brick
 window: default:glass
@@ -205,4 +212,30 @@ models:
   type: water
 from: 1
 to: water
+```
+
+### `computeHeightmapStats`
+
+Computes heightmap statistics over a model surface and adds the results as metadata.
+
+#### Extra parameters
+
+- `models` (required, models must be voxelizable in 2d): [Selection of models](ModelSelection.md) to use for computing statistics.
+- `heightmap` (required): [Heightmap](Heightmaps.md) to use.
+- `compute` (required): Specifies which statistics to compute
+  - `maximum` or `max` (optional): Metadata where to store the computed maximum value.
+  - `minimum` or `min` (optional): Metadata where to store the computed minimum value.
+
+**NOTE**: The `compute` field must have at least one optional subfield specified.
+
+#### Example
+
+```yaml
+type: computeHeightmapStats
+models:
+  type: building
+heightmap: ground
+compute:
+  maximum: maximum-ground-altitude
+  minimum: minimum-ground-altitude
 ```

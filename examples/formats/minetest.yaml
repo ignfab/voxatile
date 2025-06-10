@@ -3,6 +3,8 @@ references:
   - &voxel-stone default:stone
   - &voxel-dirt default:dirt
   - &voxel-cobble default:cobble
+  - &voxel-empty default:air
+  - &voxel-building-ground default:stonebrick
   - &voxel-grass default:dirt_with_grass
   - &voxel-glass default:glass
   - &voxel-forest-ground default:dirt_with_rainforest_litter
