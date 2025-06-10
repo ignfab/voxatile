@@ -3,6 +3,8 @@ references:
   - &voxel-stone minecraft:stone
   - &voxel-dirt minecraft:dirt
   - &voxel-cobble minecraft:cobblestone
+  - &voxel-empty minecraft:air
+  - &voxel-building-ground minecraft:stone_bricks
   - &voxel-grass minecraft:grass_block
   - &voxel-glass minecraft:glass
   - &voxel-forest-ground minecraft:podzol

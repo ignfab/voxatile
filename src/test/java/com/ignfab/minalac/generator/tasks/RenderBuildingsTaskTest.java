@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.TestingGenerationTile;
-import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
@@ -20,13 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RenderBuildingsTaskTest {
     private TestingGenerationTile tile;
-    private TestingHeightmap ground;
 
     @BeforeEach
     void setUp() {
         WorldBBox3d bbox = new WorldBBox3d(0, 0, 0, 3, 3, 22);
         tile = new TestingGenerationTile(bbox);
-        ground = tile.newStoredHeightmap("ground", 0);
     }
 
     /**
@@ -38,12 +35,14 @@ public class RenderBuildingsTaskTest {
         Model building = new TestingRectangleShapeVoxelizable2dModel(modelBbox);
 
         int expectedHeight = 20;
+        // Required metadata
         building.setMetadata("height", expectedHeight);
+        building.setMetadata("minimum-ground-altitude", 0);
+        building.setMetadata("ground-floor-altitude", 0);
         tile.models().add("building", building);
 
         assertDoesNotThrow(() -> new RenderBuildingsTask(
             new ModelSelection("building", new ModelFilterHasMetadata("height")),
-            ground.spec(),
             new TestingVoxelParams("roof").create(TestingSeed.UNUSED),
             new TestingVoxelParams("wall").create(TestingSeed.UNUSED),
             new TestingVoxelParams("window").create(TestingSeed.UNUSED)
@@ -71,9 +70,6 @@ public class RenderBuildingsTaskTest {
                 // Windows check
                 if (x != 1 && y != 1 && z % 4 == 0)
                     tile.voxels().assertVoxel("window", c);
-                // Floors & roof check
-                if (x == 1 && y == 1 && z % 4 == 2)
-                    tile.voxels().assertVoxel("roof", c);
                 // Walls check
                 if (x != 1 && y != 1 && z % 4 != 0)
                     tile.voxels().assertVoxel("wall", c);
@@ -97,7 +93,6 @@ public class RenderBuildingsTaskTest {
         Placeable placeable = new TestingVoxelParams("voxel").create(TestingSeed.UNUSED);
         assertDoesNotThrow(() -> new RenderBuildingsTask(
             new ModelSelection("building", new ModelFilterHasMetadata("height")),
-            ground.spec(),
             placeable,
             placeable,
             placeable
@@ -119,7 +114,6 @@ public class RenderBuildingsTaskTest {
         Placeable placeable = new TestingVoxelParams("voxel").create(TestingSeed.UNUSED);
         assertDoesNotThrow(() -> new RenderBuildingsTask(
             new ModelSelection("building", new ModelFilterHasMetadata("height")),
-            ground.spec(),
             placeable,
             placeable,
             placeable
