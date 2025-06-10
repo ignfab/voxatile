@@ -105,25 +105,37 @@ forEachTile:
         - put: *voxel-stone
           at: [0, 0, -20..-4]
 
-  levelBuildings:
+  computeBuildingsAltitude:
     after:
       - fetchBuildings
       - renderGround
-    type: levelGround
+    type: computeHeightmapStats
     models:
       type: buildings
     heightmap: ground
-    filling: *voxel-cobble
+    compute:
+      minimum: minimum-ground-altitude
+      maximum: ground-floor-altitude
+
+  flattenGroundBuildings:
+    after:
+      - computeBuildingsAltitude
+    type: fillBetweenHeightmapAndMetadata
+    models:
+      type: buildings
+    heightmap: ground
+    altitudeMetadata: ground-floor-altitude
+    placeAbove: *voxel-empty
+    placeBelow: *voxel-building-ground
 
   renderBuildings:
-    after: levelBuildings
+    after: flattenGroundBuildings
     type: renderBuildings
     models:
       type: buildings
       filter:
         metadata: height
         greaterThan: 0
-    heightmap: ground
     roof: *voxel-cobble
     wall: *voxel-stone
     window: *voxel-glass

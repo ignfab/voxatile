@@ -1,60 +1,39 @@
 package com.ignfab.minalac.generator.tasks;
 
 import com.ignfab.minalac.generator.generation.GenerationTile;
-import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
-import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LineVoxel2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
 
 /**
  * A {@link TileTask} rendering a {@link ModelSelection} as buildings.
  *
- * The generated buildings have a custom height, floors and windows.
+ * The generated buildings include a custom height, walls,
+ * windows and a roof.
  */
 public class RenderBuildingsTask extends ModelTask<ShapesVoxelizable2d> {
-    /**
-     * Heightmap of the ground.
-     */
-    private final ReadableHeightmapSpec heightmapSpec;
-
-    /**
-     * {@code Placeable} representing the roof of the building.
-     */
     private final Placeable roof;
-
-    /**
-     * {@code Placeable} representing the walls of the building.
-     */
     private final Placeable wall;
-
-    /**
-     * {@code Placeable} representing the windows of the building.
-     */
     private final Placeable window;
 
     /**
      * Creates a new {@code RenderBuildingsTask}.
      *
      * @param selection building models selection
-     * @param heightmapSpec heightmap spec for the ground (on which features will be placed)
      * @param roof {@code Placeable} for roofs
      * @param wall {@code Placeable} for walls
      * @param window {@code Placeable} for windows
      */
     public RenderBuildingsTask(
         ModelSelection selection,
-        ReadableHeightmapSpec heightmapSpec,
         Placeable roof,
         Placeable wall,
         Placeable window
     ) {
         super(ShapesVoxelizable2d.class, selection);
-        this.heightmapSpec = heightmapSpec;
         this.roof = roof;
         this.wall = wall;
         this.window = window;
@@ -62,31 +41,35 @@ public class RenderBuildingsTask extends ModelTask<ShapesVoxelizable2d> {
 
     @Override
     protected void run(ShapesVoxelizable2d model, GenerationTile tile) {
-        if (!(model.getMetadata("height") instanceof Integer height) || height <= 0)
+        // Metadata required to render a model as buildings
+        // Obtain them by executing the 'computeHeightmapStats' task
+        //
+        // The metadata is hardcoded because this renderer will be deleted
+        Integer zMinFoundation = model.getMetadata("minimum-ground-altitude");
+        Integer zMaxFoundation = model.getMetadata("ground-floor-altitude");
+        if (zMinFoundation == null || zMaxFoundation == null)
             return;
 
-        ReadableHeightmap heightmap = tile.heightmaps().get(heightmapSpec);
+        if (!(model.getMetadata("height") instanceof Integer buildingHeight) || buildingHeight <= 0)
+            return;
+
+        /*
+        The height of a building is calculated according to the largest side of its wall
+        in order not to overestimate the height of the building it is necessary
+        to subtract the height of the foundation from the height of the building
+
+        The height of a building cannot be negative
+        */
+        buildingHeight = Math.max(0, buildingHeight - (zMaxFoundation - zMinFoundation));
+
         ShapesVoxelizer2d voxelizer = model.voxelize2d(tile.limits().to2d());
-        // Build walls and place windows of the building
-        for (LineVoxel2d voxel : voxelizer.borders()) {
-            WorldCoords2d c = voxel.coords();
-            int zMin = heightmap.get(c);
+        // Place the facade and enhance it with windows
+        for (LineVoxel2d voxel : voxelizer.borders())
+            for (int z = zMaxFoundation + 1; z <= zMaxFoundation + buildingHeight; z++) // zMax + 1 to place walls/windows above the foundation
+                ((z % 4 == 0) ? window : wall).place(tile.voxels(), voxel.coords().x(), voxel.coords().y(), z);
 
-            for (int z = 1; z < height; z++)
-                ((z % 4 == 0) ? window : wall).place(tile.voxels(), c.x(), c.y(), zMin + z);
-            // Build the border of the roof of the building
-            roof.place(tile.voxels(), c.x(), c.y(), zMin + height);
-        }
-
-        // Build the floors of the building
-        for (Positioned2d voxel : voxelizer.inside()) {
-            WorldCoords2d c = voxel.coords();
-            int zMin = heightmap.get(c);
-
-            for (int z = 2; z < height; z = z + 4)
-                roof.place(tile.voxels(), c.x(), c.y(), zMin + z);
-            // Build the inside of the roof of the building
-            roof.place(tile.voxels(), c.x(), c.y(), zMin + height);
-        }
+        // Place the roof of the building
+        for (Positioned2d voxel : voxelizer)
+            roof.place(tile.voxels(), voxel.coords().x(), voxel.coords().y(), zMaxFoundation + buildingHeight);
     }
 }
