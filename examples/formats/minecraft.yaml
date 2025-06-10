@@ -1,10 +1,14 @@
 format: minecraft
 references:
+  - &voxel-desert-stone minecraft:red_sandstone
   - &voxel-stone minecraft:stone
   - &voxel-dirt minecraft:dirt
   - &voxel-cobble minecraft:cobblestone
   - &voxel-empty minecraft:air
   - &voxel-building-ground minecraft:stone_bricks
+  - &voxel-stonebrick minecraft:stonebrick
+  - &voxel-silver-sandstone minecraft:stone
+  - &voxel-floor minecraft:stone
   - &voxel-grass minecraft:grass_block
   - &voxel-glass minecraft:glass
   - &voxel-forest-ground minecraft:podzol

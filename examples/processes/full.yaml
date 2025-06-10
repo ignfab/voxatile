@@ -3,6 +3,8 @@ heightmaps:
     default: 0
   water:
     default: 0
+  surface:
+    default: 0
 
 forEachTile:
 
@@ -13,6 +15,16 @@ forEachTile:
       type: wmsFloat
       url: https://data.geopf.fr/wms-r/wms
       layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    processor:
+      type: floatMatrix
+
+  fetchSurface:
+    type: fetchData
+    modelType: surface
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES.MNS
     processor:
       type: floatMatrix
 
@@ -66,6 +78,13 @@ forEachTile:
     models:
       type: altitude
     heightmap: ground
+
+  setSurface:
+    after: fetchSurface
+    type: populateHeightmap
+    models:
+      type: surface
+    heightmap: surface
 
   setSpawn:
     after: setAltitude
@@ -136,6 +155,20 @@ forEachTile:
     roof: *voxel-cobble
     wall: *voxel-stone
     window: *voxel-glass
+
+  renderRoofs:
+    after:
+      - setSurface
+      - renderBuildings
+    type: renderHeightmapRoofs
+    models:
+      type: buildings
+      filter:
+        metadata: height
+        greaterThan: 0
+    heightmap: 
+      sum: [ surface, 2 ]
+    roof: *voxel-desert-stone
 
   renderForest:
     after:

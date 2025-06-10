@@ -1,0 +1,9 @@
+# Gare de Metz
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 49.110052
+    longitude: 6.177139
+  extentX: 1000
+  extentY: 1000
