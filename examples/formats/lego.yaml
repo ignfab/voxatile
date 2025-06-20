@@ -1,0 +1,320 @@
+format: lego
+references:
+
+  # BASE VOXELS
+
+  - &air
+    ref: remove
+    color: -1 # Fake color to remove brick
+  - &water
+    ref: 3003.dat
+    color: 39
+  - &underground
+    ref: 30145.dat
+    color: 7
+  - &grass
+    ref: 30145.dat
+    color: 10
+  - &grass-decoration
+    - pattern:
+        chance: 0.01
+        seed: grass-rot-1
+        place:
+          ref: 15279.dat
+          color: 74
+          lduOffsetY: 24
+    - pattern:
+        chance: 0.01
+        seed: grass-rot-2
+        place:
+          ref: 15279.dat
+          color: 74
+          lduOffsetY: 24
+          rotationAroundY: 90
+    - pattern:
+        chance: 0.01
+        seed: grass-rot-3
+        place:
+          ref: 15279.dat
+          color: 74
+          lduOffsetY: 24
+          rotationAroundY: 180
+    - pattern:
+        chance: 0.01
+        seed: grass-rot-4
+        place:
+          ref: 15279.dat
+          color: 74
+          lduOffsetY: 24
+          rotationAroundY: 270
+
+  # BUILDINGS
+
+  - &buildings-ground
+    structure:
+      - put:
+          ref: 30145.dat
+          color: 71
+        at: [ 0, 0, 0 ]
+      - put:
+          ref: remove
+          color: -1
+        at: [ 0, 0, -2..-1 ]
+  - &buildings-walls-default
+    ref: 3003.dat
+    color: 18
+  - &buildings-walls-church
+    ref: 3003.dat
+    color: 72
+  - &buildings-walls-residential
+    pattern:
+      repeatStructure:
+        - at: [ 0..3, 0..3, 0..9 ]
+          put:
+            ref: 3003.dat
+            color: 18
+        - at: [ 0..1, 0..1, 4..8 ]
+          put:
+            ref: 3003.dat
+            color: 47
+        - at: [ 2..3, 2..3, 4..8 ]
+          put:
+            ref: 3003.dat
+            color: 47
+  - &buildings-walls-commercial
+    pattern:
+      repeatStructure:
+        - at: [ 0..3, 0..3, 0..9 ]
+          put:
+            ref: 3003.dat
+            color: 28
+        - at: [ 0..1, 0..1, 4..8 ]
+          put:
+            ref: 3003.dat
+            color: 47
+        - at: [ 2..3, 2..3, 4..8 ]
+          put:
+            ref: 3003.dat
+            color: 47
+  - &buildings-roof-default
+    ref: 3003.dat
+    color: 7
+  - &buildings-roof-zinc
+    ref: 3003.dat
+    color: 503
+  - &buildings-roof-zinc-tiles
+    ref: 3003.dat
+    color: 503
+  - &buildings-roof-church
+    ref: 3003.dat
+    color: 0
+  - &buildings-roof-slates-tiles
+    ref: 3003.dat
+    color: 0
+  - &buildings-roof-slates
+    ref: 3003.dat
+    color: 0
+  - &buildings-roof-concrete
+    ref: 3003.dat
+    color: 20
+
+  # ROADS
+
+  - &path
+    ref: 3003.dat
+    color: 70
+  - &road-paint
+#    - put:
+        ref: 3022.dat
+        color: 15
+        lduOffsetY: 16
+#      at: [0, 0, 0]
+#    - put:
+#        ref: 3068a.dat
+#        color: 15
+#      at: [0, 0, 1]
+  - &road-tar
+#    - put:
+        ref: 3022.dat
+        color: 83
+        lduOffsetY: 16
+#      at: [0, 0, 0]
+#    - put:
+#        ref: 3068a.dat
+#        color: 83
+#      at: [0, 0, 1]
+  - &road-bed
+    ref: 3003.dat
+    color: 83
+  - &sidewalk
+    ref: 3003.dat
+    color: 7
+  - &sidewalk-bed
+    ref: 3003.dat
+    color: 7
+  - &cycle-path
+    ref: 3003.dat
+    color: 25
+  - &other-path
+    ref: 3003.dat
+    color: 71
+  - &stairs
+    ref: 3003.dat
+    color: 71
+
+  # VEGETATION
+
+  - &tree-trunk
+    ref: 3003.dat
+    color: 6
+  - &tree-leaves
+    structure:
+      at: [-1..1, -1..1, -1..1]
+      put:
+        pattern:
+          onlyInsteadOf:
+            ref: 3003.dat
+            color: -1 # Fake color to remove brick
+          place:
+            pattern:
+              seed: tree-leaves-1
+              chance: 0.4
+              place:
+                - ref: 3003.dat
+                  color: 2
+                - pattern:
+                    seed: tree-leaves-2
+                    chance: 0.5
+                    place:
+                      ref: 3003.dat
+                      color: 288
+  # List of possible tree leaves in *tree-leaves
+  - &tree-leaves-list
+    - ref: 3003.dat
+      color: 2
+    - ref: 3003.dat
+      color: 288
+
+  # OTHER URBAN STUFF
+
+  - &plazza
+    ref: 3003.dat
+    color: 7
+  - &metro-station-steps
+    ref: 3003.dat
+    color: 19
+  - &metro-station-walls-top
+    ref: 3003.dat
+    color: 7
+  - &metro-station-walls
+    ref: 3003.dat
+    color: 19
+  - &fence-structure # 30256.dat
+    - put:
+        ref: 3003.dat
+        color: 151
+      at: [0, 0, 1]
+    - put:
+        ref: 14918.dat
+        color: 151
+        lduOffsetX: -10
+        lduOffsetY: 24
+        lduOffsetZ: -10
+      at: [0, 0, 2]
+  - &linear-bench-structure
+    axes: [z, y]
+    blueprint:
+      - "O  "
+      - "O  "
+      - "OOO"
+    with:
+      "O":
+        ref: 3003.dat
+        color: 86
+    zOffset: 1
+  - &bench
+    structure:
+      - put:
+          ref: 2041.dat
+          color: 86
+        at: [ 0, 0, 1 ]
+  - &traffic-light
+    structure:
+      axes: [ z ]
+      blueprint: "1    23456"
+      with:
+        "1":
+          ref: 30256.dat
+          color: 0
+          lduOffsetY: 16
+        "2":
+          ref: 3003.dat
+          color: 0
+        "3":
+          ref: 3003.dat
+          color: 35
+        "4":
+          ref: 3003.dat
+          color: 38
+        "5":
+          ref: 3003.dat
+          color: 36
+        "6":
+          ref: 3068a.dat
+          color: 0
+          lduOffsetY: 16
+      zOffset: 1
+  - &city-light
+    structure:
+      axes: [ z ]
+      blueprint: "1      23"
+      with:
+        "1":
+          ref: 11062.dat # 2039.dat
+          color: 72
+          lduOffsetY: -144
+        "2":
+          ref: 3626b.dat
+          color: 47
+        "3":
+          ref: 4740.dat
+          color: 72
+          lduOffsetY: 16
+      zOffset: 1
+  - &fire-hydrant nothing
+#    structure:
+#    - put: wool:red
+#      at: [0, 0, 1..3]
+#    - put: wool:red
+#      at: [0, 1, 2]
+  - &trash-can
+    structure:
+      - put:
+          ref: 2439.dat
+          color: 72
+          lduOffsetY: -24
+        at: [ 0, 0, 1 ]
+  - &pic-nic nothing
+#    structure:
+#      axes: [z, x, y]
+#      blueprint:
+#        - - "     "
+#          - "OOOOO"
+#          - "OOOOO"
+#          - "OOOOO"
+#          - "     "
+#        - - "OOOOO"
+#          - "+   +"
+#          - "     "
+#          - "+   +"
+#          - "OOOOO"
+#        - - "+   +"
+#          - "+   +"
+#          - "=   ="
+#          - "+   +"
+#          - "+   +"
+#      with:
+#        "O": stairs:slab_wood
+#        "+": default:fence_wood
+#        "=": default:fence_rail_wood
+#      zOffset: 1

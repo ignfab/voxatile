@@ -97,4 +97,19 @@ public record WorldCoords3d(int x, int y, int z) implements Positioned3d {
     public WorldCoords3d coords() {
         return this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof WorldCoords3d that)) return false;
+
+        return x == that.x && y == that.y && z == that.z;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = x;
+        result = 31 * result + y;
+        result = 31 * result + z;
+        return result;
+    }
 }
