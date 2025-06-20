@@ -13,11 +13,13 @@ import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.GenerationTile;
+import com.ignfab.minalac.generator.outputs.lego.LegoWorld;
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
 import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.parameters.OutputFormat;
 import com.ignfab.minalac.generator.parameters.ParamsParser;
 import com.ignfab.minalac.generator.parameters.ParseException;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.LegoBrickParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.MCVoxelParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelParams;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
@@ -97,6 +99,7 @@ public final class MinalacGenerator {
         // Register game formats
         parser.registerFormat("minecraft", new OutputFormat(() -> new MCVoxelWorld(destination), MCVoxelParams.class, MCVoxelParams::new));
         parser.registerFormat("minetest", new OutputFormat(() -> new MTVoxelWorld(destination), MTVoxelParams.class, MTVoxelParams::new));
+        parser.registerFormat("lego", new OutputFormat(() -> new LegoWorld(destination), LegoBrickParams.class, LegoBrickParams::new));
 
         // TODO: Static method that provides a ParamsParser with all default renderers
         // If those name values are modified, update the documentation accordingly

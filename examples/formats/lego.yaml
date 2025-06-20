@@ -1,0 +1,78 @@
+format: lego
+references:
+  - &brick-2x2 parts/3003.dat
+  - &brick-2x2x3 parts/30145.dat
+  - &voxel-stone
+    ref: *brick-2x2
+    color: 7
+  - &voxel-dirt
+    ref: *brick-2x2
+    color: 6
+  - &voxel-cobble
+    ref: *brick-2x2
+    color: 8
+  - &voxel-grass
+    ref: *brick-2x2
+    color: 2
+  - &voxel-building-ground
+    ref: *brick-2x2
+    color: 0
+  - &ground
+    structure:
+      - put: *voxel-grass
+        at: [ 0, 0, 0 ]
+      - put:
+          ref: *brick-2x2x3
+          color: 6
+        at: [ 0, 0, -1 ]
+      - with:
+          S:
+            ref: *brick-2x2x3
+            color: 7
+        axes: z
+        blueprint: "S  S  S"
+        zOffset: -10
+  - &voxel-glass
+    ref: *brick-2x2
+    color: 47
+  - &voxel-forest-ground
+    ref: *brick-2x2
+    color: 70
+  - &forest-grass
+    ref: *brick-2x2
+    color: 10
+  - &forest-tree1
+    structure:
+      - put:
+          pattern:
+            place:
+              ref: *brick-2x2
+              color: 288
+            chance: 0.8
+        at: [ -3..3, -3..3, 4..10 ]
+      - put:
+          ref: *brick-2x2
+          color: 484
+        at: [ 0, 0, 0..5 ]
+  - &forest-tree2
+    structure:
+      - put:
+          pattern:
+            place:
+              ref: *brick-2x2
+              color: 326
+            chance: 0.8
+        at: [ -3..3, -3..3, 4..10 ]
+      - put:
+          ref: *brick-2x2
+          color: 151
+        at: [ 0, 0, 0..5 ]
+  - &voxel-water
+    ref: *brick-2x2
+    color: 39
+  - &voxel-air
+    ref: *brick-2x2
+    color: -1 # Fake color to remove brick
+  - &voxel-empty
+    ref: *brick-2x2
+    color: -1 # Fake color to remove brick
