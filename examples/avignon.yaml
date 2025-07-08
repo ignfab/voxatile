@@ -1,0 +1,165 @@
+heightmaps:
+  ground:
+    default: 0
+sources:
+  mnt:
+    modelType: mnt
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    processor:
+      type: floatMatrix
+  ortho:
+    modelType: ortho
+    provider:
+      type: wmsImage
+      url: https://data.geopf.fr/wms-r/wms
+      layer: ORTHOIMAGERY.ORTHOPHOTOS
+    processor:
+      type: intMatrix
+  bati-city:
+    modelType: building-city
+    provider:
+      type: cityjson
+      filePath: datavignon/buildings.city.json
+    processor:
+      type: cityjsonBuilding
+    postProcessors:
+      - type: copy
+        metadata: USAGE1
+        to: classification
+  road:
+    modelType: road
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:troncon_de_route
+    processor:
+      type: geoToolsVector
+    postProcessors:
+      - type: copy
+        metadata: nature
+        to: classification
+  agri:
+    modelType: field
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: RPG.LATEST:parcelles_graphiques
+    processor:
+      type: geoToolsVector
+    postProcessors:
+      - type: copy
+        metadata: code_cultu
+        to: classification
+  lidarhd:
+    modelType: lidarhd
+    provider:
+      type: lasTiled
+      tilesPath: datavignon/lidar
+      tilesFilenameTemplate: LHD_FXX_%04d_%04d_PTS_C_LAMB93_IGN69.copc.laz
+      tileSize: 1000
+      tileOffsetY: 1000
+      crs: EPSG:2154
+    processor:
+      type: lasMerged
+renderers:
+  altitude:
+    after:
+      - source:mnt
+    type: heightmap
+    modelType: mnt
+    heightmap: ground
+  ground:
+    after:
+      - source:ortho
+      - renderer:altitude
+    type: groundColored
+    modelType: ortho
+    heightmap: ground
+  building-city:
+    after:
+      - source:bati-city
+      - renderer:ground
+    type: building3d
+    modelType: building-city
+    ground: STONE
+    wall: BRICK
+    roofs:
+      Agricole: YELLOW
+      Annexe: BROWN
+      Commercial et services: PINK
+      Indifférencié: LIGHT_GRAY
+      Industriel: MAGENTA
+      Religieux: LIGHT_BLUE
+      Résidentiel: RED
+      Sportif: ORANGE
+    defaultRoof: WHITE
+  road-dirt-path:
+    after:
+      - source:road
+      - renderer:ground
+    type: road
+    modelType: road
+    classifications:
+      - Chemin
+      - Escalier
+      - Sentier
+    heightmap: ground
+    voxel: PATH
+  road-stone-path:
+    after:
+      - source:road
+      - renderer:ground
+    type: road
+    modelType: road
+    classifications:
+      - Route empierrée
+    heightmap: ground
+    voxel: COBBLE
+  road-concrete:
+    after:
+      - source:road
+      - renderer:ground
+      - renderer:road-dirt-path
+      - renderer:road-stone-path
+    type: road
+    modelType: road
+    classifications:
+      - Bretelle
+      - Rond-point
+      - Route à 1 chaussée
+      - Route à 2 chaussées
+      - Type autoroutier
+    heightmap: ground
+    large: true
+    voxel: CONCRETE
+  agri:
+    after:
+      - source:agri
+      - renderer:ground
+    type: vector
+    modelType: field
+    heightmap: ground
+    inside: CROPS
+    edge: AIR
+  vegetation:
+    after:
+      - source:lidarhd
+    type: classified
+    modelType: lidarhd
+    voxels:
+      3: VEGETATION
+      4: VEGETATION
+      5: VEGETATION
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 43.9478
+    longitude: 4.80914
+  extendX: 2000
+  extendY: 2000
+crs: EPSG:2154
+format: minetest
