@@ -1,17 +1,17 @@
 package com.ignfab.minalac.generator.inputs;
 
+import java.io.File;
+import java.util.Iterator;
+
 import com.github.mreutegg.laszip4j.CloseablePointIterable;
 import com.github.mreutegg.laszip4j.LASHeader;
-import com.github.mreutegg.laszip4j.LASPoint;
 import com.github.mreutegg.laszip4j.LASReader;
-import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
-import com.ignfab.minalac.generator.exceptions.RetryableException;
-import com.ignfab.minalac.generator.utils.iterator.Iterators;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
-import java.io.File;
-import java.util.Iterator;
+import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
+import com.ignfab.minalac.generator.exceptions.RetryableException;
+import com.ignfab.minalac.generator.utils.iterator.Iterators;
 
 public class LASDataProvider implements Provider<LASPointAndHeader> {
     private final File file;
@@ -47,8 +47,7 @@ public class LASDataProvider implements Provider<LASPointAndHeader> {
 
         @Override
         public Iterator<LASPointAndHeader> iterator() {
-            Iterator<LASPoint> iterator = points.iterator();
-            return Iterators.remap(iterator, point -> new LASPointAndHeader(point, header, !iterator.hasNext()));
+            return Iterators.remap(points.iterator(), point -> new LASPointAndHeader(point, header));
         }
     }
 }

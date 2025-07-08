@@ -1,5 +1,9 @@
 package com.ignfab.minalac.generator.processors;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
@@ -11,7 +15,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 public class LASPointSingleModelProcessor implements Processor<LASPointAndHeader, LASSingleModel> {
     private final MapToWorldConverter converter;
-    private LASSingleModel model;
+    private final Map<String, LASSingleModel> models = new HashMap<>();
 
     public LASPointSingleModelProcessor(MapToWorldConverter converter) {
         this.converter = converter;
@@ -29,9 +33,14 @@ public class LASPointSingleModelProcessor implements Processor<LASPointAndHeader
 
     @Override
     public LASSingleModel process(LASPointAndHeader object) throws GenerationFailedException, IgnorableException {
-        if (model == null)
-            model = new LASSingleModel();
-
+        String classification = Short.toString(object.point().getClassification());
+        AtomicBoolean created = new AtomicBoolean(false);
+        LASSingleModel model = models.computeIfAbsent(classification, cls -> {
+            LASSingleModel m = new LASSingleModel();
+            m.setMetadata("classification", cls);
+            created.set(true);
+            return m;
+        });
         WorldCoords3d coords;
         try {
             coords = converter.convert(new MapCoordinates(
@@ -43,11 +52,6 @@ public class LASPointSingleModelProcessor implements Processor<LASPointAndHeader
         }
         model.addPoint(coords);
 
-        if (object.last()) {
-            LASSingleModel m = model;
-            model = null;
-            return m;
-        }
-        return null;
+        return created.get() ? model : null;
     }
 }

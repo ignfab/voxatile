@@ -1,7 +1,10 @@
 package com.ignfab.minalac.generator.models;
 
+import java.util.Collections;
+
 import com.github.mreutegg.laszip4j.LASHeader;
 import com.github.mreutegg.laszip4j.LASPoint;
+
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.utils.coordinates.MapCoordinates;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
@@ -13,8 +16,6 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.voxelization.Voxelizer2d;
 import com.ignfab.minalac.generator.voxelization.Voxelizer3d;
 
-import java.util.Collections;
-
 public class LASPointModel extends Model implements Voxelizable2d, Voxelizable3d {
     private final WorldCoords2d coords;
     private final int z;
@@ -25,7 +26,7 @@ public class LASPointModel extends Model implements Voxelizable2d, Voxelizable3d
             header.getYOffset() + point.getY() * header.getYScaleFactor()
         ));
         z = (int) Math.round(header.getZOffset() + point.getZ() * header.getZScaleFactor());
-        setMetadata("classification", Short.toString(point.getClassification()));
+        setMetadata("classification", Short.toString(point.getClassification()).intern());
         if (point.hasRGB()) {
             int color = (point.getRed() & 0xFF) << 16 | (point.getGreen() & 0xFF) << 8 | (point.getBlue() & 0xFF);
             setMetadata("color", color);
