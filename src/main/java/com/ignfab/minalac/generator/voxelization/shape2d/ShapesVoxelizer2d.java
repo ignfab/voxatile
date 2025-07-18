@@ -74,6 +74,15 @@ public class ShapesVoxelizer2d implements Voxelizer2d {
         return bbox.crop(Iterables.unwrap(Iterables.remap(shapes, Shape2d::allVoxels)));
     }
 
+    // TODO-PR: Temporary. To be removed when this PR is based on PR #113.
+    /**
+     * Returns the shapes of this voxelizer.
+     * @return the {@link Shape2d}
+     */
+    public List<Shape2d> getShapesTemporary() {
+        return shapes == null ? new ArrayList<>() : shapes;
+    }
+
     /**
      * A empty {@code ShapeVoxelizer2d} for conveniance.
      */

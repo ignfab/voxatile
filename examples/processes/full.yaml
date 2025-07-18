@@ -141,6 +141,21 @@ forEachTile:
     wall: *voxel-stone
     window: *voxel-glass
 
+  renderFacades:
+    after:
+      - levelBuildings
+      - renderBuildings
+    type: renderFacades
+    models:
+      type: buildings
+      filter:
+        metadata: height
+        greaterThan: 2
+    heightmap: ground
+    heightName: height
+    ground: *structure-ground-floor
+    floor: *structure-upper-floor
+
   renderForest:
     after:
       - renderGround

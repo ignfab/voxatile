@@ -29,3 +29,75 @@ references:
         at: [ 0, 0, 0..5 ]
   - &voxel-water default:water_source
   - &voxel-air air
+  # NEW
+  - &structure-upper-floor
+    structure:
+      with:
+        'b': default:sandstonebrick
+        'g': default:obsidian_glass
+      axes: [ z, x ]
+      blueprint:
+        - "bbbb"
+        - "bggb"
+        - "bbbb"
+    elasticAtX: 2
+  - &structure-ground-floor
+    structure:
+      with:
+        'g': default:glass
+        'b': default:desert_sandstone_brick
+      axes: [ z, x ]
+      blueprint:
+        - "bbbb"
+        - "bggb"
+        - "bbbb"
+        - "bbbb"
+    elasticAtX: 2
+    elasticAtZ: 1
+  # Testing purposes
+  # TODO-PR: Remove testing voxels
+  - &voxel-obsidian default:obsidian_glass
+  - &voxel-white wool:white
+  - &voxel-grey wool:grey
+  - &voxel-black wool:black
+  - &voxel-orange wool:orange
+  - &voxel-yellow wool:yellow
+  - &voxel-green wool:green
+  - &voxel-red wool:red
+  - &voxel-pink wool:pink
+  - &voxel-magenta wool:magenta
+  - &voxel-desert-stonebrick default:desert_stonebrick
+  - &voxel-silver-sandstone-brick default:silver_sandstone_brick
+  # TODO-PR: Test to be removed
+  - &structure-ground-test
+    structure:
+      with:
+        'w': *voxel-white
+        'o': *voxel-orange
+        'r': *voxel-red
+        'p': *voxel-pink
+        'm': *voxel-magenta
+        'y': *voxel-yellow
+        'g': *voxel-green
+        'G': *voxel-grey
+      axes: [ z, x ]
+      blueprint:
+        - "ygom"
+        - "rrwr"
+        - "ygoG"
+        - "pgoG"
+    elasticAtX: 2
+    elasticAtZ: 2
+  # TODO-PR: Test to be removed
+  - &blueprint-floor-test
+    with:
+      'b': *voxel-desert-stonebrick
+      'o': *voxel-orange
+      'g': *voxel-glass
+      'y': *voxel-yellow
+      'G': *voxel-grey
+    axes: [ z, x ]
+    blueprint:
+      - "bbbb"
+      - "yggo"
+      - "GGGG"

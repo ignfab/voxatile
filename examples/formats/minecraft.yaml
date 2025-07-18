@@ -35,3 +35,27 @@ references:
         at: [ 0, 0, 0..5 ]
   - &voxel-water minecraft:water
   - &voxel-air minecraft:air
+  - &structure-upper-floor
+    structure:
+      with:
+        'b': minecraft:sandstone
+        'g': minecraft:glass
+      axes: [ z, x ]
+      blueprint:
+        - "bbbb"
+        - "bggb"
+        - "bbbb"
+    elasticAtX: 2
+  - &structure-ground-floor
+    structure:
+      with:
+        'g': minecraft:glass
+        'b': minecraft:end_stone_bricks
+      axes: [ z, x ]
+      blueprint:
+        - "bbbb"
+        - "bggb"
+        - "bbbb"
+        - "bbbb"
+    elasticAtX: 2
+    elasticAtZ: 1
