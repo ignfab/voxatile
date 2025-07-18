@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import com.ignfab.minalac.generator.parameters.OutputFormat;
 import com.ignfab.minalac.generator.parameters.placeables.patterns.PatternParams;
+import com.ignfab.minalac.generator.parameters.placeables.structures.ElasticPlaceableStructureParams;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
@@ -73,6 +74,9 @@ public abstract class PlaceableParams {
                     // For structures, relies on PlaceableStructureParams type deduction
                     case "structure":
                         return codec.treeToValue(property.getValue(), PlaceableStructureParams.class);
+                    // TODO-PR: May not be the best way to handle that. This is because structure is either a list a map => can put an optional elastic property
+                    case "elastic":
+                        return codec.treeToValue(property.getValue(), ElasticPlaceableStructureParams.class);
                     // For patterns, relies on PatternParams type deduction
                     case "pattern":
                         return codec.treeToValue(property.getValue(), PatternParams.class);

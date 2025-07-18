@@ -29,13 +29,16 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
  * Structure can be described using one of PlaceableStructureParams.Variant subclass or a combination of several.
  */
 @JsonDeserialize(using = PlaceableStructureParams.Deserializer.class)
-public final class PlaceableStructureParams extends PlaceableParams {
+public class PlaceableStructureParams extends PlaceableParams {
 
-    private final List<Variant> params;
+    private List<Variant> params;
 
     private PlaceableStructureParams(List<Variant> params) {
         this.params = params;
     }
+
+    // Empty constructor for inheritance purposes.
+    protected PlaceableStructureParams() {}
 
     @Override
     public void validate() {
@@ -46,11 +49,21 @@ public final class PlaceableStructureParams extends PlaceableParams {
 
     @Override
     public PlaceableStructure create(Seed seed) {
+        return new PlaceableStructure(createPlaceables(seed));
+    }
+
+    // TODO-PR: They should be a way to do it better - Needed for ElasticPlaceableStructureParams
+    /**
+     * Creates placeables map for the structure.
+     *
+     * @param seed Random seed to use for this {@code Placeable}.
+     * @return placeables map
+     */
+    public Map<WorldCoords3d, Placeable> createPlaceables(Seed seed) {
         Map<WorldCoords3d, Placeable>  structure = new HashMap<>();
         for (Variant param : params)
             param.apply(seed, structure);
-
-        return new PlaceableStructure(structure);
+        return structure;
     }
 
     /**
