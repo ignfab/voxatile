@@ -1,14 +1,15 @@
 package com.ignfab.minalac.generator.outputs.minetest.mod;
 
-import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
-import com.ignfab.minalac.generator.world.MapWriteException;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.HexFormat;
 import java.util.Set;
+import javax.imageio.ImageIO;
+
+import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
+import com.ignfab.minalac.generator.world.MapWriteException;
 
 public class ColoredVoxelsLuaMod implements LuaMod {
     private final Set<Integer> colors = new HashSet<>();
@@ -27,7 +28,7 @@ public class ColoredVoxelsLuaMod implements LuaMod {
     }
 
     public String nodeId(int color) {
-        return "colors:rgb_%06X".formatted(color & 0xFFFFFF);
+        return ("colors:rgb_" + HexFormat.of().toHexDigits(color, 6)).intern();
     }
 
     @Override
