@@ -9,7 +9,18 @@ import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.TestingProcessor;
 
+/**
+ * A testing ProcessorParams.
+ */
 public class TestingProcessorParams extends ProcessorParams {
+    /**
+     * An invalid testing processor.
+     */
+    public static final TestingProcessorParams INVALID = new TestingProcessorParams("");
+    /**
+     * A valid testing processor.
+     */
+    public static final TestingProcessorParams VALID = new TestingProcessorParams("valid");
     /**
      * A required field.
      */
@@ -28,6 +39,12 @@ public class TestingProcessorParams extends ProcessorParams {
     @ConstructorProperties({"requiredField"})
     public TestingProcessorParams(String requiredField) {
         this.requiredField = requiredField;
+    }
+
+    @Override
+    public void validate() {
+        if (requiredField.isBlank())
+            throw new IllegalArgumentException();
     }
 
     @Override

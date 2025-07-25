@@ -17,17 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CombinedPlaceableParamsTest {
     @Test
     public void testValidate() throws JsonProcessingException {
-        PlaceableParams invalid = new TestingPlaceableParams(null);
-        PlaceableParams valid = new TestingPlaceableParams(new TestingPlaceable());
-
         CombinedPlaceableParams params = new CombinedPlaceableParams(List.of(), null);
 
-        params.placeableParams.add(valid);
-        params.placeableParams.add(valid);
+        params.placeableParams.add(TestingPlaceableParams.VALID);
+        params.placeableParams.add(TestingPlaceableParams.VALID);
         assertDoesNotThrow(params::validate);
 
-        params.placeableParams.add(invalid);
-        params.placeableParams.add(valid);
+        params.placeableParams.add(TestingPlaceableParams.INVALID);
+        params.placeableParams.add(TestingPlaceableParams.VALID);
         assertThrows(IllegalArgumentException.class, params::validate);
     }
 

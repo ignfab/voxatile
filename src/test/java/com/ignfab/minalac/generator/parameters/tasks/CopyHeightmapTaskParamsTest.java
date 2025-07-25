@@ -13,6 +13,7 @@ import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
+import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -90,8 +91,7 @@ public class CopyHeightmapTaskParamsTest {
     @Test
     public void testValidate() {
         CopyHeightmapTaskParams paramsWithInvalidModels = new CopyHeightmapTaskParams(
-            // Invalid ModelSelectionParams
-            new ModelSelectionParams(""),
+            TestingModelSelectionParams.INVALID,
             TestingHeightmapParams.VALID,
             TestingHeightmapParams.VALID
         );
@@ -99,7 +99,7 @@ public class CopyHeightmapTaskParamsTest {
         assertThrows(IllegalArgumentException.class, paramsWithInvalidModels::validate);
 
         CopyHeightmapTaskParams paramsWithInvalidFrom = new CopyHeightmapTaskParams(
-            new ModelSelectionParams("4"),
+            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.INVALID,
             TestingHeightmapParams.VALID
         );
@@ -107,7 +107,7 @@ public class CopyHeightmapTaskParamsTest {
         assertThrows(IllegalArgumentException.class, paramsWithInvalidFrom::validate);
 
         CopyHeightmapTaskParams paramsWithInvalidTo = new CopyHeightmapTaskParams(
-            new ModelSelectionParams("2"),
+            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.VALID,
             TestingHeightmapParams.INVALID
         );

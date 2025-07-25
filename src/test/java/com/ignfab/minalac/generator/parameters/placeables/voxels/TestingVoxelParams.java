@@ -17,6 +17,14 @@ import com.ignfab.minalac.generator.utils.random.Seed;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE) // Prevents default deserializer from requiring type when using "default" placeable param structure
 public class TestingVoxelParams extends PlaceableParams {
     /**
+     * An invalid testing voxel.
+     */
+    public static final TestingVoxelParams INVALID = new TestingVoxelParams("");
+    /**
+     * A valid testing voxel.
+     */
+    public static final TestingVoxelParams VALID = new TestingVoxelParams("valid");
+    /**
      * Voxel name (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)

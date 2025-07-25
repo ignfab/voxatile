@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
+import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
+import com.ignfab.minalac.generator.parameters.placeables.TestingPlaceableParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,15 +19,15 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RenderBuildingsTaskParamsTest {
     @Test
     public void testValidate() {
-        TestingVoxelParams placeable = new TestingVoxelParams("voxel");
+        TestingPlaceableParams placeable = TestingPlaceableParams.VALID;
 
-        RenderBuildingsTaskParams paramsWithoutType = new RenderBuildingsTaskParams(new ModelSelectionParams(""), TestingHeightmapParams.VALID, placeable, placeable, placeable);
+        RenderBuildingsTaskParams paramsWithoutType = new RenderBuildingsTaskParams(TestingModelSelectionParams.INVALID, TestingHeightmapParams.VALID, placeable, placeable, placeable);
         assertThrows(IllegalArgumentException.class, paramsWithoutType::validate);
 
-        RenderBuildingsTaskParams paramsWithoutHeightmap = new RenderBuildingsTaskParams(new ModelSelectionParams("building"), TestingHeightmapParams.INVALID, placeable, placeable, placeable);
+        RenderBuildingsTaskParams paramsWithoutHeightmap = new RenderBuildingsTaskParams(TestingModelSelectionParams.VALID, TestingHeightmapParams.INVALID, placeable, placeable, placeable);
         assertThrows(IllegalArgumentException.class, paramsWithoutHeightmap::validate);
 
-        RenderBuildingsTaskParams params = new RenderBuildingsTaskParams(new ModelSelectionParams("building"), TestingHeightmapParams.VALID, placeable, placeable, placeable);
+        RenderBuildingsTaskParams params = new RenderBuildingsTaskParams(TestingModelSelectionParams.VALID, TestingHeightmapParams.VALID, placeable, placeable, placeable);
 
         assertDoesNotThrow(params::validate);
     }

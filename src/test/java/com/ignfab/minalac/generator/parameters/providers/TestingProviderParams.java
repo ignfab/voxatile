@@ -9,7 +9,18 @@ import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.inputs.TestingProvider;
 
+/**
+ * A ProviderParams class for testing purposes.
+ */
 public class TestingProviderParams extends ProviderParams {
+    /**
+     * An invalid testing provider.
+     */
+    public static final TestingProviderParams INVALID = new TestingProviderParams("");
+    /**
+     * A valid testing provider.
+     */
+    public static final TestingProviderParams VALID = new TestingProviderParams("valid");
     /**
      * A required field.
      */
@@ -28,6 +39,12 @@ public class TestingProviderParams extends ProviderParams {
     @ConstructorProperties({"requiredField"})
     public TestingProviderParams(String requiredField) {
         this.requiredField = requiredField;
+    }
+
+    @Override
+    public void validate() {
+        if (requiredField.isBlank())
+            throw new IllegalArgumentException();
     }
 
     @Override

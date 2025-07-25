@@ -13,6 +13,14 @@ import com.ignfab.minalac.generator.world.VoxelTile;
  * A TileTaskParams class for testing purposes.
  */
 public class TestingTaskParams extends TileTaskParams {
+    /**
+     * An invalid testing task.
+     */
+    public static final TestingTaskParams INVALID = new TestingTaskParams("");
+    /**
+     * A valid testing task.
+     */
+    public static final TestingTaskParams VALID = new TestingTaskParams("valid");
 
     private static final Task TASK = new Task();
 
@@ -34,6 +42,12 @@ public class TestingTaskParams extends TileTaskParams {
     @ConstructorProperties({"requiredField"})
     public TestingTaskParams(String requiredField) {
         this.requiredField = requiredField;
+    }
+
+    @Override
+    public void validate() {
+        if (requiredField.isBlank())
+            throw new IllegalArgumentException();
     }
 
     @Override
