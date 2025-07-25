@@ -9,7 +9,7 @@ import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
+import com.ignfab.minalac.generator.parameters.placeables.TestingPlaceableParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
@@ -43,7 +43,7 @@ public class LevelHeightmapTaskTest {
         TestingVoxelTile tile = new TestingVoxelTile(bbox);
 
         String placeableName = "voxel";
-        TestingVoxelParams placeable = new TestingVoxelParams(placeableName);
+        TestingPlaceableParams placeable = new TestingPlaceableParams(placeableName);
 
         Heightmap heightmap = new Heightmap(tile.limits().to2d(), -7);
 

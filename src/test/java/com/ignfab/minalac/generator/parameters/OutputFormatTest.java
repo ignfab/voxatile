@@ -7,7 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
+import com.ignfab.minalac.generator.parameters.placeables.TestingPlaceableParams;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,8 +19,8 @@ public class OutputFormatTest {
     public void testConstructor() {
         assertDoesNotThrow(() -> new OutputFormat(
             () -> null,
-            TestingVoxelParams.class,
-            TestingVoxelParams::new
+            TestingPlaceableParams.class,
+            TestingPlaceableParams::new
         ));
     }
 
@@ -28,12 +29,12 @@ public class OutputFormatTest {
     public void testCreateVoxelParamsShortcut() {
         OutputFormat format = new OutputFormat(
             () -> null,
-            TestingVoxelParams.class,
-            TestingVoxelParams::new
+            TestingPlaceableParams.class,
+            TestingPlaceableParams::new
         );
 
         PlaceableParams params = assertDoesNotThrow(() -> format.createVoxelParams("test"));
-        TestingVoxelParams testingParams = assertInstanceOf(TestingVoxelParams.class, params);
+        TestingPlaceableParams testingParams = assertInstanceOf(TestingPlaceableParams.class, params);
         assertEquals(testingParams.name, "test");
     }
 
@@ -42,8 +43,8 @@ public class OutputFormatTest {
     public void testCreateVoxelParamsDefault() throws JsonProcessingException {
         OutputFormat format = new OutputFormat(
             () -> null,
-            TestingVoxelParams.class,
-            TestingVoxelParams::new
+            TestingPlaceableParams.class,
+            TestingPlaceableParams::new
         );
 
         ObjectMapper mapper = new ObjectMapper();
@@ -52,7 +53,7 @@ public class OutputFormatTest {
         JsonNode node = mapper.readValue("{ \"name\": \"test\" }", JsonNode.class);
 
         PlaceableParams params = assertDoesNotThrow(() -> format.createVoxelParams(node, mapper));
-        TestingVoxelParams testingParams = assertInstanceOf(TestingVoxelParams.class, params);
+        TestingPlaceableParams testingParams = assertInstanceOf(TestingPlaceableParams.class, params);
         assertEquals(testingParams.name, "test");
     }
 

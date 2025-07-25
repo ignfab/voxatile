@@ -10,7 +10,7 @@ import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
+import com.ignfab.minalac.generator.parameters.placeables.TestingPlaceableParams;
 import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.TestingProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
@@ -26,7 +26,7 @@ public class GenerationParamsTest {
     void setUp() {
         GenerationParams.Area.LatitudeLongitude center = new GenerationParams.Area.LatitudeLongitude(5.8, 2.4);
         GenerationParams.Area area = new GenerationParams.Area(center, 50, 75);
-        OutputFormat format = new OutputFormat(TestingVoxelWorld::new, TestingVoxelParams.class, TestingVoxelParams::new);
+        OutputFormat format = new OutputFormat(TestingVoxelWorld::new, TestingPlaceableParams.class, TestingPlaceableParams::new);
         params = new GenerationParams(area, format);
         params.heightmaps = new HashMap<>();
         params.forEachTile = new HashMap<>();
@@ -115,7 +115,7 @@ public class GenerationParamsTest {
         params.forEachTile.put("source1", new FetchDataTaskParams("models1", new TestingProviderParams("value3"), new TestingProcessorParams("value4")));
         params.forEachTile.put("source2", new FetchDataTaskParams("models2", new TestingProviderParams("value5"), new TestingProcessorParams("value6")));
 
-        TestingVoxelParams placeable = new TestingVoxelParams("voxel");
+        TestingPlaceableParams placeable = new TestingPlaceableParams("voxel");
         params.forEachTile.put("building", new RenderBuildingsTaskParams(
             new ModelSelectionParams("building"),
             new StoredHeightmapParams("ground"),

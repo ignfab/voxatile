@@ -10,7 +10,7 @@ import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
 import com.ignfab.minalac.generator.models.filters.ModelFilterHasMetadata;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
+import com.ignfab.minalac.generator.parameters.placeables.TestingPlaceableParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
@@ -51,9 +51,9 @@ public class RenderBuildingsTaskTest {
         assertDoesNotThrow(() -> new RenderBuildingsTask(
             new ModelSelection(models, "building", new ModelFilterHasMetadata("height")),
             heightmap,
-            new TestingVoxelParams(voxelAName).create(TestingSeed.UNUSED),
-            new TestingVoxelParams(voxelBName).create(TestingSeed.UNUSED),
-            new TestingVoxelParams(voxelCName).create(TestingSeed.UNUSED)
+            new TestingPlaceableParams(voxelAName).create(TestingSeed.UNUSED),
+            new TestingPlaceableParams(voxelBName).create(TestingSeed.UNUSED),
+            new TestingPlaceableParams(voxelCName).create(TestingSeed.UNUSED)
         ).run(tile));
 
         for (WorldCoords3d c : tile.limits()) {
@@ -101,7 +101,7 @@ public class RenderBuildingsTaskTest {
         Model building = new TestingRectangleShapeVoxelizable2dModel(modelBbox);
         models.add("building", building);
 
-        Placeable placeable = new TestingVoxelParams("voxel").create(TestingSeed.UNUSED);
+        Placeable placeable = new TestingPlaceableParams("voxel").create(TestingSeed.UNUSED);
         assertDoesNotThrow(() -> new RenderBuildingsTask(
             new ModelSelection(models, "building", new ModelFilterHasMetadata("height")),
             heightmap,
@@ -123,7 +123,7 @@ public class RenderBuildingsTaskTest {
         building.setMetadata("height", -20);
         models.add("building", building);
 
-        Placeable placeable = new TestingVoxelParams("voxel").create(TestingSeed.UNUSED);
+        Placeable placeable = new TestingPlaceableParams("voxel").create(TestingSeed.UNUSED);
         assertDoesNotThrow(() -> new RenderBuildingsTask(
             new ModelSelection(models, "building", new ModelFilterHasMetadata("height")),
             heightmap,

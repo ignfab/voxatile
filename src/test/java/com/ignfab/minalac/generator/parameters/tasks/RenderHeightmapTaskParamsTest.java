@@ -12,7 +12,6 @@ import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
 import com.ignfab.minalac.generator.parameters.placeables.TestingPlaceableParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -39,7 +38,7 @@ public class RenderHeightmapTaskParamsTest {
             mapper
         ));
         assertInstanceOf(StoredHeightmapParams.class, params.at);
-        assertEquals("somethingInvisible",  assertInstanceOf(TestingVoxelParams.class, params.place).name);
+        assertEquals("somethingInvisible",  assertInstanceOf(TestingPlaceableParams.class, params.place).name);
 
         assertDoesNotThrow(params::validate);
         assertDoesNotThrow(() -> params.create(generation));
@@ -66,7 +65,7 @@ public class RenderHeightmapTaskParamsTest {
         ));
         assertInstanceOf(StoredHeightmapParams.class, params.minimum);
         assertInstanceOf(StoredHeightmapParams.class, params.maximum);
-        assertEquals("somethingInvisible",  assertInstanceOf(TestingVoxelParams.class, params.place).name);
+        assertEquals("somethingInvisible",  assertInstanceOf(TestingPlaceableParams.class, params.place).name);
 
         assertDoesNotThrow(params::validate);
         assertDoesNotThrow(() -> params.create(generation));

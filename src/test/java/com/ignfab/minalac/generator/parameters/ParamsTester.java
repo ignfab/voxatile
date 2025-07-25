@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
+import com.ignfab.minalac.generator.parameters.placeables.TestingPlaceableParams;
 
 /**
  * A utility class for testing deserialization.
@@ -22,7 +22,7 @@ public final class ParamsTester {
     /**
      * Basic testing output format used by {@code deserialize} methods and usable of any test purpose.
      */
-    public static final OutputFormat OUTPUT_FORMAT = new OutputFormat(null, TestingVoxelParams.class, TestingVoxelParams::new);
+    public static final OutputFormat OUTPUT_FORMAT = new OutputFormat(null, TestingPlaceableParams.class, TestingPlaceableParams::new);
 
     /**
      * Deserializes parameters with a given output format.

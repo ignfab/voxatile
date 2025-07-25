@@ -12,7 +12,6 @@ import com.ignfab.minalac.generator.parameters.heightmaps.StoredHeightmapParams;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.TestingPlaceableParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,9 +47,9 @@ public class RenderBuildingsTaskParamsTest {
         """, mapper));
         assertEquals("building", params.models.type);
         assertEquals("ground", assertInstanceOf(StoredHeightmapParams.class, params.heightmap).stored);
-        assertEquals("voxelA", assertInstanceOf(TestingVoxelParams.class, params.roof).name);
-        assertEquals("voxelB", assertInstanceOf(TestingVoxelParams.class, params.wall).name);
-        assertEquals("voxelC", assertInstanceOf(TestingVoxelParams.class, params.window).name);
+        assertEquals("voxelA", assertInstanceOf(TestingPlaceableParams.class, params.roof).name);
+        assertEquals("voxelB", assertInstanceOf(TestingPlaceableParams.class, params.wall).name);
+        assertEquals("voxelC", assertInstanceOf(TestingPlaceableParams.class, params.window).name);
 
         assertThrows(MismatchedInputException.class, () -> ParamsTester.deserialize(RenderBuildingsTaskParams.class, """
         type: building

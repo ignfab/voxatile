@@ -32,9 +32,9 @@ public class CombinedPlaceableParamsTest {
     public void testCreate() throws JsonProcessingException {
         TestingPlaceable placeable = new TestingPlaceable();
         CombinedPlaceableParams params = new CombinedPlaceableParams(List.of(), null);
-        params.placeableParams.add(new TestingPlaceableParams(placeable));
-        params.placeableParams.add(new TestingPlaceableParams(placeable));
-        params.placeableParams.add(new TestingPlaceableParams(placeable));
+        params.placeableParams.add(new TestingPlaceableParams("voxel1", placeable));
+        params.placeableParams.add(new TestingPlaceableParams("voxel2", placeable));
+        params.placeableParams.add(new TestingPlaceableParams("voxel3", placeable));
 
         Placeable result = assertDoesNotThrow(() -> params.create(TestingSeed.UNUSED));
         CombinedPlaceable combined = assertInstanceOf(CombinedPlaceable.class, result);
