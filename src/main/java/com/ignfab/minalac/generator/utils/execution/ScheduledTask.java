@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 public class ScheduledTask<T> {
     private final String id;
     private final Consumer<T> task;
-    private final Set<ScheduledTask<T>> dependencies;
+    /* package-private */ final Set<ScheduledTask<T>> dependencies;
     private ScheduledTaskState state;
     private TaskFailedException error;
     private Future<?> future;
@@ -70,7 +70,7 @@ public class ScheduledTask<T> {
                 System.out.printf("Task %s finished%n", id);
             } catch (RuntimeException e) {
                 // If an error occurs, we take note of the task failure
-                System.out.printf("Error in task %s%n", id);
+                System.err.printf("Error in task %s%n", id);
                 error = new TaskFailedException(this, e);
                 state = ScheduledTaskState.FAILED;
             } finally {
@@ -124,4 +124,10 @@ public class ScheduledTask<T> {
         return error;
     }
 
+    public ScheduledTask<T> copy(Scheduler<T> scheduler) {
+        ScheduledTask<T> copy = new ScheduledTask<>(id, task);
+        for (ScheduledTask<T> dependency : dependencies)
+            copy.dependencies.add(scheduler.getOrCopyTask(dependency));
+        return copy;
+    }
 }

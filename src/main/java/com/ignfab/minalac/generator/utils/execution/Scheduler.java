@@ -1,7 +1,10 @@
 package com.ignfab.minalac.generator.utils.execution;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -9,6 +12,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 
@@ -21,11 +25,19 @@ import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
  */
 public class Scheduler<T> {
     // An executor using a thread pool to run tasks
-    private final ExecutorService executor = Executors.newCachedThreadPool();
+    private final ExecutorService executor;
     private final Map<String, ScheduledTask<T>> tasks = new HashMap<>();
     // Object used for communication between the main thread and task threads.
     // .wait() / .notify() operations are performed on this object
     private final Object lock = new Object();
+
+    public Scheduler() {
+        this(Executors.newCachedThreadPool());
+    }
+
+    public Scheduler(ExecutorService executor) {
+        this.executor = executor;
+    }
 
     /**
      * Schedules the task to be executed when all dependencies are finished.
@@ -122,8 +134,24 @@ public class Scheduler<T> {
                     }
                 }
 
-                if (hasWaitingTasks && !hasRunningTasks)
+                if (hasWaitingTasks && !hasRunningTasks) {
+                    Map<ScheduledTaskState, List<ScheduledTask<T>>> tasksPerState = new HashMap<>();
+                    for (ScheduledTask<T> task : tasks.values())
+                        tasksPerState.computeIfAbsent(task.state(), s -> new ArrayList<>()).add(task);
+                    List<ScheduledTask<T>> finished = tasksPerState.get(ScheduledTaskState.FINISHED);
+                    if (finished != null)
+                        System.err.printf("Finished tasks (%d): [%s]%n", finished.size(), finished.stream()
+                            .map(ScheduledTask::id)
+                            .collect(Collectors.joining(", ")));
+                    List<ScheduledTask<T>> waiting = tasksPerState.get(ScheduledTaskState.WAITING);
+                    System.err.printf("Waiting tasks (%d):%n", waiting.size());
+                    for (ScheduledTask<T> task : waiting)
+                        System.err.printf("- %s: [%s]%n", task.id(), task.dependencies.stream()
+                            .filter(dep -> dep.state() != ScheduledTaskState.FINISHED)
+                            .map(ScheduledTask::id)
+                            .collect(Collectors.joining(", ")));
                     throw new IllegalStateException("Deadlock detected: some tasks are waiting and can not be started");
+                }
 
                 if (!hasRemainingTasks)
                     break;
@@ -146,5 +174,24 @@ public class Scheduler<T> {
         if (!tasks.containsKey(id))
             throw new IllegalArgumentException("Task %s doesn't exist".formatted(id));
         return tasks.get(id);
+    }
+
+    public Scheduler<T> copy(ExecutorService executor) {
+        Scheduler<T> copy = new Scheduler<>(Objects.requireNonNullElse(executor, this.executor));
+        tasks.forEach((id, task) -> {
+            if (copy.tasks.containsKey(id))
+                return;
+            copy.tasks.put(id, task.copy(copy));
+        });
+        return copy;
+    }
+
+    /* package-private */ ScheduledTask<T> getOrCopyTask(ScheduledTask<T> task) {
+        ScheduledTask<T> existing = tasks.get(task.id());
+        if (existing != null)
+            return existing;
+        ScheduledTask<T> copy = task.copy(this);
+        tasks.put(task.id(), copy);
+        return copy;
     }
 }
