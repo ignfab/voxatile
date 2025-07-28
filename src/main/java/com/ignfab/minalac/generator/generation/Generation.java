@@ -11,7 +11,6 @@ import org.locationtech.jts.geom.util.AffineTransformation;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationStore;
-import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
 import com.ignfab.minalac.generator.utils.execution.Scheduler;
@@ -38,7 +37,6 @@ public class Generation {
     private final AffineTransformation voxelToCrs;
 
     private final VoxelWorld world;
-    private final ModelStore models = new ModelStore();
     private final HeightmapDeclarationStore heightmaps = new HeightmapDeclarationStore();
 
     private final Scheduler<GenerationTile> scheduler = new Scheduler<>();
@@ -109,15 +107,7 @@ public class Generation {
     }
 
     /**
-     * Returns the {@link ModelStore}.
-     * @return the model store
-     */
-    public ModelStore models() {
-        return models;
-    }
-
-    /**
-     * Returns the {@link HeightmapDeclarationStore} for the stored heightmaps declarations.
+     * Returns the {@link Store} for the stored heightmaps declarations.
      *
      * @return the heightmap declaration store.
      */

@@ -74,7 +74,6 @@ public class FetchDataTaskParams extends TileTaskParams {
      */
     public FetchDataTask create(Generation generation) {
         return new FetchDataTask(
-            generation.models(),
             modelType,
             provider.create(generation),
             processor.create(generation),

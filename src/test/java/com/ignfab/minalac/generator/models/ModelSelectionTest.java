@@ -5,7 +5,9 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.models.filters.ModelFilterHasMetadata;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
 
@@ -13,26 +15,26 @@ public class ModelSelectionTest {
 
     @Test
     public void testIterator() {
-        ModelStore store = new ModelStore();
+        TestingGenerationTile tile = new TestingGenerationTile(WorldBBox3d.EMPTY);
 
         Model modelA = new TestingModel("A", Map.of("a", 1));
         Model modelB = new TestingModel("B", Map.of("b", 2));
         Model modelC = new TestingModel("C");
 
-        store.add("X", modelA);
-        store.add("Y", modelA);
-        store.add("X", modelB);
-        store.add("X", modelA);
-        store.add("Y", modelC);
+        tile.models().add("X", modelA);
+        tile.models().add("Y", modelA);
+        tile.models().add("X", modelB);
+        tile.models().add("X", modelA);
+        tile.models().add("Y", modelC);
 
-        assertBrowsesAllOnce(Arrays.asList(modelA, modelA, modelB), new ModelSelection(store, "X", null).iterator());
+        assertBrowsesAllOnce(Arrays.asList(modelA, modelA, modelB), new ModelSelection("X", null).forTile(tile));
 
-        assertBrowsesAllOnce(Arrays.asList(modelA, modelA), new ModelSelection(store, "X", new ModelFilterHasMetadata("a")).iterator());
+        assertBrowsesAllOnce(Arrays.asList(modelA, modelA), new ModelSelection("X", new ModelFilterHasMetadata("a")).forTile(tile));
 
-        assertBrowsesAllOnce(Arrays.asList(modelA, modelC), new ModelSelection(store, "Y", null).iterator());
+        assertBrowsesAllOnce(Arrays.asList(modelA, modelC), new ModelSelection("Y", null).forTile(tile));
 
-        assertEmpty(new ModelSelection(store, "Y", new ModelFilterHasMetadata("b")));
+        assertEmpty(new ModelSelection("Y", new ModelFilterHasMetadata("b")).forTile(tile));
 
-        assertEmpty(new ModelSelection(store, "Z", null));
+        assertEmpty(new ModelSelection("Z", null).forTile(tile));
     }
 }

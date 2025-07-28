@@ -11,7 +11,6 @@ import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.models.ModelImpl;
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,15 +20,14 @@ public class ModelTaskTest {
     @Test
     public void testRun() {
         GenerationTile tile = new TestingGenerationTile(WorldBBox3d.ORIGIN);
-        ModelStore modelStore = new ModelStore();
 
-        modelStore.add("digit", new ModelImplTester('1'));
-        modelStore.add("digit", new ModelImplTester('1'));
-        modelStore.add("digit", new ModelImplTester('2'));
-        modelStore.add("letter", new ModelImplTester('b'));
-        modelStore.add("letter", new ModelImplTester('a'));
+        tile.models().add("digit", new ModelImplTester('1'));
+        tile.models().add("digit", new ModelImplTester('1'));
+        tile.models().add("digit", new ModelImplTester('2'));
+        tile.models().add("letter", new ModelImplTester('b'));
+        tile.models().add("letter", new ModelImplTester('a'));
 
-        ModelTaksImpl task = new ModelTaksImpl(modelStore, "digit");
+        ModelTaskImpl task = new ModelTaskImpl("digit");
         assertEquals(0, task.modelsRendered.size());
 
         // Not testing rendering area
@@ -41,7 +39,7 @@ public class ModelTaskTest {
         assertEquals(1, Collections.frequency(task.modelsRendered, new ModelImplTester('2')));
         assertEquals(3, task.modelsRendered.size());
 
-        ModelTaksImpl idleTask = new ModelTaksImpl(modelStore, "specialCharacter");
+        ModelTaskImpl idleTask = new ModelTaskImpl("specialCharacter");
         assertEquals(0, idleTask.modelsRendered.size());
 
         idleTask.run(tile);
@@ -49,11 +47,11 @@ public class ModelTaskTest {
         assertEquals(0, idleTask.modelsRendered.size());
     }
 
-    private static class ModelTaksImpl extends ModelTask<ModelImpl> {
+    private static class ModelTaskImpl extends ModelTask<ModelImpl> {
         private final List<ModelImpl> modelsRendered = new ArrayList<>();
 
-        ModelTaksImpl(ModelStore store, String modelType) {
-            super(ModelImpl.class, new ModelSelection(store, modelType, null));
+        ModelTaskImpl(String modelType) {
+            super(ModelImpl.class, new ModelSelection(modelType, null));
         }
 
         @Override

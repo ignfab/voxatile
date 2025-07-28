@@ -20,7 +20,7 @@ public abstract class ModelTask<M> implements TileTask {
 
     @Override
     public void run(GenerationTile tile) {
-        for (Model model : selection)
+        for (Model model : selection.forTile(tile))
             if (cls.isInstance(model))
                 run(cls.cast(model), tile);
     }

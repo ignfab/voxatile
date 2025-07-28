@@ -11,7 +11,6 @@ import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
 import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.models.FloatMatrixModel;
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
@@ -35,9 +34,8 @@ public class PopulateHeightmapTaskTest {
         FloatGeographicDataMatrix2d data = new FloatGeographicDataMatrix2d(values, 3, 4, 0, -1, 1.0, 1.0);
         FloatMatrixModel model = new FloatMatrixModel(data, converter);
 
-        ModelStore store = new ModelStore();
-        store.add("matrix", model);
-        ModelSelection selection = new ModelSelection(store, "matrix", null);
+        tile.models().add("matrix", model);
+        ModelSelection selection = new ModelSelection("matrix", null);
 
         new PopulateHeightmapTask(selection, heightmap.spec()).run(tile);
 
