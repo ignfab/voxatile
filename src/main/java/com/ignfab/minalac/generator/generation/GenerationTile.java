@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.generation;
 
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapStore;
+import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelTile;
@@ -12,6 +13,7 @@ public class GenerationTile {
     private final Generation generation;
     private final VoxelTile voxels;
     private final HeightmapStore heightmaps;
+    private final ModelStore models = new ModelStore();
 
     /**
      * Creates a new {@code GenerationTile} for a generation and a volume.
@@ -36,6 +38,14 @@ public class GenerationTile {
      */
     public Generation generation() {
         return generation;
+    }
+
+    /**
+     * Returns the {@link ModelStore}.
+     * @return the model store
+     */
+    public ModelStore models() {
+        return models;
     }
 
     /**

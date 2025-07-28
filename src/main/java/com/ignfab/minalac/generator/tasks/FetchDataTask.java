@@ -8,7 +8,6 @@ import com.ignfab.minalac.generator.exceptions.RetryableException;
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.models.Model;
-import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
 
@@ -16,7 +15,6 @@ import com.ignfab.minalac.generator.processors.post.PostProcessor;
  * A {@link TileTask} fetching data from a provider, processing models with a processor applying a post-processor to each model.
  */
 public class FetchDataTask implements TileTask {
-    private final ModelStore modelStore;
     private final String modelType;
     private final Provider<?> provider;
     private final Processor<Object, ?> processor;
@@ -25,14 +23,12 @@ public class FetchDataTask implements TileTask {
     /**
      * Creates a new {@code FetchDataTask}.
      *
-     * @param modelStore where resulting models shoud be stored
      * @param modelType name of type to be associated with them
      * @param provider data provider
      * @param processor processor converting provided data to models
      * @param postProcessor post-processor to run on created models
      */
     public FetchDataTask(
-        ModelStore modelStore,
         String modelType,
         Provider<?> provider,
         Processor<?, ? extends Model> processor,
@@ -51,7 +47,6 @@ public class FetchDataTask implements TileTask {
         @SuppressWarnings("unchecked") // The model type has been validated above
         PostProcessor<Model, ?> uncheckedPostProcessor = (PostProcessor<Model, ?>) postProcessor;
 
-        this.modelStore = modelStore;
         this.modelType = modelType;
         this.provider = provider;
         this.processor = uncheckedProcessor;
@@ -73,7 +68,7 @@ public class FetchDataTask implements TileTask {
                     if (model != null) {
                         model = postProcessor.process(model);
                         if (model != null)
-                            modelStore.add(modelType, model);
+                            tile.models().add(modelType, model);
                     }
                 } catch (IgnorableException e) {
                     // TODO Add an exception handling policy

@@ -3,7 +3,6 @@ package com.ignfab.minalac.generator.parameters.models;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.parameters.models.filters.TestingModelFilterParams;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,12 +33,11 @@ public class ModelSelectionParamsTest {
     @Test
     public void testCreate() {
         ModelSelectionParams params;
-        ModelStore store = new ModelStore();
 
         params = new ModelSelectionParams("aa");
-        assertInstanceOf(ModelSelection.class, assertDoesNotThrow(() -> params.create(store)));
+        assertInstanceOf(ModelSelection.class, assertDoesNotThrow(params::create));
 
         params.filter = TestingModelFilterParams.VALID;
-        assertInstanceOf(ModelSelection.class, assertDoesNotThrow(() -> params.create(store)));
+        assertInstanceOf(ModelSelection.class, assertDoesNotThrow(params::create));
     }
 }

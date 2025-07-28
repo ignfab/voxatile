@@ -7,7 +7,6 @@ import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
@@ -20,12 +19,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LevelHeightmapTaskTest {
     private WorldBBox3d bbox;
-    private ModelStore models;
 
     @BeforeEach
     void setUp() {
         bbox = new WorldBBox3d(-1, -2, -20, 7, 6, 40);
-        models = new ModelStore();
     }
 
     /**
@@ -52,11 +49,11 @@ public class LevelHeightmapTaskTest {
         WorldBBox2d modelBbox = new WorldBBox2d(0, -1, 5, 3);
         int expectedHeight = 1;
         Model model = new TestingRectangleShapeVoxelizable2dModel(modelBbox);
-        models.add("model", model);
+        tile.models().add("model", model);
 
         // Try rendering
         assertDoesNotThrow(() -> new LevelGroundTask(
-            new ModelSelection(models, "model", null),
+            new ModelSelection("model", null),
             ground.spec(),
             placeable.create(TestingSeed.UNUSED)
         ).run(tile));

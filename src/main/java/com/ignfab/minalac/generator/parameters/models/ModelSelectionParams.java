@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.models.ModelStore;
 import com.ignfab.minalac.generator.parameters.models.filters.ModelFilterParams;
 
 /**
@@ -48,11 +47,9 @@ public class ModelSelectionParams {
     /**
      * Creates a new {@link ModelSelection} out of params.
      *
-     * @param store Model store which select models from.
-     *
      * @return a model selection.
      */
-    public ModelSelection create(ModelStore store) {
-        return new ModelSelection(store, type, (filter == null) ? null : filter.create());
+    public ModelSelection create() {
+        return new ModelSelection(type, (filter == null) ? null : filter.create());
     }
 }

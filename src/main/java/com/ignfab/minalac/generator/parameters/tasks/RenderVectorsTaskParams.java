@@ -93,7 +93,7 @@ public class RenderVectorsTaskParams extends TileTaskParams {
         }
 
         return new RenderVectorsTask(
-            models.create(generation.models()),
+            models.create(),
             heightmap.create(generation.heightmaps()),
             insidePlaceable,
             bordersPlaceable
