@@ -146,6 +146,12 @@
             <artifactId>commons-cli</artifactId>
             <version>1.8.0</version>
         </dependency>
+        <!-- Minestom (Minecraft server software without vanilla behavior) -->
+        <dependency>
+            <groupId>net.minestom</groupId>
+            <artifactId>minestom</artifactId>
+            <version>2025.08.12-1.21.8</version>
+        </dependency>
 
         <!--
         TEST DEPENDENCIES

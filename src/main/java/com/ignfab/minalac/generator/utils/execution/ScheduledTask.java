@@ -19,6 +19,9 @@ public class ScheduledTask<T> {
     private TaskFailedException error;
     private Future<?> future;
 
+    // Little hack to avoid logs being flooded
+    public static boolean verbose = true;
+
     /**
      * Creates a new task with the given characteristics.
      *
@@ -63,14 +66,14 @@ public class ScheduledTask<T> {
         future = executor.submit(() -> {
             try {
                 Thread.currentThread().setName(id);
-                System.out.printf("Starting task %s%n", id);
+                if (verbose) System.out.printf("Starting task %s%n", id);
                 state = ScheduledTaskState.RUNNING;
                 task.accept(context);
                 state = ScheduledTaskState.FINISHED;
-                System.out.printf("Task %s finished%n", id);
+                if (verbose) System.out.printf("Task %s finished%n", id);
             } catch (RuntimeException e) {
                 // If an error occurs, we take note of the task failure
-                System.err.printf("Error in task %s%n", id);
+                if (verbose) System.err.printf("Error in task %s%n", id);
                 error = new TaskFailedException(this, e);
                 state = ScheduledTaskState.FAILED;
             } finally {
