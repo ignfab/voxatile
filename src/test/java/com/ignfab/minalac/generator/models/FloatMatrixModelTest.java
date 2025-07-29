@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.util.AffineTransformation;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.inputs.FloatArrayGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
@@ -16,7 +17,7 @@ public class FloatMatrixModelTest {
     @Test
     public void testBBox() throws TransformException {
 
-        FloatGeographicDataMatrix2d data = new FloatGeographicDataMatrix2d(3, 4, 1.0, 2.0, 1.0, 1.0);
+        FloatGeographicDataMatrix2d data = new FloatArrayGeographicDataMatrix2d(3, 4, 1.0, 2.0, 1.0, 1.0);
 
         MapToWorldConverter converter = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
         FloatMatrixModel model = new FloatMatrixModel(data, converter);
@@ -36,7 +37,7 @@ public class FloatMatrixModelTest {
             1.0f, 2.0f, 3.0f
         };
 
-        FloatGeographicDataMatrix2d data = new FloatGeographicDataMatrix2d(values, 3, 4, 1.0, 2.0, 1.0, 1.0);
+        FloatGeographicDataMatrix2d data = new FloatArrayGeographicDataMatrix2d(values, 3, 4, 1.0, 2.0, 1.0, 1.0);
 
         FloatMatrixModel model = new FloatMatrixModel(data, converter);
         assertNull(model.get(new WorldCoords2d(0, 2)));
@@ -61,7 +62,7 @@ public class FloatMatrixModelTest {
             -1.0f, 1.0f,
             -3.0f, 5.0f,
         };
-        FloatGeographicDataMatrix2d data = new FloatGeographicDataMatrix2d(values, 2, 2, 0.0, 0.0, 10.0, 10.0);
+        FloatGeographicDataMatrix2d data = new FloatArrayGeographicDataMatrix2d(values, 2, 2, 0.0, 0.0, 10.0, 10.0);
 
         FloatMatrixModel model = new FloatMatrixModel(data, converter);
         // Borders

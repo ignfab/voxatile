@@ -31,6 +31,7 @@ import com.ignfab.minalac.generator.parameters.processors.post.MetadataDefaultPo
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataParsePostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataValueMappingPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParams;
+import com.ignfab.minalac.generator.parameters.providers.GeoTiffProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
@@ -103,6 +104,7 @@ public final class MinalacGenerator {
         parser.registerParams("gpkg", GeoPackageProviderParams.class);
         parser.registerParams("shapefile", ShapefileProviderParams.class);
         parser.registerParams("wmsFloat", WMSFloatBilProviderParams.class);
+        parser.registerParams("geotiff", GeoTiffProviderParams.class);
 
         parser.registerParams("floatMatrix", FloatMatrixProcessorParams.class);
         parser.registerParams("geoToolsVector", GeoToolsVectorProcessorParams.class);

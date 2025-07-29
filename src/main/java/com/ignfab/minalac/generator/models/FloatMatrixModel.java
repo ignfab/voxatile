@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.models;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
-import com.ignfab.minalac.generator.inputs.GeographicDataMatrix2d;
+import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.utils.coordinates.MapCoordinates;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
@@ -13,7 +13,7 @@ import com.ignfab.minalac.generator.voxelization.Matrix2d;
  * A model based on a matrix of floats (usually a heightmap model).
  */
 public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
-    private GeographicDataMatrix2d<Float> data;
+    private FloatGeographicDataMatrix2d data;
     private MapToWorldConverter mapToWorld;
     private WorldToMapConverter worldToMap;
     private WorldBBox2d bbox;
@@ -25,7 +25,7 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
      * @param converter coordinates converter from matrix to world
      * @throws TransformException
      */
-    public FloatMatrixModel(GeographicDataMatrix2d<Float> data, MapToWorldConverter converter) throws TransformException {
+    public FloatMatrixModel(FloatGeographicDataMatrix2d data, MapToWorldConverter converter) throws TransformException {
         mapToWorld = converter;
         try {
             worldToMap = mapToWorld.inverse();

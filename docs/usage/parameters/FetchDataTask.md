@@ -11,11 +11,12 @@ Task of type `fetchData` fetches data from geographic data source, processes it,
   * [`gpkg` (GeoPackage)](#gpkg-geopackage)
   * [`shapefile` (Shapefile)](#shapefile-shapefile)
   * [`wmsFloat` (Web Map Service with floating point values)](#wmsfloat-web-map-service-with-floating-point-values)
+  * [`geotiff` (GeoTiff)](#geotiff-geotiff)
 * [Processors](#processors)
   * [`geoToolsVector` (GeoTools vector processor)](#geotoolsvector-geotools-vector-processor)
   * [`floatMatrix` (Float matrix processor)](#floatmatrix-float-matrix-processor)
 
-See also [post processing](PostProcessing.md) documentation.
+See also [post-processing](PostProcessing.md) documentation.
 
 ## Example
 
@@ -93,6 +94,15 @@ Provider of type `wmsFloat` fetches **float** data from a [Web Map Service](http
 
 **Suitable processors**: `floatMatrix`
 
+### `geotiff` (GeoTiff)
+Provider of type `geotiff` reads **float** (for now) raster data from a [GeoTiff](https://en.wikipedia.org/wiki/GeoTIFF) file.
+
+**Extra parameters**:
+- `filePath` (required): Path of the GeoTiff file (absolute, or relative to execution context)
+- `crsOverride` (optional, default none): CRS to use when reading data. By default, the CRS is read from the GeoTiff itself. You should only use this parameter if the CRS is invalid or missing from the file. This **DOES NOT** reproject data!
+
+**Suitable processors**: `floatMatrix`
+
 ## Processors
 
 A processor converts data from a provider into models. Processor type is identified by `type` field.
@@ -109,4 +119,4 @@ Processor of type `floatMatrix` translates a float data matrix to a model.
 
 **Extra parameters**: None
 
-**Suitable providers**: `wmsFloat`
+**Suitable providers**: `wmsFloat`, `geotiff`
