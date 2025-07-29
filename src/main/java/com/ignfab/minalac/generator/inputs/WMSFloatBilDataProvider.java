@@ -117,13 +117,14 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
         if (total != size)
             throw new RetryableException("Incomplete data read from stream");
 
-        FloatGeographicDataMatrix2d result = new FloatGeographicDataMatrix2d(
+        FloatArrayGeographicDataMatrix2d result = new FloatArrayGeographicDataMatrix2d(
             width,
             height,
             envelope.getMinX(),
             envelope.getMinY(),
             envelope.getWidth() / width,
-            envelope.getHeight() / height);
+            envelope.getHeight() / height
+        );
 
         ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer().get(result.data());
 
@@ -133,8 +134,8 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
     /**
      * Result returned by provide method. Here, only one result is provided.
      */
-    public class Result implements Provider.Result<FloatGeographicDataMatrix2d> {
-        private Iterator<FloatGeographicDataMatrix2d> iterator;
+    private class Result implements Provider.Result<FloatGeographicDataMatrix2d> {
+        private final Iterator<FloatGeographicDataMatrix2d> iterator;
 
         Result(FloatGeographicDataMatrix2d data) {
             iterator = Iterators.iterator(data);

@@ -8,13 +8,14 @@ import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
+import com.ignfab.minalac.generator.inputs.FloatArrayGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.models.FloatMatrixModel;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PopulateHeightmapTaskTest {
     @Test
@@ -31,7 +32,7 @@ public class PopulateHeightmapTaskTest {
             1.0f, 2.0f, 3.0f
         };
 
-        FloatGeographicDataMatrix2d data = new FloatGeographicDataMatrix2d(values, 3, 4, 0, -1, 1.0, 1.0);
+        FloatGeographicDataMatrix2d data = new FloatArrayGeographicDataMatrix2d(values, 3, 4, 0, -1, 1.0, 1.0);
         FloatMatrixModel model = new FloatMatrixModel(data, converter);
 
         tile.models().add("matrix", model);

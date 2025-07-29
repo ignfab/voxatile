@@ -2,6 +2,8 @@ package com.ignfab.minalac.generator.inputs;
 
 /**
  * A matrix of values.
+ * This class is generic and should only be used through one of its concrete extension.
+ * @see FloatGeographicDataMatrix2d
  *
  * @param <T> type of the value
  */

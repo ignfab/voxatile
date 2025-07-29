@@ -92,6 +92,11 @@
             <artifactId>gt-shapefile</artifactId>
             <version>${geotools.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-geotiff</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
         <!--
             Required to identify coordinates reference systems
             Example error: No code "EPSG:4326" from authority "EPSG"
@@ -222,6 +227,16 @@
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <!-- With at least an entry "Main-Class: ..." to make it executable -->
                             <mainClass>com.ignfab.minalac.generator.MinalacGenerator</mainClass>
+                            <!-- And manifest entries from javax.media:jai_imageio, required for GeoTools GeoTiff module -->
+                            <manifestEntries>
+                                <Name>javax/media/jai/</Name>
+                                <Specification-Title>Java Advanced Imaging Image I/O Tools</Specification-Title>
+                                <Specification-Version>1.1</Specification-Version>
+                                <Specification-Vendor>Sun Microsystems, Inc.</Specification-Vendor>
+                                <Implementation-Title>com.sun.media.imageio</Implementation-Title>
+                                <Implementation-Version>1.1</Implementation-Version>
+                                <Implementation-Vendor>Sun Microsystems, Inc.</Implementation-Vendor>
+                            </manifestEntries>
                         </transformer>
                         <!-- Properly shades all resources, required for GeoTools HSQL embedded databases -->
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
