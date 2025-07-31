@@ -20,12 +20,6 @@ public class JTSGeometryBufferPostProcessorParams extends PostProcessorParams {
     public double buffer;
 
     /**
-     * Whether to discard models resulting in empty geometry (optional, default false).
-     */
-    @JsonSetter(nulls = Nulls.SKIP)
-    public boolean discardEmptyResults = false;
-
-    /**
      * Constructor used to ensure that the required fields are present during deserialization.
      * @param buffer The buffer value
      */
@@ -42,6 +36,6 @@ public class JTSGeometryBufferPostProcessorParams extends PostProcessorParams {
 
     @Override
     public PostProcessor<JTSGeometryModel, ?> create() {
-        return new JTSGeometryBufferPostProcessor(buffer, discardEmptyResults);
+        return new JTSGeometryBufferPostProcessor(buffer);
     }
 }

@@ -20,6 +20,8 @@ Models are always selected on their type and that selection may be narrowed down
      * [In](#in)
      * [Lower Than](#lower-than)
      * [Greater Than](#greater-than)
+  * [Filtering on geometry](#filtering-on-geometry)
+    * [Empty](#empty)
 
 ## Example
 
@@ -187,3 +189,19 @@ Example:
 Fields:
   - `metadata` (required): Name of the metadata to check
   - `greaterThan` (required): Threshold value that the metadata must be greater than. (Only possible to compare numbers with this filter)
+
+### Filtering on geometry
+
+These filters rely on models geometry. If the model does not come from the `geoToolsVector` processor, these filters won't match.
+
+#### Empty
+
+Returns true if model geometry is empty.
+
+Examples:
+```yaml
+   emptyGeometry:
+```
+
+Fields:
+- `emptyGeometry` (required): This field has no value

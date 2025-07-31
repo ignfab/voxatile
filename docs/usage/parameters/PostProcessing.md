@@ -212,4 +212,3 @@ Post-processor that applies a buffer around the geometry of the model.
 
 **Extra parameters**:
 - `buffer` (required): the signed distance of the buffer to apply, can be negative.
-- `discardEmptyResults` (optional, default `no`): `yes` to discard models resulting in an empty geometry, `no` to keep them. This can happen with a negative `buffer` value, when the original geometry was smaller than that value.
