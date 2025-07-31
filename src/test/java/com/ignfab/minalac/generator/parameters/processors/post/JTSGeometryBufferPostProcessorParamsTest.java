@@ -27,7 +27,6 @@ public class JTSGeometryBufferPostProcessorParamsTest {
     @DisplayName("JTS geometry buffer post-processor params creates a JTS geometry post-processor")
     public void testCreate() {
         JTSGeometryBufferPostProcessorParams params = new JTSGeometryBufferPostProcessorParams(-2);
-        params.discardEmptyResults = true;
         PostProcessor<?, ?> postProcessor = assertDoesNotThrow(params::create);
         assertInstanceOf(JTSGeometryBufferPostProcessor.class, postProcessor);
     }
