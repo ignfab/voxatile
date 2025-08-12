@@ -2,14 +2,14 @@ package com.ignfab.minalac.generator.placeables.gettable2d;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
-import com.ignfab.minalac.generator.placeables.Nothing;
-import com.ignfab.minalac.generator.placeables.Placeable;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 public class Container2dTest {
 
+    // TODO-PR: Update the tests (Container2d class became Container)
+    @Test
+    public void toBeUpdated() {
+        throw new RuntimeException("Update the tests (Container2d class became Container)");
+    }
+    /*
     @Test
     public void testAddGet() {
         Container2d container = new Container2d(7, 10);
@@ -61,5 +61,5 @@ public class Container2dTest {
         public Placeable get(int u, int v) {
             return placeable;
         }
-    }
+    }*/
 }

@@ -1,10 +1,15 @@
-package com.ignfab.minalac.generator.utils;
+package com.ignfab.minalac.generator.placeables.gettable2d;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class SegmenterTest {
+
+    // TODO-PR: Update the tests (When SegmentCapability was added to Segmenter)
+    @Test
+    public void toBeUpdated() {
+        throw new RuntimeException("Update the tests (When SegmentCapability was added to Segmenter)");
+    }
+    /*
     @Test
     public void testConstructor() {
         assertThrows(IllegalArgumentException.class, () -> new Segmenter(0, 10));
@@ -60,5 +65,5 @@ public class SegmenterTest {
         assertEquals(new Segmenter.Segment(0 + 2, 12), odd.getSegment(23 + 2));
         assertEquals(new Segmenter.Segment(0 + 3, 12), odd.getSegment(35 + 3));
         assertEquals(new Segmenter.Segment(0 + 4, 11), odd.getSegment(47 + 4));
-    }
+    }*/
 }

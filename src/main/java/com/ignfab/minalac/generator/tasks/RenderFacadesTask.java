@@ -7,9 +7,9 @@ import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.placeables.SegmentCapability;
-import com.ignfab.minalac.generator.placeables.gettable2d.Container2d;
+import com.ignfab.minalac.generator.placeables.gettable2d.Container;
 import com.ignfab.minalac.generator.placeables.gettable2d.Gettable2d;
-import com.ignfab.minalac.generator.placeables.gettable2d.StructureExtenderXZ;
+import com.ignfab.minalac.generator.placeables.gettable2d.Layout;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Line2d;
@@ -95,7 +95,7 @@ public class RenderFacadesTask extends ModelTask<ShapesVoxelizable2d> {
         checkExtendability(upperFloorPattern.axisX(), "upperFloorPattern x-axis");
         checkExtendability(groundFloorPattern.axisZ(), "groundFloorPattern z-axis");
 
-        Container2d layout = new Container2d(lineLength, height);
+        Container layout = new Container();
         int heightGround = height;
 
         int floorMinHeight = upperFloorPattern.axisZ().minimalLength();
@@ -104,11 +104,12 @@ public class RenderFacadesTask extends ModelTask<ShapesVoxelizable2d> {
         if (height >= (floorMinHeight + groundMinHeight)) {
             int heightFloors = (height - groundMinHeight) - ((height - groundMinHeight) % floorMinHeight);
             heightGround = heightGround - heightFloors;
-            StructureExtenderXZ forFloor = new StructureExtenderXZ(lineLength, heightFloors, upperFloorPattern.axisX().minimalLength(), floorMinHeight, upperFloorPattern);
-            layout.add(forFloor, 0, heightGround);
+
+            Layout forFloor = new Layout.RepeatXZ(new WorldBBox2d(0, heightGround, lineLength, heightFloors), upperFloorPattern);
+            layout.add(forFloor);
         }
-        StructureExtenderXZ forGround = new StructureExtenderXZ(lineLength, heightGround, groundFloorPattern.axisX().minimalLength(), heightGround, groundFloorPattern);
-        layout.add(forGround, 0, 0);
+        Layout forGround = new Layout.RepeatX(new WorldBBox2d(0, 0, lineLength, heightGround), groundFloorPattern);
+        layout.add(forGround);
 
         return layout;
     }
