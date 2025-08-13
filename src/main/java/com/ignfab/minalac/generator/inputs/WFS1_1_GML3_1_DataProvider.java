@@ -70,7 +70,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
             .parameter("SERVICE", SERVICE)
             .parameter("VERSION", VERSION)
             .parameter("REQUEST", "GetFeature")
-            .parameter("OUTPUTFORMAT", "GML3")
+            .parameter("OUTPUTFORMAT", "gml3")
             .parameter("TYPENAMES", type)
             .parameter("SRSNAME", srsName)
             .build();
