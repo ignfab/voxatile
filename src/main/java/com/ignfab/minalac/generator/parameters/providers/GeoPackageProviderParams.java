@@ -13,6 +13,7 @@ import org.geotools.referencing.CRS;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.GeoPackageDataProvider;
 import com.ignfab.minalac.generator.inputs.Provider;
+import com.ignfab.minalac.generator.utils.FileHelpers;
 
 /**
  * Parameters for GeoPackage providers.
@@ -64,7 +65,7 @@ public class GeoPackageProviderParams extends ProviderParams {
             crsOverride = null;
 
         File file = new File(filePath);
-        if (!file.isFile())
+        if (!FileHelpers.isReadableRegularFile(file))
             throw new IllegalArgumentException("File \"%s\" does not exist".formatted(file.getAbsolutePath()));
 
         return new GeoPackageDataProvider(file, typeName, crsOverride, generation::getEnvelopeForCRS);

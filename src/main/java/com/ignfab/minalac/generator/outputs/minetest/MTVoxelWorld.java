@@ -1,13 +1,12 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collection;
 
 import com.ignfab.minalac.generator.generation.SquareUnitsTileGenerator;
 import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
+import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
@@ -77,33 +76,23 @@ public class MTVoxelWorld extends VoxelWorld {
         if (destination == null)
             return; // Save disabled if null destination
 
-        createFile(new File(destination, "world.mt"), """
+        try {
+            FileHelpers.write(new File(destination, "world.mt"), """
                 world_name = %s
                 enable_damage = true
                 creative_mode = true
                 auth_backend = sqlite3
                 player_backend = sqlite3
-                gameid = minetest""".formatted(metadata.getWorldName()));
-        createFile(new File(destination, "map_meta.txt"), """
+                gameid = minetest
+                """.formatted(metadata.getWorldName()));
+            FileHelpers.write(new File(destination, "map_meta.txt"), """
                 mapgen_limit = 31000
                 mg_name = singlenode
-                [end_of_params]""");
-        createFile(new File(destination, "worldmods/ign_spawn/init.lua"), """
-                minetest.setting_set("static_spawnpoint", "%d, %d, %d")""".formatted(metadata.getSpawn().x(), metadata.getSpawn().z(), metadata.getSpawn().y())); // XYZ => XZY
-    }
-
-    private void createFile(File file, String content) throws MapWriteException {
-        file.getParentFile().mkdirs();
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            throw new MapWriteException(e);
-        }
-        try (
-            FileWriter fileWriter = new FileWriter(file);
-            PrintWriter printWriter = new PrintWriter(fileWriter)
-        ) {
-            printWriter.println(content);
+                [end_of_params]
+                """);
+            FileHelpers.write(new File(destination, "worldmods/ign_spawn/init.lua"), """
+                minetest.setting_set("static_spawnpoint", "%d, %d, %d")
+                """.formatted(metadata.getSpawn().x(), metadata.getSpawn().z(), metadata.getSpawn().y())); // XYZ => XZY
         } catch (IOException e) {
             throw new MapWriteException(e);
         }

@@ -14,6 +14,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.ignfab.minalac.generator.utils.FileHelpers;
+
 /**
  * A command line parser and basic processor.
  * MinalacGeneratorCLI performs parsing, basic validation and some basic tasks such as retrieving generation parameters.
@@ -127,21 +129,11 @@ public class MinalacGeneratorCLI {
      * @return Content of parameters file/variable
      */
     public String readParameters() {
-        String parameters = null; // Must please linter with uninitialized parameters
+        String parameters;
 
         if (parametersPath != null) {
-            if (!Files.exists(parametersPath)) {
-                System.err.printf("%s does not exist%n", parametersPath);
-                System.exit(1);
-            }
-
-            if (!Files.isRegularFile(parametersPath)) {
-                System.err.printf("%s is not a regular file%n", parametersPath);
-                System.exit(1);
-            }
-
-            if (!Files.isReadable(parametersPath)) {
-                System.err.printf("%s is not readable%n", parametersPath);
+            if (!FileHelpers.isReadableRegularFile(parametersPath)) {
+                System.err.printf("%s is not a regular readable file%n", parametersPath);
                 System.exit(1);
             }
 
@@ -151,16 +143,17 @@ public class MinalacGeneratorCLI {
                 System.err.printf("Error reading parameters from %s%n", parametersPath);
                 e.printStackTrace();
                 System.exit(1);
+                return null; // never actually reached
             }
         } else {
             parameters = System.getenv(PARAMS_ENVVAR_NAME);
+            if (parameters == null || parameters.isBlank()) {
+                System.err.printf("Please provide generation parameters (either with -p option or using %s environment variable)%n", PARAMS_ENVVAR_NAME);
+                usage();
+                System.exit(1);
+            }
         }
 
-        if (parameters == null) {
-            System.err.printf("Please provide generation parameters (either with -p option or using %s environment variable)%n", PARAMS_ENVVAR_NAME);
-            usage();
-            System.exit(1);
-        }
         return parameters;
     }
 
