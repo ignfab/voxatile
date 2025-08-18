@@ -13,6 +13,7 @@ import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.inputs.GeoTiffDataProvider;
 import com.ignfab.minalac.generator.inputs.Provider;
+import com.ignfab.minalac.generator.utils.FileHelpers;
 
 /**
  * Parameters for GeoTiff providers.
@@ -56,7 +57,7 @@ public class GeoTiffProviderParams extends ProviderParams {
             crsOverride = null;
 
         File file = new File(filePath);
-        if (!file.isFile())
+        if (!FileHelpers.isReadableRegularFile(file))
             throw new IllegalArgumentException("File \"%s\" does not exist".formatted(file.getAbsolutePath()));
 
         return new GeoTiffDataProvider(file, crsOverride, generation::getEnvelopeForCRS);
