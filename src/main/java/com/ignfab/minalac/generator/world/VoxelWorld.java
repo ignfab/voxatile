@@ -36,6 +36,7 @@ public abstract class VoxelWorld {
         if (!this.limits.isEmpty())
             throw new IllegalStateException("The limits have already been set");
         this.limits = limits;
+        this.metadata.setSpawn(limits.center());
     }
 
     /**

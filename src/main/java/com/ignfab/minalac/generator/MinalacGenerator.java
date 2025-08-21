@@ -41,10 +41,9 @@ import com.ignfab.minalac.generator.parameters.tasks.PopulateHeightmapTaskParams
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderVectorsTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.SetSpawnTaskParams;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
@@ -95,6 +94,7 @@ public final class MinalacGenerator {
         parser.registerParams("renderBuildings", RenderBuildingsTaskParams.class);
         parser.registerParams("renderHeightmap", RenderHeightmapTaskParams.class);
         parser.registerParams("renderVectors", RenderVectorsTaskParams.class);
+        parser.registerParams("setSpawn", SetSpawnTaskParams.class);
 
 
         parser.registerParams("wfs", WFSProviderParams.class);
@@ -143,11 +143,6 @@ public final class MinalacGenerator {
 
         System.out.println("Saving world");
         VoxelWorldMetadata metadata = generation.world().getMetadata();
-        WorldBBox3d limits = generation.world().limits();
-        int spawnX = (limits.minX() + limits.maxX() + 1) / 2;
-        int spawnY = (limits.minY() + limits.maxY() + 1) / 2;
-        // TODO: Spawn height should now be computed by a task when tile includes spawnpoint (MINALAC-138)
-        metadata.setSpawn(new WorldCoords3d(spawnX, spawnY, 100));
         metadata.setWorldName("Minalac");
 
         tile.save();
