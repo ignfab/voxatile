@@ -400,4 +400,16 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
     public WorldBBox3d bbox() {
         return this;
     }
+
+    /**
+     * Returns the center of this {@link WorldBBox3d}.
+     * @return the coordinates of the center.
+     */
+    public WorldCoords3d center() {
+        return new WorldCoords3d(
+            min.x() + size.x() / 2,
+            min.y() + size.y() / 2,
+            min.z() + size.z() / 2
+        );
+    }
 }

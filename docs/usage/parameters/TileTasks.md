@@ -13,6 +13,7 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`renderVectors`](#rendervectors)
   * [`levelGround`](#levelground)
   * [`renderBuildings`](#renderbuildings)
+  * [`setSpawn`](#setspawn)
 * [Tasks operating on heightmaps](#tasks-operating-on-heightmaps)
   * [`populateHeightmap`](#populateheightmap)
   * [`copyHeightmap`](#copyheightmap)
@@ -144,6 +145,26 @@ heightmap: ground
 roof: default:cobble
 wall: default:brick
 window: default:glass
+```
+
+### `setSpawn`
+This task sets the initial position of the player.
+The provided coordinates must be within the generation limits.
+It queries the heightmap to determine the altitude (Z) of the spawn point.
+
+#### Extra parameters
+
+- `heightmap`: [Heightmap](Heightmaps.md) to use (required).
+- `x` (int): x-coordinate of the initial position (required).
+- `y` (int): y-coordinate of the initial position (required).
+
+#### Example
+
+```yaml
+type: setSpawn
+heightmap: ground
+x: 2
+y: -1
 ```
 
 ## Tasks operating on heightmaps

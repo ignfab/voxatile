@@ -274,4 +274,14 @@ public class WorldBBox2dTest {
 
         assertEmpty(WorldBBox2d.EMPTY.crop(list.iterator()));
     }
+
+    @Test
+    public void testCenter() {
+        // sizeX odd, sizeY even
+        assertEquals(new WorldCoords2d(-1, 1), new WorldBBox2d(-2, -1, 3, 4).center());
+        // sizeX even, sizeY odd
+        assertEquals(new WorldCoords2d(1, -1), new WorldBBox2d(-1, -2, 4, 3).center());
+        // unit sizes
+        assertEquals(new WorldCoords2d(4, 3), new WorldBBox2d(4, 3, 1, 1).center());
+    }
 }

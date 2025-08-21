@@ -32,6 +32,7 @@ public class VoxelWorldTest {
         });
 
         assertEquals(new WorldBBox3d(new WorldCoords3d(-1, -2, -3), new WorldCoords3d(4, 5, 6)), world.limits());
+        assertEquals(new WorldCoords3d(2, 2, 2), world.getMetadata().getSpawn());
 
         assertThrows(IllegalStateException.class, () -> {
             world.setLimits(new WorldBBox3d(
@@ -91,7 +92,7 @@ public class VoxelWorldTest {
     private static class VoxelWorldMock extends VoxelWorld {
 
         protected VoxelWorldMock() {
-            super(null);
+            super(new VoxelWorldMetadata());
         }
 
         @Override

@@ -30,7 +30,7 @@ public class TestingHeightmapParams extends WritableHeightmapParams {
      */
     @ConstructorProperties({"requiredField"})
     public TestingHeightmapParams(String requiredField) {
-        super("stored");
+        super(requiredField);
         this.requiredField = requiredField;
     }
 

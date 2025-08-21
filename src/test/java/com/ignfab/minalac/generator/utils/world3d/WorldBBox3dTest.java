@@ -247,4 +247,14 @@ public class WorldBBox3dTest {
 
         assertEmpty(WorldBBox3d.EMPTY.crop(list.iterator()));
     }
+
+    @Test
+    public void testCenter() {
+        // Odd sizes
+        assertEquals(new WorldCoords3d(-2, 0, 2), new WorldBBox3d(-3, -2, -1, 3, 5, 7).center());
+        // Even sizes
+        assertEquals(new WorldCoords3d(-1, 1, 3), new WorldBBox3d(-3, -2, -1, 4, 6, 8).center());
+        // unit sizes
+        assertEquals(new WorldCoords3d(-3, -2, -1), new WorldBBox3d(-3, -2, -1, 1, 1, 1).center());
+    }
 }

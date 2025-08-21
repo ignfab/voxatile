@@ -387,4 +387,15 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
     public WorldBBox2d bbox() {
         return this;
     }
+
+    /**
+     * Returns the center of this {@link WorldBBox2d}.
+     * @return the coordinates of the center.
+     */
+    public WorldCoords2d center() {
+        return new WorldCoords2d(
+            min.x() + size.x() / 2,
+            min.y() + size.y() / 2
+        );
+    }
 }

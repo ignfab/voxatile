@@ -68,6 +68,15 @@ forEachTile:
       type: altitude
     heightmap: ground
 
+  setSpawn:
+    after:
+      - setAltitude
+    type: setSpawn
+    heightmap:
+      sum: [ground, 1]
+    x: 0
+    y: 0
+
   flattenWater:
     after:
       - fetchWater

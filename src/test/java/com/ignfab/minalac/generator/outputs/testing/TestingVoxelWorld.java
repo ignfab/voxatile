@@ -5,6 +5,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelTile;
 import com.ignfab.minalac.generator.world.VoxelWorld;
+import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
 /**
  * Testing purpose {@link VoxelWorld} intended to be used in unit tests.
@@ -24,7 +25,7 @@ public class TestingVoxelWorld extends VoxelWorld {
      * Creates a new TestingVoxelWorld.
      */
     public TestingVoxelWorld() {
-        super(null);
+        super(new VoxelWorldMetadata());
     }
 
     @Override
