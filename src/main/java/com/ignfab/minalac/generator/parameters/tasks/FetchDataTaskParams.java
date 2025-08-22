@@ -1,8 +1,6 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
 import java.beans.ConstructorProperties;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -39,12 +37,6 @@ public class FetchDataTaskParams extends TileTaskParams {
      */
     @JsonSetter(nulls = Nulls.SKIP)
     public PostProcessorParams postProcessing = new IdentityPostProcessorParams();
-
-    /**
-     * Dependencies (optional).
-     */
-    @JsonSetter(nulls = Nulls.SKIP)
-    public List<String> after = new ArrayList<>();
 
    /**
      * Constructor used to ensure that the required fields are present during deserialization.

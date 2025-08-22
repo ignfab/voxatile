@@ -61,16 +61,14 @@ forEachTile:
       type: geoToolsVector
 
   setAltitude:
-    after:
-      - fetchAltitude
+    after: fetchAltitude
     type: populateHeightmap
     models:
       type: altitude
     heightmap: ground
 
   setSpawn:
-    after:
-      - setAltitude
+    after: setAltitude
     type: setSpawn
     heightmap:
       sum: [ground, 1]
@@ -115,8 +113,7 @@ forEachTile:
     filling: *voxel-cobble
 
   renderBuildings:
-    after:
-      - levelBuildings
+    after: levelBuildings
     type: renderBuildings
     models:
       type: buildings
@@ -164,8 +161,7 @@ forEachTile:
           place: *forest-tree2
 
   populateWaterPresence:
-    after:
-      - fetchWater
+    after: fetchWater
     type: copyHeightmap
     models:
       type: water
@@ -173,8 +169,7 @@ forEachTile:
     to: water
 
   computeWaterDepth:
-    after:
-      - populateWaterPresence
+    after: populateWaterPresence
     type: copyHeightmap
     models:
       type: water

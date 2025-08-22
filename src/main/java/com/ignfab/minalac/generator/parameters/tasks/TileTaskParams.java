@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.parameters.tasks;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
@@ -18,6 +19,7 @@ public abstract class TileTaskParams extends PolymorphicParams {
      * Dependencies (optional).
      */
     @JsonSetter(nulls = Nulls.SKIP)
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     public List<String> after = new ArrayList<>();
 
     /**
