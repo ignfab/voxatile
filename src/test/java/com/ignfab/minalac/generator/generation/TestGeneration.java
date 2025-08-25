@@ -1,5 +1,8 @@
 package com.ignfab.minalac.generator.generation;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
@@ -13,6 +16,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.random.Seed;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelTile;
@@ -43,7 +47,7 @@ public class TestGeneration {
     public void testGeneration() throws FactoryException, TransformException {
         VoxelWorld world = new EmptyVoxelWorld(500, 500);
 
-        Generation generation = new Generation(world, seed, crs2154, x2154, y2154, 500, 500, 2.0, 3.0, 0.5 * Math.PI);
+        Generation generation = new Generation(world, seed, crs2154, x2154, y2154, 500, 500, 2.0, 3.0, 0.5 * Math.PI, 500);
 
         assertEquals(seed, generation.seed());
         WorldBBox3d box = generation.world().limits();
@@ -81,6 +85,10 @@ public class TestGeneration {
         geometry = converter.convert(geometry);
         assertEquals(0.0, geometry.getCoordinate().x, 0.01);
         assertEquals(0.0, geometry.getCoordinate().y, 0.01);
+
+        // Check tiling
+        assertEquals(500, generation.maxTileSize());
+        assertEquals(1, generation.numberOfTiles());
     }
 
     private static class EmptyVoxelWorld extends VoxelWorld {
@@ -109,6 +117,11 @@ public class TestGeneration {
         @Override
         public VoxelTile newTile(WorldBBox3d limits) {
             throw new UnsupportedOperationException("Unimplemented method 'newTile'");
+        }
+
+        @Override
+        public Collection<WorldBBox2d> tiles(int maxTileSize) {
+            return Collections.singleton(maxLimits().to2d());
         }
     }
 }

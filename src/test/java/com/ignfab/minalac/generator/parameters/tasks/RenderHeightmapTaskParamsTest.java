@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class RenderHeightmapTaskParamsTest {
     @Test
     public void testDeserializeAt() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
         generation.heightmaps().add(new HeightmapDeclaration("ground", 5));
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -47,7 +47,7 @@ public class RenderHeightmapTaskParamsTest {
 
     @Test
     public void testDeserializeMinMax() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
         generation.heightmaps().add(new HeightmapDeclaration("water", 5));
         generation.heightmaps().add(new HeightmapDeclaration("ground", 25));
 

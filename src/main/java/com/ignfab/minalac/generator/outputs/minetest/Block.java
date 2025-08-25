@@ -9,6 +9,12 @@ import java.util.HashMap;
  * @see <a href="https://github.com/minetest/minetest/blob/master/doc/world_format.md#map-file-format">Minetest world format</a>
  */
 public class Block {
+
+    /**
+     * Block size, used for tiling.
+     */
+    public static final int SIZE = 16;
+
     private short[] param0;
     private byte[] param1;
     private byte[] param2;

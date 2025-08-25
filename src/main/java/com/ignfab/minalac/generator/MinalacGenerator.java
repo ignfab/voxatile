@@ -78,6 +78,8 @@ public final class MinalacGenerator {
         else
             destination = cli.outputPath().toFile();
 
+        Integer maxTileSize = cli.maxTileSize();
+
         // Generation parsing
         ParamsParser parser = new ParamsParser();
 
@@ -114,40 +116,64 @@ public final class MinalacGenerator {
         parser.registerParams("geometryBuffer", JTSGeometryBufferPostProcessorParams.class);
         parser.registerParams("remap", MetadataValueMappingPostProcessorParams.class);
 
-        Generation generation = parser.parse(cli.readParameters()).create();
+        Generation generation = parser.parse(cli.readParameters()).create(maxTileSize);
 
-        System.out.println("Initialization: " + Duration.between(initializationStart, Instant.now()).toSeconds() + "s");
+        System.out.printf("Generation initialization took %ds.%n", Duration.between(initializationStart, Instant.now()).toSeconds());
         if (cli.generationDisabled()) {
-            System.out.println("Total: " + Duration.between(start, Instant.now()).toSeconds() + "s");
-            System.out.println("Done (stopped before map generation)");
+            System.out.printf("Total: %ds.%nDone (stopped before map generation).%n", Duration.between(start, Instant.now()).toSeconds());
             return;
         }
 
-
-        System.out.println("Creation of the map.");
-        // Start generation duration
-        Instant generationStart = Instant.now();
+        Instant worldInitializationStart = Instant.now();
 
         // Initialize world
         generation.world().initialize();
+        System.out.printf("World initialization took %ds.%n", Duration.between(worldInitializationStart, Instant.now()).toSeconds());
 
-        // One unique tile for now
-        GenerationTile tile = new GenerationTile(generation, generation.world().limits());
+        int numberOfTiles = generation.numberOfTiles();
+        System.out.printf("Generation will be performed in %d tiles of maximum %d voxels by side.%n", numberOfTiles, generation.maxTileSize());
+
+        // Start generating tiles
+        Duration generatingDuration = Duration.ZERO; // This will hold total generation time
+        Duration mapSavingDuration = Duration.ZERO; // This will hold total map saving time
+
+        int currentTile = 0;
+
         try {
-            generation.scheduler().run(tile, 5, TimeUnit.MINUTES);
+            for (GenerationTile tile : generation.tiles()) {
+                currentTile++;
+                String tileString = "%d/%d (x=%d..%d, y=%d..%d)".formatted(currentTile, numberOfTiles, tile.limits().minX(), tile.limits().maxX(), tile.limits().minY(), tile.limits().maxY());
+                System.out.printf("%nTile %s.%n", tileString);
+
+                // Generate tile
+                Instant tileGenerationStart = Instant.now();
+                generation.scheduler().run(tile, 5, TimeUnit.MINUTES);
+                Duration tileGenerationDuration = Duration.between(tileGenerationStart, Instant.now());
+
+                generatingDuration = generatingDuration.plus(tileGenerationDuration);
+                System.out.printf("Tile %s generated in %ds.%n", tileString, tileGenerationDuration.toSeconds());
+
+                // Save tile
+                Instant tileSavingStart = Instant.now();
+                tile.save();
+                Duration tileSavingDuration = Duration.between(tileSavingStart, Instant.now());
+
+                mapSavingDuration = mapSavingDuration.plus(tileSavingDuration);
+                System.out.printf("Tile %s saved in %ds.%n", tileString, tileSavingDuration.toSeconds());
+            }
         } finally {
             generation.scheduler().shutdown();
         }
 
-        System.out.println("Generation: " + Duration.between(generationStart, Instant.now()).toSeconds() + "s");
+        System.out.printf("%nAll %d tiles generated and saved.%nSpent %ds generating and %ds saving.%n", numberOfTiles, generatingDuration.toSeconds(), mapSavingDuration.toSeconds());
 
-        System.out.println("Saving world");
+        Instant finalizationStart = Instant.now();
+
         VoxelWorldMetadata metadata = generation.world().getMetadata();
         metadata.setWorldName("Minalac");
 
-        tile.save();
         generation.world().finalizeAndSave();
-        System.out.println("Total: " + Duration.between(start, Instant.now()).toSeconds() + "s");
-        System.out.println("Done");
+        System.out.printf("Generation finalization took %ds.%n", Duration.between(finalizationStart, Instant.now()).toSeconds());
+        System.out.printf("Total: %ds.%nDone.%n", Duration.between(start, Instant.now()).toSeconds());
     }
 }

@@ -21,12 +21,15 @@ import org.apache.commons.cli.ParseException;
 public class MinalacGeneratorCLI {
 
     private static final String PARAMS_ENVVAR_NAME = "MINALAC_PARAMS";
+    private static final String MAX_TILE_SIZE_ENVVAR_NAME = "MINALAC_MAX_TILE_SIZE";
 
     private Path outputPath;
     private Path parametersPath;
 
     private boolean generationDisabled;
     private boolean saveDisabled;
+
+    private Integer maxTileSize = null;
 
     private final Options options;
 
@@ -39,6 +42,7 @@ public class MinalacGeneratorCLI {
         options.addOption(new Option("p", "param-file", true, "Get generation params from file"));
         options.addOption(new Option(null, "generation-disabled", false, "Stop before starting generation, after parameters parsed"));
         options.addOption(new Option(null, "save-disabled", false, "Stop before saving output file, after generation done"));
+        options.addOption(new Option(null, "max-tile-size", true, "Set maximum tile size (may be passed using %s environment variable)".formatted(MAX_TILE_SIZE_ENVVAR_NAME)));
     }
 
     /**
@@ -52,7 +56,7 @@ public class MinalacGeneratorCLI {
         try {
             cmd = parser.parse(options, args);
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
             usage();
             System.exit(1);
             return; // Must please linter with uninitialized cmd
@@ -67,9 +71,27 @@ public class MinalacGeneratorCLI {
             try {
                 parametersPath = Paths.get(cmd.getOptionValue("p"));
             } catch (InvalidPathException e) {
-                System.out.println("Invalid parameters file path");
-                System.out.println(e.getMessage());
+                System.err.println("Invalid parameters file path");
+                System.err.println(e.getMessage());
                 System.exit(1);
+            }
+        }
+
+        if (cmd.hasOption("--max-tile-size")) {
+            try {
+                maxTileSize = parseStrictPositiveInteger(cmd.getOptionValue("--max-tile-size"));
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid value for --max-tile-size: should be a positive integer number");
+                System.exit(1);
+            }
+        } else {
+            String envvar = System.getenv(MAX_TILE_SIZE_ENVVAR_NAME);
+            if (envvar != null && !envvar.isBlank()) {
+                try {
+                    maxTileSize = parseStrictPositiveInteger(envvar);
+                } catch (NumberFormatException e) {
+                    System.out.printf("Warning: Omitting invalid value '%s' in %s environment variable (should have been a positive integer number).%n", envvar, MAX_TILE_SIZE_ENVVAR_NAME);
+                }
             }
         }
 
@@ -77,7 +99,7 @@ public class MinalacGeneratorCLI {
         saveDisabled = cmd.hasOption("--save-disabled");
 
         if (cmd.getArgs().length != 1) {
-            System.out.println("Please provide output path");
+            System.err.println("Please provide output path");
             usage();
             System.exit(1);
         }
@@ -85,8 +107,8 @@ public class MinalacGeneratorCLI {
         try {
             outputPath = Paths.get(cmd.getArgs()[0]);
         } catch (InvalidPathException e) {
-            System.out.println("Invalid output path");
-            System.out.println(e.getMessage());
+            System.err.println("Invalid output path");
+            System.err.println(e.getMessage());
             System.exit(1);
         }
     }
@@ -109,24 +131,24 @@ public class MinalacGeneratorCLI {
 
         if (parametersPath != null) {
             if (!Files.exists(parametersPath)) {
-                System.out.printf("%s does not exist%n", parametersPath);
+                System.err.printf("%s does not exist%n", parametersPath);
                 System.exit(1);
             }
 
             if (!Files.isRegularFile(parametersPath)) {
-                System.out.printf("%s is not a regular file%n", parametersPath);
+                System.err.printf("%s is not a regular file%n", parametersPath);
                 System.exit(1);
             }
 
             if (!Files.isReadable(parametersPath)) {
-                System.out.printf("%s is not readable%n", parametersPath);
+                System.err.printf("%s is not readable%n", parametersPath);
                 System.exit(1);
             }
 
             try {
                 parameters = Files.readString(parametersPath);
             } catch (IOException e) {
-                System.out.printf("Error reading parameters from %s%n", parametersPath);
+                System.err.printf("Error reading parameters from %s%n", parametersPath);
                 e.printStackTrace();
                 System.exit(1);
             }
@@ -135,7 +157,7 @@ public class MinalacGeneratorCLI {
         }
 
         if (parameters == null) {
-            System.out.printf("Please provide generation parameters (either with -p option or using %s environment variable)%n", PARAMS_ENVVAR_NAME);
+            System.err.printf("Please provide generation parameters (either with -p option or using %s environment variable)%n", PARAMS_ENVVAR_NAME);
             usage();
             System.exit(1);
         }
@@ -170,5 +192,21 @@ public class MinalacGeneratorCLI {
      */
     public boolean saveDisabled() {
         return saveDisabled;
+    }
+
+    /**
+     * Returns wanted tiles size if any.
+     *
+     * @return tiles maximum
+     */
+    public Integer maxTileSize() {
+        return maxTileSize;
+    }
+
+    private static int parseStrictPositiveInteger(String value) throws NumberFormatException {
+        int result = Integer.parseInt(value);
+        if (result <= 0)
+            throw new NumberFormatException("Not a positive integer");
+        return result;
     }
 }

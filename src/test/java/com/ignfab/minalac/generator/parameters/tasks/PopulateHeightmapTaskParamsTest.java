@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PopulateHeightmapTaskParamsTest {
     @Test
     public void testDeserialize() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
         generation.heightmaps().add(new HeightmapDeclaration("ground", 5));
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());

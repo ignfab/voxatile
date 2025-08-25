@@ -19,6 +19,12 @@ import net.querz.nbt.tag.CompoundTag;
  * @see <a href="https://minecraft.wiki/w/Chunk">Chunk (Minecraft Wiki)</a>
  */
 public record Region(int regionX, int regionZ, MCAFile file) {
+
+    /**
+     * Region size, used for tiling.
+     */
+    public static final int SIZE = 512;
+
     /**
      * Constructs a new {@link Region}.
      *

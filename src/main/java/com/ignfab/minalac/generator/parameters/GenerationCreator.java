@@ -24,9 +24,10 @@ public final class GenerationCreator {
      * Creates a new {@code Generation} from the specified parameters.
      *
      * @param params the parameters
+     * @param maxTileSize max tile size if tiling wanted, else null
      * @return the corresponding generation object
      */
-    static Generation create(GenerationParams params) {
+    static Generation create(GenerationParams params, Integer maxTileSize) {
         // TODO : If not provided its default value should be calculated by finding the appropriated projected CRS for the provided center point.
         // At the moment the default value is EPSG:2154
         CoordinateReferenceSystem targetCrs;
@@ -52,7 +53,8 @@ public final class GenerationCreator {
             params.area.extentY,
             params.horizontalScale,
             params.verticalScale,
-            Math.toRadians(params.area.angle)
+            Math.toRadians(params.area.angle),
+            maxTileSize == null || maxTileSize <= 0 ? Math.max(params.area.extentX, params.area.extentY) : maxTileSize
         );
 
         params.heightmaps.forEach((name, heightmapParams) ->

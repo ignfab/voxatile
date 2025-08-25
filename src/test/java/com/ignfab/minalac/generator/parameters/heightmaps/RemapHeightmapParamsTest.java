@@ -25,7 +25,7 @@ public class RemapHeightmapParamsTest {
 
     @Test
     public void testDeserialize() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
         HeightmapDeclaration heightmapSpec = (new HeightmapDeclaration("lotad", 0));
         generation.heightmaps().add(heightmapSpec);
 

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 public class ConstantHeightmapParamsTest {
     @Test
     public void testDeserialize() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
 
         ReadableHeightmapParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(
             ReadableHeightmapParams.class,

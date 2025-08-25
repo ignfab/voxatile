@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class MultiOperandsHeightmapParamsTest {
     @Test
     public void testDeserializeSum() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
         HeightmapDeclaration heightmapSpec = (new HeightmapDeclaration("ground", 0));
         generation.heightmaps().add(heightmapSpec);
 
@@ -54,7 +54,7 @@ public class MultiOperandsHeightmapParamsTest {
 
     @Test
     public void testDeserializeProduct() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
         HeightmapDeclaration heightmapSpec = (new HeightmapDeclaration("ground", 0));
         generation.heightmaps().add(heightmapSpec);
 

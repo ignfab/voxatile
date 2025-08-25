@@ -21,13 +21,25 @@ java -jar Generator.jar [OPTIONS] <outputPath>
 
 Options:
 - `-h` or `--help` display command usage.
-- `-p <path>` or `--param-file <path>` read generation parameters from given path. If omitted, parameters are read from `MINALAC_PARAMS` environment variable.
+- `-p <path>` or `--param-file <path>` read generation parameters from given path. If omitted, parameters are read from [`MINALAC_PARAMS`](#minalac_params) environment variable.
 - `--generation-disabled` Stop before starting generation, after parameters parsed.
 - `--save-disabled` Stop before saving output file, after generation done.
+- `--max-tile-size <size>` Perform tiled generation with tiles no larger than `size` (positive integer) in both dimensions. See also [`MINALAC_MAX_TILE_SIZE`](#minalac_max_tile_size) environment variable.
+
 
 `<outputPath>`: generation output path (must be an existing and writable directory).
 
 Output path and generation parameters have to be provided.
+
+## Environment variables
+
+### `MINALAC_PARAMS`
+
+If set, may contain generation parameters to use when `--param-file` command line option is absent.
+
+### `MINALAC_MAX_TILE_SIZE`
+
+If set to a positive integer, perform tiled generation with tiles no larger than this number. Overridden by `--max-tile-size` command line option.
 
 ## Compile and run
 

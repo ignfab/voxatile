@@ -51,7 +51,7 @@ public class MTVoxelTile extends VoxelTile {
     private long coordsToPos(int blockX, int blockY, int blockZ) {
         // See position hashing algorithm on world format documentation
         // https://github.com/minetest/minetest/blob/master/doc/world_format.md#position-hashing
-        return blockZ * 16777216L + blockY * 4096 + blockX;
+        return blockZ * 16777216L + blockY * 4096L + blockX;
     }
 
     /**

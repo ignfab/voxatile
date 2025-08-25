@@ -16,7 +16,7 @@ public class GeoToolsVectorProcessorParamsTest {
     public void testCreate() throws FactoryException {
         CoordinateReferenceSystem crs2154 = CRS.decode("EPSG:2154");
 
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, crs2154, 0, 0, 20, 20, 1, 1, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, crs2154, 0, 0, 20, 20, 1, 1, 0.0, 100);
 
         // A simple OK test
         final GeoToolsVectorProcessorParams params = new GeoToolsVectorProcessorParams();

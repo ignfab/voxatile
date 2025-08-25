@@ -18,7 +18,7 @@ public class LocalMinimumHeightmapParamsTest {
 
     @Test
     public void testDeserialize() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
         generation.heightmaps().add(new HeightmapDeclaration("ground", 0));
 
         LocalMinimumHeightmapParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(

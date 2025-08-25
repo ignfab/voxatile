@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.outputs.minecraft;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Random;
 
@@ -14,6 +15,8 @@ import net.querz.nbt.tag.IntTag;
 import net.querz.nbt.tag.ListTag;
 import net.querz.nbt.tag.StringTag;
 
+import com.ignfab.minalac.generator.generation.SquareUnitsTileGenerator;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldSize3d;
@@ -472,5 +475,11 @@ public class MCVoxelWorld extends VoxelWorld {
             root.put("Data", data);
         }
         return root;
+    }
+
+    @Override
+    public Collection<WorldBBox2d> tiles(int maxTileSize) {
+        SquareUnitsTileGenerator tileGenerator = new SquareUnitsTileGenerator(Region.SIZE, limits().to2d());
+        return tileGenerator.getTiles(maxTileSize);
     }
 }
