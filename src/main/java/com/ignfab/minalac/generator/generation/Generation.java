@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.generation;
 
+import java.util.Collection;
+
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -14,7 +16,9 @@ import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationSt
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
 import com.ignfab.minalac.generator.utils.execution.Scheduler;
+import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.random.Seed;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
@@ -41,6 +45,9 @@ public class Generation {
 
     private final Scheduler<GenerationTile> scheduler = new Scheduler<>();
 
+    private final int maxTileSize;
+    private final Collection<WorldBBox2d> tiles;
+
     /**
      * Constructs a new generation context.
      * It sets {@code VoxelWorld}'s limits in way the center is at {@code WorldCoords2d} (0, 0).
@@ -55,6 +62,7 @@ public class Generation {
      * @param horizontalScale Horizontal size of voxel in CRS units
      * @param verticalScale Vertical size of voxel in CRS units
      * @param angle Rotation angle around center in radians
+     * @param maxTileSize Maximum tile size
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     public Generation(
@@ -67,7 +75,8 @@ public class Generation {
         int extentY,
         double horizontalScale,
         double verticalScale,
-        double angle) {
+        double angle,
+        int maxTileSize) {
 
         this.seed = seed;
 
@@ -82,6 +91,10 @@ public class Generation {
         ));
 
         this.world = world;
+
+        this.maxTileSize = maxTileSize;
+        tiles = world.tiles(maxTileSize);
+
         this.crs = crs;
         this.verticalScale = verticalScale;
 
@@ -107,7 +120,7 @@ public class Generation {
     }
 
     /**
-     * Returns the {@link Store} for the stored heightmaps declarations.
+     * Returns the {@link HeightmapDeclarationStore} for the stored heightmaps.
      *
      * @return the heightmap declaration store.
      */
@@ -186,5 +199,34 @@ public class Generation {
      */
     public CoordinateReferenceSystem crs() {
         return crs;
+    }
+
+    /**
+     * Returns maximum generation tile size.
+     *
+     * @return maximum generation tile size
+     */
+    public int maxTileSize() {
+        return this.maxTileSize;
+    }
+
+    /**
+     * Returns number of generation tiles.
+     *
+     * @return number of generation tiles
+     */
+    public int numberOfTiles() {
+        return this.tiles.size();
+    }
+
+    /**
+     * Returns an itereable over generation tiles.
+     *
+     * @return an itereable over generation tiles
+     */
+    public Iterable<GenerationTile> tiles() {
+        return Iterables.remap(tiles,
+            bbox -> new GenerationTile(this, bbox.to3d(world.limits().minZ(), world.limits().sizeZ()))
+        );
     }
 }

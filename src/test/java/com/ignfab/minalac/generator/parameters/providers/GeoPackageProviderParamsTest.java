@@ -19,7 +19,7 @@ public class GeoPackageProviderParamsTest {
     @Test
     public void testCreate(@TempDir File tmp) throws FactoryException, IOException {
         CoordinateReferenceSystem crs = CRS.decode("EPSG:2154");
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, crs, 0, 0, 20, 20, 1, 1, 0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, crs, 0, 0, 20, 20, 1, 1, 0, 100);
         File file = new File(tmp, "fake.gpkg");
         if (!file.createNewFile())
             fail("Unable to setup test file");

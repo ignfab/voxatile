@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.world;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.placeables.Placeable;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
@@ -112,6 +114,11 @@ public class VoxelWorldTest {
         @Override
         public VoxelTile newTile(WorldBBox3d limits) {
             throw new UnsupportedOperationException("Unimplemented method 'newTile'");
+        }
+
+        @Override
+        public Collection<WorldBBox2d> tiles(int maxTileSize) {
+            return Collections.singleton(maxLimits().to2d());
         }
     }
 }

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class CopyHeightmapTaskParamsTest {
     @Test
     public void testDeserialize() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
         generation.heightmaps().add(new HeightmapDeclaration("ground", 5));
         generation.heightmaps().add(new HeightmapDeclaration("water", 1));
 

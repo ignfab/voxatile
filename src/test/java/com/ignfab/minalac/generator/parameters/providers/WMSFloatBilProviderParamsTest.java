@@ -16,7 +16,7 @@ public class WMSFloatBilProviderParamsTest {
     @Test
     public void testCreate() throws NoSuchAuthorityCodeException, FactoryException {
         CoordinateReferenceSystem crs = CRS.decode("EPSG:2154");
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, crs, 0, 0, 100, 100, 1, 1, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, crs, 0, 0, 100, 100, 1, 1, 0.0, 100);
 
         // A simple OK test
         final WMSFloatBilProviderParams params = new WMSFloatBilProviderParams("http://toto.com", "layer1");

@@ -124,7 +124,7 @@ public class GenerationParamsTest {
             placeable,
             placeable
         ));
-        Generation generation = params.create();
+        Generation generation = params.create(100);
 
         assertNotNull(generation);
         assertEquals(50, generation.world().limits().sizeX());

@@ -39,3 +39,9 @@ Where:
 - `<outputPath>` is where world files will be generated, only required if no option set (if directory exists, it will be emptied).
 
 While many places are available, there are only two formats (`minecraft`, `minetest`) and one process (`full`) for now.
+
+To perform tiled generation, set `MINALAC_MAX_TILE_SIZE` environment variable to the wanted maximum tile size:
+
+```shell
+MINALAC_MAX_TILE_SIZE=512 ./generate.sh minetest full ign $HOME/.minetest/worlds/minalac
+```

@@ -1,5 +1,8 @@
 package com.ignfab.minalac.generator.world;
 
+import java.util.Collection;
+
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
@@ -99,4 +102,13 @@ public abstract class VoxelWorld {
      * @throws MapWriteException if an error occurs while writing to the destination.
      */
     public abstract void finalizeAndSave() throws MapWriteException;
+
+    /**
+     * Computes tiles of maximum size, covering the whole world.
+     *
+     * @param maxTileSize maximum tile size (on x and y axes)
+     *
+     * @return a list of boxes representing resulting tiles
+     */
+    public abstract Collection<WorldBBox2d> tiles(int maxTileSize);
 }

@@ -34,7 +34,8 @@ public class TestingGenerationTile extends GenerationTile {
                 limits.sizeY(), // extentY
                 1.0, // Horizontal scale
                 1.0, // Vertical sclae
-                0 // Angle
+                0, // Angle
+                Math.max(limits.sizeX(), limits.sizeY())
             ),
             limits);
         heightmaps = new TestingHeightmapStore(generation().heightmaps(), limits().to2d());

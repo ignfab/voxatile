@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 
+import com.ignfab.minalac.generator.generation.SquareUnitsTileGenerator;
 import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
@@ -104,5 +107,11 @@ public class MTVoxelWorld extends VoxelWorld {
         } catch (IOException e) {
             throw new MapWriteException(e);
         }
+    }
+
+    @Override
+    public Collection<WorldBBox2d> tiles(int maxTileSize) {
+        SquareUnitsTileGenerator tileGenerator = new SquareUnitsTileGenerator(Block.SIZE, limits().to2d());
+        return tileGenerator.getTiles(maxTileSize);
     }
 }

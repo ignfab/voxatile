@@ -129,10 +129,11 @@ public class GenerationParams {
     /**
      * Creates the corresponding {@link Generation}.
      *
+     * @param maxTileSize max tile size if tiling wanted, else null
      * @return the corresponding {@code Generation}
      */
-    public Generation create() {
-        return GenerationCreator.create(this);
+    public Generation create(Integer maxTileSize) {
+        return GenerationCreator.create(this, maxTileSize);
     }
 
     /**

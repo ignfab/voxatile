@@ -16,7 +16,7 @@ public class WFSProviderParamsTest {
     @Test
     public void testCreate() throws NoSuchAuthorityCodeException, FactoryException {
         CoordinateReferenceSystem crs = CRS.decode("EPSG:2154");
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, crs, 0, 0, 20, 20, 1, 1, 0.0);
+        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, crs, 0, 0, 20, 20, 1, 1, 0.0, 100);
 
         // A simple OK test
         final WFSProviderParams params = new WFSProviderParams("http://toto.com", "feature1");
