@@ -59,14 +59,14 @@ public class SQLiteMapWriter {
      * @param block the {@link Block} to be inserted
      * @throws MapWriteException if an {@link SQLException} or {@link IOException} occurs during insertion
      */
-    public void insertBlock(int pos, Block block) throws MapWriteException {
+    public void insertBlock(long pos, Block block) throws MapWriteException {
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO blocks VALUES (?,?)");
-            statement.setInt(1, pos);
+            statement.setLong(1, pos);
             statement.setBytes(2, this.serializer.serialize(block));
             statement.execute();
         } catch (SQLException | IOException e) {
-            throw new MapWriteException("Failed to insert blocks into map", e);
+            throw new MapWriteException("Failed to insert blocks %d into map".formatted(pos), e);
         }
     }
 }
