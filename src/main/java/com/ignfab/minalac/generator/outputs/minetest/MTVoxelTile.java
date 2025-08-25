@@ -16,7 +16,7 @@ import com.ignfab.minalac.generator.world.VoxelTile;
 public class MTVoxelTile extends VoxelTile {
     private final File destination;
 
-    private final HashMap<Integer, Block> blocks = new HashMap<>();
+    private final HashMap<Long, Block> blocks = new HashMap<>();
 
     /**
      * Creates a new {@code MTVoxelTile}.
@@ -31,8 +31,7 @@ public class MTVoxelTile extends VoxelTile {
 
     // Retrieves or creates the mapblock corresponding to given voxel position.
     private Block getOrCreateBlock(int blockX, int blockY, int blockZ) {
-        Integer pos = coordsToPos(blockX, blockY, blockZ);
-
+        Long pos = coordsToPos(blockX, blockY, blockZ);
         Block block = blocks.get(pos);
         if (block == null)
             synchronized (blocks) {
@@ -49,10 +48,10 @@ public class MTVoxelTile extends VoxelTile {
         return blocks.get(coordsToPos(blockX, blockY, blockZ));
     }
 
-    private Integer coordsToPos(int blockX, int blockY, int blockZ) {
+    private long coordsToPos(int blockX, int blockY, int blockZ) {
         // See position hashing algorithm on world format documentation
         // https://github.com/minetest/minetest/blob/master/doc/world_format.md#position-hashing
-        return blockZ * 16777216 + blockY * 4096 + blockX;
+        return blockZ * 16777216L + blockY * 4096 + blockX;
     }
 
     /**
@@ -84,7 +83,7 @@ public class MTVoxelTile extends VoxelTile {
             return; // Save disabled if null destination
 
         SQLiteMapWriter database = new SQLiteMapWriter(destination);
-        for (Map.Entry<Integer, Block> entry : blocks.entrySet()) {
+        for (Map.Entry<Long, Block> entry : blocks.entrySet()) {
             database.insertBlock(entry.getKey(), entry.getValue());
         }
     }
