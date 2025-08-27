@@ -340,7 +340,20 @@ forEachTile:
     models:
       type: building-city
     surfaceType: wall
-    place: *default-wall
+    place:
+      pattern:
+        repeatStructure:
+          axes: [ z, x, y ]
+          with:
+            O: default:glass
+            X: *default-wall
+          blueprint:
+            - - "XX"
+              - "XX"
+            - - "OX"
+              - "XO"
+            - - "XX"
+              - "XX"
 
   renderBati3dRoofs:
     after:
