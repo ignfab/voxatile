@@ -15,6 +15,7 @@ A placeable is something that can be placed in voxel world at a given position: 
   * [Blueprint structures](#blueprint-structures)
 * [Patterns](#patterns)
   * [Random patterns](#random-patterns)
+  * [Repeat patterns](#repeat-patterns)
 
 ## Combine placeables
 
@@ -304,3 +305,112 @@ Fields:
 - `seed`: Random seed (optional default "").
 
 Chance of 0.0 (and lower) means never, chance of 1.0 and higher mean always. In between means the probability (for example 0.25 is 1 chance out of 4).
+
+### Repeat Patterns
+
+A pattern that repeats a [structure](#structures):
+```yaml
+place:
+  pattern:
+    repeatStructure: 
+      with:
+        '░': default:goldblock
+        '█': default:desert_stone_block
+      axes: [ x, y ]
+      blueprint:
+        - '███'
+        - '█░░'
+        - '█░░'
+        - '█░░'
+```
+
+![A simple example of a repeat pattern rendering](img/repeat-pattern-example.png)
+
+When repeating a structure, you can apply a shift to each repetition along the 3 axes. Here is an example:
+```yaml
+place:
+  pattern:
+    repeatStructure: 
+      with:
+        '░': default:goldblock
+        '█': default:desert_stone_block
+      axes: [ x, y ]
+      blueprint:
+        - '███'
+        - '█░░'
+        - '█░░'
+        - '█░░'
+    eachX:
+      shiftY: 2
+```
+
+![repeat pattern with y-axis shift on each repetition](img/repeat-pattern-shift-y.png)
+
+Applying a shift in the direction of the axis results in a space between placements (spacing):
+```yaml
+place:
+  pattern:
+    repeatStructure: 
+      with:
+        '░': default:goldblock
+        '█': default:desert_stone_block
+      axes: [ x, y ]
+      blueprint:
+        - '███'
+        - '█░░'
+        - '█░░'
+        - '█░░'
+    eachX:
+      shiftX: 2
+    eachY:
+      shiftY: 2
+```
+
+![repeat pattern with x and y axes spacing on each repetition](img/repeat-pattern-spacing-x-y.png)
+
+**Note:** Using negative values in `eachX`/`shiftX`, `eachY`/`shiftY` or `eachZ`/`shiftZ` will crop the structure.
+
+Fields:
+- `repeatStructure`: [Structure](#structures) to repeat (required).
+- `eachX`: Shift applied for each X-axis repetition (optional):
+  - `shiftX`: Spacing applied on X-axis (optional, default `0`).
+  - `shiftY`: Shift applied on Y-axis (optional, default `0`).
+  - `shiftZ`: Shift applied on Z-axis (optional, default `0`).
+- `eachY`: Shift applied for each Y-axis repetition (optional):
+  - `shiftX`: Shift applied on X-axis (optional, default `0`).
+  - `shiftY`: Spacing applied on Y-axis (optional, default `0`).
+  - `shiftZ`: Shift applied on Z-axis (optional, default `0`).
+- `eachZ`: Shift applied for each Z-axis repetition (optional):
+  - `shiftX`: Shift applied on X-axis (optional, default `0`).
+  - `shiftY`: Shift applied on Y-axis (optional, default `0`).
+  - `shiftZ`: Spacing applied on Z-axis (optional, default `0`).
+
+**Note:** Non-cubic patterns, such as:
+```yaml
+place:
+  pattern:
+    repeatStructure: 
+      with:
+        '/': wool:black
+      axes: [ x, y ]
+      blueprint:
+        - '  /'
+        - ' /'
+        - '/'
+```
+
+Won't be repeated in the world like this:
+```
+  ///
+ ///
+///
+```
+
+But rather like this:
+```
+  /  /  /
+ /  /  /
+/  /  /
+```
+
+This is because the pattern repeats the bounding box of the structure, including empty spaces.
