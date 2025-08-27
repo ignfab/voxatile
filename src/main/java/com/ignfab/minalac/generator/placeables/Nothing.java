@@ -6,14 +6,14 @@ import com.ignfab.minalac.generator.world.VoxelTile;
  * A placeable placing nothing.
  * Can be convenient to pass this to some operation when not wanting place anything.
  */
-public final class Nothing implements Placeable {
+public final class Nothing implements Pattern {
     /**
-     * NoVoxel singleton instance.
+     * Nothing singleton instance.
      */
     public static final Nothing INSTANCE = new Nothing();
 
     /**
-     * NoVoxel private constructor (use INSTANCE instead).
+     * Nothing private constructor (use INSTANCE instead).
      */
     private Nothing() {}
 
@@ -26,4 +26,9 @@ public final class Nothing implements Placeable {
      */
     @Override
     public void place(VoxelTile tile, int x, int y, int z) {}
+
+    @Override
+    public Placeable get(int x, int y, int z) {
+        return this;
+    }
 }
