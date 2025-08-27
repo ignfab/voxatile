@@ -15,6 +15,7 @@ A placeable is something that can be placed in voxel world at a given position: 
   * [Blueprint structures](#blueprint-structures)
 * [Patterns](#patterns)
   * [Random patterns](#random-patterns)
+  * [Repeat patterns](#repeat-patterns)
 
 ## Combine placeables
 
@@ -304,3 +305,55 @@ Fields:
 - `seed`: Random seed (optional default "").
 
 Chance of 0.0 (and lower) means never, chance of 1.0 and higher mean always. In between means the probability (for example 0.25 is 1 chance out of 4).
+
+### Repeat Patterns
+
+A pattern that repeats a [structure](#structures):
+```yaml
+place:
+  pattern:
+    repeatStructure:
+      with:
+        'T': default:pine_tree
+        'W': default:pine_wood
+      axes: [ x, y ]
+      blueprint:
+        - 'WWW'
+        - 'WTT'
+        - 'WTT'
+        - 'WTT'
+```
+
+![A simple example of a repeat pattern rendering](img/repeat-pattern-exemple.png)
+
+When repeating a structure, you can apply a shift to each repetition along the three axes. Here’s an example:
+```yaml
+place:
+  pattern:
+    repeatStructure:
+      with:
+        'T': default:pine_tree
+        'S': default:pine_wood
+      axes: [ x, y ]
+      blueprint:
+        - 'WWW'
+        - 'WTT'
+        - 'WTT'
+        - 'WTT'
+    forEachXRepetition:
+      shiftYBy: 2
+```
+
+![repeat pattern with y-axis shift on each repetition](img/repeat-pattern-shift-y.png)
+
+Fields:
+- `repeatStructure`: [Structure](#structures) to place (required).
+- `forEachXRepetition`: Y-axis or/and Z-axis shift for each X-axis change (optional):
+  - `shiftYBy`: Shift applied on each Y-axis change (optional).
+  - `shiftZBy`: Shift applied on each Z-axis change (optional).
+- `forEachYRepetition`: X-axis or/and Z-axis shift for each Y-axis change (optional):
+  - `shiftXBy`: Shift applied on each X-axis change (optional).
+  - `shiftZBy`: Shift applied on each Z-axis change
+- `forEachZRepetition`: X-axis or/and Y-axis shift for each Z-axis change (optional):
+  - `shiftXBy`: Shift applied on each X-axis change
+  - `shiftYBy`: Shift applied on each Y-axis change
