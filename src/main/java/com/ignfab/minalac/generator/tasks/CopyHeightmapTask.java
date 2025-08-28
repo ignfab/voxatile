@@ -6,17 +6,17 @@ import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmapSpec;
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
+import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
-import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.SurfaceVoxelizer2d;
 
 /**
  * A {@link TileTask} copying values of a heightmap to another at all coordinates within the model's shape.
  */
-public class CopyHeightmapTask extends ModelTask<ShapesVoxelizable2d> {
+public class CopyHeightmapTask extends ModelTask<Shape2dConvertibleModel> {
     private final ReadableHeightmapSpec fromSpec;
     private final WritableHeightmapSpec toSpec;
-
+    private final SurfaceVoxelizer2d voxelizer;
     /**
      * Creates a new {@code CopyHeightmapTask}.
      *
@@ -25,20 +25,19 @@ public class CopyHeightmapTask extends ModelTask<ShapesVoxelizable2d> {
      * @param toSpec target writable heightmap spec
      */
     public CopyHeightmapTask(ModelSelection selection, ReadableHeightmapSpec fromSpec, WritableHeightmapSpec toSpec) {
-        super(ShapesVoxelizable2d.class, selection);
+        super(Shape2dConvertibleModel.class, selection);
         this.fromSpec = fromSpec;
         this.toSpec = toSpec;
+        voxelizer = new SurfaceVoxelizer2d();
     }
 
     @Override
-    protected void run(ShapesVoxelizable2d model, GenerationTile tile) {
+    protected void run(Shape2dConvertibleModel model, GenerationTile tile) {
         ReadableHeightmap from = tile.heightmaps().get(fromSpec);
         WritableHeightmap to = tile.heightmaps().get(toSpec);
 
-        ShapesVoxelizer2d voxelizer = model.voxelize2d(tile.limits().to2d().intersection(from.bbox()).intersection(to.bbox()));
         WritableHeightmap buffered = to.copy();
-
-        for (Positioned2d voxel : voxelizer)
+        for (Positioned2d voxel : buffered.bbox().clip(voxelizer.voxelize(model)))
             buffered.set(voxel.coords(), from.get(voxel.coords()));
 
         to.copyValues(buffered);

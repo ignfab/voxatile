@@ -1,0 +1,10 @@
+package com.ignfab.minalac.generator.voxelization.shape3d.iterator;
+
+import com.ignfab.minalac.generator.utils.world2d.Vector2d;
+import com.ignfab.minalac.generator.utils.world3d.Positioned3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+/**
+ * @param coords Voxel position in world
+ * @param index Voxel index along geometry (x is along axis, y is wide)
+ */
+public record Indexed2dPosition3d(WorldCoords3d coords, Vector2d index) implements Positioned3d {}

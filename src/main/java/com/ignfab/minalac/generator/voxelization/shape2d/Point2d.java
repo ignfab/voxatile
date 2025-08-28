@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.voxelization.shape2d;
 
-import com.ignfab.minalac.generator.utils.iterator.Iterables;
+import java.util.Collections;
+
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
@@ -28,7 +29,7 @@ public class Point2d implements Positioned2d, Shape2d {
     }
 
     @Override
-    public Iterable<Positioned2d> allVoxels() {
-        return Iterables.iterable(this);
+    public Iterable<Point2d> points() {
+        return Collections.singleton(this);
     }
 }

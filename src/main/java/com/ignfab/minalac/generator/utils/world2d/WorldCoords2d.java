@@ -32,6 +32,15 @@ public record WorldCoords2d(int x, int y) implements Positioned2d {
     }
 
     /**
+     * Converts this {@link WorldCoords2d} to a {@link Vector2d}.
+     *
+     * @return a new {@link Vector2d} with same coordinates
+     */
+    public Vector2d toVector() {
+        return new Vector2d(x, y);
+    }
+
+    /**
      * Creates a new {@link WorldCoords2d} from double floating point coordinates.
      * Given coordinates are rounded using {@code Math.round}.
      *

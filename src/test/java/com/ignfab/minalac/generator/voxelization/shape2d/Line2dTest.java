@@ -1,8 +1,8 @@
 package com.ignfab.minalac.generator.voxelization.shape2d;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.utils.world2d.Vector2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
@@ -18,131 +18,103 @@ public class Line2dTest {
     }
 
     @Test
-    @DisplayName("Test constructor")
     public void testConstructor() {
         // One voxel line
         testLineConstruction("one voxel line", new WorldCoords2d(10, -20), new WorldCoords2d(10, -20));
-
-        // Vertical line
-        testLineConstruction("vertical line", new WorldCoords2d(10, -5), new WorldCoords2d(10, 15));
-
-        // Horizontal line
-        testLineConstruction("vertical line", new WorldCoords2d(-10, 5), new WorldCoords2d(10, 5));
 
         // Random line
         testLineConstruction("random line", new WorldCoords2d(10, -20), new WorldCoords2d(-30, 40));
     }
 
     @Test
-    @DisplayName("Test maxIndex")
-    public void testMaxIndex() {
-        Line2d line;
+    public void testDirection() {
+        // Horizontal line
+        assertEquals(new Vector2d(-1.0, 0.0), new Line2d(
+            new WorldCoords2d(1, 2),
+            new WorldCoords2d(-1, 2)
+        ).direction());
 
-        line = new Line2d(
-            new WorldCoords2d(-5, 7),
-            new WorldCoords2d(8, -10)
-        );
-        assertEquals(17, line.maxIndex()); // 7 to -10 -> index: 0 to 17
+        // Vertical line
+        assertEquals(new Vector2d(0.0, 1.0), new Line2d(
+            new WorldCoords2d(3, 4),
+            new WorldCoords2d(3, 8)
+        ).direction());
 
-        line = new Line2d(
-            new WorldCoords2d(-5, 7),
-            new WorldCoords2d(8, -3)
-        );
-        assertEquals(13, line.maxIndex()); // -5 to 8 -> index: 0 to 13
+        // One voxel line (has no direction)
+        assertEquals(Vector2d.ZERO, new Line2d(
+            new WorldCoords2d(10, 10),
+            new WorldCoords2d(10, 10)
+        ).direction());
     }
 
     @Test
-    @DisplayName("Test atIndex")
+    public void testLenght() {
+        // 3-4-5 rule
+        assertEquals(5.0, new Line2d(
+            new WorldCoords2d(10, 10),
+            new WorldCoords2d(13, 14)
+        ).length(), 0.00001);
+
+        // One voxel line
+        assertEquals(0.0, new Line2d(
+            new WorldCoords2d(10, 10),
+            new WorldCoords2d(10, 10)
+        ).length(), 0.00001);
+    }
+
+    @Test
     public void testAtIndex() {
         Line2d line;
 
+        // We play with the 3,4,5 rule: 3²+4²=5² (a rectangle of 3x4 has a diagonal of 5).
+        // Here we have a 9x12 line, which has a length of 15.
+        // 9 size along X means there are 10 voxels (length is between voxels)
+
         line = new Line2d(
-            new WorldCoords2d(3, 11),
-            new WorldCoords2d(-7, -4)
+            new WorldCoords2d(-3, -4),
+            new WorldCoords2d(6, 8)
         );
 
         assertEquals(line.start(), line.atIndex(0));
-        assertEquals(line.end(), line.atIndex(line.maxIndex()));
+        assertEquals(line.end(), line.atIndex(15));
 
-        assertEquals(new WorldCoords2d(1, 8), line.atIndex(3));
+        assertEquals(new WorldCoords2d(0, 0), line.atIndex(5));
     }
 
     @Test
-    @DisplayName("Test intersection")
-    public void testIntersection() {
-        Line2d line;
-        Line2d.Intersection intersection;
-
-        // Horizontal line
-        line = new Line2d(
-            new WorldCoords2d(30, 20),
-            new WorldCoords2d(-10, 20)
+    public void testIndexAt() {
+        Line2d line = new Line2d(
+            new WorldCoords2d(-3, -4),
+            new WorldCoords2d(6, 8)
         );
 
-        assertNull(line.intersection(19));
-        assertNull(line.intersection(21));
-        intersection = line.intersection(20);
+        assertEquals(0.0, line.indexAt(line.start().x(), line.start().y()), 0.00001);
+        assertEquals(15.0, line.indexAt(line.end().x(), line.end().y()), 0.00001);
+        assertEquals(5.0, line.indexAt(0, 0), 0.00001);
+    }
 
-        assertEquals(-10, intersection.start());
-        assertEquals(30, intersection.end());
-        assertFalse(intersection.bottom());
-        assertFalse(intersection.top());
+    @Test
+    public void testConvertLineRelative() {
+        Line2d line;
 
         // Vertical line
         line = new Line2d(
-            new WorldCoords2d(15, -5),
-            new WorldCoords2d(15, 10)
+            new WorldCoords2d(-3, -4),
+            new WorldCoords2d(-3, -8)
         );
 
-        assertNull(line.intersection(-6));
-        assertNull(line.intersection(11));
+        assertEquals(new Vector2d(0.0, 3.0), line.convertLineRelative(-6, -4));
+        assertEquals(new Vector2d(2.0, 0.0), line.convertLineRelative(-3, -6));
+        assertEquals(new Vector2d(-1.0, 0.0), line.convertLineRelative(-3, -3));
 
-        intersection = line.intersection(0);
-        assertNotNull(intersection);
-        assertEquals(15, intersection.start());
-        assertEquals(15, intersection.end());
-        assertTrue(intersection.bottom());
-        assertTrue(intersection.top());
-
-        intersection = line.intersection(-5);
-        assertNotNull(intersection);
-        assertTrue(intersection.bottom());
-        assertFalse(intersection.top());
-
-        intersection = line.intersection(10);
-        assertNotNull(intersection);
-        assertFalse(intersection.bottom());
-        assertTrue(intersection.top());
-
-        // One voxel line
+        // Horizontal line
         line = new Line2d(
-            new WorldCoords2d(10, -20),
-            new WorldCoords2d(10, -20)
+            new WorldCoords2d(-3, -4),
+            new WorldCoords2d(6, -4)
         );
-        assertNull(line.intersection(-21));
-        assertNull(line.intersection(-19));
-        assertNotNull(line.intersection(-20));
 
-        // Several voxel intersections
-        line = new Line2d(
-            new WorldCoords2d(-5, -2),
-            new WorldCoords2d(5, 2)
-        );
-        intersection = line.intersection(0);
-        assertEquals(-1, intersection.start());
-        assertEquals(1, intersection.end());
-        assertTrue(intersection.bottom());
-        assertTrue(intersection.top());
-
-        // Same test, the other way
-        line = new Line2d(
-            new WorldCoords2d(-5, 2),
-            new WorldCoords2d(5, -2)
-        );
-        intersection = line.intersection(0);
-        assertEquals(-1, intersection.start());
-        assertEquals(1, intersection.end());
-        assertTrue(intersection.bottom());
-        assertTrue(intersection.top());
+        assertEquals(new Vector2d(0.0, -2.0), line.convertLineRelative(-3, -2));
+        assertEquals(new Vector2d(3.0, 0.0), line.convertLineRelative(0, -4));
+        assertEquals(new Vector2d(-2.0, 0.0), line.convertLineRelative(-5, -4));
     }
 }

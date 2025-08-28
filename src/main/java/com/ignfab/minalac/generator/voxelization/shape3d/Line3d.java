@@ -1,9 +1,12 @@
 package com.ignfab.minalac.generator.voxelization.shape3d;
 
+import java.util.Collections;
+
 import com.ignfab.minalac.generator.utils.world3d.Bounded3d;
+import com.ignfab.minalac.generator.utils.world3d.Vector3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.voxelization.shape3d.iterator.Line3dIterator;
+import com.ignfab.minalac.generator.voxelization.shape2d.Line2d;
 
 /**
  * Represents a 3d line segment in the voxel world.
@@ -12,28 +15,18 @@ import com.ignfab.minalac.generator.voxelization.shape3d.iterator.Line3dIterator
  * <p>
  * The line is modelled using a parametric equation:
  * <pre>{@code
- *  x = slopeX * index + start.x
- *  y = slopeY * index + start.y
- *  z = slopeZ * index + start.z
+ *  x = direction.x() * index + start.x()
+ *  y = direction.y() * index + start.y()
+ *  z = direction.z() * index + start.z()
  * }</pre>
- * With {@code 0 <= index <= maxIndex}.
- *
- * @see #maxIndex() maxIndex
+ * With {@code 0 <= index <= length}.
  */
 public class Line3d implements Bounded3d, Shape3d {
     private final WorldCoords3d start;
     private final WorldCoords3d end;
-
-    // 0 <= index <= maxIndex
-    // { x = slopeX * index + start.x
-    // { y = slopeY * index + start.y
-    // { z = slopeZ * index + start.z
-    private final int maxIndex;
-    private final double slopeX;
-    private final double slopeY;
-    private final double slopeZ;
-
     private final WorldBBox3d bbox;
+    private final Vector3d direction;
+    private final double length;
 
     /**
      * Creates a new line between the given start and end.
@@ -45,27 +38,14 @@ public class Line3d implements Bounded3d, Shape3d {
     public Line3d(WorldCoords3d start, WorldCoords3d end) {
         this.start = start;
         this.end = end;
-
-        // This will be involved in intersection calculation
         bbox = new WorldBBox3d(start, end);
 
-        // Compute direction vector of the line
-        int deltaX = end.x() - start.x();
-        int deltaY = end.y() - start.y();
-        int deltaZ = end.z() - start.z();
-
-        // Maximum index is the largest coordinate distance
-        maxIndex = Math.max(Math.abs(deltaX), Math.max(Math.abs(deltaY), Math.abs(deltaZ)));
-
-        // Normalize vector to index
-        if (maxIndex == 0) {
-            slopeX = 0.0;
-            slopeY = 0.0;
-            slopeZ = 0.0;
+        if (start.equals(end)) {
+            length = 0;
+            direction = Vector3d.ZERO;
         } else {
-            slopeX = deltaX / (double) maxIndex;
-            slopeY = deltaY / (double) maxIndex;
-            slopeZ = deltaZ / (double) maxIndex;
+            length = Vector3d.length(bbox.sizeX() - 1, bbox.sizeY() - 1, bbox.sizeZ() - 1);
+            direction = new Vector3d((end.x() - start.x()) / length, (end.y() - start.y()) / length,  (end.z() - start.z()) / length);
         }
     }
 
@@ -88,28 +68,58 @@ public class Line3d implements Bounded3d, Shape3d {
     }
 
     /**
-     * Returns the maximum value the index can be when voxelizing the line.
-     * This corresponds to the length in number of voxel of this line.
+     * Returns line direction unit vector or {@code Vector3d.ZERO} if line is a single point.
      *
-     * @return the maximum index value.
+     * @return Line direction unit vector.
      */
-    public int maxIndex() {
-        return maxIndex;
+    public Vector3d direction() {
+        return direction;
+    }
+
+    /**
+     * Returns the length of line segment in voxels along line axis.
+     *
+     * @return length
+     */
+    public double length() {
+        return length;
     }
 
     /**
      * Computes the coordinate of the point on the line at the given index.
      * This corresponds to the coordinate of the nth voxel of this line.
      *
-     * @param index the index in the line.
+     * @param index the index in the line (could be outside segment).
      * @return the voxel coordinate for this index.
      */
-    public WorldCoords3d atIndex(int index) {
+    public WorldCoords3d atIndex(double index) {
         return WorldCoords3d.round(
-            slopeX * index + start.x(),
-            slopeY * index + start.y(),
-            slopeZ * index + start.z()
+            direction.x() * index + start.x(),
+            direction.y() * index + start.y(),
+            direction.z() * index + start.z()
         );
+    }
+
+    /**
+     * Returns index in line nearest to (x, y) point, ignoring z third dimension.
+     * <p>
+     * It is equivalent to, but faster than, {@code .to2d().indexAt(x, y)}.
+     *
+     * @param x x-axis cordinate of given point
+     * @param y y-axis cordinate of given point
+     * @return index in line, may be negative or greater than segment length
+     */
+    public double indexAt(int x, int y) {
+        return (x - start.x()) * direction.x() + (y - start.y()) * direction.y();
+    }
+
+    /**
+     * Projects this line on X-Y plane as a new {@link Line2d}.
+     *
+     * @return projected 2d line
+     */
+    public Line2d to2d() {
+        return new Line2d(start.to2d(), end.to2d());
     }
 
     @Override
@@ -119,11 +129,14 @@ public class Line3d implements Bounded3d, Shape3d {
 
     @Override
     public String toString() {
-        return "Line3d{start=%s, end=%s}".formatted(start, end);
+        return "%s{start=%s, end=%s}".formatted(getClass().getSimpleName(), start, end);
     }
 
+    // Shape3d implementation
+
     @Override
-    public Iterable<LineVoxel3d> borderVoxels() {
-        return () -> new Line3dIterator(this);
+    public Iterable<Line3d> lines() {
+        return Collections.singleton(this);
     }
 }
+

@@ -4,33 +4,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.voxelization.shape2d.LineString2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.LinearRing2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.MultiShape2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Point2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Polygon2d;
-import com.ignfab.minalac.generator.voxelization.shape2d.Polyline2d;
-import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.Shape2d;
+import com.ignfab.minalac.generator.voxelization.shape3d.LineString3d;
+import com.ignfab.minalac.generator.voxelization.shape3d.LinearRing3d;
+import com.ignfab.minalac.generator.voxelization.shape3d.MultiShape3d;
 import com.ignfab.minalac.generator.voxelization.shape3d.Point3d;
 import com.ignfab.minalac.generator.voxelization.shape3d.Polygon3d;
-import com.ignfab.minalac.generator.voxelization.shape3d.Polyline3d;
-import com.ignfab.minalac.generator.voxelization.shape3d.ShapesVoxelizer3d;
+import com.ignfab.minalac.generator.voxelization.shape3d.Shape3d;
 
 /**
  * Model represented by a JTS Geometry.
  * It is voxelizable both in 2d and 3d.
  */
-public class JTSGeometryModel extends ModelImpl implements ShapesVoxelizable2d, ShapesVoxelizable3d {
+public class JTSGeometryModel extends ModelImpl implements Shape2dConvertibleModel, Shape3dConvertibleModel {
     private Geometry geom;
 
     /**
@@ -84,38 +86,19 @@ public class JTSGeometryModel extends ModelImpl implements ShapesVoxelizable2d, 
         return p.getX() + "/" + p.getY();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ShapesVoxelizer2d voxelize2d(WorldBBox2d bbox) {
-        if (!computeGeometryBBox().intersects(bbox))
-            return ShapesVoxelizer2d.EMPTY;
-        ShapesVoxelizer2d voxelizer = new ShapesVoxelizer2d(bbox);
-        convert(geom, new GeometryConverter2d(voxelizer));
-        return voxelizer;
+    public Shape3d toShape3d() {
+        GeometryConverter3d converter = new GeometryConverter3d();
+        convert(geom, converter);
+        return converter.result();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
-    public ShapesVoxelizer3d voxelize3d(WorldBBox3d bbox) {
-        if (!computeGeometryBBox().intersects(bbox.to2d()))
-            return ShapesVoxelizer3d.EMPTY;
-        ShapesVoxelizer3d voxelizer = new ShapesVoxelizer3d(bbox);
-        convert(geom, new GeometryConverter3d(voxelizer));
-        return voxelizer;
-    }
-
-    private WorldBBox2d computeGeometryBBox() {
-        // Compute bounding box
-        Envelope envelope = geom.getEnvelopeInternal();
-
-        return new WorldBBox2d(
-            WorldCoords2d.floor(envelope.getMinX(), envelope.getMinY()),
-            WorldCoords2d.ceil(envelope.getMaxX(), envelope.getMaxY())
-        );
+    public Shape2d toShape2d() {
+        GeometryConverter2d converter = new GeometryConverter2d();
+        convert(geom, converter);
+        return converter.result();
     }
 
     /**
@@ -126,11 +109,13 @@ public class JTSGeometryModel extends ModelImpl implements ShapesVoxelizable2d, 
     private void convert(Geometry geometry, GeometryConverter converter) {
         switch (geometry.getGeometryType()) {
             // Single point
-            case Geometry.TYPENAME_POINT -> converter.convertPoint((Point) geometry);
-            // Lines
-            case Geometry.TYPENAME_LINESTRING, Geometry.TYPENAME_LINEARRING -> converter.convertLine((LineString) geometry);
+            case Geometry.TYPENAME_POINT -> converter.convert((Point) geometry);
+            // Line strings
+            case Geometry.TYPENAME_LINESTRING -> converter.convert((LineString) geometry);
+            // Linear ring
+            case Geometry.TYPENAME_LINEARRING -> converter.convert((LinearRing) geometry);
             // Polygon (with holes)
-            case Geometry.TYPENAME_POLYGON -> converter.convertPolygon((Polygon) geometry);
+            case Geometry.TYPENAME_POLYGON -> converter.convert((Polygon) geometry);
             // Geometry collections
             case Geometry.TYPENAME_MULTIPOINT, Geometry.TYPENAME_MULTILINESTRING, Geometry.TYPENAME_MULTIPOLYGON, Geometry.TYPENAME_GEOMETRYCOLLECTION -> {
                 GeometryCollection collection = (GeometryCollection) geometry;
@@ -149,96 +134,140 @@ public class JTSGeometryModel extends ModelImpl implements ShapesVoxelizable2d, 
          * Converts a single point.
          * @param point the point to convert.
          */
-        void convertPoint(Point point);
+        void convert(Point point);
 
         /**
          * Converts a line string (multiple lines connected with each other).
-         * It may be a basic line string (open) or a linear ring (end connected with start).
-         * @param line the line to convert.
+         * @param lineString the line string to convert.
          */
-        void convertLine(LineString line);
+        void convert(LineString lineString);
+
+        /**
+         * Converts a linear ring (a line string forming a ring).
+         * @param linearRing the linear ring to convert.
+         */
+        void convert(LinearRing linearRing);
 
         /**
          * Converts a single polygon.
          * It may contain holes.
          * @param polygon the polygon to convert.
          */
-        void convertPolygon(Polygon polygon);
+        void convert(Polygon polygon);
     }
 
     /**
      * Implementation converting JTS geometries into 2d shapes.
-     * Those shapes are stored in the given shapes voxelizer.
-     * @param voxelizer the voxelizer to store converted shapes.
      */
-    private record GeometryConverter2d(ShapesVoxelizer2d voxelizer) implements GeometryConverter {
+    private final class GeometryConverter2d implements GeometryConverter {
+
+        private Shape2d result;
+
+        private Shape2d result() {
+            return result;
+        }
+
+        private void addShape(Shape2d shape) {
+            if (result == null)
+                result = shape;
+            else
+                if (result instanceof MultiShape2d collection)
+                    collection.addShape(shape);
+                else
+                    result = new MultiShape2d(result, shape);
+        }
+
         private WorldCoords2d convertCoordinate(Coordinate coordinate) {
             return WorldCoords2d.round(coordinate.x, coordinate.y);
         }
 
-        private Polyline2d convertLineString(LineString line) {
+        private List<WorldCoords2d> convertCoordinates(LineString line) {
             Coordinate[] coordinates = line.getCoordinates();
             List<WorldCoords2d> coords = new ArrayList<>(coordinates.length);
             for (Coordinate coordinate : coordinates)
                 coords.add(convertCoordinate(coordinate));
-            return Polyline2d.fromPoints(coords);
+            return coords;
         }
 
         @Override
-        public void convertPoint(Point point) {
-            voxelizer.addShape(new Point2d(convertCoordinate(point.getCoordinate())));
+        public void convert(Point point) {
+            addShape(new Point2d(convertCoordinate(point.getCoordinate())));
         }
 
         @Override
-        public void convertLine(LineString line) {
-            voxelizer.addShape(convertLineString(line));
+        public void convert(LineString line) {
+            addShape(LineString2d.fromPoints(convertCoordinates(line)));
         }
 
         @Override
-        public void convertPolygon(Polygon polygon) {
-            Polyline2d shell = convertLineString(polygon.getExteriorRing());
-            List<Polyline2d> holes = new ArrayList<>(polygon.getNumInteriorRing());
+        public void convert(LinearRing ring) {
+            addShape(LinearRing2d.fromPoints(convertCoordinates(ring)));
+        }
+
+        @Override
+        public void convert(Polygon polygon) {
+            LinearRing2d shell = LinearRing2d.fromPoints(convertCoordinates(polygon.getExteriorRing()));
+            List<LinearRing2d> holes = new ArrayList<>(polygon.getNumInteriorRing());
             for (int n = 0; n < polygon.getNumInteriorRing(); n++)
-                holes.add(convertLineString(polygon.getInteriorRingN(n)));
-            voxelizer.addShape(new Polygon2d(shell, holes));
+                holes.add(LinearRing2d.fromPoints(convertCoordinates(polygon.getInteriorRingN(n))));
+            addShape(new Polygon2d(shell, holes));
         }
     }
 
     /**
      * Implementation converting JTS geometries into 3d shapes.
-     * Those shapes are stored in the given shapes voxelizer.
-     * @param voxelizer the voxelizer to store converted shapes.
      */
-    private record GeometryConverter3d(ShapesVoxelizer3d voxelizer) implements GeometryConverter {
+    private final class GeometryConverter3d implements GeometryConverter {
+
+        private Shape3d result;
+
+        private Shape3d result() {
+            return result;
+        }
+
+        private void addShape(Shape3d shape) {
+            if (result == null)
+                result = shape;
+            else
+                if (result instanceof MultiShape3d collection)
+                    collection.addShape(shape);
+                else
+                    result = new MultiShape3d(result, shape);
+        }
         private WorldCoords3d convertCoordinate(Coordinate coordinate) {
             return WorldCoords3d.round(coordinate.x, coordinate.y, coordinate.z);
         }
 
-        private Polyline3d convertLineString(LineString line) {
+        private List<WorldCoords3d> convertCoordinates(LineString line) {
             Coordinate[] coordinates = line.getCoordinates();
             List<WorldCoords3d> coords = new ArrayList<>(coordinates.length);
             for (Coordinate coordinate : coordinates)
                 coords.add(convertCoordinate(coordinate));
-            return Polyline3d.fromPoints(coords);
+            return coords;
         }
 
         @Override
-        public void convertPoint(Point point) {
-            voxelizer.addShape(new Point3d(convertCoordinate(point.getCoordinate())));
+        public void convert(Point point) {
+            addShape(new Point3d(convertCoordinate(point.getCoordinate())));
         }
 
         @Override
-        public void convertLine(LineString line) {
-            voxelizer.addShape(convertLineString(line));
+        public void convert(LineString line) {
+            addShape(LineString3d.fromPoints(convertCoordinates(line)));
         }
 
         @Override
-        public void convertPolygon(Polygon polygon) {
-            Polyline3d shell = convertLineString(polygon.getExteriorRing());
-            List<Polyline3d> holes = new ArrayList<>(polygon.getNumInteriorRing());
+        public void convert(LinearRing ring) {
+            addShape(LinearRing3d.fromPoints(convertCoordinates(ring)));
+        }
+
+        @Override
+        public void convert(Polygon polygon) {
+            LinearRing3d shell = LinearRing3d.fromPoints(convertCoordinates(polygon.getExteriorRing()));
+            List<LinearRing3d> holes = new ArrayList<>(polygon.getNumInteriorRing());
             for (int n = 0; n < polygon.getNumInteriorRing(); n++)
-                holes.add(convertLineString(polygon.getInteriorRingN(n)));
-            voxelizer.addShape(new Polygon3d(shell, holes));
+                holes.add(LinearRing3d.fromPoints(convertCoordinates(polygon.getInteriorRingN(n))));
+            addShape(new Polygon3d(shell, holes));
         }
     }
 }

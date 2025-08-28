@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import com.ignfab.minalac.generator.utils.iterator.Iterators;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+import com.ignfab.minalac.generator.utils.world3d.iterator.WorldBBox3dClipIterator;
 import com.ignfab.minalac.generator.utils.world3d.iterator.WorldBBox3dIterator;
 
 /**
@@ -323,16 +324,6 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
     }
 
     /**
-     * Returns an iterator.
-     *
-     * @return a {@link WorldBBox3dIterator} to iterate over all the points contained in the bounding box.
-     */
-    @Override
-    public WorldBBox3dIterator iterator() {
-        return new WorldBBox3dIterator(this);
-    }
-
-    /**
      * Convert this {@link WorldBBox3d} to {@link WorldBBox2d}, dropping its components along the z-axis.
      * The region represented by this bbox will be flattened.
      *
@@ -349,6 +340,22 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
      */
     public boolean isEmpty() {
         return size.x() == 0 || size.y() == 0 || size.z() == 0;
+    }
+
+    /**
+     * Clips an iterable, filtering out every result positioned outside the bounding box.
+     *
+     * @param iterable Iterable to clip
+     * @param <T> Type of iterable values
+     * @return clipped iterable
+     */
+    public <T extends Positioned3d> Iterable<T> clip(Iterable<T> iterable) {
+        return () -> new WorldBBox3dClipIterator<T>(iterable.iterator(), this.bbox());
+    }
+
+    @Override
+    public WorldBBox3dIterator iterator() {
+        return new WorldBBox3dIterator(this);
     }
 
     @Override

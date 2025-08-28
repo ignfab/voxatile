@@ -1,6 +1,5 @@
 package com.ignfab.minalac.generator.voxelization.shape3d;
 
-import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.world3d.Positioned3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
@@ -26,10 +25,4 @@ public class Point3d implements Positioned3d, Shape3d {
     public WorldCoords3d coords() {
         return coords;
     }
-
-    @Override
-    public Iterable<Positioned3d> allVoxels() {
-        return Iterables.iterable(this);
-    }
-
 }

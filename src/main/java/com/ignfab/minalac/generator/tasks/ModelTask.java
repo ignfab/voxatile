@@ -9,7 +9,7 @@ import com.ignfab.minalac.generator.models.ModelSelection;
  *
  * @param <M> Model type for this task.
  */
-public abstract class ModelTask<M> implements TileTask {
+public abstract class ModelTask<M extends Model> implements TileTask {
     private final Class<M> cls;
     private final ModelSelection selection;
 

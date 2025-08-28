@@ -2,7 +2,11 @@ package com.ignfab.minalac.generator.generation;
 
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapStore;
 import com.ignfab.minalac.generator.models.ModelStore;
+import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
+import com.ignfab.minalac.generator.utils.world2d.iterator.WorldBBox2dClipIterator;
+import com.ignfab.minalac.generator.utils.world3d.Positioned3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.iterator.WorldBBox3dClipIterator;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
@@ -75,5 +79,27 @@ public class GenerationTile {
 
         // Heightmaps are discarded, only voxels are saved
         voxels().save();
-   }
+    }
+
+    /**
+     * Clips an 3d iterable, filtering out every result positioned outside the tile.
+     *
+     * @param iterable Iterable to clip
+     * @param <T> Type of iterable values
+     * @return clipped iterable
+     */
+    public <T extends Positioned3d> Iterable<T> clip3d(Iterable<T> iterable) {
+        return () -> new WorldBBox3dClipIterator<T>(iterable.iterator(), this.limits());
+    }
+
+    /**
+     * Clips an 2d iterable, filtering out every result positioned outside the tile.
+     *
+     * @param iterable Iterable to clip
+     * @param <T> Type of iterable values
+     * @return clipped iterable
+     */
+    public <T extends Positioned2d> Iterable<T> clip2d(Iterable<T> iterable) {
+        return () -> new WorldBBox2dClipIterator<T>(iterable.iterator(), this.limits().to2d());
+    }
 }

@@ -10,8 +10,9 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.Line2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.LinearRing2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Polygon2d;
-import com.ignfab.minalac.generator.voxelization.shape2d.Polyline2d;
 
 import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,6 +61,85 @@ public class Polygon2dIteratorTest {
     }
 
     @Test
+    @DisplayName("Test intersection")
+    public void testIntersection() {
+        Line2d line;
+        Polygon2dIterator.Intersection intersection;
+
+        // Horizontal line
+        line = new Line2d(
+            new WorldCoords2d(30, 20),
+            new WorldCoords2d(-10, 20)
+        );
+
+        assertNull(Polygon2dIterator.intersection(line, 19));
+        assertNull(Polygon2dIterator.intersection(line, 21));
+        intersection = Polygon2dIterator.intersection(line, 20);
+
+        assertEquals(-10, intersection.start());
+        assertEquals(30, intersection.end());
+        assertFalse(intersection.bottom());
+        assertFalse(intersection.top());
+
+        // Vertical line
+        line = new Line2d(
+            new WorldCoords2d(15, -5),
+            new WorldCoords2d(15, 10)
+        );
+
+        assertNull(Polygon2dIterator.intersection(line, -6));
+        assertNull(Polygon2dIterator.intersection(line, 11));
+
+        intersection = Polygon2dIterator.intersection(line, 0);
+        assertNotNull(intersection);
+        assertEquals(15, intersection.start());
+        assertEquals(15, intersection.end());
+        assertTrue(intersection.bottom());
+        assertTrue(intersection.top());
+
+        intersection = Polygon2dIterator.intersection(line, -5);
+        assertNotNull(intersection);
+        assertTrue(intersection.bottom());
+        assertFalse(intersection.top());
+
+        intersection = Polygon2dIterator.intersection(line, 10);
+        assertNotNull(intersection);
+        assertFalse(intersection.bottom());
+        assertTrue(intersection.top());
+
+        // One voxel line
+        line = new Line2d(
+            new WorldCoords2d(10, -20),
+            new WorldCoords2d(10, -20)
+        );
+        assertNull(Polygon2dIterator.intersection(line, -21));
+        assertNull(Polygon2dIterator.intersection(line, -19));
+        assertNotNull(Polygon2dIterator.intersection(line, -20));
+
+        // Several voxel intersections
+        line = new Line2d(
+            new WorldCoords2d(-5, -2),
+            new WorldCoords2d(5, 2)
+        );
+        intersection = Polygon2dIterator.intersection(line, 0);
+        assertEquals(-1, intersection.start());
+        assertEquals(1, intersection.end());
+        assertTrue(intersection.bottom());
+        assertTrue(intersection.top());
+
+        // Same test, the other way
+        line = new Line2d(
+            new WorldCoords2d(-5, 2),
+            new WorldCoords2d(5, -2)
+        );
+        intersection = Polygon2dIterator.intersection(line, 0);
+        assertEquals(-1, intersection.start());
+        assertEquals(1, intersection.end());
+        assertTrue(intersection.bottom());
+        assertTrue(intersection.top());
+    }
+
+    @Test
     @DisplayName("Basic test with a square")
     @SuppressWarnings("checkstyle:OperatorWrap") // Allows for better alignment of ASCII-art
     public void testWithBasicPolygon() {
@@ -71,12 +151,11 @@ public class Polygon2dIteratorTest {
             " +++ " +
             "     ");
 
-        Polygon2d polygon = new Polygon2d(Polyline2d.fromPoints(
+        Polygon2d polygon = new Polygon2d(LinearRing2d.fromPoints(
             new WorldCoords2d(1, 1),
             new WorldCoords2d(3, 1),
             new WorldCoords2d(3, 3),
-            new WorldCoords2d(1, 3),
-            new WorldCoords2d(1, 1)
+            new WorldCoords2d(1, 3)
         ));
 
         // Interface does not imply that iterator must browse voxels once but it actually does
@@ -102,27 +181,24 @@ public class Polygon2dIteratorTest {
 
         Polygon2d polygon = new Polygon2d(
             // Shell
-            Polyline2d.fromPoints(
+            LinearRing2d.fromPoints(
                 new WorldCoords2d(0, 0),
                 new WorldCoords2d(8, 0),
                 new WorldCoords2d(8, 7),
-                new WorldCoords2d(0, 7),
-                new WorldCoords2d(0, 0)
+                new WorldCoords2d(0, 7)
             ),
             // Holes
-            Polyline2d.fromPoints(
+            LinearRing2d.fromPoints(
                 new WorldCoords2d(1, 2),
                 new WorldCoords2d(4, 2),
                 new WorldCoords2d(4, 4),
-                new WorldCoords2d(1, 4),
-                new WorldCoords2d(1, 2)
+                new WorldCoords2d(1, 4)
             ),
-            Polyline2d.fromPoints(
+            LinearRing2d.fromPoints(
                 new WorldCoords2d(5, 5),
                 new WorldCoords2d(5, 7),
                 new WorldCoords2d(7, 7),
-                new WorldCoords2d(7, 5),
-                new WorldCoords2d(5, 5)
+                new WorldCoords2d(7, 5)
             )
         );
 
@@ -134,7 +210,7 @@ public class Polygon2dIteratorTest {
     @Test
     @DisplayName("Test empty polygon")
     public void testEmpty() {
-        Polygon2d polygon = new Polygon2d(Polyline2d.fromPoints(new WorldCoords2d(1, 2), new WorldCoords2d(1, 2), new WorldCoords2d(1, 2)));
+        Polygon2d polygon = new Polygon2d(LinearRing2d.fromPoints(new WorldCoords2d(1, 2), new WorldCoords2d(1, 2), new WorldCoords2d(1, 2)));
         assertBrowsesAllOnce(Collections.singleton(new WorldCoords2d(1, 2)), new Polygon2dIterator(polygon, true));
         assertBrowsesAllOnce(Collections.emptyList(), new Polygon2dIterator(polygon, false));
     }
@@ -157,12 +233,11 @@ public class Polygon2dIteratorTest {
         Polygon2d polygon;
 
         // Straight lines
-        polygon = new Polygon2d(Polyline2d.fromPoints(
+        polygon = new Polygon2d(LinearRing2d.fromPoints(
             new WorldCoords2d(0, 0),
             new WorldCoords2d(0, 6),
             new WorldCoords2d(6, 6),
-            new WorldCoords2d(6, 0),
-            new WorldCoords2d(0, 0)
+            new WorldCoords2d(6, 0)
         ));
 
         expected = new Sandbox2d(new WorldBBox2d(0, 0, 7, 7),
@@ -179,12 +254,11 @@ public class Polygon2dIteratorTest {
         assertBrowsesAllOnce(expected.voxels("-+o"), new Polygon2dIterator(polygon, true));
 
         // 45° lines
-        polygon = new Polygon2d(Polyline2d.fromPoints(
+        polygon = new Polygon2d(LinearRing2d.fromPoints(
             new WorldCoords2d(3, 0),
             new WorldCoords2d(6, 3),
             new WorldCoords2d(3, 6),
-            new WorldCoords2d(0, 3),
-            new WorldCoords2d(3, 0)
+            new WorldCoords2d(0, 3)
         ));
 
         expected = new Sandbox2d(new WorldBBox2d(0, 0, 7, 7),
@@ -201,12 +275,11 @@ public class Polygon2dIteratorTest {
         assertBrowsesAllOnce(expected.voxels("-+o"), new Polygon2dIterator(polygon, true));
 
         // Between straight and 45° (first cases)
-        polygon = new Polygon2d(Polyline2d.fromPoints(
+        polygon = new Polygon2d(LinearRing2d.fromPoints(
             new WorldCoords2d(5, 0),
             new WorldCoords2d(6, 5),
             new WorldCoords2d(1, 6),
-            new WorldCoords2d(0, 1),
-            new WorldCoords2d(5, 0)
+            new WorldCoords2d(0, 1)
         ));
 
         expected = new Sandbox2d(new WorldBBox2d(0, 0, 7, 7),
@@ -223,12 +296,11 @@ public class Polygon2dIteratorTest {
         assertBrowsesAllOnce(expected.voxels("-+o"), new Polygon2dIterator(polygon, true));
 
         // Between straight and 45° (other cases)
-        polygon = new Polygon2d(Polyline2d.fromPoints(
+        polygon = new Polygon2d(LinearRing2d.fromPoints(
             new WorldCoords2d(1, 0),
             new WorldCoords2d(6, 1),
             new WorldCoords2d(5, 6),
-            new WorldCoords2d(0, 5),
-            new WorldCoords2d(1, 0)
+            new WorldCoords2d(0, 5)
         ));
 
         expected = new Sandbox2d(new WorldBBox2d(0, 0, 7, 7),

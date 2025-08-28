@@ -1,11 +1,9 @@
 package com.ignfab.minalac.generator.voxelization.shape3d;
 
 import java.util.Collection;
-import java.util.LinkedList;
 
 import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.world3d.Bounded3d;
-import com.ignfab.minalac.generator.utils.world3d.Positioned3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
@@ -15,8 +13,8 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
  * and all holes must be contained inside the shell.
  */
 public class Polygon3d implements Bounded3d, Shape3d {
-    private final Collection<Line3d> lines;
-    private final WorldBBox3d bbox;
+    private final LinearRing3d shell;
+    private final Collection<LinearRing3d> holes;
 
     /**
      * Creates a new polygon with the given shell and collection of holes.
@@ -24,15 +22,9 @@ public class Polygon3d implements Bounded3d, Shape3d {
      * @param shell the outer shell of the polygon.
      * @param holes the collection of holes of the polygon.
      */
-    public Polygon3d(Polyline3d shell, Collection<Polyline3d> holes) {
-        bbox = shell.bbox();
-
-        // We only need to know about lines (shell and holes are supposed to be
-        // closed)
-        lines = new LinkedList<>();
-        lines.addAll(shell.lines());
-        for (Polyline3d hole : holes)
-            lines.addAll(hole.lines());
+    public Polygon3d(LinearRing3d shell, Collection<LinearRing3d> holes) {
+        this.shell = shell;
+        this.holes = holes;
     }
 
     /**
@@ -41,26 +33,11 @@ public class Polygon3d implements Bounded3d, Shape3d {
      * @return the border iterable of this polygon.
      */
     public Iterable<Line3d> lines() {
-        return lines;
+        return Iterables.union(shell.lines(), Iterables.unwrap(Iterables.remap(holes, LinearRing3d::lines)));
     }
 
     @Override
     public WorldBBox3d bbox() {
-        return bbox;
-    }
-
-    @Override
-    public Iterable<LineVoxel3d> borderVoxels() {
-        return Iterables.unwrap(Iterables.remap(lines, Shape3d::borderVoxels));
-    }
-
-    @Override
-    public Iterable<Positioned3d> insideVoxels() {
-        throw new UnsupportedOperationException("Unimplemented method 'insideVoxels'");
-    }
-
-    @Override
-    public Iterable<Positioned3d> allVoxels() {
-        throw new UnsupportedOperationException("Unimplemented method 'allVoxels'");
+        return shell.bbox();
     }
 }

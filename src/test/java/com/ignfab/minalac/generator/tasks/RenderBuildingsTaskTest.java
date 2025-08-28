@@ -6,8 +6,9 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
+import com.ignfab.minalac.generator.models.TestingRectangleShape2dModel;
 import com.ignfab.minalac.generator.models.filters.ModelFilterHasMetadata;
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
@@ -32,7 +33,7 @@ public class RenderBuildingsTaskTest {
     @Test
     void testBuildingRenderingWithMetadata() {
         WorldBBox2d modelBbox = new WorldBBox2d(0, 0, 3, 3);
-        Model building = new TestingRectangleShapeVoxelizable2dModel(modelBbox);
+        Model building = new TestingRectangleShape2dModel(modelBbox);
 
         int expectedHeight = 20;
         // Required metadata
@@ -43,9 +44,9 @@ public class RenderBuildingsTaskTest {
 
         assertDoesNotThrow(() -> new RenderBuildingsTask(
             new ModelSelection("building", new ModelFilterHasMetadata("height")),
-            new TestingVoxelParams("roof").create(TestingSeed.UNUSED),
-            new TestingVoxelParams("wall").create(TestingSeed.UNUSED),
-            new TestingVoxelParams("window").create(TestingSeed.UNUSED)
+            new TestingVoxel("roof"),
+            new TestingVoxel("wall"),
+            new TestingVoxel("window")
         ).run(tile));
 
         for (WorldCoords3d c : tile.limits()) {
@@ -87,7 +88,7 @@ public class RenderBuildingsTaskTest {
     @Test
     void testBuildingRenderingWithoutMetadata() {
         WorldBBox2d modelBbox = new WorldBBox2d(0, 0, 3, 3);
-        Model building = new TestingRectangleShapeVoxelizable2dModel(modelBbox);
+        Model building = new TestingRectangleShape2dModel(modelBbox);
         tile.models().add("building", building);
 
         Placeable placeable = new TestingVoxelParams("voxel").create(TestingSeed.UNUSED);
@@ -106,7 +107,7 @@ public class RenderBuildingsTaskTest {
     @Test
     void testBuildingRenderingWithNegativeHeight() {
         WorldBBox2d modelBbox = new WorldBBox2d(0, 0, 3, 3);
-        Model building = new TestingRectangleShapeVoxelizable2dModel(modelBbox);
+        Model building = new TestingRectangleShape2dModel(modelBbox);
 
         building.setMetadata("height", -20);
         tile.models().add("building", building);
