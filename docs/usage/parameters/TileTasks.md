@@ -10,7 +10,7 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`fetchData`](#fetchdata)
 * [Tasks operating on world](#tasks-operating-on-world)
   * [`renderHeightmap`](#renderheightmap)
-  * [`renderVectors`](#rendervectors)
+  * [`renderSurfaces`](#rendersurfaces)
   * [`fillBetweenHeightmapAndMetadata`](#fillbetweenheightmapandmetadata)
   * [`renderBuildings`](#renderbuildings)
   * [`setSpawn`](#setspawn)
@@ -61,39 +61,25 @@ maximum: ground
 place: default:water
 ```
 
-### `renderVectors`
+### `renderSurfaces`
 
-Renders 2-D geometries (points, linear things and surfaces) with [placeables](Placeables.md) on a given [heightmap](Heightmaps.md).
+Renders 2-D shapes surfaces with [placeables](Placeables.md) on a given [heightmap](Heightmaps.md).
 
 #### Extra parameters
 
 - `models`: [Selection of models](ModelSelection.md) to render (required, models must be voxelizable in 2d)
-- `heightmap`: [Heightmap](Heightmaps.md) to use (required).
-- `place`: [Placeable](Placeables.md) to place on each voxel of shapes (optional)
-- `inside`: [Placeable](Placeables.md) to place on each voxel inside shapes (optional)
-- `borders`: [Placeable](Placeables.md) to place on each voxel of shapes borders (optional)
-
-**NOTE**: `place` cannot be used with `inside` or `borders` (`inside` and `borders` may be used together).
+- `heightmap`: [Heightmap](Heightmaps.md) to use (required)
+- `place`: [Placeable](Placeables.md) to place on each voxel of shapes (required)
 
 #### Examples
 
 Draw "building" shapes with cobble on ground:
 ```yaml
-type: renderVectors
+type: renderSurfaces
 models:
   type: building
 heightmap: ground
 place: default:cobble
-```
-
-Draw same shapes but with wooden borders and glass inside:
-```yaml
-type: vector
-models:
-  type: building
-heightmap: ground
-borders: default:wood
-inside: default:glass
 ```
 
 ### `fillBetweenHeightmapAndMetadata`

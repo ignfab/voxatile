@@ -43,7 +43,8 @@ import com.ignfab.minalac.generator.parameters.tasks.HeightmapStatsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.PopulateHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
-import com.ignfab.minalac.generator.parameters.tasks.RenderVectorsTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.RenderLinesTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.RenderSurfacesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.SetSpawnTaskParams;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
@@ -99,7 +100,8 @@ public final class MinalacGenerator {
         parser.registerParams("populateHeightmap", PopulateHeightmapTaskParams.class);
         parser.registerParams("renderBuildings", RenderBuildingsTaskParams.class);
         parser.registerParams("renderHeightmap", RenderHeightmapTaskParams.class);
-        parser.registerParams("renderVectors", RenderVectorsTaskParams.class);
+        parser.registerParams("renderSurfaces", RenderSurfacesTaskParams.class);
+        parser.registerParams("renderLines", RenderLinesTaskParams.class);
         parser.registerParams("setSpawn", SetSpawnTaskParams.class);
 
         parser.registerParams("wfs", WFSProviderParams.class);

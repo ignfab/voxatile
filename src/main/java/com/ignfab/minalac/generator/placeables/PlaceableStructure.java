@@ -106,15 +106,26 @@ public class PlaceableStructure implements Placeable {
     /**
      * Returns the placeable at the specified coordinates.
      *
-     * @param x relative x-coordinate
-     * @param y relative y-coordinate
-     * @param z relative z-coordinate
+     * @param coords structure relative coordinates
+     *
+     * @return placeable at relative structure coordinates or {@code NoVoxel.INSTANCE} if none
+     */
+    public Placeable get(WorldCoords3d coords) {
+        Placeable placeable = placeables.get(coords);
+        return placeable == null ? Nothing.INSTANCE : placeable;
+    }
+
+    /**
+     * Returns the placeable at the specified coordinates.
+     *
+     * @param x structure relative x-coordinate
+     * @param y structure relative y-coordinate
+     * @param z structure relative z-coordinate
      *
      * @return placeable at relative structure coordinates or {@code NoVoxel.INSTANCE} if none
      */
     public Placeable get(int x, int y, int z) {
-        Placeable placeable = placeables.get(new WorldCoords3d(x, y, z));
-        return placeable == null ? Nothing.INSTANCE : placeable;
+        return get(new WorldCoords3d(x, y, z));
     }
 
     /**
