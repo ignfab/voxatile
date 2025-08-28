@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
+import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
-import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
+import com.ignfab.minalac.generator.models.TestingRectangleShape2dModel;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -25,7 +25,7 @@ public class FillBetweenHeightmapAndModelTaskTest {
             heightmap.set(pos, pos.x());
 
         // Prepare a single square model that has the same size as the tile.
-        ShapesVoxelizable2d model = new TestingRectangleShapeVoxelizable2dModel(tile.limits().to2d());
+        Model model = new TestingRectangleShape2dModel(tile.limits().to2d());
         int zMetadata = 5;
         model.setMetadata("zTest", zMetadata);
         tile.models().add("model", model);

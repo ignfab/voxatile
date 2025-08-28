@@ -253,8 +253,8 @@ public class WorldBBox2dTest {
     }
 
     @Test
-    @DisplayName("Test crop() method")
-    void testCrop() {
+    @DisplayName("Test filterInside() method")
+    void testFilterInside() {
         List<WorldCoords2d> list = Arrays.asList(
             new WorldCoords2d(2, 3),
             new WorldCoords2d(0, 1),
@@ -267,12 +267,12 @@ public class WorldBBox2dTest {
                 new WorldCoords2d(4, 5),
                 new WorldCoords2d(6, 7)
             ),
-            new WorldBBox2d(2, 4, 5, 4).crop(list.iterator())
+            new WorldBBox2d(2, 4, 5, 4).filterInside(list.iterator())
         );
 
-        assertEmpty(new WorldBBox2d(-2, -4, 1, 3).crop(list.iterator()));
+        assertEmpty(new WorldBBox2d(-2, -4, 1, 3).filterInside(list.iterator()));
 
-        assertEmpty(WorldBBox2d.EMPTY.crop(list.iterator()));
+        assertEmpty(WorldBBox2d.EMPTY.filterInside(list.iterator()));
     }
 
     @Test

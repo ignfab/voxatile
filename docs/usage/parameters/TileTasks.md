@@ -67,7 +67,7 @@ Renders 2-D geometries (points, linear things and surfaces) with [placeables](Pl
 
 #### Extra parameters
 
-- `models`: [Selection of models](ModelSelection.md) to render (required, models must be voxelizable in 2d)
+- `models`: [Selection of models](ModelSelection.md) to render (required, models must be convertible to 2d shapes)
 - `heightmap`: [Heightmap](Heightmaps.md) to use (required).
 - `place`: [Placeable](Placeables.md) to place on each voxel of shapes (optional)
 - `inside`: [Placeable](Placeables.md) to place on each voxel inside shapes (optional)
@@ -104,7 +104,7 @@ If the heightmap value is lower than or equal to the altitude, the placeable use
 
 #### Extra parameters
 
-- `models` (required, models must be voxelizable in 2d): [Selection of models](ModelSelection.md) to use.
+- `models` (required, models must be convertible to 2d shapes): [Selection of models](ModelSelection.md) to use.
 - `heightmap` (required): [Heightmap](Heightmaps.md) to use.
 - `altitudeMetadata` (required): Name of the model metadata containing the altitude value.
 - `placeAbove` (optional, default [`Nothing`](Placeables.md#nothing)): [Placeable](Placeables.md) placed above the altitude value.
@@ -200,7 +200,7 @@ Copies the values of a heightmap to another at all coordinates within the model'
 
 ##### Extra parameters
 
-- `models`: [Selection of models](ModelSelection.md) to use as a filter (required, models must be voxelizable in 2d).
+- `models`: [Selection of models](ModelSelection.md) to use as a filter (required, models must be convertible to 2d shapes).
 - `from`: [Heightmap](Heightmaps.md) to use.
 - `to`: [Heightmap](Heightmaps.md) receiving the values. It should be a [stored heightmap](Heightmaps.md#stored-heightmap).
 
@@ -220,7 +220,7 @@ Computes heightmap statistics over a model surface and adds the results as metad
 
 #### Extra parameters
 
-- `models` (required, models must be voxelizable in 2d): [Selection of models](ModelSelection.md) to use for computing statistics.
+- `models` (required, models must be convertible to 2d shapes): [Selection of models](ModelSelection.md) to use for computing statistics.
 - `heightmap` (required): [Heightmap](Heightmaps.md) to use.
 - `compute` (required): Specifies which statistics to compute
   - `maximum` or `max` (optional): Metadata where to store the computed maximum value.

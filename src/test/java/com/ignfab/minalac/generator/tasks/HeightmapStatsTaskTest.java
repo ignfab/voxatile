@@ -6,7 +6,7 @@ import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
+import com.ignfab.minalac.generator.models.TestingRectangleShape2dModel;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -28,9 +28,9 @@ public class HeightmapStatsTaskTest {
             heightmap.set(pos, heightFormula(pos));
 
         // Prepare a single square model
-        Model modelA = new TestingRectangleShapeVoxelizable2dModel(new WorldBBox2d(0, -1, 5, 3));
+        Model modelA = new TestingRectangleShape2dModel(new WorldBBox2d(0, -1, 5, 3));
         tile.models().add("model", modelA);
-        Model modelB = new TestingRectangleShapeVoxelizable2dModel(new WorldBBox2d(3, 3, 4, 3));
+        Model modelB = new TestingRectangleShape2dModel(new WorldBBox2d(3, 3, 4, 3));
         tile.models().add("model", modelB);
 
         // Try to compute
@@ -52,7 +52,7 @@ public class HeightmapStatsTaskTest {
         TestingGenerationTile tile = new TestingGenerationTile(WorldBBox3d.EMPTY);
         TestingHeightmap ground = tile.newStoredHeightmap("heightmap", 0);
 
-        Model model = new TestingRectangleShapeVoxelizable2dModel(new WorldBBox2d(0, -1, 5, 3));
+        Model model = new TestingRectangleShape2dModel(new WorldBBox2d(0, -1, 5, 3));
         tile.models().add("model", model);
 
         assertDoesNotThrow(() -> new HeightmapStatsTask(

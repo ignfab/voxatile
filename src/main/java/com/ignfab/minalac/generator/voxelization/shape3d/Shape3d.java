@@ -1,38 +1,36 @@
 package com.ignfab.minalac.generator.voxelization.shape3d;
 
-import java.util.Collections;
-
-import com.ignfab.minalac.generator.utils.iterator.Iterables;
-import com.ignfab.minalac.generator.utils.world3d.Positioned3d;
+import com.ignfab.minalac.generator.utils.world3d.Bounded3d;
 
 /**
  * Interface for voxel shapes in 3 dimensions.
  */
-public interface Shape3d {
+public interface Shape3d extends Shape3dConvertible, Bounded3d {
     /**
-     * Returns an iterator over all voxels in this shape.
+     * Returns an iterable over points in the shape.
+     * <p>
+     * All unique points must be returned. This iterator might return the same point multiple time
+     * but it's better if shapes return only unique points.
+     * <p>
+     * Linestrings and polygons could be constitued of nothing (no lines, no rings) but a single
+     * point if they are smaller than a voxel.
      *
-     * @return the global iterator of this shape.
+     * @return iterable over all points.
      */
-    default Iterable<Positioned3d> allVoxels() {
-        return Iterables.union(borderVoxels(), insideVoxels());
-    }
+    Iterable<Point3d> points();
 
     /**
-     * Returns an iterable over border voxels in this shape.
-     *
-     * @return the border iterable of this shape.
+     * {@return iterable over all line strings in the shape}
      */
-    default Iterable<LineVoxel3d> borderVoxels() {
-        return Collections::emptyIterator;
-    };
+    Iterable<LineString3d> lineStrings();
 
     /**
-     * Returns an iterable over inside voxels in this shape.
-     *
-     * @return the inside iterable of this shape.
+     * {@return iterable over all polygons in the shape}
      */
-    default Iterable<Positioned3d> insideVoxels() {
-        return Collections::emptyIterator;
+    Iterable<Polygon3d> polygons();
+
+    @Override
+    default Shape3d toShape3d() {
+        return this;
     }
 }
