@@ -4,21 +4,24 @@ import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.models.Voxelizable2d;
+import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.Shape2dVoxelizer;
+import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.SurfaceVoxelizer2d;
 
 /**
  * A {@link TileTask} which, for each model in {@link ModelSelection},
  * fills with {@link Placeable} the gap between a heightmap and an altitude (given by a model metadata)
  * within the model's boundaries.
  */
-public class FillBetweenHeightmapAndMetadataTask extends ModelTask<Voxelizable2d> {
+public class FillBetweenHeightmapAndMetadataTask extends ModelTask<Shape2dConvertibleModel> {
     private final ReadableHeightmapSpec heightmapSpec;
     private final String altitudeMetadata;
     private final Placeable placeAbove;
     private final Placeable placeBelow;
+    private final Shape2dVoxelizer voxelizer = new SurfaceVoxelizer2d();
 
     /**
      * Creates a new {@code FillBetweenHeightmapAndMetadataTask}.
@@ -36,7 +39,7 @@ public class FillBetweenHeightmapAndMetadataTask extends ModelTask<Voxelizable2d
         Placeable placeAbove,
         Placeable placeBelow
     ) {
-        super(Voxelizable2d.class, selection);
+        super(Shape2dConvertibleModel.class, selection);
         this.heightmapSpec = heightmapSpec;
         this.altitudeMetadata = altitudeMetadata;
         this.placeAbove = placeAbove;
@@ -44,14 +47,14 @@ public class FillBetweenHeightmapAndMetadataTask extends ModelTask<Voxelizable2d
     }
 
     @Override
-    protected void run(Voxelizable2d model, GenerationTile tile) {
+    protected void run(Shape2dConvertibleModel model, GenerationTile tile) {
         ReadableHeightmap heightmap = tile.heightmaps().get(heightmapSpec);
         Integer altitude = model.getMetadata(altitudeMetadata);
         // TODO should we use a FailurePolicy ?
         if (altitude == null)
             return;
 
-        for (Positioned2d voxel : model.voxelize2d(tile.limits().to2d())) {
+        for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(model))) {
             WorldCoords2d c = voxel.coords();
 
             int height = heightmap.get(c);

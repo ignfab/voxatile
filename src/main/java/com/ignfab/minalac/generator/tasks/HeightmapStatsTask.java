@@ -4,16 +4,19 @@ import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.models.Voxelizable2d;
+import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.Shape2dVoxelizer;
+import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.SurfaceVoxelizer2d;
 
 /**
  * A {@link TileTask} which computes heightmap statistics over a model surface and adds the results as a metadata.
  */
-public class HeightmapStatsTask extends ModelTask<Voxelizable2d> {
+public class HeightmapStatsTask extends ModelTask<Shape2dConvertibleModel> {
     private final ReadableHeightmapSpec heightmapSpec;
     private final String minimum;
     private final String maximum;
+    private final Shape2dVoxelizer voxelizer = new SurfaceVoxelizer2d();
 
     /**
      * Creates a new {@code HeightmapStatsTask}.
@@ -29,20 +32,20 @@ public class HeightmapStatsTask extends ModelTask<Voxelizable2d> {
         String minimum,
         String maximum
     ) {
-        super(Voxelizable2d.class, selection);
+        super(Shape2dConvertibleModel.class, selection);
         this.heightmapSpec = heightmapSpec;
         this.minimum = minimum;
         this.maximum = maximum;
     }
 
     @Override
-    protected void run(Voxelizable2d model, GenerationTile tile) {
+    protected void run(Shape2dConvertibleModel model, GenerationTile tile) {
         ReadableHeightmap heightmap = tile.heightmaps().get(heightmapSpec);
 
         boolean empty = true;
         int min = Integer.MAX_VALUE;
         int max = Integer.MIN_VALUE;
-        for (Positioned2d voxel : model.voxelize2d(tile.limits().to2d().intersection(heightmap.bbox()))) {
+        for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(model))) {
             empty = false;
 
             int value = heightmap.get(voxel.coords());

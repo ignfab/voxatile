@@ -226,8 +226,8 @@ public class WorldBBox3dTest {
     }
 
     @Test
-    @DisplayName("Test crop() method")
-    void testCrop() {
+    @DisplayName("Test filterInside() method")
+    void testFilterInside() {
         List<WorldCoords3d> list = Arrays.asList(
             new WorldCoords3d(2, 3, 4),
             new WorldCoords3d(0, 1, 2),
@@ -240,12 +240,12 @@ public class WorldBBox3dTest {
                 new WorldCoords3d(4, 5, 6),
                 new WorldCoords3d(6, 7, 8)
             ),
-            new WorldBBox3d(2, 4, 6, 5, 4, 3).crop(list.iterator())
+            new WorldBBox3d(2, 4, 6, 5, 4, 3).filterInside(list.iterator())
         );
 
-        assertEmpty(new WorldBBox3d(-2, -4, -5, 1, 3, 5).crop(list.iterator()));
+        assertEmpty(new WorldBBox3d(-2, -4, -5, 1, 3, 5).filterInside(list.iterator()));
 
-        assertEmpty(WorldBBox3d.EMPTY.crop(list.iterator()));
+        assertEmpty(WorldBBox3d.EMPTY.filterInside(list.iterator()));
     }
 
     @Test

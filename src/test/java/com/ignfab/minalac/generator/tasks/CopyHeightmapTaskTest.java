@@ -7,7 +7,7 @@ import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
+import com.ignfab.minalac.generator.models.TestingRectangleShape2dModel;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
@@ -39,7 +39,7 @@ public class CopyHeightmapTaskTest {
                 value++;
             }
 
-        Model model = new TestingRectangleShapeVoxelizable2dModel(new WorldBBox2d(0, 1, 2, 2));
+        Model model = new TestingRectangleShape2dModel(new WorldBBox2d(0, 1, 2, 2));
         tile.models().add("square", model);
         ModelSelection selection = new ModelSelection("square", null);
 
@@ -80,7 +80,7 @@ public class CopyHeightmapTaskTest {
 
         TestingHeightmap to = tile.newStoredHeightmap("to", new WorldBBox2d(-1, -3, 3, 4), 2);
 
-        Model model = new TestingRectangleShapeVoxelizable2dModel(new WorldBBox2d(0, 0, 2, 3));
+        Model model = new TestingRectangleShape2dModel(new WorldBBox2d(0, 0, 2, 3));
         tile.models().add("rectangle", model);
         ModelSelection selection = new ModelSelection("rectangle", null);
 

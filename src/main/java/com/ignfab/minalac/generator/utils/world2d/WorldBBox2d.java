@@ -226,32 +226,6 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
     }
 
     /**
-     * Crops an iterator over positioned items to the bounding box.
-     *
-     * @param iterator iterator over positioned items
-     *
-     * @return an iterator only with items contained in the bounding box
-     *
-     * @param <T> type of iterator results
-     */
-    public <T extends Positioned2d> Iterator<T> crop(Iterator<? extends T> iterator) {
-        return Iterators.cast(Iterators.filter(iterator, this::contains));
-    }
-
-    /**
-     * Same as {@link WorldBBox2d#crop(Iterator)}} but with an iterable as argument.
-     *
-     * @param iterable iterable giving an iterator over positioned items
-     *
-     * @return an iterator only with items contained in the bounding box
-     *
-     * @param <T> type of iterator results
-     */
-    public <T extends Positioned2d> Iterator<T> crop(Iterable<? extends T> iterable) {
-        return crop(iterable.iterator());
-    }
-
-    /**
      * {@return the size of the bounding box}
      */
     public WorldSize2d size() {
@@ -315,16 +289,6 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
     }
 
     /**
-     * Returns an iterator.
-     *
-     * @return a {@code WorldBBox2dIterator} to iterate over all the points contained in the bounding box.
-     */
-    @Override
-    public WorldBBox2dIterator iterator() {
-        return new WorldBBox2dIterator(this);
-    }
-
-    /**
      * Convert this {@link WorldBBox2d} to {@link WorldBBox3d}, with additional components along the z-axis.
      *
      * @param originZ the z-coordinate of the starting position
@@ -342,6 +306,37 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
      */
     public boolean isEmpty() {
         return size.x() == 0 || size.y() == 0;
+    }
+
+    /**
+     * Filters an iterator over positioned items, removing whose not inside the bounding box.
+     *
+     * @param iterator iterator over positioned items to filter
+     *
+     * @return an iterator with only items contained in the bounding box
+     *
+     * @param <T> type of iterator results
+     */
+    public <T extends Positioned2d> Iterator<T> filterInside(Iterator<? extends T> iterator) {
+        return Iterators.cast(Iterators.filter(iterator, this::contains));
+    }
+
+    /**
+     * Filters an iterable over positioned items, removing whose not inside the bounding box.
+     *
+     * @param iterable iterable over positioned items to filter
+     *
+     * @return an iterable with only items contained in the bounding box
+     *
+     * @param <T> type of iterable results
+     */
+    public <T extends Positioned2d> Iterable<T> filterInside(Iterable<? extends T> iterable) {
+        return () -> filterInside(iterable.iterator());
+    }
+
+    @Override
+    public WorldBBox2dIterator iterator() {
+        return new WorldBBox2dIterator(this);
     }
 
     @Override

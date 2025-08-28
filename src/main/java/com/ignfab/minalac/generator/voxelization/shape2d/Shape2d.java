@@ -1,38 +1,36 @@
 package com.ignfab.minalac.generator.voxelization.shape2d;
 
-import java.util.Collections;
-
-import com.ignfab.minalac.generator.utils.iterator.Iterables;
-import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
+import com.ignfab.minalac.generator.utils.world2d.Bounded2d;
 
 /**
  * Interface for voxel shapes in 2 dimensions.
  */
-public interface Shape2d {
+public interface Shape2d extends Shape2dConvertible, Bounded2d {
     /**
-     * Returns an iterator over all voxels in this shape.
+     * Returns an iterable over points in the shape.
+     * <p>
+     * All unique points must be returned. This iterator might return the same point multiple time
+     * but it's better if shapes return only unique points.
+     * <p>
+     * Linestrings and polygons could be constituted of nothing (no lines, no rings) but a single
+     * point if they are smaller than a voxel.
      *
-     * @return the global iterator of this shape.
+     * @return iterable over all points.
      */
-    default Iterable<Positioned2d> allVoxels() {
-        return Iterables.union(borderVoxels(), insideVoxels());
-    }
+    Iterable<Point2d> points();
 
     /**
-     * Returns an iterable over border voxels in this shape.
-     *
-     * @return the border iterable of this shape.
+     * {@return iterable over all line strings in the shape}
      */
-    default Iterable<LineVoxel2d> borderVoxels() {
-        return Collections::emptyIterator;
-    }
+    Iterable<LineString2d> lineStrings();
 
     /**
-     * Returns an iterable over inside voxels in this shape.
-     *
-     * @return the inside iterable of this shape.
+     * {@return iterable over all polygons in the shape}
      */
-    default Iterable<Positioned2d> insideVoxels() {
-        return Collections::emptyIterator;
-    };
+    Iterable<Polygon2d> polygons();
+
+    @Override
+    default Shape2d toShape2d() {
+        return this;
+    }
 }
