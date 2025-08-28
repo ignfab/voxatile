@@ -1,14 +1,16 @@
 package com.ignfab.minalac.generator.voxelization.shape2d.iterator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
+import com.ignfab.minalac.generator.utils.world2d.Vector2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.voxelization.shape2d.Line2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Polygon2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.Segment2d;
 
 /**
  * An iterator returning voxels of each position inside a 2d polygon.
@@ -24,8 +26,8 @@ public class Polygon2dIterator implements Iterator<Positioned2d> {
     private int y;
     private int endX;
 
-    private Iterator<Line2d.Intersection> iterator;
-    private Line2d.Intersection reuseIntersection;
+    private Iterator<Intersection> iterator;
+    private Intersection reuseIntersection;
     private int borderStart;
     private int borderEnd;
     private boolean borderChangingInsideness;
@@ -38,10 +40,14 @@ public class Polygon2dIterator implements Iterator<Positioned2d> {
      * @param includeBorders include borders in iteration
      *
      * <p>
+     * This iterator supposes polygon borders are rendered with "thin line algorithm"
+     * (minimal voxel iterator).
+     *
+     * <p>
      * Polygon iterator will browse each Y in polygon bbox.
-     * It will fetch all line intersection with voxel line at that Y.
+     * It will fetch all segments intersections with voxel line at that Y.
      * Each intersection is modeled by a start, an end (of x value), and two
-     * flags indicating if this line crosses the top and/or bottom limit of
+     * flags indicating if the segment crosses the top and/or bottom limit of
      * the voxel line.
      *
      * <p>
@@ -66,7 +72,13 @@ public class Polygon2dIterator implements Iterator<Positioned2d> {
      * start of next border (which voxels should be excluded). If that border
      * does not change insideness, we have to get back iterating just after it
      * as if it were an "entering" border.
+     *
      */
+
+    // TODO (other PR): This iterator has to be revamped to simplify and clarify algorithm
+    // TODO (other PR): includeBorders was there to have a voxelized polygon not overlapping eventual
+    // border iterator. Now such iterator doesn't exist anymore, this flag should be replaced by something
+    // like "thickness" adapted to polygons.
     public Polygon2dIterator(Polygon2d polygon, boolean includeBorders) {
         this.polygon = polygon;
         this.includeBorders = includeBorders;
@@ -75,11 +87,109 @@ public class Polygon2dIterator implements Iterator<Positioned2d> {
         moveOn();
     }
 
+    /**
+     * Computes all intersecting positions of a segment at a given Y-coordinate.
+     * If segment is rather horizontal than vertical, intersection concerns several voxels.
+     * This is used for polygon filling. It could be used for segment drawing if we would
+     * not need an index position for each voxel.
+     *
+     * @param segment Segment to compute intersections with horizontal axis
+     * @param y Y-coordinate for which we want intersection positions
+     *
+     * @return An Intersection object or {@code null} if there is no intersection
+     */
+    public static Intersection intersection(Segment2d segment, int y) {
+        // No intersection
+        if (y < segment.bbox().minY() || y > segment.bbox().maxY())
+            return null;
+
+        int maxIndex = Math.max(segment.bbox().sizeX(), segment.bbox().sizeY()) - 1;
+        double indexFactor;
+        if (maxIndex > 0)
+            indexFactor = segment.length() / maxIndex;
+        else
+            indexFactor = 0;
+
+        // Find start and end indexes of intersection (reciprocal computation from Y)
+        // Ceils and floors depends on the segment direction
+        double startT;
+        double endT;
+        WorldCoords2d start = segment.start();
+        Vector2d direction = segment.direction();
+
+        if (start.y() == segment.end().y()) {
+            // Horizontal segment
+            startT = 0;
+            endT = maxIndex;
+        } else if (direction.y() < 0) {
+            // Ascending segment
+            startT = Math.max(0, Math.floor((y + 0.5 - start.y()) / (direction.y() * indexFactor)) + 1);
+            endT = Math.min(maxIndex, Math.floor((y - 0.5 - start.y()) / (direction.y() * indexFactor)));
+        } else {
+            // Descending segment
+            startT = Math.max(0, Math.ceil((y - 0.5 - start.y()) / (direction.y() * indexFactor)));
+            endT = Math.min(maxIndex, Math.ceil((y + 0.5 - start.y()) / (direction.y() * indexFactor)) - 1);
+        }
+
+        int x1 = (int) Math.round(direction.x() * indexFactor * endT + start.x());
+        int x2 = (int) Math.round(direction.x() * indexFactor * startT + start.x());
+
+        return new Intersection(
+            Math.min(x1, x2),
+            Math.max(x1, x2),
+            y > segment.bbox().minY(), // Segment crosses top voxel line border if Y is not minimum Y
+            y < segment.bbox().maxY()  // Segment crosses bottom voxel line border if Y is not maximum Y
+        );
+    }
+
+    /**
+     * Lists intersections of this polygon at a given y.
+     * Very useful for voxelization purpose.
+     * <p>
+     * {@code Segment2d} computes intersection of a segment at that given y.
+     * This method lists all these intersection.
+     *
+     * @param y the y-component value of the straight segment to intersect.
+     * @return the list of intersections.
+     */
+    public List<Intersection> intersections(int y) {
+        if (y < polygon.bbox().minY() || y > polygon.bbox().maxY())
+            return Collections.emptyList();
+
+        List<Intersection> intersections = new ArrayList<>();
+        for (Segment2d segment : polygon.segments()) {
+            Intersection intersection = intersection(segment, y);
+            if (intersection != null)
+                intersections.add(intersection);
+        }
+
+        return intersections;
+    }
+
+    /**
+     * An intersection with a segment at given Y-coordinate.
+     * Intersection is not only a point, it can be several voxels large if
+     * segment is rather vertical than horizontal. Here we store min and max
+     * X-coordinate value of intersection, plus some information useful for
+     * polygon filling (how does segment crosses Y-coordinate voxel line).
+     *
+     * @param start Minimum X-coordinate of intersection
+     * @param end Maximum X-coordinate of intersection
+     * @param top True if the segment crosses Y-coordinate voxel line upper side
+     * @param bottom True if the segment crosses Y-coordinate voxel line lower side
+     */
+     public record Intersection(int start, int end, boolean top, boolean bottom) implements Comparable<Intersection> {
+        @Override
+        public int compareTo(Intersection other) {
+            return start - other.start;
+        }
+    }
+
     // Move X to the next border range (range of border voxels)
     // Returns false if no more iteration range found
     private boolean nextBorderRange() {
         // Reuse previous intersection or fetch a new one
-        Line2d.Intersection intersection = reuseIntersection;
+        Intersection intersection = reuseIntersection;
         reuseIntersection = null;
 
         if (intersection == null) {
@@ -183,7 +293,7 @@ public class Polygon2dIterator implements Iterator<Positioned2d> {
         return includeBorders ? nextIterationRangeIncludingBorders() : nextIterationRangeExcludingBorders();
     }
 
-    // Go to next line
+    // Go to next scan line
     private void nextLine() {
         // If borders are excluded, there may be lines with no iterations (only borders), so we have to loop
         do {
@@ -191,8 +301,8 @@ public class Polygon2dIterator implements Iterator<Positioned2d> {
             if (y > polygon.bbox().maxY())
                 return; // Stops when out of polygon
 
-            // Fetch all line intersections, sort them and creates an iterator
-            List<Line2d.Intersection> list = polygon.intersections(y);
+            // Fetch all scan line intersections, sort them and creates an iterator
+            List<Intersection> list = intersections(y);
             list.sort(null);
             iterator = list.iterator();
 

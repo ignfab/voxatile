@@ -1,35 +1,47 @@
 package com.ignfab.minalac.generator.voxelization.shape3d;
 
-import com.ignfab.minalac.generator.utils.iterator.Iterables;
+import java.util.Collections;
+
 import com.ignfab.minalac.generator.utils.world3d.Positioned3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 /**
  * Represents a 3d point in the voxel world.
  *
- * {@code Point3d} does have neither inside nor border voxels (no line information).
- * Its only voxel will be accessible through {@code allVoxels()} iterable.
+ * @param coords the coordinate of the point.
  */
-public class Point3d implements Positioned3d, Shape3d {
-    private final WorldCoords3d coords;
+public record Point3d(WorldCoords3d coords) implements Positioned3d, Shape3d {
 
     /**
-     * Creates a new point at the given coordinate.
+     * Creates a new point from integer coordinates.
+     * This is a shortcut to {@code new Point3d(new WorldCoords3d(x, y, z))}.
      *
-     * @param coords the coordinate of the point.
+     * @param x The x-component value
+     * @param y The y-component value
+     * @param z The z-component value
      */
-    public Point3d(WorldCoords3d coords) {
-        this.coords = coords;
+    public Point3d(int x, int y, int z) {
+        this(new WorldCoords3d(x, y, z));
     }
 
     @Override
-    public WorldCoords3d coords() {
-        return coords;
+    public Iterable<Point3d> points() {
+        return Collections.singleton(this);
     }
 
     @Override
-    public Iterable<Positioned3d> allVoxels() {
-        return Iterables.iterable(this);
+    public Iterable<LineString3d> lineStrings() {
+        return Collections::emptyIterator;
     }
 
+    @Override
+    public Iterable<Polygon3d> polygons() {
+        return Collections::emptyIterator;
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        return new WorldBBox3d(coords);
+    }
 }

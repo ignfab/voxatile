@@ -213,29 +213,29 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
     }
 
     /**
-     * Crops an iterator over positioned items to the bounding box.
+     * Filters an iterator over positioned items, removing whose not inside the bounding box.
      *
-     * @param iterator iterator over positioned items
+     * @param iterator iterator over positioned items to filter
      *
-     * @return an iterator only with items contained in the bounding box
+     * @return an iterator with only items contained in the bounding box
      *
      * @param <T> type of iterator results
      */
-    public <T extends Positioned3d> Iterator<T> crop(Iterator<? extends T> iterator) {
+    public <T extends Positioned3d> Iterator<T> filterInside(Iterator<? extends T> iterator) {
         return Iterators.cast(Iterators.filter(iterator, this::contains));
     }
 
     /**
-     * Same as {@link WorldBBox3d#crop(Iterator)}} but with an iterable as argument.
+     * Filters an iterable over positioned items, removing whose not inside the bounding box.
      *
-     * @param iterable iterable giving an iterator over positioned items
+     * @param iterable iterable over positioned items to filter
      *
-     * @return an iterator only with items contained in the bounding box
+     * @return an iterable with only items contained in the bounding box
      *
-     * @param <T> type of iterator results
+     * @param <T> type of iterable results
      */
-    public <T extends Positioned3d> Iterator<T> crop(Iterable<? extends T> iterable) {
-        return crop(iterable.iterator());
+    public <T extends Positioned3d> Iterable<T> filterInside(Iterable<? extends T> iterable) {
+        return () -> filterInside(iterable.iterator());
     }
 
     /**
@@ -323,16 +323,6 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
     }
 
     /**
-     * Returns an iterator.
-     *
-     * @return a {@link WorldBBox3dIterator} to iterate over all the points contained in the bounding box.
-     */
-    @Override
-    public WorldBBox3dIterator iterator() {
-        return new WorldBBox3dIterator(this);
-    }
-
-    /**
      * Convert this {@link WorldBBox3d} to {@link WorldBBox2d}, dropping its components along the z-axis.
      * The region represented by this bbox will be flattened.
      *
@@ -349,6 +339,11 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
      */
     public boolean isEmpty() {
         return size.x() == 0 || size.y() == 0 || size.z() == 0;
+    }
+
+    @Override
+    public WorldBBox3dIterator iterator() {
+        return new WorldBBox3dIterator(this);
     }
 
     @Override

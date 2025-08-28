@@ -1,34 +1,46 @@
 package com.ignfab.minalac.generator.voxelization.shape2d;
 
-import com.ignfab.minalac.generator.utils.iterator.Iterables;
+import java.util.Collections;
+
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
 /**
  * Represents a 2d point in the voxel world.
  *
- * {@code Point2d} does have neither inside nor border voxels (no line information).
- * Its only voxel will be accessible through {@code allVoxels()} iterable.
+ * @param coords the coordinate of the point.
  */
-public class Point2d implements Positioned2d, Shape2d {
-    private final WorldCoords2d coords;
+public record Point2d(WorldCoords2d coords) implements Positioned2d, Shape2d {
 
     /**
-     * Creates a new point at the given coordinate.
+     * Creates a new point from integer coordinates.
+     * This is a shortcut to {@code new Point2d(new WorldCoords2d(x, y))}.
      *
-     * @param coords the coordinate of the point.
+     * @param x The x-component value
+     * @param y The y-component value
      */
-    public Point2d(WorldCoords2d coords) {
-        this.coords = coords;
+    public Point2d(int x, int y) {
+        this(new WorldCoords2d(x, y));
     }
 
     @Override
-    public WorldCoords2d coords() {
-        return coords;
+    public Iterable<Point2d> points() {
+        return Collections.singleton(this);
     }
 
     @Override
-    public Iterable<Positioned2d> allVoxels() {
-        return Iterables.iterable(this);
+    public Iterable<LineString2d> lineStrings() {
+        return Collections::emptyIterator;
+    }
+
+    @Override
+    public Iterable<Polygon2d> polygons() {
+        return Collections::emptyIterator;
+    }
+
+    @Override
+    public WorldBBox2d bbox() {
+        return new WorldBBox2d(coords);
     }
 }
