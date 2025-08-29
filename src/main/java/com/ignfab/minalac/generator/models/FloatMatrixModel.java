@@ -77,8 +77,8 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
         float fx = x - xf;
         float fy = y - yf;
 
-        return (1 - fy) * ((1 - fx) * data.get(xf, yf) + fx * data.get(xc, yf))
-            + fy * ((1 - fx) * data.get(xf, yc) + fx * data.get(xc, yc));
+        return (1 - fy) * ((1 - fx) * data.getFloat(xf, yf) + fx * data.getFloat(xc, yf))
+            + fy * ((1 - fx) * data.getFloat(xf, yc) + fx * data.getFloat(xc, yc));
     }
 
     @Override

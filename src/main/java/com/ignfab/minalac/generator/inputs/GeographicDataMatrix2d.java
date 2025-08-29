@@ -12,8 +12,8 @@ public interface GeographicDataMatrix2d<T> {
     /**
      * Returns a value at a given coordinates in the matrix.
      *
-     * @param x x-coordinate from 0 to maxX()
-     * @param y y-coordinate from 0 to maxY()
+     * @param x x-coordinate from {@code 0} to {@code sizeX() - 1}
+     * @param y y-coordinate from {@code 0} to {@code sizeY() - 1}
      *
      * @return value at given coordinates
      */
