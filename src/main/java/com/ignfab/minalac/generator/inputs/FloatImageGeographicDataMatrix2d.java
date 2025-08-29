@@ -29,7 +29,7 @@ public record FloatImageGeographicDataMatrix2d(
     double cellSizeY
 ) implements FloatGeographicDataMatrix2d {
     @Override
-    public Float get(int x, int y) {
+    public float getFloat(int x, int y) {
         return data.getSampleFloat(dataOriginX + x, dataOriginY + sizeY - y - 1, 0);
     }
 }
