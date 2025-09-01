@@ -67,7 +67,8 @@ public class FetchDataTask implements TileTask {
         // Resulting list of models. Will be added to store only if fetch succeeds
         List<Model> models = new LinkedList<>();
 
-        try (Provider.Result<?> result = provider.provide(tile.limits())) {
+        try (Provider.Result<?> result = provider.provide(tile.modelTypeVolume(modelType).get())) {
+
             processor.initialize(result.crs());
             while (result.hasNext()) {
                 Object data = result.next();

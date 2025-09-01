@@ -12,7 +12,11 @@ import fr.ign.voxatile.core.models.ModelSelection;
  */
 public abstract class ModelTask<M extends Model> implements TileTask {
     private final Class<M> cls;
-    private final ModelSelection selection;
+
+    /**
+     * Selection of models to be processed by this task.
+     */
+    protected final ModelSelection selection;
 
     protected ModelTask(Class<M> cls, ModelSelection selection) {
         this.cls = cls;

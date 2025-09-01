@@ -8,7 +8,6 @@ import fr.ign.voxatile.core.utils.world2d.WorldBBox2d;
 public class HeightmapDeclaration {
     private final String name;
     private final int defaultValue;
-    // TODO: Later, margins could be added here
 
     private final WritableHeightmapSpec spec = new WritableHeightmapSpec();
 

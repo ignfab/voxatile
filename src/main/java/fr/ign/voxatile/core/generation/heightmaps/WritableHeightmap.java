@@ -1,5 +1,6 @@
 package fr.ign.voxatile.core.generation.heightmaps;
 
+import fr.ign.voxatile.core.utils.world2d.WorldBBox2d;
 import fr.ign.voxatile.core.utils.world2d.WorldCoords2d;
 
 /**
@@ -46,4 +47,13 @@ public interface WritableHeightmap extends ReadableHeightmap {
      * @param other Heightmap to copy values from
      */
     void copyValues(ReadableHeightmap other);
+
+    /**
+     * Extends heightmap area so it includes given area.
+     * <p>
+     * Can be called only before heighmap contains any data (before any write/copy).
+     *
+     * @param area area to include in heightmap
+     */
+    void includeArea(WorldBBox2d area);
 }
