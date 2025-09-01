@@ -36,9 +36,7 @@ public abstract class VoxelTile {
     }
 
     /**
-     * Return the limits of this tile.
-     *
-     * @return the {@code WorldBBox3d} representing the limits of the world
+     * {@return the limits of this tile}
      */
     public WorldBBox3d limits() {
         return limits;

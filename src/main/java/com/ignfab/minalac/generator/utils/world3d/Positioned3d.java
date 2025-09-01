@@ -10,9 +10,7 @@ package com.ignfab.minalac.generator.utils.world3d;
  */
 public interface Positioned3d {
     /**
-     * The position of the object in voxel world.
-     *
-     * @return the voxel coordinate.
+     * {@return the position of the object in voxel world}
      */
     WorldCoords3d coords();
 }

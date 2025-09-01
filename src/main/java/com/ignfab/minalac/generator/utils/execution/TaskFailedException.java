@@ -18,9 +18,7 @@ public class TaskFailedException extends Exception {
     }
 
     /**
-     * Returns the failed task.
-     *
-     * @return the failed task
+     * {@return the failed task}
      */
     public ScheduledTask<?> getTask() {
         return task;

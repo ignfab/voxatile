@@ -24,18 +24,14 @@ public class HeightmapDeclaration {
     }
 
     /**
-     * Returns the name of this declaration.
-     *
-     * @return name
+     * {@return the name of this declaration}
      */
     public String name() {
         return name;
     }
 
     /**
-     * Returns spec object to use as key in readable/writable heightmap stores in order to retrieve it.
-     *
-     * @return {@link WritableHeightmapSpec} object
+     * {@return spec object to use as key in readable/writable heightmap stores in order to retrieve it}
      */
     public WritableHeightmapSpec spec() {
         return spec;

@@ -52,9 +52,7 @@ public record Region(int regionX, int regionZ, MCAFile file) {
     }
 
     /**
-     * Returns the filename of this region.
-     *
-     * @return the filename of this region
+     * {@return the filename of this region}
      */
     public String getFileName() {
         return MCAUtil.createNameFromRegionLocation(regionX, regionZ);

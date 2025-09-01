@@ -102,18 +102,14 @@ public class ScheduledTask<T> {
     }
 
     /**
-     * Returns the ID of the task.
-     *
-     * @return the ID of the task
+     * {@return the ID of the task}
      */
     public String id() {
         return id;
     }
 
     /**
-     * Returns the state of this task.
-     *
-     * @return the state of this task
+     * {@return the state of this task}
      */
     public ScheduledTaskState state() {
         return state;

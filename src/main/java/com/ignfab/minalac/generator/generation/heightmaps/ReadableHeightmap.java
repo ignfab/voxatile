@@ -32,9 +32,7 @@ public interface ReadableHeightmap {
     }
 
     /**
-     * Returns the bounding box of the heightmap.
-     *
-     * @return the {@link WorldBBox2d} associated to the heightmap.
+     * {@return the bounding box associated to the heightmap}
      */
     WorldBBox2d bbox();
 }

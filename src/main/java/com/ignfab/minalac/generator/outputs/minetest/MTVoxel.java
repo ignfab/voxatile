@@ -64,26 +64,23 @@ public class MTVoxel implements Placeable {
     }
 
     /**
-     * Returns the node type string.
-     * @return the node type string
+     * {@return the node type string}
      */
     public String getType() {
         return type;
     }
 
     /**
-     * Returns the param1 data of the node.
+     * {@return the param1 data of the node}
      * This parameter usually contains information about the node's light intensity.
-     * @return the param1 data of the node.
      */
     public byte getParam1() {
         return param1;
     }
 
     /**
-     * Returns the param2 data of the node.
+     * {@return the param2 data of the node}
      * This parameter usually contains information about the node's spacial orientation.
-     * @return the param2 data of the node
      */
     public byte getParam2() {
         return param2;

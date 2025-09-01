@@ -20,44 +20,32 @@ public interface GeographicDataMatrix2d<T> {
     T get(int x, int y);
 
     /**
-     * Returns matrix size on x-axis (aka width).
-     *
-     * @return matrix width
+     * {@return matrix size on x-axis (aka width)}
      */
     int sizeX();
 
     /**
-     * Returns matrix size on y-axis (aka height).
-     *
-     * @return matrix height
+     * {@return matrix size on y-axis (aka height)}
      */
     int sizeY();
 
     /**
-     * Return x-axis component of geographical offset.
-     *
-     * @return offset x-axis component
+     * {@return x-axis component of geographical offset}
      */
     double offsetX();
 
     /**
-     * Return y-axis component of geographical offset.
-     *
-     * @return offset y-axis component
+     * {@return y-axis component of geographical offset}
      */
     double offsetY();
 
     /**
-     * Return x-axis geographical size of matrix cells.
-     *
-     * @return size x-axis component
+     * {@return x-axis geographical size of matrix cells}
      */
     double cellSizeX();
 
     /**
-     * Return y-axis geographical size of matrix cells.
-     *
-     * @return size y-axis component
+     * {@return y-axis geographical size of matrix cells}
      */
     double cellSizeY();
 }

@@ -52,11 +52,7 @@ public class FetchDataTaskParams extends TileTaskParams {
         this.processor = processor;
     }
 
-    /**
-     * Checks if there are any blatantly invalid parameters.
-     *
-     * @throws IllegalArgumentException is any of the parameters is invalid.
-     */
+    @Override
     public void validate() throws IllegalArgumentException {
         if (modelType.isBlank())
             throw new IllegalArgumentException("The 'modelType' field cannot be empty or contain only whitespace.");
@@ -66,12 +62,7 @@ public class FetchDataTaskParams extends TileTaskParams {
         postProcessing.validate();
     }
 
-    /**
-     * Creates the corresponding {@code DataSource}.
-     *
-     * @param generation the generation context
-     * @return the created data source
-     */
+    @Override
     public FetchDataTask create(Generation generation) {
         return new FetchDataTask(
             modelType,

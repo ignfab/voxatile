@@ -25,9 +25,8 @@ public record IntegerInterval(int begin, int end) implements Comparable<IntegerI
     }
 
     /**
-     * Size in terms of how many integers are in interval (3 to 3 has size 1).
-     *
-     * @return size of the interval
+     * {@return the size of this interval}
+     * It corresponds to how many integers are in interval (3 to 3 has size 1).
      */
     public int size() {
         return end - begin + 1;

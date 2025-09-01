@@ -35,7 +35,7 @@ public class BinaryOperationHeightmapSpec extends ReadableHeightmapSpec {
     /**
      * Usable heightmap corresponding to this {@code BinaryOperationHeightmapSpec}.
      *
-     * {@see ReadableHeightmapSpec}
+     * @see ReadableHeightmapSpec
      */
     private final class Created implements ReadableHeightmap {
         private final ReadableHeightmap firstOperand;

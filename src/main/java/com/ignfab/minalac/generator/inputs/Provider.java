@@ -24,9 +24,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
  */
 public interface Provider<T> {
     /**
-     * Returns the type of provided elements.
-     *
-     * @return the type of provided elements
+     * {@return the type of provided elements}
      */
     Class<T> providedType();
 
@@ -58,9 +56,7 @@ public interface Provider<T> {
      */
     interface Result<T> extends Closeable {
         /**
-         * Returns the coordinate reference system of resulting data.
-         *
-         * @return CRS of resulting data
+         * {@return the coordinate reference system of resulting data}
          */
         CoordinateReferenceSystem crs();
 

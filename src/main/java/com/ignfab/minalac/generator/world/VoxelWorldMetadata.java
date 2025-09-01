@@ -16,27 +16,23 @@ public class VoxelWorldMetadata {
     protected String worldName;
 
     /**
-     * Returns the initial position of the player.
-     *
-     * @return the spawn of the player
+     * {@return the initial spawn position of the player}
      */
     public WorldCoords3d getSpawn() {
         return spawn;
     }
 
     /**
-     * Sets the initial position of the player.
+     * Sets the initial spawn position of the player.
      *
-     * @param spawn the initial position of the player
+     * @param spawn the initial spawn position of the player
      */
     public void setSpawn(WorldCoords3d spawn) {
         this.spawn = spawn;
     }
 
     /**
-     * Returns the name of the world.
-     *
-     * @return the name of the world
+     * {@return the name of the world}
      */
     public String getWorldName() {
         return worldName;
