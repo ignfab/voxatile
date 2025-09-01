@@ -323,6 +323,16 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
     }
 
     /**
+     * Returns the bounding box shifted by given coordinates.
+     *
+     * @param by coordinate to shift the bounding box by
+     * @return shifted bounding box
+     */
+    public WorldBBox3d shift(WorldCoords3d by) {
+        return new WorldBBox3d(min().add(by), size());
+    }
+
+    /**
      * Convert this {@link WorldBBox3d} to {@link WorldBBox2d}, dropping its components along the z-axis.
      * The region represented by this bbox will be flattened.
      *

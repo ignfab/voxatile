@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.world;
 import java.util.Objects;
 
 import com.ignfab.minalac.generator.placeables.Placeable;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * A dummy voxel for {@code TestingVoxelWorld} and {@code TestingVoxelTile}.
@@ -55,5 +56,10 @@ public class TestingVoxel implements Placeable {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        return WorldBBox3d.ORIGIN;
     }
 }

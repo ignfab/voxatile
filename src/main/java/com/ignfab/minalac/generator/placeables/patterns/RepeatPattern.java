@@ -3,6 +3,8 @@ package com.ignfab.minalac.generator.placeables.patterns;
 import com.ignfab.minalac.generator.placeables.Pattern;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
+import com.ignfab.minalac.generator.utils.iterator.Iterables;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldSize3d;
 
@@ -16,6 +18,7 @@ public class RepeatPattern implements Pattern {
     private final WorldCoords3d zd;
 
     private final WorldSize3d size;
+    private final WorldBBox3d bbox;
 
     /**
      * Create a new {@code RepeatPattern}.
@@ -41,6 +44,10 @@ public class RepeatPattern implements Pattern {
             structure.limits().sizeY() + yd.y(),
             structure.limits().sizeZ() + zd.z()
         );
+
+        // BBox is the largest bbox of underlying placables.
+        // Actual bbox depends on position but we have none.
+        bbox = WorldBBox3d.surrounding(Iterables.remap(structure.limits(), (pos) -> structure.get(pos).bbox()));
     }
 
     @Override
@@ -57,5 +64,10 @@ public class RepeatPattern implements Pattern {
             min.y() + Math.floorMod(y - min.y() - xd.y() * nx - zd.y() * nz, size.y()),
             min.z() + Math.floorMod(z - min.z() - xd.z() * nx - yd.z() * ny, size.z())
         );
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        return bbox;
     }
 }

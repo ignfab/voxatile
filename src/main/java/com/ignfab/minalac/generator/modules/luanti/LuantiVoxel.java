@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.modules.luanti;
 import java.util.Objects;
 
 import com.ignfab.minalac.generator.placeables.Placeable;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
@@ -102,5 +103,10 @@ public class LuantiVoxel implements Placeable {
     @Override
     public int hashCode() {
         return Objects.hash(type, param1, param2);
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        return WorldBBox3d.ORIGIN;
     }
 }
