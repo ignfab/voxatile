@@ -1,6 +1,8 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,6 +24,13 @@ public abstract class TaskParams extends PolymorphicParams {
     @JsonSetter(nulls = Nulls.SKIP)
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     public Set<String> after = new HashSet<>();
+
+    /**
+     * Model types to apply margin on (optional).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    public List<String> addMarginsTo = new ArrayList<>();
 
     @Override
     public void validate() {

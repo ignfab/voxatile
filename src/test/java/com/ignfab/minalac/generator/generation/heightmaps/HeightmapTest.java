@@ -66,9 +66,28 @@ public class HeightmapTest {
 
     @Test
     public void testOut() {
-        Heightmap heightmap = new Heightmap(0, 0, 3, 2, 0);
+        Heightmap heightmap = new Heightmap(0, 0, 3, 2, -3);
         assertThrows(IndexOutOfBoundsException.class, () -> heightmap.set(25, 25, 0));
-        assertThrows(IndexOutOfBoundsException.class, () -> heightmap.get(25, 25));
+        assertEquals(-3, assertDoesNotThrow(() -> heightmap.get(25, 25)));
+    }
+
+    @Test
+    public void testIncludeArea() {
+        Heightmap heightmap = new Heightmap(0, 0, 3, 2, -4);
+        heightmap.includeArea(new WorldBBox2d(-1, 3, 1, 2));
+
+        assertEquals(new WorldBBox2d(-1, 0, 4, 5), heightmap.bbox());
+
+        assertDoesNotThrow(() -> heightmap.set(-1, 0, 10));
+        assertDoesNotThrow(() -> heightmap.set(2, 4, 10));
+
+        assertThrows(IndexOutOfBoundsException.class, () -> heightmap.set(-1, -1, 10));
+
+        // Should not be able to change heightmap size anymore
+        assertThrows(IllegalStateException.class, () -> heightmap.includeArea(new WorldBBox2d(5, 4, 3, 2)));
+
+        // But should ignore if area already included
+        assertDoesNotThrow(() -> heightmap.includeArea(heightmap.bbox()));
     }
 
     @Test

@@ -5,6 +5,7 @@ import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * A {@link TileTask} placing things between a minimum and maximum heightmap.
@@ -25,6 +26,11 @@ public class RenderHeightmapTask implements TileTask {
         this.minimum = minimum;
         this.maximum = maximum;
         this.placeable = placeable;
+    }
+
+    @Override
+    public WorldBBox3d placementMargins() {
+        return placeable.bbox().symetric();
     }
 
     @Override

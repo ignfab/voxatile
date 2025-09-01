@@ -5,7 +5,6 @@ import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmapSpec;
 import com.ignfab.minalac.generator.models.FloatMatrixModel;
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.Matrix2d;
 
@@ -34,12 +33,12 @@ public class PopulateHeightmapTask extends ModelTask<FloatMatrixModel> {
     @Override
     protected void run(FloatMatrixModel model, GenerationTile tile) {
         WritableHeightmap heightmap = tile.heightmap(heightmapSpec);
-        WorldBBox2d intersection = tile.limits().to2d().intersection(heightmap.bbox());
+        heightmap.includeArea(tile.modelTypeVolume(selection.type()).get().to2d());
+
         // Iterate over matrix and fill heightmap altitude
-        for (Matrix2d.Value<Float> value : model) {
+        for (Matrix2d.Value<Float> value : heightmap.bbox().filterInside(model)) {
             WorldCoords2d c = value.coords();
-            if (intersection.contains(c))
-                heightmap.set(c, (int) Math.round(value.value() / verticalScale));
+            heightmap.set(c, (int) Math.round(value.value() / verticalScale));
         }
     }
 }

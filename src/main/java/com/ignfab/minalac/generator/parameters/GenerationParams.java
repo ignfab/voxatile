@@ -190,6 +190,18 @@ public class GenerationParams {
 
         // ForEachTile scheduling
         forEachTile.populate(generation, generation.forEachTileScheduler());
+        TODO:
+        /* Here we have to add margins to models... we need to know task puts wants margin
+
+
+
+            taskParams.addMarginsTo.forEach((modelType) -> {
+                // Add placement margins to implied models
+                generation.includeModelTypeMargins(modelType, task.placementMargins());
+            });
+        */
+
+
         // AfterAllTiles scheduling
         afterAllTiles.populate(generation, generation.afterAllTilesScheduler());
 

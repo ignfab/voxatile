@@ -141,6 +141,9 @@ forEachTile:
           features: BDTOPO_V3:zone_de_vegetation
       - type: renderSurfaces
         after: renderGround
+        addMarginsTo:
+          - vegetation
+          - altitude
         models:
           type: vegetation
           filter:

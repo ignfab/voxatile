@@ -276,6 +276,15 @@ public class WorldBBox2dTest {
     }
 
     @Test
+    @DisplayName("Test enlarged() method")
+    public void testEnlarged() {
+        assertEquals(new WorldBBox2d(0, 0, 4, 6),
+            new WorldBBox2d(1, 2, 3, 4).enlarged(new WorldBBox2d(-1, -2, 1, 1)));
+        assertEquals(new WorldBBox2d(1, 2, 4, 6),
+            new WorldBBox2d(1, 2, 3, 4).enlarged(new WorldBBox2d(1, 2, 1, 1)));
+    }
+
+    @Test
     public void testCenter() {
         // sizeX odd, sizeY even
         assertEquals(new WorldCoords2d(-1, 1), new WorldBBox2d(-2, -1, 3, 4).center());

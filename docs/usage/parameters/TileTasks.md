@@ -2,10 +2,10 @@
 
 Tile tasks will be performed on each tile. They only can be used in a "tile schedule" (for now `forEachTile` only).
 
-Each task has a `type`, optional dependencies to other tasks (in `after`), and other parameters depending on its type.
+Each task has a `type`, some common parameters and specific parameters depending on its type.
 
 ## Table of contents
-
+* [Common parameters](#common-parameters)
 * [Organizational tasks](#organizational-tasks)
   * [`noOperation`](OrganizationalTasks.md#nooperation)
   * [`sequence`](OrganizationalTasks.md#sequence)
@@ -24,6 +24,22 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`populateHeightmap`](#populateheightmap)
   * [`copyHeightmap`](#copyheightmap)
   * [`computeHeightmapStats`](#computeheightmapstats)
+
+## Common parameters
+
+- `type`: Type of the task (required).
+
+This type will define what this task will do and what extra parameters it needs. Available types are listed below in different categories.
+
+- `after`: Task that must run before this task (optional).
+
+A single task name or a list of task names can be provided. This task will start only once all mentioned tasks have successfully completed.
+
+- `addMarginsTo`: Model types to add margins to (optional).
+
+In order to perfectly stitch tiles together, rendering tasks may need to get a bit data overpassing the tile area/volume. This field indicates which model type(s) are concerned. This field could contain a single model type name or a list of model type names.
+
+Margins are given by the tasks before starting to work. If a task needs to add margins according to fetched model, it must use another mechanism. Please refer to task documentation.
 
 ## Organizational tasks
 
@@ -162,7 +178,7 @@ The blueprint shows five successive vertical slices of the structure. This will 
 
 ### `renderPoints`
 
-Renders 3d points as a placeable. 
+Renders 3d points as a placeable.
 
 #### Extra parameters
 
