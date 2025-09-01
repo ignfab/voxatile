@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.placeables;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ignfab.minalac.generator.utils.world3d.Bounded3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.VoxelTile;
@@ -14,6 +15,7 @@ import com.ignfab.minalac.generator.world.VoxelTile;
 public class PlaceableStructure implements Placeable {
     private final Map<WorldCoords3d, Placeable> placeables = new HashMap<>();
     private WorldBBox3d limits = null;
+    private WorldBBox3d bbox = null;
 
     /**
      * {@inheritDoc}
@@ -37,8 +39,9 @@ public class PlaceableStructure implements Placeable {
         else
             placeables.put(coords, placeable);
 
-        // Force limits recompute
+        // Force limits & bbox recompute (likely to be useless as they should be used only once structure built)
         limits = null;
+        bbox = null;
     }
 
     /**
@@ -131,5 +134,19 @@ public class PlaceableStructure implements Placeable {
                 : new WorldBBox3d(placeables.keySet().toArray(new WorldCoords3d[0]));
 
         return limits;
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        // Bbox won't be updated if one of childs bbox changes but this is not supposed to happen
+        // as all structures are build before any of them are used.
+
+        if (bbox == null)
+            bbox = WorldBBox3d.surrounding(() ->
+                placeables.entrySet().stream().map(
+                    (Map.Entry<WorldCoords3d, Placeable> e) -> (Bounded3d) e.getValue().bbox().shift(e.getKey())
+                ).iterator()
+            );
+        return bbox;
     }
 }

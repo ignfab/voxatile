@@ -227,7 +227,7 @@ public class WorldBBox3dTest {
 
     @Test
     @DisplayName("Test crop() method")
-    void testCrop() {
+    public void testCrop() {
         List<WorldCoords3d> list = Arrays.asList(
             new WorldCoords3d(2, 3, 4),
             new WorldCoords3d(0, 1, 2),
@@ -246,6 +246,18 @@ public class WorldBBox3dTest {
         assertEmpty(new WorldBBox3d(-2, -4, -5, 1, 3, 5).crop(list.iterator()));
 
         assertEmpty(WorldBBox3d.EMPTY.crop(list.iterator()));
+    }
+
+    @Test
+    @DisplayName("Test shift() method")
+    public void testShift() {
+        WorldBBox3d shifted;
+        WorldBBox3d box = new WorldBBox3d(1, 2, 3, 4, 5, 6);
+
+        shifted = box.shift(new WorldCoords3d(-2, -4, -6));
+
+        assertEquals(box.size(), shifted.size());
+        assertEquals(new WorldCoords3d(-1, -2, -3), shifted.min());
     }
 
     @Test

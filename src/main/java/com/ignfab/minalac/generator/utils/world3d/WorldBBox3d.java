@@ -347,6 +347,16 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
     }
 
     /**
+     * Returns the bounding box shifted by given coordinates.
+     *
+     * @param by coordinate to shift the bounding box by
+     * @return shifted bounding box
+     */
+    public WorldBBox3d shift(WorldCoords3d by) {
+        return new WorldBBox3d(min().add(by), size());
+    }
+
+    /**
      * Returns an iterator.
      *
      * @return a {@link WorldBBox3dIterator} to iterate over all the points contained in the bounding box.

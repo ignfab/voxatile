@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.placeables;
 
 import com.ignfab.minalac.generator.utils.random.Random;
 import com.ignfab.minalac.generator.utils.random.Seed;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * A pattern placing something or not according to a simple "dice roll".
@@ -30,5 +31,11 @@ public class RandomPattern implements Pattern {
         if (random.nextDouble() < chance)
             return placeable;
         return Nothing.INSTANCE;
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        // bbox() is the largest possible bbox, not the actual which depends on position and seed.
+        return placeable.bbox();
     }
 }

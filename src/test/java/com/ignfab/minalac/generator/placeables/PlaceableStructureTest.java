@@ -155,6 +155,9 @@ public class PlaceableStructureTest {
         Placeable vt = new TestingVoxel("X");
         PlaceableStructure structure = new PlaceableStructure();
 
+        // Empty structure
+        assertEquals(WorldBBox3d.EMPTY, structure.limits());
+
         // Basic checks
         structure.set(1, 2, 3, vt);
         assertEquals(new WorldBBox3d(1, 2, 3, 1, 1, 1), structure.limits());
@@ -174,5 +177,27 @@ public class PlaceableStructureTest {
         PlaceableStructure superStructure = new PlaceableStructure();
         superStructure.set(3, 2, 1, structure);
         assertEquals(new WorldBBox3d(3, 2, 1, 1, 1, 1), superStructure.limits());
+    }
+
+    @Test
+    public void testBbox() {
+        Placeable p = new TestingVoxel("X");
+        PlaceableStructure structure = new PlaceableStructure();
+        PlaceableStructure substruct = new PlaceableStructure();
+
+        // Empty structure
+        assertEquals(WorldBBox3d.EMPTY, structure.bbox());
+
+        // Simple structure
+        structure.set(0, 0, 0, p);
+        assertEquals(new WorldBBox3d(0, 0, 0, 1, 1, 1), structure.bbox());
+
+        // Substructures
+        substruct.set(new WorldBBox3d(-1, -1, -1, 3, 3, 3), p);
+        structure.set(0, 0, 10, substruct);
+        structure.set(0, -10, 0, substruct);
+
+        // (x: -1 to 1, y: -11 to 1, z: -1 to 11)
+        assertEquals(new WorldBBox3d(-1, -11, -1, 3, 13, 13), structure.bbox());
     }
 }

@@ -8,6 +8,7 @@ import net.querz.nbt.tag.CompoundTag;
 import net.querz.nbt.tag.StringTag;
 
 import com.ignfab.minalac.generator.placeables.Placeable;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
@@ -106,5 +107,10 @@ public class MCVoxel implements Placeable {
     @Override
     public int hashCode() {
         return Objects.hash(type, properties);
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        return WorldBBox3d.ORIGIN;
     }
 }
