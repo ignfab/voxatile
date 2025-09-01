@@ -9,9 +9,7 @@ package com.ignfab.minalac.generator.utils.world3d;
  */
 public interface Bounded3d {
     /**
-     * Gives the bounding box of the object.
-     *
-     * @return the bounding box
+     * {@return the bounding box of the object}
      */
     WorldBBox3d bbox();
 }

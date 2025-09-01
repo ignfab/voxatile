@@ -43,25 +43,19 @@ public abstract class VoxelWorld {
     }
 
     /**
-     * Return the limits of this world.
-     *
-     * @return the {@code WorldBBox3d} representing the limits of the world
+     * {@return the limits of this world}
      */
     public WorldBBox3d limits() {
         return limits;
     }
 
     /**
-     * Return the maximum limits of the world (hard limit of the format).
-     *
-     * @return the {@code WorldBBox3d} representing the maximum limits of the world
+     * {@return the maximum limits of the world (hard limit of the format)}
      */
     public abstract WorldBBox3d maxLimits();
 
     /**
-     * Returns the metadata of this {@code VoxelWorld}.
-     *
-     * @return the {@link VoxelWorldMetadata}
+     * {@return the metadata of this world}
      */
     public VoxelWorldMetadata getMetadata() {
         return metadata;

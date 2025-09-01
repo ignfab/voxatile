@@ -47,21 +47,12 @@ public class WorldBBox3dIterator implements Iterator<WorldCoords3d> {
         }
     }
 
-    /**
-     * Indicates if there are more elements.
-     *
-     * @return {@code true} if the iteration has more elements.
-     */
+    @Override
     public boolean hasNext() {
         return hasNext;
     }
 
-    /**
-     * Returns the next element.
-     *
-     * @return the next {@link WorldCoords3d} in the iteration.
-     * @throws NoSuchElementException if the iteration has no more elements.
-     */
+    @Override
     public WorldCoords3d next() throws NoSuchElementException {
         if (!hasNext)
             throw new NoSuchElementException();

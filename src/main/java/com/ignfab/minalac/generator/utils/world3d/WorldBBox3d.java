@@ -239,108 +239,84 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
     }
 
     /**
-     * Returns the size of the bounding box.
-     *
-     * @return the size of the bounding box as a {@link WorldSize3d}.
+     * {@return the size of the bounding box}
      */
     public WorldSize3d size() {
         return size;
     }
 
     /**
-     * Returns the bounding box size along the x-axis.
-     *
-     * @return the bounding box size along the x-axis.
+     * {@return the bounding box size along the x-axis}
      */
     public int sizeX() {
         return size.x();
     }
 
     /**
-     * Returns the bounding box size along the y-axis.
-     *
-     * @return the bounding box size along the y-axis.
+     * {@return the bounding box size along the y-axis}
      */
     public int sizeY() {
         return size.y();
     }
 
     /**
-     * Returns the bounding box size along the z-axis.
-     *
-     * @return the bounding box size along the z-axis.
+     * {@return the bounding box size along the z-axis}
      */
     public int sizeZ() {
         return size.z();
     }
 
     /**
-     * Returns the minimum point.
-     *
-     * @return the {@link WorldCoords3d} of the minimum point.
+     * {@return the minimum point}
      */
     public WorldCoords3d min() {
         return min;
     }
 
     /**
-     * Returns the minimum point x-coordinate.
-     *
-     * @return the x-coordinate of the minimum point.
+     * {@return the x-coordinate of the minimum point}
      */
     public int minX() {
         return min.x();
     }
 
     /**
-     * Returns the minimum point y-coordinate.
-     *
-     * @return the y-coordinate of the minimum point.
+     * {@return the y-coordinate of the minimum point}
      */
     public int minY() {
         return min.y();
     }
 
     /**
-     * Returns the minimum point z-coordinate.
-     *
-     * @return the z-coordinate of the minimum point.
+     * {@return the z-coordinate of the minimum point}
      */
     public int minZ() {
         return min.z();
     }
 
     /**
-     * Returns the maximum point.
-     *
-     * @return the {@link WorldCoords3d} of the maximum point.
+     * {@return the maximum point}
      */
     public WorldCoords3d max() {
         return max;
     }
 
     /**
-     * Returns the maximum point x-coordinate.
-     *
-     * @return the x-coordinate of the maximum point.
+     * {@return the x-coordinate of the maximum point}
      */
     public int maxX() {
         return max.x();
     }
 
     /**
-     * Returns the maximum point y-coordinate.
-     *
-     * @return the y-coordinate of the maximum point.
+     * {@return the y-coordinate of the maximum point}
      */
     public int maxY() {
         return max.y();
     }
 
     /**
-     * Returns the maximum point z-coordinate.
-     *
-     * @return the z-coordinate of the maximum point.
+     * {@return the z-coordinate of the maximum point}
      */
     public int maxZ() {
         return max.z();

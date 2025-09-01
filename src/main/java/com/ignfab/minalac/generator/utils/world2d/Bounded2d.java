@@ -5,9 +5,7 @@ package com.ignfab.minalac.generator.utils.world2d;
  */
 public interface Bounded2d {
     /**
-     * Gives the bounding box of the object.
-     *
-     * @return the bounding box
+     * {@return the bounding box of the object}
      */
     WorldBBox2d bbox();
 }

@@ -41,19 +41,14 @@ public class HeightmapDeclarationStore {
     }
 
     /**
-     * Returns existing names in store.
-     *
-     * @return the set of existing names
-     *
+     * {@return the set of existing names in store}
      */
     public Set<String> names() {
         return store.keySet();
     }
 
     /**
-     * Returns existing declarations in store.
-     *
-     * @return the collection of existing declarations
+     * {@return the collection of existing declarations in store}
      */
     public Collection<HeightmapDeclaration> declarations() {
         return store.values();

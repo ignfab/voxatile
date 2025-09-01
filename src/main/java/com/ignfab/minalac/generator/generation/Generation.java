@@ -129,8 +129,7 @@ public class Generation {
     }
 
     /**
-     * Returns the generation scheduler.
-     * @return the scheduler.
+     * {@return the generation scheduler}
      */
     public Scheduler<GenerationTile> scheduler() {
         return scheduler;
@@ -174,9 +173,7 @@ public class Generation {
     }
 
     /**
-     * Returns the vertical scale.
-     *
-     * @return the vertical scale
+     * {@return the vertical scale}
      */
     // To be removed when vertical is used by this class. (Renderers will probably contain that value)
     public double getVerticalScale() {
@@ -184,45 +181,35 @@ public class Generation {
     }
 
     /**
-     * Returns the random number seed for this generation.
-     *
-     * @return the seed
+     * {@return random number seed for this generation}
      */
     public Seed seed() {
         return seed;
     }
 
     /**
-     * Returns target CRS.
-     *
-     * @return CRS used for world rendering
+     * {@return target CRS, used for world rendering}
      */
     public CoordinateReferenceSystem crs() {
         return crs;
     }
 
     /**
-     * Returns maximum generation tile size.
-     *
-     * @return maximum generation tile size
+     * {@return maximum generation tile size}
      */
     public int maxTileSize() {
         return this.maxTileSize;
     }
 
     /**
-     * Returns number of generation tiles.
-     *
-     * @return number of generation tiles
+     * {@return number of generation tiles}
      */
     public int numberOfTiles() {
         return this.tiles.size();
     }
 
     /**
-     * Returns an itereable over generation tiles.
-     *
-     * @return an itereable over generation tiles
+     * {@return an iterable over generation tiles}
      */
     public Iterable<GenerationTile> tiles() {
         return Iterables.remap(tiles,

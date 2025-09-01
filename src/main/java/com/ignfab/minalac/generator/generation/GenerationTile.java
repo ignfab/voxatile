@@ -32,44 +32,35 @@ public class GenerationTile {
     }
 
     /**
-     * Gives the generation which this tile belongs to.
-     *
-     * @return generation
+     * {@return the generation which this tile belongs to}
      */
     public Generation generation() {
         return generation;
     }
 
     /**
-     * Returns the {@link ModelStore}.
-     * @return the model store
+     * {@return the model store}
      */
     public ModelStore models() {
         return models;
     }
 
     /**
-     * Gives the limits of the tile.
-     *
-     * @return limits of the tile
+     * {@return the limits of the tile}
      */
     public WorldBBox3d limits() {
         return voxels.limits();
     }
 
     /**
-     * Gives the {@link HeightmapStore} for this generation tile.
-     *
-     * @return heightmap store for the generation tile
+     * {@return heightmap store for the generation tile}
      */
     public HeightmapStore heightmaps() {
         return heightmaps;
     }
 
     /**
-     * Gives the {@link VoxelTile} for this generation tile.
-     *
-     * @return voxel world tile corresponding to the generation tile
+     * {@return voxel world tile for this generation tile}
      */
     public VoxelTile voxels() {
         return voxels;
