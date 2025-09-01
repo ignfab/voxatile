@@ -1,12 +1,15 @@
 package com.ignfab.minalac.generator.placeables;
 
+import com.ignfab.minalac.generator.utils.world3d.Bounded3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * The {@code Placeable} interface represents something placeable in voxel world.
+ *
+ * {@code Placeable} are bounded. In their bounding boxes, (0, 0, 0) is the placing point.
  */
-public interface Placeable {
+public interface Placeable extends Bounded3d {
     /**
      * Places the placeable at given position in {@link VoxelTile}.
      * Coordinates are expressed using the system used in {@link WorldCoords3d}.
