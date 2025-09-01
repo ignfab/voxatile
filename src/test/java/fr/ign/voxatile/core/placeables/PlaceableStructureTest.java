@@ -158,6 +158,9 @@ public class PlaceableStructureTest {
         Placeable vt = new TestingVoxel("X");
         PlaceableStructure structure = PlaceableStructure.EMPTY;
 
+        // Empty structure
+        assertEquals(WorldBBox3d.EMPTY, structure.limits());
+
         // Basic checks
         structure = structure.toBuilder().set(1, 2, 3, vt).build();
         assertEquals(new WorldBBox3d(1, 2, 3, 1, 1, 1), structure.limits());
@@ -216,5 +219,29 @@ public class PlaceableStructureTest {
     @Test
     public void testEmptyBuilder() {
         assertSame(PlaceableStructure.EMPTY, PlaceableStructure.builder().build());
+    }
+
+    public void testBbox() {
+        Placeable p = new TestingVoxel("X");
+        PlaceableStructure.Builder structureBuilder = new PlaceableStructure.Builder();
+        PlaceableStructure.Builder substructBuilder = new PlaceableStructure.Builder();
+
+        // Empty structure
+        assertEquals(WorldBBox3d.EMPTY, structureBuilder.build().bbox());
+
+        // Simple structure
+        structureBuilder.set(0, 0, 0, p);
+        PlaceableStructure structure = structureBuilder.build();
+        assertEquals(new WorldBBox3d(0, 0, 0, 1, 1, 1), structure.bbox());
+
+        // Substructures
+        substructBuilder.set(new WorldBBox3d(-1, -1, -1, 3, 3, 3), p);
+        PlaceableStructure substruct = substructBuilder.build();
+
+        structureBuilder.set(0, 0, 10, substruct);
+        structureBuilder.set(0, -10, 0, substruct);
+
+        // (x: -1 to 1, y: -11 to 1, z: -1 to 11)
+        assertEquals(new WorldBBox3d(-1, -11, -1, 3, 13, 13), structureBuilder.build().bbox());
     }
 }

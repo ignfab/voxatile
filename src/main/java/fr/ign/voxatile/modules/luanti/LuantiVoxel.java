@@ -3,6 +3,7 @@ package fr.ign.voxatile.modules.luanti;
 import java.util.Objects;
 
 import fr.ign.voxatile.core.placeables.Placeable;
+import fr.ign.voxatile.core.utils.world3d.WorldBBox3d;
 import fr.ign.voxatile.core.world.VoxelTile;
 
 /**
@@ -102,5 +103,10 @@ public class LuantiVoxel implements Placeable {
     @Override
     public int hashCode() {
         return Objects.hash(type, param1, param2);
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        return WorldBBox3d.ORIGIN;
     }
 }

@@ -3,6 +3,7 @@ package fr.ign.voxatile.core.placeables;
 import java.util.LinkedList;
 import java.util.List;
 
+import fr.ign.voxatile.core.utils.world3d.WorldBBox3d;
 import fr.ign.voxatile.core.world.VoxelTile;
 
 /**
@@ -11,6 +12,7 @@ import fr.ign.voxatile.core.world.VoxelTile;
  */
 public class CombinedPlaceable implements Placeable {
     private final List<Placeable> placeables = new LinkedList<>();
+    private WorldBBox3d bbox;
 
     /**
      * Add a placeable at the end of the {@code CombinedPlaceable}'s placeables list.
@@ -19,10 +21,19 @@ public class CombinedPlaceable implements Placeable {
      */
     public void add(Placeable placeable) {
         placeables.add(placeable);
+        bbox = null; // Force recompute bbox
     }
 
     @Override
     public void place(VoxelTile tile, int x, int y, int z) {
         placeables.forEach((placeable) -> placeable.place(tile, x, y, z));
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        if (bbox == null)
+            bbox = WorldBBox3d.surrounding(placeables);
+
+        return bbox;
     }
 }

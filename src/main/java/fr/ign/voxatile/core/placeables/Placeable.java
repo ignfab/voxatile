@@ -1,12 +1,15 @@
 package fr.ign.voxatile.core.placeables;
 
+import fr.ign.voxatile.core.utils.world3d.Bounded3d;
 import fr.ign.voxatile.core.utils.world3d.WorldCoords3d;
 import fr.ign.voxatile.core.world.VoxelTile;
 
 /**
  * The {@code Placeable} interface represents something placeable in voxel world.
+ *
+ * {@code Placeable} are bounded. In their bounding boxes, (0, 0, 0) is the placing point.
  */
-public interface Placeable {
+public interface Placeable extends Bounded3d {
     /**
      * Places the placeable at given position in {@link VoxelTile}.
      * Coordinates are expressed using the system used in {@link WorldCoords3d}.

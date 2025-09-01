@@ -1,5 +1,6 @@
 package fr.ign.voxatile.core.placeables;
 
+import fr.ign.voxatile.core.utils.world3d.WorldBBox3d;
 import fr.ign.voxatile.core.utils.world3d.WorldCoords3d;
 import fr.ign.voxatile.core.world.VoxelTile;
 
@@ -20,5 +21,10 @@ public class TestingPlaceable implements Placeable {
     public void place(VoxelTile tile, int x, int y, int z) {
         timesPlaced++;
         lastPlaced = new WorldCoords3d(x, y, z);
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        return WorldBBox3d.ORIGIN;
     }
 }

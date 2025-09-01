@@ -106,4 +106,10 @@ public class LayoutStructure implements Structure {
 
         return new LayoutStructure(structArray, axisX, axisY, axisZ);
     }
+
+    @Override
+    public WorldBBox3d bbox() {
+        //TODO !!
+        throw new UnsupportedOperationException("Unimplemented method 'bbox'");
+    }
 }

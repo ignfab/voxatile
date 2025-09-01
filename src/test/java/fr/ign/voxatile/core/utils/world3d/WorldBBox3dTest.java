@@ -249,6 +249,18 @@ public class WorldBBox3dTest {
     }
 
     @Test
+    @DisplayName("Test shift() method")
+    public void testShift() {
+        WorldBBox3d shifted;
+        WorldBBox3d box = new WorldBBox3d(1, 2, 3, 4, 5, 6);
+
+        shifted = box.shift(new WorldCoords3d(-2, -4, -6));
+
+        assertEquals(box.size(), shifted.size());
+        assertEquals(new WorldCoords3d(-1, -2, -3), shifted.min());
+    }
+
+    @Test
     public void testCenter() {
         // Odd sizes
         assertEquals(new WorldCoords3d(-2, 0, 2), new WorldBBox3d(-3, -2, -1, 3, 5, 7).center());

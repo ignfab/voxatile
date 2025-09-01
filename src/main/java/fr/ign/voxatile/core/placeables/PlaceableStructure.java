@@ -3,6 +3,7 @@ package fr.ign.voxatile.core.placeables;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.ign.voxatile.core.utils.world3d.Bounded3d;
 import fr.ign.voxatile.core.utils.world3d.WorldBBox3d;
 import fr.ign.voxatile.core.utils.world3d.WorldCoords3d;
 import fr.ign.voxatile.core.world.VoxelTile;
@@ -14,6 +15,7 @@ import fr.ign.voxatile.core.world.VoxelTile;
 public final class PlaceableStructure implements Structure {
     private final Map<WorldCoords3d, Placeable> placeables;
     private final WorldBBox3d limits;
+    private final WorldBBox3d bbox;
 
     /**
      * Reusable empty structure instance.
@@ -23,11 +25,17 @@ public final class PlaceableStructure implements Structure {
     private PlaceableStructure() {
         placeables = Map.of();
         limits = WorldBBox3d.EMPTY;
+        bbox = WorldBBox3d.EMPTY;
     }
 
     private PlaceableStructure(Map<WorldCoords3d, Placeable> placeables) {
         this.placeables = Map.copyOf(placeables);
         limits = new WorldBBox3d(this.placeables.keySet().toArray(WorldCoords3d[]::new));
+        bbox = WorldBBox3d.surrounding(() ->
+            this.placeables.entrySet().stream().map(
+                (Map.Entry<WorldCoords3d, Placeable> e) -> (Bounded3d) e.getValue().bbox().shift(e.getKey())
+            ).iterator()
+        );
     }
 
     /**
@@ -76,6 +84,11 @@ public final class PlaceableStructure implements Structure {
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        return bbox;
     }
 
     /**

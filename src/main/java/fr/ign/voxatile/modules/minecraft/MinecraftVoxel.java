@@ -8,6 +8,7 @@ import io.github.ensgijs.nbt.tag.CompoundTag;
 import io.github.ensgijs.nbt.tag.StringTag;
 
 import fr.ign.voxatile.core.placeables.Placeable;
+import fr.ign.voxatile.core.utils.world3d.WorldBBox3d;
 import fr.ign.voxatile.core.world.VoxelTile;
 
 /**
@@ -170,5 +171,10 @@ public class MinecraftVoxel implements Placeable {
         }
 
         return new MinecraftVoxel(type);
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        return WorldBBox3d.ORIGIN;
     }
 }

@@ -1,5 +1,6 @@
 package fr.ign.voxatile.core.placeables;
 
+import fr.ign.voxatile.core.utils.world3d.WorldBBox3d;
 import fr.ign.voxatile.core.world.VoxelTile;
 
 /**
@@ -30,5 +31,10 @@ public final class Nothing implements Pattern {
     @Override
     public Placeable get(int x, int y, int z) {
         return this;
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        return WorldBBox3d.EMPTY;
     }
 }
