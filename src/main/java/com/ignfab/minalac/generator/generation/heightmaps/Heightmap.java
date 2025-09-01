@@ -9,8 +9,9 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
  * A 2d heightmap in voxel world units.
  */
 public class Heightmap implements WritableHeightmap {
-    private final WorldBBox2d bbox;
-    private final int[] values;
+    private WorldBBox2d bbox; // Bbox of values array
+    private final int defaultValue;
+    private int[] values; // Will be created at first write attempt
 
     /**
      * Creates a new {@link Heightmap}.
@@ -33,9 +34,8 @@ public class Heightmap implements WritableHeightmap {
      */
     public Heightmap(WorldBBox2d bbox, int defaultValue) {
         this.bbox = bbox;
-        values = new int[bbox.size().area()];
-        if (defaultValue != 0)
-            Arrays.fill(values, defaultValue);
+        this.defaultValue = defaultValue;
+        values = null;
     }
 
     /**
@@ -45,14 +45,20 @@ public class Heightmap implements WritableHeightmap {
      */
     public Heightmap(ReadableHeightmap other) {
         this.bbox = other.bbox();
+        this.defaultValue = 0; // TODO: Something better ? ReadableHeightmap may not have default value
         values = new int[bbox.size().area()];
         copyValues(other);
     }
 
-    private int index(int x, int y) {
-        if (!bbox.contains(x, y))
-            throw new IndexOutOfBoundsException("Index out of range at (x=%d, y=%d)".formatted(x, y));
-        return (x - bbox.minX()) * bbox.sizeY() + (y - bbox.minY());
+    @Override
+    public void includeArea(WorldBBox2d area) {
+        if (bbox.contains(area))
+            return;
+
+        if (values != null)
+            throw new IllegalStateException("Can't change an already populated heightmap size");
+
+        bbox = WorldBBox2d.surrounding(bbox, area);
     }
 
     @Override
@@ -62,17 +68,32 @@ public class Heightmap implements WritableHeightmap {
 
     @Override
     public int get(int x, int y) {
-        return values[index(x, y)];
+        if (values == null || !bbox.contains(x, y))
+            return defaultValue;
+
+        return values[x - bbox.minX() + bbox.sizeX() * (y - bbox.minY())];
     }
 
     @Override
     public void set(int x, int y, int height) {
-        values[index(x, y)] = height;
+        if (!bbox.contains(x, y))
+            throw new IndexOutOfBoundsException("Index out of range at (x=%d, y=%d)".formatted(x, y));
+
+        if (values == null) {
+            values = new int[bbox.size().area()];
+            if (defaultValue != 0)
+                Arrays.fill(values, defaultValue);
+        }
+
+        values[x - bbox.minX() + bbox.sizeX() * (y - bbox.minY())] = height;
     }
 
     @Override
     public void copyValues(ReadableHeightmap other) {
-        if (other instanceof Heightmap hm && other.bbox().equals(bbox)) {
+        if (values == null)
+            values = new int[bbox.size().area()];
+
+        if (other instanceof Heightmap hm && hm.values != null && other.bbox().equals(bbox)) {
             // If same bbox and same class, we can go faster
             System.arraycopy(hm.values, 0, values, 0, values.length);
             return;
