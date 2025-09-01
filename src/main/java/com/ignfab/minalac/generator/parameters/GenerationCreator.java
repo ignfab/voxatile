@@ -65,6 +65,10 @@ public final class GenerationCreator {
         params.forEachTile.forEach((name, taskParams) -> {
             TileTask task = taskParams.create(generation);
             generation.scheduler().schedule(name, task);
+            taskParams.addMarginsTo.forEach((modelType) -> {
+                // Add placement margins to implied models
+                generation.includeModelTypeMargins(modelType, task.placementMargins());
+            });
         });
         params.forEachTile.forEach((name, taskParams) -> {
             for (String depName : taskParams.after)

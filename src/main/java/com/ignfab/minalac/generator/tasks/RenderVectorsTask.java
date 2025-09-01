@@ -9,6 +9,7 @@ import com.ignfab.minalac.generator.placeables.Nothing;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LineVoxel2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.ShapesVoxelizer2d;
 
@@ -25,6 +26,9 @@ public class RenderVectorsTask extends ModelTask<ShapesVoxelizable2d> {
     private final Placeable inside;
     private final Placeable borders;
 
+    // BBox of placeables (max bbox of everything that could be placed)
+    private final WorldBBox3d bbox;
+
     /**
      * Creates a new {@code RenderVectorsTask}.
      *
@@ -38,12 +42,19 @@ public class RenderVectorsTask extends ModelTask<ShapesVoxelizable2d> {
         heightmapSpec = heightmap;
         this.inside = inside;
         this.borders = borders;
+
+        bbox = WorldBBox3d.surrounding(inside, borders);
+    }
+
+    @Override
+    public WorldBBox3d placementMargins() {
+        return bbox;
     }
 
     @Override
     protected void run(ShapesVoxelizable2d model, GenerationTile tile) {
         ReadableHeightmap heightmap = tile.heightmaps().get(heightmapSpec);
-        ShapesVoxelizer2d voxelizer = model.voxelize2d(tile.limits().to2d());
+        ShapesVoxelizer2d voxelizer = model.voxelize2d(tile.limits().to2d().grow(bbox.to2d()));
 
         if (inside != Nothing.INSTANCE) {
             // In case of same border & inside, don't perform two iterations

@@ -130,6 +130,9 @@ forEachTile:
       - renderGround
       - fetchVegetation
     type: renderVectors
+    addMarginsTo:
+      - vegetation
+      - altitude
     models:
       type: vegetation
       filter:

@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.utils.world2d;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 import com.ignfab.minalac.generator.utils.iterator.Iterators;
@@ -137,6 +138,16 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
         }
 
         return new WorldBBox2d(minX, minY, maxX - minX + 1, maxY - minY + 1);
+    }
+
+    /**
+     * Creates a new {@link WorldBBox2d} containing all bounded items.
+     *
+     * @param items a list of bounded items to contain
+     * @return a bounding box containing all items
+     */
+    public static WorldBBox2d surrounding(Bounded2d... items) {
+        return surrounding(Arrays.asList(items));
     }
 
     /**
@@ -330,6 +341,28 @@ public class WorldBBox2d implements Bounded2d, Iterable<WorldCoords2d> {
      */
     public int maxY() {
         return max.y();
+    }
+
+    /**
+     * Grow bounding box by given bounding box.
+     *
+     * This operation consist in placing a {@code by} bounding box at each point
+     * of current bounding box (centered at (0, 0)) and taking the union of all these bounding boxes.
+     *
+     * @param by area which grow bounding box by
+     * @return grown bounding box
+     */
+    public WorldBBox2d grow(WorldBBox2d by) {
+        return new WorldBBox2d(
+            new WorldCoords2d(
+                Math.min(min.x(), min.x() + by.min.x()),
+                Math.min(min.y(), min.y() + by.min.y())
+            ),
+            new WorldCoords2d(
+                Math.max(max.x(), max.x() + by.max.x()),
+                Math.max(max.y(), max.y() + by.max.y())
+            )
+        );
     }
 
     /**

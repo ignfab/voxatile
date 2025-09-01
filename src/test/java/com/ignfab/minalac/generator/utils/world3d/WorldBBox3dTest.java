@@ -249,6 +249,15 @@ public class WorldBBox3dTest {
     }
 
     @Test
+    @DisplayName("Test grow() method")
+    public void testGrow() {
+        assertEquals(new WorldBBox3d(0, 0, 0, 5, 7, 9),
+            new WorldBBox3d(1, 2, 3, 4, 5, 6).grow(new WorldBBox3d(-1, -2, -3, 1, 1, 1)));
+        assertEquals(new WorldBBox3d(1, 2, 3, 5, 7, 9),
+            new WorldBBox3d(1, 2, 3, 4, 5, 6).grow(new WorldBBox3d(1, 2, 3, 1, 1, 1)));
+    }
+
+    @Test
     @DisplayName("Test shift() method")
     public void testShift() {
         WorldBBox3d shifted;
