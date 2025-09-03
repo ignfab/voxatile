@@ -20,7 +20,10 @@ public class PlaceableStructure implements Placeable {
      */
     @Override
     public void place(VoxelTile tile, int x, int y, int z) {
-        placeables.forEach((c, placeable) -> placeable.place(tile, c.x() + x, c.y() + y, c.z() + z));
+        for (Map.Entry<WorldCoords3d, Placeable> entry : placeables.entrySet()) {
+            WorldCoords3d c = entry.getKey();
+            entry.getValue().place(tile, c.x() + x, c.y() + y, c.z() + z);
+        }
     }
 
     /**

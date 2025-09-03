@@ -1,8 +1,10 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
 import com.ignfab.minalac.generator.placeables.Placeable;
@@ -16,7 +18,7 @@ import com.ignfab.minalac.generator.world.VoxelTile;
 public class MTVoxelTile extends VoxelTile {
     private final File destination;
 
-    private final HashMap<Long, Block> blocks = new HashMap<>();
+    private final Long2ObjectMap<Block> blocks = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
 
     /**
      * Creates a new {@code MTVoxelTile}.
@@ -31,17 +33,7 @@ public class MTVoxelTile extends VoxelTile {
 
     // Retrieves or creates the mapblock corresponding to given voxel position.
     private Block getOrCreateBlock(int blockX, int blockY, int blockZ) {
-        Long pos = coordsToPos(blockX, blockY, blockZ);
-        Block block = blocks.get(pos);
-        if (block == null)
-            synchronized (blocks) {
-                block = blocks.get(pos);
-                if (block == null) {
-                    block = new Block();
-                    blocks.put(pos, block);
-                }
-            }
-        return block;
+        return blocks.computeIfAbsent(coordsToPos(blockX, blockY, blockZ), k -> new Block());
     }
 
     private Block getBlock(int blockX, int blockY, int blockZ) {
@@ -83,9 +75,8 @@ public class MTVoxelTile extends VoxelTile {
             return; // Save disabled if null destination
 
         SQLiteMapWriter database = new SQLiteMapWriter(destination);
-        for (Map.Entry<Long, Block> entry : blocks.entrySet()) {
-            database.insertBlock(entry.getKey(), entry.getValue());
-        }
+        for (Long2ObjectMap.Entry<Block> entry : Long2ObjectMaps.fastIterable(blocks))
+            database.insertBlock(entry.getLongKey(), entry.getValue());
     }
 
     /**

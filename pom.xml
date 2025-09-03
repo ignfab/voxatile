@@ -146,6 +146,12 @@
             <artifactId>commons-cli</artifactId>
             <version>1.8.0</version>
         </dependency>
+        <!-- Type-specific collections -->
+        <dependency>
+            <groupId>it.unimi.dsi</groupId>
+            <artifactId>fastutil-core</artifactId>
+            <version>8.5.16</version>
+        </dependency>
 
         <!--
         TEST DEPENDENCIES
