@@ -1,7 +1,5 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
-import java.io.File;
-
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -16,19 +14,19 @@ import com.ignfab.minalac.generator.world.VoxelTile;
  * Implementation of {@link VoxelTile} for Minetest.
  */
 public class MTVoxelTile extends VoxelTile {
-    private final File destination;
+    private final SQLiteMapWriter mapWriter;
 
     private final Long2ObjectMap<Block> blocks = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
 
     /**
      * Creates a new {@code MTVoxelTile}.
      *
-     * @param destination Destination database file
+     * @param mapWriter SQLite writer for map blocks
      * @param limits Limits of this tile (must be contained in world limits)
      */
-    public MTVoxelTile(File destination, WorldBBox3d limits) {
+    public MTVoxelTile(SQLiteMapWriter mapWriter, WorldBBox3d limits) {
         super(limits);
-        this.destination = destination;
+        this.mapWriter = mapWriter;
     }
 
     // Retrieves or creates the mapblock corresponding to given voxel position.
@@ -71,12 +69,11 @@ public class MTVoxelTile extends VoxelTile {
      */
     @Override
     public void save() throws MapWriteException {
-        if (destination == null)
-            return; // Save disabled if null destination
+        if (mapWriter == null)
+            return; // Save disabled if null writer
 
-        SQLiteMapWriter database = new SQLiteMapWriter(destination);
         for (Long2ObjectMap.Entry<Block> entry : Long2ObjectMaps.fastIterable(blocks))
-            database.insertBlock(entry.getLongKey(), entry.getValue());
+            mapWriter.insertBlock(entry.getLongKey(), entry.getValue());
     }
 
     /**

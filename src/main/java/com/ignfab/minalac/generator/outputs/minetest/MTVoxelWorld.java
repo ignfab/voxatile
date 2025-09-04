@@ -1,7 +1,6 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 
 import com.ignfab.minalac.generator.generation.SquareUnitsTileGenerator;
@@ -26,7 +25,7 @@ public class MTVoxelWorld extends VoxelWorld {
     );
 
     private final File destination;
-    private final File mapDatabase;
+    private SQLiteMapWriter mapWriter;
 
     /**
      * Constructs a new {@code MTVoxelWorld}.
@@ -37,13 +36,6 @@ public class MTVoxelWorld extends VoxelWorld {
     public MTVoxelWorld(File destination) {
         super(new VoxelWorldMetadata());
         this.destination = destination;
-
-        // Prepare destination directory
-        if (destination == null) {
-            mapDatabase = null;
-        } else {
-            mapDatabase = new File(destination, "map.sqlite");
-        }
     }
 
     @Override
@@ -53,7 +45,7 @@ public class MTVoxelWorld extends VoxelWorld {
 
     @Override
     public MTVoxelTile newTile(WorldBBox3d limits) {
-        return new MTVoxelTile(mapDatabase, limits);
+        return new MTVoxelTile(mapWriter, limits);
     }
 
     @Override
@@ -64,7 +56,8 @@ public class MTVoxelWorld extends VoxelWorld {
         if (!destination.exists() || !destination.isDirectory())
             throw new MapWriteException("Directory %s can not be accessed".formatted(destination));
 
-        new SQLiteMapWriter(mapDatabase).createDatabase();
+        mapWriter = new SQLiteMapWriter(new File(destination, "map.sqlite"));
+        mapWriter.createDatabase();
     }
 
     /**
@@ -77,6 +70,8 @@ public class MTVoxelWorld extends VoxelWorld {
             return; // Save disabled if null destination
 
         try {
+            mapWriter.close();
+
             FileHelpers.write(new File(destination, "world.mt"), """
                 world_name = %s
                 enable_damage = true
@@ -93,7 +88,7 @@ public class MTVoxelWorld extends VoxelWorld {
             FileHelpers.write(new File(destination, "worldmods/ign_spawn/init.lua"), """
                 minetest.setting_set("static_spawnpoint", "%d, %d, %d")
                 """.formatted(metadata.getSpawn().x(), metadata.getSpawn().z(), metadata.getSpawn().y())); // XYZ => XZY
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new MapWriteException(e);
         }
     }
