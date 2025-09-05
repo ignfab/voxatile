@@ -36,6 +36,16 @@ public record Region(int regionX, int regionZ, MCAFile file) {
     }
 
     /**
+     * Constructs a new {@link Region}.
+     *
+     * @param regionKey the int-packed key of this region
+     * @see #computeKey(int, int)
+     */
+    public Region(int regionKey) {
+        this(keyToRegionX(regionKey), keyToRegionZ(regionKey));
+    }
+
+    /**
      * Returns the {@link Chunk} at the specified coordinates or creates it if it doesn't exist.
      *
      * @param chunkX the x-coordinate of the chunk
@@ -98,5 +108,43 @@ public record Region(int regionX, int regionZ, MCAFile file) {
     public MCVoxel getBlock(int blockX, int blockY, int blockZ) {
         CompoundTag block = file().getBlockStateAt(blockX, blockY, blockZ);
         return (block == null) ? null : MCVoxel.fromBlockState(block);
+    }
+
+    /**
+     * Computes the int-packed key of the region containing the blocks with given x/z.
+     * @param blockX the x-coordinate of the block
+     * @param blockZ the z-coordinate of the block
+     * @return the region key
+     */
+    public static int computeKeyFromBlock(int blockX, int blockZ) {
+        return computeKey(MCAUtil.blockToRegion(blockX), MCAUtil.blockToRegion(blockZ));
+    }
+
+    /**
+     * Computes the int-packed key of the region with given x/z.
+     * @param regionX the x-coordinate of the region
+     * @param regionZ the z-coordinate of the region
+     * @return the region key
+     */
+    public static int computeKey(int regionX, int regionZ) {
+        return (regionX << 16) | (regionZ & 0xFFFF);
+    }
+
+    /**
+     * Extracts the x-coordinate of the region from its key.
+     * @param regionKey the region key
+     * @return the x-coordinate of the region
+     */
+    public static int keyToRegionX(int regionKey) {
+        return (short) ((regionKey >> 16) & 0xFFFF); // cast to short to properly restore sign
+    }
+
+    /**
+     * Extracts the z-coordinate of the region from its key.
+     * @param regionKey the region key
+     * @return the z-coordinate of the region
+     */
+    public static int keyToRegionZ(int regionKey) {
+        return (short) (regionKey & 0xFFFF); // cast to short to properly restore sign
     }
 }

@@ -25,6 +25,9 @@ public class MCVoxel implements Placeable {
      */
     protected final Map<String, String> properties;
 
+    // Lazily-initialized reusable block data
+    private CompoundTag block;
+
     /**
      * Constructs a new {@code MCVoxel}.
      *
@@ -85,12 +88,14 @@ public class MCVoxel implements Placeable {
      * @param z position z-coordinate
      */
     protected void place(MCVoxelTile tile, int x, int y, int z)  {
-        CompoundTag block = new CompoundTag();
-        block.putString("Name", type);
-        if (properties != null) {
-            CompoundTag state = new CompoundTag();
-            properties.forEach(state::putString);
-            block.put("Properties", state);
+        if (block == null) {
+            block = new CompoundTag();
+            block.putString("Name", type);
+            if (properties != null) {
+                CompoundTag state = new CompoundTag();
+                properties.forEach(state::putString);
+                block.put("Properties", state);
+            }
         }
         tile.setBlockState(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
     }
