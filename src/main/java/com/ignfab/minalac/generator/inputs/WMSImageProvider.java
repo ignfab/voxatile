@@ -1,10 +1,7 @@
 package com.ignfab.minalac.generator.inputs;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import javax.imageio.ImageIO;
+import javax.imageio.stream.ImageInputStream;
 
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
@@ -18,10 +15,12 @@ import com.ignfab.minalac.generator.utils.coordinates.EnvelopeProvider;
 import com.ignfab.minalac.generator.utils.iterator.Iterators;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
-/**
- * Data provider for Web Map Service (raster data).
- */
-public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatrix2d> {
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+
+public class WMSImageProvider implements Provider<IntegerGeographicDataMatrix2d> {
     private static final String SERVICE = "WMS";
     private static final String VERSION = "1.3.0";
 
@@ -30,15 +29,9 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
     private final EnvelopeProvider envelopeProvider;
     private final String srsName;
 
-    /**
-     * Creates a new {@code WMSDataProvider}.
-     *
-     * @param baseURL base URL of the service
-     * @param layer name of the WMS layer to query
-     * @param crs coordinate reference system to use for this source
-     * @param envelopeProvider function to use to compute envelopes from bounding boxes
-     */
-    public WMSFloatBilDataProvider(String baseURL, String layer, CoordinateReferenceSystem crs, EnvelopeProvider envelopeProvider) {
+    ImageInputStream stream;
+
+    public WMSImageProvider(String baseURL, String layer, String format, CoordinateReferenceSystem crs, EnvelopeProvider envelopeProvider) {
         this.crs = crs;
         this.envelopeProvider = envelopeProvider;
 
@@ -51,18 +44,18 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
             .parameter("VERSION", VERSION)
             .parameter("REQUEST", "GetMap")
             .parameter("LAYERS", layer)
-            .parameter("FORMAT", "image/x-bil;bits=32")
+            .parameter("FORMAT", format)
             .parameter("STYLES", "")
             .build();
     }
 
     @Override
-    public Class<FloatGeographicDataMatrix2d> providedType() {
-        return FloatGeographicDataMatrix2d.class;
+    public Class<IntegerGeographicDataMatrix2d> providedType() {
+        return IntegerGeographicDataMatrix2d.class;
     }
 
     @Override
-    public Provider.Result<FloatGeographicDataMatrix2d> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
+    public Provider.Result<IntegerGeographicDataMatrix2d> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
 
         ReferencedEnvelope envelope;
         try {
@@ -71,10 +64,6 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
             throw new GenerationFailedException(e);
         }
 
-        // Let's say we want heightmap with 1 map unit precision.
-        // TODO: Should computed from capabilities and voxel size in realworld
-        // (we don't need information more accurate than voxel size neither information more
-        // accurate than capabilities)
         int width  = (int) Math.round(envelope.getMaxX() - envelope.getMinX());
         int height = (int) Math.round(envelope.getMaxY() - envelope.getMinY());
 
@@ -97,36 +86,25 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
             throw new RetryableException("Error opening connection", e);
         }
 
-        int size = 4 * width * height;
-        int total = 0;
-
-        byte[] data = new byte[size];
+        BufferedImage image;
         try {
-            int read;
-            while (0 < (read = inputStream.read(data, total, size - total)))
-                total = total + read;
+            image = ImageIO.read(inputStream);
         } catch (IOException e) {
-            throw new RetryableException("Error fetching data", e);
+            throw new RetryableException("Error decoding data", e);
         }
 
         try {
             inputStream.close();
         } catch (IOException ignored) {}
 
-        if (total != size)
-            throw new RetryableException("Incomplete data read from stream");
-
-        FloatArrayGeographicDataMatrix2d result = new FloatArrayGeographicDataMatrix2d(
-            width,
-            height,
-            envelope.getMinX(),
-            envelope.getMinY(),
-            envelope.getWidth() / width,
-            envelope.getHeight() / height
+        return new SimpleResult<>(envelope.getCoordinateReferenceSystem(), Iterators.iterator(
+            new BufferedImageGeographicDataMatrix2d(
+                image,
+                envelope.getMinX(),
+                envelope.getMinY(),
+                envelope.getWidth() / width,
+                envelope.getHeight() / height)
+            )
         );
-
-        ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer().get(result.data());
-
-        return new SimpleResult<>(envelope.getCoordinateReferenceSystem(), Iterators.iterator(result));
     }
 }

@@ -4,19 +4,14 @@ import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.utils.coordinates.MapCoordinates;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
-import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.Matrix2d;
 
 /**
  * A model based on a matrix of floats (usually a heightmap model).
  */
-public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
+public class FloatMatrixModel extends MatrixModel implements Matrix2d<Float> {
     private FloatGeographicDataMatrix2d data;
-    private MapToWorldConverter mapToWorld;
-    private WorldToMapConverter worldToMap;
-    private WorldBBox2d bbox;
 
     /**
      * Creates a new {@code FloatMatrixModel}.
@@ -26,29 +21,8 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
      * @throws TransformException
      */
     public FloatMatrixModel(FloatGeographicDataMatrix2d data, MapToWorldConverter converter) throws TransformException {
-        mapToWorld = converter;
-        try {
-            worldToMap = mapToWorld.inverse();
-        } catch (TransformException e) {
-            throw new IllegalArgumentException("converter must be invertible");
-        }
-
+        super(data, converter);
         this.data = data;
-
-        double maxX = data.offsetX() + data.sizeX() * data.cellSizeX() - 1.0;
-        double maxY = data.offsetY() + data.sizeY() * data.cellSizeY() - 1.0;
-
-        this.bbox = new WorldBBox2d(
-            mapToWorld.convert(new MapCoordinates(data.offsetX(), data.offsetY())),
-            mapToWorld.convert(new MapCoordinates(data.offsetX(), maxY)),
-            mapToWorld.convert(new MapCoordinates(maxX, data.offsetY())),
-            mapToWorld.convert(new MapCoordinates(maxX, maxY))
-        );
-    }
-
-    @Override
-    public WorldBBox2d bbox() {
-        return bbox;
     }
 
     @Override
@@ -79,13 +53,6 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
 
         return (1 - fy) * ((1 - fx) * data.getFloat(xf, yf) + fx * data.getFloat(xc, yf))
             + fy * ((1 - fx) * data.getFloat(xf, yc) + fx * data.getFloat(xc, yc));
-    }
-
-    @Override
-    public String salt() {
-        // TODO: Seed mechanism for matrix cannot rely on feature (matrix model is a extract
-        // of a unique huge data matrix).
-        throw new UnsupportedOperationException("Unimplemented method 'salt'");
     }
 }
 

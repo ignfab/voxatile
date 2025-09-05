@@ -52,6 +52,8 @@ Not all processors are compatible with all provider. See [providers](#provider-p
 
 ## Providers
 
+// TODO: https://github.com/ignfab/minalac-generator/commit/7ebd6811e61459c186f823b5f275e9c87a70634f?diff=unified#diff-af49bc20d2d1c94a03bb6e35ce8e61300d9627d520de9ffbe7d014039a4d85db
+
 A provider fetches data from a source and provides it as-is to a processor. Provider type is identified by `type` field.
 
 ### `wfs` (Web Feature Service)

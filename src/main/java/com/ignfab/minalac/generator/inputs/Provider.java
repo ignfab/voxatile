@@ -1,6 +1,9 @@
 package com.ignfab.minalac.generator.inputs;
 
 import java.io.Closeable;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
@@ -84,5 +87,53 @@ public interface Provider<T> {
          * @throws java.util.NoSuchElementException if no more result available.
          */
         T next() throws GenerationFailedException, RetryableException;
+    }
+
+    class SimpleResult<T> implements Result<T> {
+        private final CoordinateReferenceSystem crs;
+        private final Iterator<T> iterator;
+        private final List<? extends Closeable> close;
+
+        public SimpleResult(CoordinateReferenceSystem crs, Iterator<T> iterator, Closeable... close) {
+            this(crs, iterator, List.of(close));
+        }
+
+        public SimpleResult(CoordinateReferenceSystem crs, Iterator<T> iterator, List<? extends Closeable> close) {
+            this.crs = crs;
+            this.iterator = iterator;
+            this.close = close;
+        }
+
+        @Override
+        public CoordinateReferenceSystem crs() {
+            return crs;
+        }
+
+        @Override
+        public boolean hasNext() throws GenerationFailedException, RetryableException {
+            return iterator.hasNext();
+        }
+
+        @Override
+        public T next() throws GenerationFailedException, RetryableException {
+            return iterator.next();
+        }
+
+        @Override
+        public void close() throws IOException {
+            IOException exception = null;
+            for (Closeable closeable : close) {
+                try {
+                    closeable.close();
+                } catch (IOException e) {
+                    if (exception == null)
+                        exception = e;
+                    else
+                        exception.addSuppressed(e);
+                }
+            }
+            if (exception != null)
+                throw exception;
+        }
     }
 }
