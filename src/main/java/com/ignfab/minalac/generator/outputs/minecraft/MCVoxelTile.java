@@ -2,9 +2,10 @@ package com.ignfab.minalac.generator.outputs.minecraft;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.querz.mca.Chunk;
 import net.querz.mca.MCAUtil;
 import net.querz.nbt.tag.CompoundTag;
@@ -21,7 +22,7 @@ import com.ignfab.minalac.generator.world.VoxelTile;
 public class MCVoxelTile extends VoxelTile {
     private final File destination;
 
-    private final Map<Integer, Region> regions = new HashMap<>();
+    private final Int2ObjectMap<Region> regions = Int2ObjectMaps.synchronize(new Int2ObjectOpenHashMap<>());
 
     /**
      * Creates a new {@code MCVoxelTile}.
@@ -76,20 +77,7 @@ public class MCVoxelTile extends VoxelTile {
 
     // In-Game coords
     private Region getOrCreateRegion(int blockX, int blockZ)  {
-        int regionX = MCAUtil.blockToRegion(blockX);
-        int regionZ = MCAUtil.blockToRegion(blockZ);
-        int key = computeRegionKey(regionX, regionZ);
-        Region region = regions.get(key);
-        if (region == null) {
-            region = new Region(regionX, regionZ);
-            regions.put(key, region);
-        }
-        return region;
-    }
-
-    // In-Game coords
-    private int computeRegionKey(int regionX, int regionZ) {
-        return (regionX << 16) | (regionZ & 0xFFFF);
+        return regions.computeIfAbsent(Region.computeKeyFromBlock(blockX, blockZ), Region::new);
     }
 
     // In-Game coords
@@ -105,7 +93,7 @@ public class MCVoxelTile extends VoxelTile {
      */
     @Override
     public Placeable getVoxel(int x, int y, int z) {
-        Region region = regions.get(computeRegionKey(MCAUtil.blockToRegion(x), MCAUtil.blockToRegion(-y - 1)));
+        Region region = regions.get(Region.computeKeyFromBlock(x, -y - 1));
 
         if (region == null) return null;
 
