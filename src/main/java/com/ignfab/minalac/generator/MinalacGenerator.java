@@ -22,6 +22,7 @@ import com.ignfab.minalac.generator.parameters.placeables.voxels.MCVoxelParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelParams;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.IntegerMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.ConditionalPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.DiscardPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.IdentityPostProcessorParams;
@@ -35,6 +36,7 @@ import com.ignfab.minalac.generator.parameters.providers.GeoTiffProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
+import com.ignfab.minalac.generator.parameters.providers.WMSImageProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.CopyHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.LevelGroundTaskParams;
@@ -99,13 +101,14 @@ public final class MinalacGenerator {
         parser.registerParams("renderVectors", RenderVectorsTaskParams.class);
         parser.registerParams("setSpawn", SetSpawnTaskParams.class);
 
-
         parser.registerParams("wfs", WFSProviderParams.class);
         parser.registerParams("gpkg", GeoPackageProviderParams.class);
         parser.registerParams("shapefile", ShapefileProviderParams.class);
         parser.registerParams("wmsFloat", WMSFloatBilProviderParams.class);
+        parser.registerParams("wmsImage", WMSImageProviderParams.class);
         parser.registerParams("geotiff", GeoTiffProviderParams.class);
 
+        parser.registerParams("integerMatrix", IntegerMatrixProcessorParams.class);
         parser.registerParams("floatMatrix", FloatMatrixProcessorParams.class);
         parser.registerParams("geoToolsVector", GeoToolsVectorProcessorParams.class);
 
