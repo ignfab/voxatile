@@ -34,7 +34,7 @@ public class ImagePattern implements Pattern {
     public Placeable get(GenerationTile tile, int x, int y, int z) {
 
         Placeable placeable = Nothing.INSTANCE;
-        float distance = Float.MAX_VALUE;
+        double distance = Double.MAX_VALUE;
 
         // TODO: for CPU optimization sake, forTile should cache selection by tile
         for (Model model: models.forTile(tile))
@@ -43,7 +43,7 @@ public class ImagePattern implements Pattern {
                 if (value != null) {
                     Color color = Color.fromRGBint(value);
                     for (Map.Entry<Color, Placeable> candidate : placeables.entrySet()) {
-                        float d = color.distance(candidate.getKey());
+                        double d = color.distance(candidate.getKey());
                         if (d < distance) {
                             distance = d;
                             placeable = candidate.getValue();

@@ -43,9 +43,10 @@ public class WMSImageProviderParams extends ProviderParams {
      * @param layer Layer to fetch
      */
     @ConstructorProperties({"url", "layer", "format"})
-    public WMSImageProviderParams(String url, String layer) {
+    public WMSImageProviderParams(String url, String layer, String format) {
         this.url = url;
         this.layer = layer;
+        this.format = format;
     }
 
     @Override

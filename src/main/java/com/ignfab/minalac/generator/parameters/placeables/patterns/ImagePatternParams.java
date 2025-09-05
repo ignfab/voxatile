@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.placeables.ImagePattern;
+import com.ignfab.minalac.generator.placeables.Pattern;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.Color;
 import com.ignfab.minalac.generator.utils.random.Seed;
@@ -16,7 +17,7 @@ import com.ignfab.minalac.generator.utils.random.Seed;
 /**
  * Parameters an {@link ImagePattern} placeable.
  */
-public class ImagePatternParams extends PlaceableParams {
+public class ImagePatternParams extends PatternParams {
 
     @JsonSetter(nulls = Nulls.FAIL)
     public ModelSelectionParams models;
@@ -47,7 +48,7 @@ public class ImagePatternParams extends PlaceableParams {
     }
 
     @Override
-    public Placeable create(Seed seed) {
+    public Pattern create(Seed seed) {
 
         Map<Color, Placeable> placeables = new HashMap<>();
 

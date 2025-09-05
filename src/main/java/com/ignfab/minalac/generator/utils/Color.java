@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-public record Color(byte red, byte green, byte blue) {
+public record Color(short red, short green, short blue) {
 
     private final static Map<String, Color> named = new HashMap<>() {{
         // CSS 1–2.0 color names
@@ -27,9 +27,9 @@ public record Color(byte red, byte green, byte blue) {
 
     public static Color fromRGBint(int RGBint) {
         return new Color(
-            (byte) (RGBint >>> 16 & 0xff),
-            (byte) (RGBint >>> 8 & 0xff),
-            (byte) (RGBint & 0xff)
+            (short) (RGBint >>> 16 & 0xff),
+            (short) (RGBint >>> 8 & 0xff),
+            (short) (RGBint & 0xff)
         );
     }
 
@@ -56,8 +56,8 @@ public record Color(byte red, byte green, byte blue) {
         throw new IllegalArgumentException("Unable to parse color '%s'".formatted(c));
     }
 
-    public float distance(Color other) {
+    public double distance(Color other) {
         // TODO : A better formula must exist!
-        return Math.abs(red - other.red) + Math.abs(blue - other.blue) + Math.abs(green - other.green);
+        return Math.sqrt((red - other.red) *(red - other.red) + (blue - other.blue) * (blue - other.blue) + (green - other.green) * (green - other.green));
     }
 }

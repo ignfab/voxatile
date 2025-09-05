@@ -1,0 +1,76 @@
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+  fetch:
+    type: fetchData
+    modelType: test
+    provider:
+      type: wmsImage
+      url: https://data.geopf.fr/wms-r/wms
+#      layer: SCANEM40_PYR_PNG_FXX_LAMB93
+      layer: ORTHOIMAGERY.ORTHOPHOTOS
+      format: image/png
+    processor:
+      type: integerMatrix
+
+  fetchAltitude:
+    type: fetchData
+    modelType: altitude
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    processor:
+      type: floatMatrix
+
+  setAltitude:
+    after: fetchAltitude
+    type: populateHeightmap
+    models:
+      type: altitude
+    heightmap: ground
+
+  renderGround:
+    after:
+      - fetch
+      - setAltitude
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - put:
+            pattern:
+              models:
+                type: test
+              place:
+                # white: default:dirt_with_snow
+                # yellow: default:sand
+                # green: default:dirt_with_grass
+                # maroon: default:dirt_with_rainforest_litter
+                # olive: default:dirt_with_dry_grass
+                # gray: default:stone
+                # red: default:desert_stone
+                # black: default:obsidian
+                # aqua: default:ice
+                "#FFF": wool:white
+                "#888": wool:grey
+                "#444": wool:dark_grey
+                "#000": wool:black
+                "#00F": wool:blue
+                "#0FF" : wool:cyan
+                "#0F0": wool:green
+                "#080": wool:dark_green
+                "#FF0" : wool:yellow
+                "#F80" : wool:orange
+                "#800" : wool:brown
+                "#F00" : wool:red
+                "#F88" : wool:pink
+                "#F08" : wool:magenta
+                "#F0F" : wool:violet
+          at: [0, 0, 0]
+        - put: *voxel-dirt
+          at: [0, 0, -3..-1]
+        - put: *voxel-stone
+          at: [0, 0, -20..-4]
