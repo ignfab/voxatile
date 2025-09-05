@@ -2,7 +2,7 @@ package com.ignfab.minalac.generator.placeables;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
+import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,10 +36,10 @@ public class CombinedPlaceableTest {
         combined2.add(placeable2);
 
         // Test without any child
-        assertDoesNotThrow(() -> combined0.place(TestingVoxelTile.UNUSED, 1, 2, 3));
+        assertDoesNotThrow(() -> combined0.place(TestingGenerationTile.UNUSED, 1, 2, 3));
 
         // Test with one child
-        assertDoesNotThrow(() -> combined1.place(TestingVoxelTile.UNUSED, 4, 5, 6));
+        assertDoesNotThrow(() -> combined1.place(TestingGenerationTile.UNUSED, 4, 5, 6));
         assertEquals(new WorldCoords3d(4, 5, 6), placeable1.lastPlaced());
 
         // Test with two children

@@ -15,17 +15,17 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
  */
 public class TestingGenerationTile extends GenerationTile {
 
+    /**
+     * A default {@code TestingGenerationTile} instance to pass as argument where it won't actually be used.
+     */
+    public static final TestingGenerationTile UNUSED = new TestingGenerationTile(TestingVoxelWorld.UNUSED, WorldBBox3d.EMPTY);
+
     // This is a mock heightmap store that is re-created each {@code newStoredHeightmap} call.
     private final TestingHeightmapStore heightmaps;
 
-    /**
-     * Creates a new {@code TestingGenerationTile}.
-     *
-     * @param limits Limits of that tile
-     */
-    public TestingGenerationTile(WorldBBox3d limits) {
+    private TestingGenerationTile(TestingVoxelWorld world, WorldBBox3d limits) {
         super(new Generation(
-                new TestingVoxelWorld(),
+                world,
                 null, // Seed
                 null, // CRS
                 0.0, // CenterX
@@ -35,12 +35,22 @@ public class TestingGenerationTile extends GenerationTile {
                 1.0, // Horizontal scale
                 1.0, // Vertical sclae
                 0, // Angle
-                Math.max(limits.sizeX(), limits.sizeY())
+                Math.max(limits.sizeX(), limits.sizeY()) // Max tile size
             ),
             limits);
         heightmaps = new TestingHeightmapStore(generation().heightmaps(), limits().to2d());
     }
 
+    /**
+     * Creates a new {@code TestingGenerationTile}.
+     *
+     * @param limits Limits of that tile
+     */
+    public TestingGenerationTile(WorldBBox3d limits) {
+        this(new TestingVoxelWorld(), limits);
+    }
+
+    @Override
     public TestingVoxelTile voxels() {
         return (TestingVoxelTile) super.voxels();
     }

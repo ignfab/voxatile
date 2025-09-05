@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -46,7 +46,7 @@ public class VoxelWorldTest {
 
     @Test
     public void testVoxelIterator() {
-        TestingVoxelTile tile = new TestingVoxelTile(new WorldBBox3d(new WorldCoords3d(-1, -2, -5), new WorldCoords3d(2, 3, 6)));
+        TestingGenerationTile tile = new TestingGenerationTile(new WorldBBox3d(new WorldCoords3d(-1, -2, -5), new WorldCoords3d(2, 3, 6)));
         Placeable a = new TestingVoxel("aa");
         Placeable b = new TestingVoxel("b");
         Placeable c = new TestingVoxel("c");
@@ -69,7 +69,7 @@ public class VoxelWorldTest {
                     new PlacedVoxel(a, new WorldCoords3d(-1, 2, -4)),
                     new PlacedVoxel(c, new WorldCoords3d(-1, 2, -5))
                 ),
-                tile.voxels(-1, 2)
+                tile.voxels().voxels(-1, 2)
             );
         });
 
@@ -79,14 +79,14 @@ public class VoxelWorldTest {
                     new PlacedVoxel(b, new WorldCoords3d(1, -2, 1)),
                     new PlacedVoxel(c, new WorldCoords3d(1, -2, -2))
                 ),
-                tile.voxels(1, -2)
+                tile.voxels().voxels(1, -2)
             );
         });
 
         assertDoesNotThrow(() -> {
             assertIterableEquals(
                 Collections.emptyList(),
-                tile.voxels(0, -2)
+                tile.voxels().voxels(0, -2)
             );
         });
     }

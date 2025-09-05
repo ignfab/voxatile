@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.placeables;
 
-import com.ignfab.minalac.generator.world.VoxelTile;
+import com.ignfab.minalac.generator.generation.GenerationTile;
 
 /**
  * A pattern of placeables.
@@ -22,7 +22,7 @@ public interface Pattern extends Placeable {
 
     // Default place implementation allowing to use any pattern as placeable.
     @Override
-    default void place(VoxelTile tile, int x, int y, int z) {
+    default void place(GenerationTile tile, int x, int y, int z) {
         get(x, y, z).place(tile, x, y, z);
     }
 }

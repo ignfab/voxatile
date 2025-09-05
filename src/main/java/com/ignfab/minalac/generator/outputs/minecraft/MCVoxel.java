@@ -7,8 +7,8 @@ import java.util.Objects;
 import net.querz.nbt.tag.CompoundTag;
 import net.querz.nbt.tag.StringTag;
 
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.placeables.Placeable;
-import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * {@code MCVoxel} class implements a {@link Placeable} voxel for Minecraft.
@@ -68,8 +68,8 @@ public class MCVoxel implements Placeable {
     }
 
     @Override
-    public void place(VoxelTile tile, int x, int y, int z)  {
-        if (tile instanceof MCVoxelTile mcTile) {
+    public void place(GenerationTile tile, int x, int y, int z)  {
+        if (tile.voxels() instanceof MCVoxelTile mcTile) {
             place(mcTile, x, y, z);
         } else {
             throw new IllegalArgumentException("Voxel does not match voxel tile output format");

@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.outputs.testing;
 
 import java.util.Objects;
 
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
@@ -32,8 +33,8 @@ public class TestingVoxel implements Placeable {
      * @param z z-coordinate where to place voxel
      */
     @Override
-    public void place(VoxelTile tile, int x, int y, int z) {
-        ((TestingVoxelTile) tile).set(x, y, z, this);
+    public void place(GenerationTile tile, int x, int y, int z) {
+        ((TestingVoxelTile) tile.voxels()).set(x, y, z, this);
     }
 
     /**

@@ -2,7 +2,7 @@ package com.ignfab.minalac.generator.placeables;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
+import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.utils.random.TestingRandom;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
@@ -25,12 +25,12 @@ public class RandomPatternTest {
 
         RandomPattern pattern1 = new RandomPattern(seed, placeable, 0.5);
         random.setNextDouble(1.0);
-        assertDoesNotThrow(() -> pattern1.place(TestingVoxelTile.UNUSED, 0, 0, 0));
+        assertDoesNotThrow(() -> pattern1.place(TestingGenerationTile.UNUSED, 0, 0, 0));
         assertNull(placeable.lastPlaced());
 
         random.setNextDouble(0.0);
         RandomPattern pattern2 = new RandomPattern(seed, placeable, 0.5);
-        assertDoesNotThrow(() -> pattern2.place(TestingVoxelTile.UNUSED, 0, 0, 0));
+        assertDoesNotThrow(() -> pattern2.place(TestingGenerationTile.UNUSED, 0, 0, 0));
         assertEquals(new WorldCoords3d(0, 0, 0), placeable.lastPlaced());
     }
 }

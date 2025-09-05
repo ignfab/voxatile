@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.outputs.testing;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,19 +29,19 @@ public class TestingVoxelTileTest {
     @Test
     @DisplayName("Test setting in the world using voxel can be retrieved")
     public void testGetVoxel() {
-        TestingVoxelTile tile = new TestingVoxelTile(new WorldBBox3d(1, 2, 3, 4, 5, 6));
+        TestingGenerationTile tile = new TestingGenerationTile(new WorldBBox3d(1, 2, 3, 4, 5, 6));
         TestingVoxel vt1 = new TestingVoxel("AA");
         TestingVoxel vt2 = new TestingVoxel("BB");
 
         vt1.place(tile, 1, 2, 3);
         vt2.place(tile, 3, 4, 5);
-        tile.assertVoxel("AA", 1, 2, 3);
-        tile.assertVoxel("BB", 3, 4, 5);
+        tile.voxels().assertVoxel("AA", 1, 2, 3);
+        tile.voxels().assertVoxel("BB", 3, 4, 5);
 
-        assertEquals(vt1, tile.getVoxel(1, 2, 3));
-        assertEquals(vt2, tile.getVoxel(3, 4, 5));
-        assertNull(tile.getVoxel(0, 0, 0));
-        assertNull(tile.getVoxel(3, 2, 5));
+        assertEquals(vt1, tile.voxels().getVoxel(1, 2, 3));
+        assertEquals(vt2, tile.voxels().getVoxel(3, 4, 5));
+        assertNull(tile.voxels().getVoxel(0, 0, 0));
+        assertNull(tile.voxels().getVoxel(3, 2, 5));
     }
 
     @Test

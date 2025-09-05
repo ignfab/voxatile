@@ -3,9 +3,9 @@ package com.ignfab.minalac.generator.placeables;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * {@code PlaceableStructure} is a {@link Placeable} consisting of placeables at given coordinate offsets.
@@ -19,7 +19,7 @@ public class PlaceableStructure implements Placeable {
      * {@inheritDoc}
      */
     @Override
-    public void place(VoxelTile tile, int x, int y, int z) {
+    public void place(GenerationTile tile, int x, int y, int z) {
         placeables.forEach((c, placeable) -> placeable.place(tile, c.x() + x, c.y() + y, c.z() + z));
     }
 

@@ -2,8 +2,8 @@ package com.ignfab.minalac.generator.outputs.minetest;
 
 import java.util.Objects;
 
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.placeables.Placeable;
-import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * {@code MTVoxel} class implements a {@link Placeable} voxel for Minetest.
@@ -42,8 +42,8 @@ public class MTVoxel implements Placeable {
     }
 
     @Override
-    public void place(VoxelTile tile, int x, int y, int z)  {
-        if (tile instanceof MTVoxelTile mtTile) {
+    public void place(GenerationTile tile, int x, int y, int z)  {
+        if (tile.voxels() instanceof MTVoxelTile mtTile) {
             place(mtTile, x, y, z);
         } else {
             throw new IllegalArgumentException("Voxel does not match voxel tile output format");

@@ -76,9 +76,9 @@ public class RenderBuildingsTask extends ModelTask<ShapesVoxelizable2d> {
             int zMin = heightmap.get(c);
 
             for (int z = 1; z < height; z++)
-                ((z % 4 == 0) ? window : wall).place(tile.voxels(), c.x(), c.y(), zMin + z);
+                ((z % 4 == 0) ? window : wall).place(tile, c.x(), c.y(), zMin + z);
             // Build the border of the roof of the building
-            roof.place(tile.voxels(), c.x(), c.y(), zMin + height);
+            roof.place(tile, c.x(), c.y(), zMin + height);
         }
 
         // Build the floors of the building
@@ -87,9 +87,9 @@ public class RenderBuildingsTask extends ModelTask<ShapesVoxelizable2d> {
             int zMin = heightmap.get(c);
 
             for (int z = 2; z < height; z = z + 4)
-                roof.place(tile.voxels(), c.x(), c.y(), zMin + z);
+                roof.place(tile, c.x(), c.y(), zMin + z);
             // Build the inside of the roof of the building
-            roof.place(tile.voxels(), c.x(), c.y(), zMin + height);
+            roof.place(tile, c.x(), c.y(), zMin + height);
         }
     }
 }

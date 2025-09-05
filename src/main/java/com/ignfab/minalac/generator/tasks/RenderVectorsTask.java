@@ -50,7 +50,7 @@ public class RenderVectorsTask extends ModelTask<ShapesVoxelizable2d> {
             if (inside == borders) {
                 for (Positioned2d voxel : voxelizer) {
                     WorldCoords2d c = voxel.coords();
-                    inside.place(tile.voxels(), c.x(), c.y(), heightmap.get(c));
+                    inside.place(tile, c.x(), c.y(), heightmap.get(c));
                 }
                 return;
             }
@@ -58,7 +58,7 @@ public class RenderVectorsTask extends ModelTask<ShapesVoxelizable2d> {
             // Iteration over inside voxels
             for (Positioned2d voxel : voxelizer.inside()) {
                 WorldCoords2d c = voxel.coords();
-                inside.place(tile.voxels(), c.x(), c.y(), heightmap.get(c));
+                inside.place(tile, c.x(), c.y(), heightmap.get(c));
             }
         }
 
@@ -66,7 +66,7 @@ public class RenderVectorsTask extends ModelTask<ShapesVoxelizable2d> {
             // Iteration over border voxels
             for (LineVoxel2d voxel : voxelizer.borders()) {
                 WorldCoords2d c = voxel.coords();
-                borders.place(tile.voxels(), c.x(), c.y(), heightmap.get(c));
+                borders.place(tile, c.x(), c.y(), heightmap.get(c));
             }
     }
 }
