@@ -18,11 +18,11 @@ public interface Pattern extends Placeable {
      *
      * @return placeable, should not be null (return {@code NoVoxel.INSTANCE} instead)
      */
-    Placeable get(int x, int y, int z);
+    Placeable get(GenerationTile tile, int x, int y, int z);
 
     // Default place implementation allowing to use any pattern as placeable.
     @Override
     default void place(GenerationTile tile, int x, int y, int z) {
-        get(x, y, z).place(tile, x, y, z);
+        get(tile, x, y, z).place(tile, x, y, z);
     }
 }

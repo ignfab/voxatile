@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.placeables;
 
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.utils.random.Random;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
@@ -25,7 +26,7 @@ public class RandomPattern implements Pattern {
     }
 
     @Override
-    public Placeable get(int x, int y, int z) {
+    public Placeable get(GenerationTile tile, int x, int y, int z) {
         random.setSeed(x, y, z);
         if (random.nextDouble() < chance)
             return placeable;
