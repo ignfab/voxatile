@@ -43,6 +43,7 @@ import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderVectorsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.SetSpawnTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.TileTaskSequenceParams;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
 import com.ignfab.minalac.generator.world.MapWriteException;
@@ -90,6 +91,7 @@ public final class MinalacGenerator {
 
         // TODO: Static method that provides a ParamsParser with all default renderers
         // If those name values are modified, update the documentation accordingly
+        parser.registerParams("sequence", TileTaskSequenceParams.class);
         parser.registerParams("copyHeightmap", CopyHeightmapTaskParams.class);
         parser.registerParams("fetchData", FetchDataTaskParams.class);
         parser.registerParams("levelGround", LevelGroundTaskParams.class);

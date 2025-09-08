@@ -160,37 +160,40 @@ forEachTile:
           chance: 0.003
           place: *forest-tree2
 
-  populateWaterPresence:
-    after: fetchWater
-    type: copyHeightmap
-    models:
-      type: water
-    from: 1
-    to: water
+  prepareWater:
+    after:
+      - fetchWater
 
-  computeWaterDepth:
-    after: populateWaterPresence
-    type: copyHeightmap
-    models:
-      type: water
-    from:
-      remap:
-        manhattan: water
-        maximumDistance: 12
-        targetValue: 0
-      mapping:
-        0: 0
-        1: 1
-        2: 8
-        3..3: 10
-        4..6: 11
-        7..12: 12
-    to: water
+    type: sequence
+
+    tasks:
+      - type: copyHeightmap
+        models:
+          type: water
+        from: 1
+        to: water
+
+      - type: copyHeightmap
+        models:
+          type: water
+        from:
+          remap:
+            manhattan: water
+            maximumDistance: 12
+            targetValue: 0
+          mapping:
+            0: 0
+            1: 1
+            2: 8
+            3..3: 10
+            4..6: 11
+            7..12: 12
+        to: water
 
   renderWater:
     after:
+      - prepareWater
       - renderGround
-      - computeWaterDepth
       # Vegetation and water vector data overlap in certain areas. (Because of vegetation representing canopy)
       # The dependency and air voxel below should be removed when cropping is implemented on vector data.
       - renderForest
