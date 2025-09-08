@@ -1,0 +1,10 @@
+# Paris la Défense
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 48.890291034392135
+    longitude: 2.243203047677532
+  angle: 0
+  extentX: 1000
+  extentY: 1000

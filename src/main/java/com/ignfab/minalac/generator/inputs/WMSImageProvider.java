@@ -79,6 +79,7 @@ public class WMSImageProvider implements Provider<IntegerGeographicDataMatrix2d>
 
         InputStream inputStream;
         try {
+            System.out.println(url.toURL());
             inputStream = url.toURL().openStream();
         } catch (MalformedURLException e) {
             throw new GenerationFailedException("Invalid URL for layer", e);

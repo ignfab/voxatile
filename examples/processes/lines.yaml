@@ -1,0 +1,68 @@
+heightmaps:
+  ground:
+    default: 0
+  water:
+    default: 0
+
+forEachTile:
+
+  fetchBuildings:
+    type: fetchData
+    modelType: buildings
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:batiment
+    processor:
+      type: geoToolsVector
+
+  fetchRoads:
+    type: fetchData
+    modelType: roads
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:troncon_de_route
+    processor:
+      type: geoToolsVector
+
+  renderBuildings:
+    after:
+      - fetchBuildings
+    type: renderSurfaces
+    models:
+      type: buildings
+    heightmap: ground
+    inside: default:sand
+#    borders:
+#      structure:
+#        at: [0, 0, 1]
+#        put: default:glass
+
+  renderRoads:
+    after:
+      - fetchRoads
+    type: renderLines
+    models:
+      type: roads
+    structure:
+      axes: [ y, x ]
+      blueprint:
+        - "====="
+        - "....."
+        - "....."
+        - "....."
+        - "....."
+        - "....."
+        - "....."
+        - "....."
+        - "....."
+        - "....."
+        - "....."
+        - "....."
+        - "....."
+        - "===.."
+      with:
+        "=": wool:white
+        '.': wool:black
+

@@ -5,6 +5,7 @@ import java.util.Map;
 
 public record Color(short red, short green, short blue) {
 
+
     private final static Map<String, Color> named = new HashMap<>() {{
         // CSS 1–2.0 color names
         put("white", Color.fromString("#FFFFFF"));
@@ -56,8 +57,49 @@ public record Color(short red, short green, short blue) {
         throw new IllegalArgumentException("Unable to parse color '%s'".formatted(c));
     }
 
+    public static record HSV(double hue, double saturation, double luminance) {};
+
+    public HSV toHSV() {
+        int value = Math.max(Math.max(red, green), blue);
+        int delta = value - Math.min(Math.min(red, green), blue);
+        double hue = 0;
+        if (delta > 0) {
+            if (value == red)
+                hue = 1.0 + (green - blue) / delta;
+            else if (value == green)
+                hue = 3.0 + (blue -red) / delta;
+            else /* (value == blue) */
+                hue = 5.0 + (red - green) / delta;
+        }
+        // hue goes from 0.0 to 6.0 (0.0 and 6.0 are same hue)
+        // saturation goes from 0.0 to 1.0
+        // value goes from 0.0 to 1.0
+        return new HSV(hue, value == 0 ? 0 : (double) delta / value, (double) value / 255);
+    }
+
+    private static double fn(double n) { return n * n; }
+
     public double distance(Color other) {
+        HSV hsv1 = toHSV();
+        HSV hsv2 = other.toHSV();
+
+        double hdist = Math.abs(hsv1.hue() - hsv2.hue());
+        hdist = Math.min(hdist, 6.0 - hdist) / 6.0; // From 0.0 (equal) to 1.0 (opposite)
+
+        return
+            (fn(hdist) - 0.5) * hsv1.saturation() * hsv2.saturation() + // Here we take hue in account depending of how much both colors are saturated.
+            fn(hsv1.saturation() - hsv2.saturation()) +
+            fn(hsv1.luminance() - hsv2.luminance());
+        /*
+          To apply factors on hue/saturation/luminance sensibility:
+
+            fhue * (fn(hdist) - 0.5) * hsv1.saturation() * hsv2.saturation() + // Here we take hue in account depending of how much both colors are saturated.
+            fsat * (fn(hsv1.saturation() - hsv2.saturation()) - 0.5) +
+            flum * (fn(hsv1.luminance() - hsv2.luminance()) - 0.5);
+        */
+
+
         // TODO : A better formula must exist!
-        return Math.sqrt((red - other.red) *(red - other.red) + (blue - other.blue) * (blue - other.blue) + (green - other.green) * (green - other.green));
+//        return fn(red - other.red) + fn(blue - other.blue) + fn(green - other.green);
     }
 }

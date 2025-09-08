@@ -6,7 +6,9 @@ import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.models.IntegerMatrixModel;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
+import com.ignfab.minalac.generator.outputs.minetest.MTVoxel;
 import com.ignfab.minalac.generator.utils.Color;
+import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
 /**
@@ -50,9 +52,7 @@ public class ImagePattern implements Pattern {
                         }
                     }
                 }
-
             }
-
         return placeable;
     }
 }
