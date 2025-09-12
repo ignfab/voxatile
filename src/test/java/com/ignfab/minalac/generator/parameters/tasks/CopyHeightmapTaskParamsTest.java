@@ -48,8 +48,7 @@ public class CopyHeightmapTaskParamsTest {
         assertDoesNotThrow(params::validate);
         assertDoesNotThrow(() -> params.create(generation));
 
-        assertThrows(
-            JacksonException.class,
+        assertDoesNotThrow(
             () -> ParamsTester.deserialize(
                 CopyHeightmapTaskParams.class,
                 """
@@ -89,28 +88,28 @@ public class CopyHeightmapTaskParamsTest {
 
     @Test
     public void testValidate() {
-        CopyHeightmapTaskParams paramsWithInvalidModels = new CopyHeightmapTaskParams(
-            // Invalid ModelSelectionParams
-            new ModelSelectionParams(""),
+        CopyHeightmapTaskParams paramsWithNullModels = new CopyHeightmapTaskParams(
             TestingHeightmapParams.VALID,
             TestingHeightmapParams.VALID
         );
 
-        assertThrows(IllegalArgumentException.class, paramsWithInvalidModels::validate);
+        assertThrows(IllegalArgumentException.class, paramsWithNullModels::validate);
 
         CopyHeightmapTaskParams paramsWithInvalidFrom = new CopyHeightmapTaskParams(
-            new ModelSelectionParams("4"),
             TestingHeightmapParams.INVALID,
             TestingHeightmapParams.VALID
         );
 
+        paramsWithInvalidFrom.models = new ModelSelectionParams("4");
+
         assertThrows(IllegalArgumentException.class, paramsWithInvalidFrom::validate);
 
         CopyHeightmapTaskParams paramsWithInvalidTo = new CopyHeightmapTaskParams(
-            new ModelSelectionParams("2"),
             TestingHeightmapParams.VALID,
             TestingHeightmapParams.INVALID
         );
+
+        paramsWithInvalidTo.models = new ModelSelectionParams("2");
 
         assertThrows(IllegalArgumentException.class, paramsWithInvalidTo::validate);
     }

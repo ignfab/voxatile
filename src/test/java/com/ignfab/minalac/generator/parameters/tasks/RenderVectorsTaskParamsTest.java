@@ -15,60 +15,72 @@ public class RenderVectorsTaskParamsTest {
         RenderVectorsTaskParams params;
 
         // Test required arguments
-        params = new RenderVectorsTaskParams(new ModelSelectionParams(""), TestingHeightmapParams.VALID);
+        params = new RenderVectorsTaskParams(TestingHeightmapParams.VALID);
         params.place = TestingPlaceableParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderVectorsTaskParams(selection, TestingHeightmapParams.INVALID);
+        params = new RenderVectorsTaskParams(TestingHeightmapParams.INVALID);
+        params.models = selection;
         params.place = TestingPlaceableParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderVectorsTaskParams(selection, TestingHeightmapParams.VALID);
+        params = new RenderVectorsTaskParams(TestingHeightmapParams.VALID);
+        params.models = selection;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderVectorsTaskParams(selection, TestingHeightmapParams.VALID);
+        params = new RenderVectorsTaskParams(TestingHeightmapParams.VALID);
+        params.models = selection;
         params.borders = TestingPlaceableParams.VALID;
         assertDoesNotThrow(params::validate);
 
         // Test optional arguments
-        params = new RenderVectorsTaskParams(selection, TestingHeightmapParams.VALID);
+        params = new RenderVectorsTaskParams(TestingHeightmapParams.VALID);
+        params.models = selection;
         params.borders = TestingPlaceableParams.VALID;
         params.inside = TestingPlaceableParams.VALID;
         assertDoesNotThrow(params::validate);
 
-        params = new RenderVectorsTaskParams(selection, TestingHeightmapParams.VALID);
+        params = new RenderVectorsTaskParams(TestingHeightmapParams.VALID);
+        params.models = selection;
         params.inside = TestingPlaceableParams.VALID;
         assertDoesNotThrow(params::validate);
 
-        params = new RenderVectorsTaskParams(selection, TestingHeightmapParams.VALID);
+        params = new RenderVectorsTaskParams(TestingHeightmapParams.VALID);
+        params.models = selection;
         params.borders = TestingPlaceableParams.VALID;
         assertDoesNotThrow(params::validate);
 
-        params = new RenderVectorsTaskParams(selection, TestingHeightmapParams.VALID);
+        params = new RenderVectorsTaskParams(TestingHeightmapParams.VALID);
+        params.models = selection;
         params.place = TestingPlaceableParams.VALID;
         assertDoesNotThrow(params::validate);
 
         // Test incompatible arguments
-        params = new RenderVectorsTaskParams(selection, TestingHeightmapParams.VALID);
+        params = new RenderVectorsTaskParams(TestingHeightmapParams.VALID);
+        params.models = selection;
         params.place = TestingPlaceableParams.VALID;
         params.borders = TestingPlaceableParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderVectorsTaskParams(selection, TestingHeightmapParams.VALID);
+        params = new RenderVectorsTaskParams(TestingHeightmapParams.VALID);
+        params.models = selection;
         params.place = TestingPlaceableParams.VALID;
         params.inside = TestingPlaceableParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         // Test invalid arguments
-        params = new RenderVectorsTaskParams(selection, TestingHeightmapParams.VALID);
+        params = new RenderVectorsTaskParams(TestingHeightmapParams.VALID);
+        params.models = selection;
         params.borders = TestingPlaceableParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderVectorsTaskParams(selection, TestingHeightmapParams.VALID);
+        params = new RenderVectorsTaskParams(TestingHeightmapParams.VALID);
+        params.models = selection;
         params.inside = TestingPlaceableParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderVectorsTaskParams(selection, TestingHeightmapParams.VALID);
+        params = new RenderVectorsTaskParams(TestingHeightmapParams.VALID);
+        params.models = selection;
         params.place = TestingPlaceableParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 

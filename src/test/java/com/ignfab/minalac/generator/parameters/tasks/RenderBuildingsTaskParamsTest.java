@@ -20,14 +20,15 @@ public class RenderBuildingsTaskParamsTest {
     public void testValidate() {
         TestingVoxelParams placeable = new TestingVoxelParams("voxel");
 
-        RenderBuildingsTaskParams paramsWithoutType = new RenderBuildingsTaskParams(new ModelSelectionParams(""), TestingHeightmapParams.VALID, placeable, placeable, placeable);
-        assertThrows(IllegalArgumentException.class, paramsWithoutType::validate);
+        RenderBuildingsTaskParams paramsWithoutModels = new RenderBuildingsTaskParams(TestingHeightmapParams.VALID, placeable, placeable, placeable);
+        assertThrows(IllegalArgumentException.class, paramsWithoutModels::validate);
 
-        RenderBuildingsTaskParams paramsWithoutHeightmap = new RenderBuildingsTaskParams(new ModelSelectionParams("building"), TestingHeightmapParams.INVALID, placeable, placeable, placeable);
+        RenderBuildingsTaskParams paramsWithoutHeightmap = new RenderBuildingsTaskParams(TestingHeightmapParams.INVALID, placeable, placeable, placeable);
+        paramsWithoutHeightmap.models = new ModelSelectionParams("building");
         assertThrows(IllegalArgumentException.class, paramsWithoutHeightmap::validate);
 
-        RenderBuildingsTaskParams params = new RenderBuildingsTaskParams(new ModelSelectionParams("building"), TestingHeightmapParams.VALID, placeable, placeable, placeable);
-
+        RenderBuildingsTaskParams params = new RenderBuildingsTaskParams(TestingHeightmapParams.VALID, placeable, placeable, placeable);
+        params.models = new ModelSelectionParams("building");
         assertDoesNotThrow(params::validate);
     }
 
