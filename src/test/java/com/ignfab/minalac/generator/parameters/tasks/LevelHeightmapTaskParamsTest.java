@@ -18,16 +18,18 @@ public class LevelHeightmapTaskParamsTest {
     @Test
     public void testValidate() {
         TestingVoxelParams placeable = new TestingVoxelParams("voxel");
+        ModelSelectionParams selection = new ModelSelectionParams();
+        selection.type = "Ok";
 
         LevelGroundTaskParams paramsWithoutModels = new LevelGroundTaskParams(new WritableHeightmapParams("ground"), placeable);
         assertThrows(IllegalArgumentException.class, paramsWithoutModels::validate);
 
         LevelGroundTaskParams paramsWithoutHeightmap = new LevelGroundTaskParams(new WritableHeightmapParams(""), placeable);
-        paramsWithoutHeightmap.models = new ModelSelectionParams("building");
+        paramsWithoutHeightmap.models = selection;
         assertThrows(IllegalArgumentException.class, paramsWithoutHeightmap::validate);
 
         LevelGroundTaskParams params = new LevelGroundTaskParams(new WritableHeightmapParams("ground"), placeable);
-        params.models = new ModelSelectionParams("building");
+        params.models = selection;
         assertDoesNotThrow(params::validate);
     }
 

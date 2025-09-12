@@ -11,7 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RenderVectorsTaskParamsTest {
     @Test
     public void testValidate() {
-        ModelSelectionParams selection = new ModelSelectionParams("building");
+        ModelSelectionParams selection = new ModelSelectionParams();
+        selection.type = "Ok";
+
         RenderVectorsTaskParams params;
 
         // Test required arguments

@@ -88,6 +88,9 @@ public class CopyHeightmapTaskParamsTest {
 
     @Test
     public void testValidate() {
+        ModelSelectionParams selection = new ModelSelectionParams();
+        selection.type = "Ok";
+
         CopyHeightmapTaskParams paramsWithNullModels = new CopyHeightmapTaskParams(
             TestingHeightmapParams.VALID,
             TestingHeightmapParams.VALID
@@ -100,7 +103,7 @@ public class CopyHeightmapTaskParamsTest {
             TestingHeightmapParams.VALID
         );
 
-        paramsWithInvalidFrom.models = new ModelSelectionParams("4");
+        paramsWithInvalidFrom.models = selection;
 
         assertThrows(IllegalArgumentException.class, paramsWithInvalidFrom::validate);
 
@@ -109,7 +112,7 @@ public class CopyHeightmapTaskParamsTest {
             TestingHeightmapParams.INVALID
         );
 
-        paramsWithInvalidTo.models = new ModelSelectionParams("2");
+        paramsWithInvalidTo.models = selection;
 
         assertThrows(IllegalArgumentException.class, paramsWithInvalidTo::validate);
     }

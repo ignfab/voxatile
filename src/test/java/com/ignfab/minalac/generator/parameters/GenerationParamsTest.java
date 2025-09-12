@@ -123,7 +123,9 @@ public class GenerationParamsTest {
             placeable,
             placeable
         );
-        task.models = new ModelSelectionParams("building");
+        task.models = new ModelSelectionParams();
+        task.models.type = "building";
+
         params.forEachTile.put("building", task);
         Generation generation = params.create(100);
 

@@ -50,17 +50,6 @@ public class PopulateHeightmapTaskParamsTest {
                 PopulateHeightmapTaskParams.class,
                 """
                 type: matrixToHeightmap
-                heightmap: ground
-                """,
-                mapper
-            ));
-
-        assertThrows(
-            JacksonException.class,
-            () -> ParamsTester.deserialize(
-                PopulateHeightmapTaskParams.class,
-                """
-                type: matrixToHeightmap
                 models:
                   type: mnt
                 """,
@@ -71,18 +60,17 @@ public class PopulateHeightmapTaskParamsTest {
 
     @Test
     public void testValidate() {
-        PopulateHeightmapTaskParams paramsWithInvalidModels = new PopulateHeightmapTaskParams(
-            // Invalid ModelSelectionParams
-            new ModelSelectionParams(""),
+        PopulateHeightmapTaskParams paramsWithNoModels = new PopulateHeightmapTaskParams(
             TestingHeightmapParams.VALID
         );
 
-        assertThrows(IllegalArgumentException.class, paramsWithInvalidModels::validate);
+        assertThrows(IllegalArgumentException.class, paramsWithNoModels::validate);
 
         PopulateHeightmapTaskParams paramsWithInvalidHeightmap = new PopulateHeightmapTaskParams(
-            new ModelSelectionParams("again"),
             TestingHeightmapParams.INVALID
         );
+        paramsWithInvalidHeightmap.models = new ModelSelectionParams();
+        paramsWithInvalidHeightmap.models.type = "Ok";
 
         assertThrows(IllegalArgumentException.class, paramsWithInvalidHeightmap::validate);
     }

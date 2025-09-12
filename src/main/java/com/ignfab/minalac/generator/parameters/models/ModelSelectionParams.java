@@ -1,6 +1,5 @@
 package com.ignfab.minalac.generator.parameters.models;
 
-import java.beans.ConstructorProperties;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -26,19 +25,12 @@ public class ModelSelectionParams {
     @JsonSetter(nulls = Nulls.SKIP)
     public ModelFilterParams filter = null;
 
-    /**
-     * Creates a new {@code ModelFilterParams}.
-     *
-     * @param type Type of model to select.
-     */
-    @ConstructorProperties({"type"})
-    public ModelSelectionParams(String type) {
-        this.type = type;
-    }
-
     private boolean isNone = false;
 
     public void narrowDown(ModelSelectionParams params) {
+        if (isNone)
+            return;
+
         if (params.isNone || type != null && params.type != null && !type.equals(params.type)) {
             // If we have two different types, no model will ever match
             isNone = true;

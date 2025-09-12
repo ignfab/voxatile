@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.tasks.PopulateHeightmapTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
 
@@ -27,9 +26,8 @@ public class PopulateHeightmapTaskParams extends ModelTaskParams {
      * @param models models selection to get data from.
      * @param heightmap the name of the heightmap to use.
      */
-    @ConstructorProperties({"models", "heightmap"})
-    public PopulateHeightmapTaskParams(ModelSelectionParams models, WritableHeightmapParams heightmap) {
-        this.models = models;
+    @ConstructorProperties({"heightmap"})
+    public PopulateHeightmapTaskParams(WritableHeightmapParams heightmap) {
         this.heightmap = heightmap;
     }
 
