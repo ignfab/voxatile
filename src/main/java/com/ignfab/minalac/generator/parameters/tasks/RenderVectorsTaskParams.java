@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.placeables.Nothing;
 import com.ignfab.minalac.generator.placeables.Placeable;
@@ -17,11 +16,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for creating a {@link RenderVectorsTask}.
  */
-public class RenderVectorsTaskParams extends TileTaskParams {
-    /**
-     * The type of models to render (required).
-     */
-    public ModelSelectionParams models;
+public class RenderVectorsTaskParams extends ModelTaskParams {
     /**
      * The name of the ground heightmap to use (required).
      */
@@ -46,18 +41,16 @@ public class RenderVectorsTaskParams extends TileTaskParams {
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
-     * @param models models selection to render.
      * @param heightmap the name of the ground heightmap to use.
      */
-    @ConstructorProperties({"models", "heightmap"})
-    public RenderVectorsTaskParams(ModelSelectionParams models, ReadableHeightmapParams heightmap) {
-        this.models = models;
+    @ConstructorProperties({"heightmap"})
+    public RenderVectorsTaskParams(ReadableHeightmapParams heightmap) {
         this.heightmap = heightmap;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
-        models.validate();
+        super.validate();
 
         heightmap.validate();
 

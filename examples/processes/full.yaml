@@ -163,19 +163,16 @@ forEachTile:
   prepareWater:
     after:
       - fetchWater
-
     type: sequence
+    models:
+      type: water
 
     tasks:
       - type: copyHeightmap
-        models:
-          type: water
         from: 1
         to: water
 
       - type: copyHeightmap
-        models:
-          type: water
         from:
           remap:
             manhattan: water

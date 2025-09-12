@@ -14,12 +14,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for creating a {@link PopulateHeightmapTask}.
  */
-public class PopulateHeightmapTaskParams extends TileTaskParams {
-    /**
-     * The type of models to get data from (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
+public class PopulateHeightmapTaskParams extends ModelTaskParams {
     /**
      * The name of the heightmap to use (required).
      */
@@ -40,8 +35,8 @@ public class PopulateHeightmapTaskParams extends TileTaskParams {
 
     @Override
     public void validate() throws IllegalArgumentException {
+        super.validate();
         heightmap.validate();
-        models.validate();
     }
 
     @Override

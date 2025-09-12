@@ -8,20 +8,13 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.tasks.CopyHeightmapTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
 
 /**
  * Parameters for creating a {@link CopyHeightmapTask}.
  */
-public class CopyHeightmapTaskParams extends TileTaskParams {
-    /**
-     * Models to use as a filter (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
-
+public class CopyHeightmapTaskParams extends ModelTaskParams {
     /**
      * The copied heightmap (required).
      */
@@ -41,16 +34,15 @@ public class CopyHeightmapTaskParams extends TileTaskParams {
      * @param from the copied heightmap
      * @param to the name of the heightmap receiving the values.
      */
-    @ConstructorProperties({"models", "from", "to"})
-    public CopyHeightmapTaskParams(ModelSelectionParams models, ReadableHeightmapParams from, WritableHeightmapParams to) {
-        this.models = models;
+    @ConstructorProperties({"from", "to"})
+    public CopyHeightmapTaskParams(ReadableHeightmapParams from, WritableHeightmapParams to) {
         this.from = from;
         this.to = to;
     }
 
     @Override
     public void validate() {
-        models.validate();
+        super.validate();
         from.validate();
         to.validate();
     }
