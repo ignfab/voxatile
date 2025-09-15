@@ -5,12 +5,17 @@ import java.util.List;
 
 import com.ignfab.minalac.generator.generation.GenerationTile;
 
+/**
+ * A tile task that runs other tile tasks in sequence and in order.
+ */
 public class TileTaskSequence implements TileTask {
-    List<TileTask> tasks = new LinkedList<>();
+    private List<TileTask> tasks = new LinkedList<>();
 
-    public TileTaskSequence() {
-    }
-
+    /**
+     * Adds a {@link TileTask} at the end of the sequence.
+     *
+     * @param task task to add
+     */
     public void add(TileTask task) {
         tasks.add(task);
     }

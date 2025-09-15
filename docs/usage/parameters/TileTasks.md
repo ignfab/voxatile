@@ -6,6 +6,8 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
 
 ## Table of contents
 
+* [Scheduling tasks](#scheduling-tasks)
+  * [`sequence`](#sequence)
 * [Tasks fetching data](#tasks-fetching-data)
   * [`fetchData`](#fetchdata)
 * [Tasks operating on world](#tasks-operating-on-world)
@@ -17,6 +19,63 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
 * [Tasks operating on heightmaps](#tasks-operating-on-heightmaps)
   * [`populateHeightmap`](#populateheightmap)
   * [`copyHeightmap`](#copyheightmap)
+
+## Scheduling tasks
+
+These tasks do nothing by themselves. They only launch other tasks in a convenient way, simplifying writing of parameter files.
+
+### `sequence`
+
+Launches sub-tasks in sequence. Sub-tasks can eventually share a model selection.
+
+#### Extra parameters
+- `tasks`: List of tasks to launch (required).
+- `models`: Model selection for all tasks (optional).
+
+Tasks in `tasks` have the same syntax than everywhere else except that:
+- `after` is forbidden (tasks will run in sequence).
+- `models` is optional if a model selection is given at sequence level.
+
+If `models` is provided at both levels, selections are combined and intersection is taken. Partial selections can be provided until resulting selection is valid (i.e. has a model type).
+
+For example, it is possible to provide model type at sequence level and precise filters only at task level (see example). Of course, if two different model types are provided at task and selection level, no model will be selected.
+
+Sequences can also include tasks not using a model selection.
+
+#### Example
+
+This will run three tasks on `vegetation` models (one to paint soil, another to place trees and the last one to place grapes):
+
+```yaml
+type: sequence
+after: fetch-vegetation
+models:
+  type: vegetation
+tasks:
+  - type: vector
+    heightmap: ground
+    place: default:grass
+  - type: vector
+    models:
+      filter:
+        metadata: nature
+        in:
+          - Forêt fermée de conifères
+          - Forêt fermée de feuillus
+          - Forêt fermée mixte
+          - Forêt ouverte
+    heightmap: ground
+    place:
+      pattern:
+        chance: 0.1
+        place: *tree
+  - type: vector
+    models:
+      filter:
+        metadata: nature
+        equals: Vignes
+    place: farming:grapes
+```
 
 ## Tasks fetching data
 

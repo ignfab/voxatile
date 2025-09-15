@@ -23,7 +23,6 @@ public class PopulateHeightmapTaskParams extends ModelTaskParams {
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
-     * @param models models selection to get data from.
      * @param heightmap the name of the heightmap to use.
      */
     @ConstructorProperties({"heightmap"})

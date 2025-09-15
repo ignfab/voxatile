@@ -5,21 +5,25 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.tasks.TileTask;
 import com.ignfab.minalac.generator.tasks.TileTaskSequence;
 
+/**
+ * Parameters for a {@link TileTaskSequence}.
+ */
 public class TileTaskSequenceParams extends TileTaskParams {
 
     /**
-     * Tasks list (required)
+     * Tasks list (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
     public List<TileTaskParams> tasks;
 
     /**
-     * Model selection (optional)
+     * Model selection (optional).
      *
      * @see #setModels()
      */
@@ -58,7 +62,7 @@ public class TileTaskSequenceParams extends TileTaskParams {
 
     @Override
     public void validate() {
-        for (TileTaskParams task: tasks) {
+        for (TileTaskParams task : tasks) {
             if (!task.after.isEmpty())
                 throw new IllegalArgumentException("In a sequence, tasks cannot have dependancies");
 
@@ -69,7 +73,7 @@ public class TileTaskSequenceParams extends TileTaskParams {
     @Override
     public TileTask create(Generation generation) {
         TileTaskSequence sequence = new TileTaskSequence();
-        for (TileTaskParams task: tasks)
+        for (TileTaskParams task : tasks)
             sequence.add(task.create(generation));
 
         return sequence;

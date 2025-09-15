@@ -14,7 +14,10 @@ public class ModelSelection {
     private final String type;
     private final Predicate<Model> filter;
 
-    public static ModelSelection NONE = new None();
+    /**
+     * A selection of no models.
+     */
+    public static final ModelSelection NONE = new None();
 
     /**
      * Constructs a new {@code ModelSelection}.
@@ -39,7 +42,7 @@ public class ModelSelection {
     }
 
     private static class None extends ModelSelection {
-        public None() {
+        None() {
             super(null, null);
         }
 

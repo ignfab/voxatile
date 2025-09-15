@@ -27,6 +27,13 @@ public class ModelSelectionParams {
 
     private boolean isNone = false;
 
+    /**
+     * Narrows down this selection params accorging to given selection params will select only models also fitting other selection params.
+     * <p>
+     * This may lead to empty selection, in particular if other selection params has a different model type than this.
+     *
+     * @param params other selection params
+     */
     public void narrowDown(ModelSelectionParams params) {
         if (isNone)
             return;

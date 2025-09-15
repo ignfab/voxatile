@@ -30,7 +30,6 @@ public class CopyHeightmapTaskParams extends ModelTaskParams {
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
-     * @param models models to use as a filter
      * @param from the copied heightmap
      * @param to the name of the heightmap receiving the values.
      */
