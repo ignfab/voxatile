@@ -1,21 +1,15 @@
 package com.ignfab.minalac.generator.parameters;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.composer.ComposerException;
-import org.yaml.snakeyaml.constructor.DuplicateKeyException;
+import com.fasterxml.jackson.dataformat.yaml.YAMLAnchorReplayingFactory;
 
 /**
  * A Json/Yaml parser able to decode parameters into a {@code Generation} object.
@@ -28,7 +22,7 @@ public class ParamsParser {
      * Creates a new Parser.
      */
     public ParamsParser() {
-        mapper = new ObjectMapper(new YAMLFactory());
+        mapper = new ObjectMapper(new YAMLAnchorReplayingFactory());
         mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
         // To prevent duplicates in map type parameters.
         mapper.enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
@@ -43,24 +37,6 @@ public class ParamsParser {
      * @throws JsonProcessingException
      */
     public GenerationParams parse(String serialized) throws ParseException, JsonProcessingException {
-        // Resolve Yaml anchors and pick up format
-        // (Jackson is not able to do it by itself but it is still very good at deserializing)
-
-        LoaderOptions loaderOptions = new LoaderOptions();
-        loaderOptions.setAllowDuplicateKeys(false);
-
-        DumperOptions dumperOptions = new DumperOptions();
-        dumperOptions.setDereferenceAliases(true); // Prevents new anchor generation on dumping
-
-        Yaml yaml = new Yaml(loaderOptions, dumperOptions);
-
-        Map<Object, Object> document;
-        try {
-            document = yaml.load(serialized);
-        } catch (DuplicateKeyException | ComposerException e) {
-            throw new ParseException(e);
-        }
-
         // Custom deserializers
         SimpleModule module = new SimpleModule("MinalacParserModule");
         module.addDeserializer(OutputFormat.class, formatDeserializer);
@@ -70,18 +46,19 @@ public class ParamsParser {
         anotherModule.setDeserializerModifier(new Params.BeanModifier());
         mapper.registerModule(anotherModule);
 
-        if (!document.containsKey("format"))
+        JsonNode document = mapper.readTree(serialized);
+        if (!document.has("format"))
             throw new ParseException("Missing format field!");
 
         // Deserialize output format only
-        OutputFormat format = mapper.readValue(yaml.dump(document.get("format")), OutputFormat.class);
+        OutputFormat format = mapper.readValue(document.get("format").asText(), OutputFormat.class);
 
         // Register format specific deserializer
         format.registerPlaceableDeserializer(mapper);
 
         // Deserialize the whole parameter object
         try {
-            return mapper.readValue(yaml.dump(document), GenerationParams.class);
+            return mapper.treeToValue(document, GenerationParams.class);
         } catch (MismatchedInputException | ValueInstantiationException e) {
             throw new ParseException(e);
         }
