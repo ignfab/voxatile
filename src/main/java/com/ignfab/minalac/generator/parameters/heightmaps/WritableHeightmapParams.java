@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationStore;
 import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmapSpec;
 import com.ignfab.minalac.generator.parameters.JsonDelegateDeserialize;
+import com.ignfab.minalac.generator.parameters.utils.StringNotBlank;
 
 /**
  * Parameter class for a {@link WritableHeightmapSpec}.
@@ -24,7 +25,7 @@ public class WritableHeightmapParams implements ReadableHeightmapParams {
      * The name of the heightmap.
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String stored;
+    public StringNotBlank stored;
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
@@ -32,19 +33,13 @@ public class WritableHeightmapParams implements ReadableHeightmapParams {
      * @param stored the name of the heightmap.
      */
     @ConstructorProperties("stored")
-    public WritableHeightmapParams(String stored) {
+    public WritableHeightmapParams(StringNotBlank stored) {
         this.stored = stored;
     }
 
     @Override
-    public void validate() throws IllegalArgumentException {
-        if (stored.isBlank())
-            throw new IllegalArgumentException("Name cannot be empty or blank");
-    }
-
-    @Override
     public WritableHeightmapSpec create(HeightmapDeclarationStore store) {
-        return store.get(stored).spec();
+        return store.get(stored.create()).spec();
     }
 
     /**
@@ -68,7 +63,7 @@ public class WritableHeightmapParams implements ReadableHeightmapParams {
         @Override
         public Object deserializeWithType(JsonParser jsonParser, DeserializationContext deserializationContext, TypeDeserializer typeDeserializer) throws IOException {
             return switch (jsonParser.currentToken()) {
-                case VALUE_STRING -> new WritableHeightmapParams(jsonParser.getText());
+                case VALUE_STRING -> new WritableHeightmapParams(jsonParser.readValueAs(StringNotBlank.class));
                 default -> super.deserializeWithType(jsonParser, deserializationContext, typeDeserializer);
             };
         }

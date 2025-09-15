@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.parameters.ValueParser;
+import com.ignfab.minalac.generator.parameters.utils.StringNotBlank;
 import com.ignfab.minalac.generator.processors.post.MetadataValueMappingPostProcessor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
 
@@ -23,7 +24,7 @@ public class MetadataValueMappingPostProcessorParams extends PostProcessorParams
      * Metadata field to map (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String metadata;
+    public StringNotBlank metadata;
 
     /**
      * Policy if metadata is missing (optional).
@@ -69,14 +70,12 @@ public class MetadataValueMappingPostProcessorParams extends PostProcessorParams
      * @param metadata name of the metadata to translate
      */
     @ConstructorProperties({ "metadata" })
-    public MetadataValueMappingPostProcessorParams(String metadata) {
+    public MetadataValueMappingPostProcessorParams(StringNotBlank metadata) {
         this.metadata = metadata;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
-        if (metadata.isBlank())
-            throw new IllegalArgumentException("The 'metadata' field cannot be empty or contain only whitespace.");
         if (toFrom == null && fromTo == null)
             throw new IllegalArgumentException("Either 'toFrom' or 'fromTo' field must be provided.");
         if (toFrom != null)
@@ -105,7 +104,7 @@ public class MetadataValueMappingPostProcessorParams extends PostProcessorParams
 
         return new MetadataValueMappingPostProcessor<>(
             as.type(),
-            metadata,
+            metadata.create(),
             valueMapping,
             defaultValue,
             ifMissing.create(),

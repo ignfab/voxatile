@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxel;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
+import com.ignfab.minalac.generator.parameters.utils.StringNotBlank;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
@@ -19,7 +20,7 @@ public class MCVoxelParams extends PlaceableParams {
      * Block type name (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String block;
+    public StringNotBlank block;
 
     /**
      * Block properties (optional).
@@ -33,18 +34,16 @@ public class MCVoxelParams extends PlaceableParams {
      * @param block Block type name
      */
     @ConstructorProperties({"block"})
-    public MCVoxelParams(String block) {
+    public MCVoxelParams(StringNotBlank block) {
         this.block = block;
     }
 
     @Override
-    public void validate() throws IllegalArgumentException {
-        if (block.isBlank())
-            throw new IllegalArgumentException("block should not be empty or blank");
+    public Placeable create(Seed seed) {
+        return new MCVoxel(block.create(), properties);
     }
 
-    @Override
-    public Placeable create(Seed seed) {
-        return new MCVoxel(block, properties);
+    public static MCVoxelParams fromString(String block) {
+        return new MCVoxelParams(new StringNotBlank(block));
     }
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.models.Model;
+import com.ignfab.minalac.generator.parameters.utils.StringNotBlank;
 import com.ignfab.minalac.generator.processors.post.MetadataCopyPostProcessor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
 
@@ -17,13 +18,13 @@ public class MetadataCopyPostProcessorParams extends PostProcessorParams {
      * Name of the metadata to copy (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String metadata;
+    public StringNotBlank metadata;
 
     /**
      * Name of copied metadata (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String to;
+    public StringNotBlank to;
 
     /**
      * Whether to abort if metadata is absent (optional).
@@ -44,24 +45,16 @@ public class MetadataCopyPostProcessorParams extends PostProcessorParams {
      * @param to name of copied metadata
      */
     @ConstructorProperties({"metadata", "to"})
-    public MetadataCopyPostProcessorParams(String metadata, String to) {
+    public MetadataCopyPostProcessorParams(StringNotBlank metadata, StringNotBlank to) {
         this.metadata = metadata;
         this.to = to;
     }
 
     @Override
-    public void validate() throws IllegalArgumentException {
-        if (metadata.isBlank())
-            throw new IllegalArgumentException("The 'metadata' field cannot be empty or contain only whitespace.");
-        if (to.isBlank())
-            throw new IllegalArgumentException("The 'to' field cannot be empty or contain only whitespace.");
-    }
-
-    @Override
     public PostProcessor<Model, ?> create() {
         return new MetadataCopyPostProcessor(
-            metadata,
-            to,
+            metadata.create(),
+            to.create(),
             abortIfMetadataIsAbsent,
             keepExisting
         );

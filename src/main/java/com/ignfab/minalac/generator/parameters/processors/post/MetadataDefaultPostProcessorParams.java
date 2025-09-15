@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.parameters.ValueParser;
+import com.ignfab.minalac.generator.parameters.utils.StringNotBlank;
 import com.ignfab.minalac.generator.processors.post.MetadataDefaultPostProcessor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
 
@@ -18,7 +19,7 @@ public class MetadataDefaultPostProcessorParams extends PostProcessorParams {
      * Name of the metadata (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public final String metadata;
+    public final StringNotBlank metadata;
 
     /**
      * Default value to use if the metadata is not present (required).
@@ -41,20 +42,14 @@ public class MetadataDefaultPostProcessorParams extends PostProcessorParams {
      * @param as type to which the value should be converted
      */
     @ConstructorProperties({ "metadata", "value", "as" })
-    public MetadataDefaultPostProcessorParams(String metadata, String value, ValueParser<?> as) {
+    public MetadataDefaultPostProcessorParams(StringNotBlank metadata, String value, ValueParser<?> as) {
         this.metadata = metadata;
         this.value = value;
         this.as = as;
     }
 
     @Override
-    public void validate() throws IllegalArgumentException {
-        if (metadata.isBlank())
-            throw new IllegalArgumentException("The 'metadata' field cannot be empty or contain only whitespace.");
-    }
-
-    @Override
     public PostProcessor<Model, Model> create() {
-        return new MetadataDefaultPostProcessor(metadata, as.parse(value));
+        return new MetadataDefaultPostProcessor(metadata.create(), as.parse(value));
     }
 }

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.filters.ModelFilterOnMetadataValue;
+import com.ignfab.minalac.generator.parameters.utils.StringNotBlank;
 
 /**
  * Parameters for a filter that selects models where the metadata value is less than a specified threshold.
@@ -18,7 +19,7 @@ public class ModelFilterMetadataLowerThanParams extends ModelFilterParams {
      * Name of the metadata to compare (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String metadata;
+    public StringNotBlank metadata;
 
     /**
      * Threshold value (required).
@@ -33,19 +34,13 @@ public class ModelFilterMetadataLowerThanParams extends ModelFilterParams {
      * @param lowerThan threshold value
      */
     @ConstructorProperties({ "metadata", "lowerThan" })
-    public ModelFilterMetadataLowerThanParams(String metadata, double lowerThan) {
+    public ModelFilterMetadataLowerThanParams(StringNotBlank metadata, double lowerThan) {
         this.metadata = metadata;
         this.lowerThan = lowerThan;
     }
 
     @Override
-    public void validate() {
-        if (metadata.isBlank())
-            throw new IllegalArgumentException("Metadata name cannot be empty or blank");
-    }
-
-    @Override
     public Predicate<Model> create() {
-        return new ModelFilterOnMetadataValue<>(Number.class, metadata, metadataValue -> metadataValue.doubleValue() < lowerThan);
+        return new ModelFilterOnMetadataValue<>(Number.class, metadata.create(), metadataValue -> metadataValue.doubleValue() < lowerThan);
     }
 }

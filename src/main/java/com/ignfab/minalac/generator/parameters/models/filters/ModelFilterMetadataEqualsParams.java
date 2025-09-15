@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.filters.ModelFilterOnMetadataValue;
 import com.ignfab.minalac.generator.parameters.ValueParser;
+import com.ignfab.minalac.generator.parameters.utils.StringNotBlank;
 
 /**
  * Parameters for an "equals" operator.
@@ -19,7 +20,7 @@ public class ModelFilterMetadataEqualsParams extends ModelFilterParams {
      * Name of the metadata to test (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String metadata;
+    public StringNotBlank metadata;
 
     /**
      * Value of metadata to test (required).
@@ -40,20 +41,14 @@ public class ModelFilterMetadataEqualsParams extends ModelFilterParams {
      * @param equals value of metadata to test.
      */
     @ConstructorProperties({"metadata", "equals"})
-    public ModelFilterMetadataEqualsParams(String metadata, Object equals) {
+    public ModelFilterMetadataEqualsParams(StringNotBlank metadata, Object equals) {
         this.metadata = metadata;
         this.equals = equals;
     }
 
     @Override
-    public void validate() {
-        if (metadata.isBlank())
-            throw new IllegalArgumentException("Metadata name cannot be empty or blank");
-    }
-
-    @Override
     public Predicate<Model> create() {
         Object equals = as.parse(this.equals);
-        return new ModelFilterOnMetadataValue<>(as.type(), metadata, equals::equals);
+        return new ModelFilterOnMetadataValue<>(as.type(), metadata.create(), equals::equals);
     }
 }

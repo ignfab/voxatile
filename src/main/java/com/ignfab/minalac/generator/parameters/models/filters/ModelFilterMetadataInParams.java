@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.filters.ModelFilterOnMetadataValue;
 import com.ignfab.minalac.generator.parameters.ValueParser;
+import com.ignfab.minalac.generator.parameters.utils.StringNotBlank;
 
 /**
  * Parameters for filtering models by metadata values.
@@ -20,7 +21,7 @@ public class ModelFilterMetadataInParams extends ModelFilterParams {
      * Name of the metadata to test (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String metadata;
+    public StringNotBlank metadata;
 
     /**
      * List of possible values for that metadata (required).
@@ -41,15 +42,13 @@ public class ModelFilterMetadataInParams extends ModelFilterParams {
      * @param in list of possible values for that metadata.
      */
     @ConstructorProperties({"metadata", "in"})
-    public ModelFilterMetadataInParams(String metadata, List<Object> in) {
+    public ModelFilterMetadataInParams(StringNotBlank metadata, List<Object> in) {
         this.metadata = metadata;
         this.in = in;
     }
 
     @Override
     public void validate() {
-        if (metadata.isBlank())
-            throw new IllegalArgumentException("Metadata name cannot be empty or blank");
         if (in.isEmpty())
             throw new IllegalArgumentException("Values list cannot not be empty");
     }
@@ -57,6 +56,6 @@ public class ModelFilterMetadataInParams extends ModelFilterParams {
     @Override
     public Predicate<Model> create() {
         List<? extends Object> inParsed = in.stream().map(as::parse).toList();
-        return new ModelFilterOnMetadataValue<>(as.type(), metadata, inParsed::contains);
+        return new ModelFilterOnMetadataValue<>(as.type(), metadata.create(), inParsed::contains);
     }
 }

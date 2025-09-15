@@ -14,6 +14,7 @@ import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationSt
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.parameters.JsonDelegateDeserialize;
 import com.ignfab.minalac.generator.parameters.Params;
+import com.ignfab.minalac.generator.parameters.utils.StringNotBlank;
 
 /**
  * Base interface for all {@code ReadableHeightmapSpec} parameters.
@@ -63,7 +64,7 @@ public interface ReadableHeightmapParams extends Params {
         public Object deserializeWithType(JsonParser jsonParser, DeserializationContext deserializationContext, TypeDeserializer typeDeserializer) throws IOException {
             return switch (jsonParser.currentToken()) {
                 case VALUE_NUMBER_INT -> new ConstantHeightmapParams(jsonParser.getIntValue());
-                case VALUE_STRING -> new WritableHeightmapParams(jsonParser.getText());
+                case VALUE_STRING -> new WritableHeightmapParams(jsonParser.readValueAs(StringNotBlank.class));
                 default -> super.deserializeWithType(jsonParser, deserializationContext, typeDeserializer);
             };
         }

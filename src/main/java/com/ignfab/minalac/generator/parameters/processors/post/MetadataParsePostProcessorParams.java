@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.parameters.ValueParser;
+import com.ignfab.minalac.generator.parameters.utils.StringNotBlank;
 import com.ignfab.minalac.generator.processors.post.MetadataParsePostProcessor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
 
@@ -18,7 +19,7 @@ public class MetadataParsePostProcessorParams extends PostProcessorParams {
      * Name of the metadata to parse (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public final String metadata;
+    public final StringNotBlank metadata;
 
     /**
      * Type of parsed value (required).
@@ -46,15 +47,9 @@ public class MetadataParsePostProcessorParams extends PostProcessorParams {
      * @param as type of parsed value
      */
     @ConstructorProperties({ "metadata", "as" })
-    public MetadataParsePostProcessorParams(String metadata, ValueParser<?> as) {
+    public MetadataParsePostProcessorParams(StringNotBlank metadata, ValueParser<?> as) {
         this.metadata = metadata;
         this.as = as;
-    }
-
-    @Override
-    public void validate() throws IllegalArgumentException {
-        if (metadata.isBlank())
-            throw new IllegalArgumentException("The 'metadata' field cannot be empty or contain only whitespace.");
     }
 
     @Override
@@ -64,7 +59,7 @@ public class MetadataParsePostProcessorParams extends PostProcessorParams {
 
         return new MetadataParsePostProcessor<>(
             parser.type(),
-            metadata,
+            metadata.create(),
             parser.parser(),
             ifMissing.create(),
             ifNotParsable.create()

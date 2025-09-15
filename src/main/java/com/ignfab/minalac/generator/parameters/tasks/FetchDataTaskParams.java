@@ -10,6 +10,7 @@ import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.IdentityPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.PostProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.ProviderParams;
+import com.ignfab.minalac.generator.parameters.utils.StringNotBlank;
 import com.ignfab.minalac.generator.tasks.FetchDataTask;
 
 /**
@@ -19,8 +20,7 @@ public class FetchDataTaskParams extends TileTaskParams {
     /**
      * Type to give to provided models (required).
      */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public String modelType;
+    public StringNotBlank modelType;
 
     /**
      * Data provider (required).
@@ -46,22 +46,16 @@ public class FetchDataTaskParams extends TileTaskParams {
      * @param processor data processor for provided data
      */
     @ConstructorProperties({"modelType", "provider", "processor"})
-    public FetchDataTaskParams(String modelType, ProviderParams provider, ProcessorParams processor) {
+    public FetchDataTaskParams(StringNotBlank modelType, ProviderParams provider, ProcessorParams processor) {
         this.modelType = modelType;
         this.provider = provider;
         this.processor = processor;
     }
 
     @Override
-    public void validate() throws IllegalArgumentException {
-        if (modelType.isBlank())
-            throw new IllegalArgumentException("The 'modelType' field cannot be empty or contain only whitespace.");
-    }
-
-    @Override
     public FetchDataTask create(Generation generation) {
         return new FetchDataTask(
-            modelType,
+            modelType.create(),
             provider.create(generation),
             processor.create(generation),
             postProcessing.create()

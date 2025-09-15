@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.parameters.models.filters.ModelFilterParams;
+import com.ignfab.minalac.generator.parameters.utils.StringNotBlank;
 
 /**
  * Parameters for a {@link ModelSelection}.
@@ -16,7 +17,7 @@ public class ModelSelectionParams {
      * Type of model (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String type;
+    public StringNotBlank type;
 
     /**
      * Extra filter (optional).
@@ -30,16 +31,8 @@ public class ModelSelectionParams {
      * @param type Type of model to select.
      */
     @ConstructorProperties({"type"})
-    public ModelSelectionParams(String type) {
+    public ModelSelectionParams(StringNotBlank type) {
         this.type = type;
-    }
-
-    /**
-     * Validates params.
-     */
-    public void validate() {
-        if (type.isBlank())
-            throw new IllegalArgumentException("Model type cannot be empty or blank");
     }
 
     /**
@@ -48,6 +41,6 @@ public class ModelSelectionParams {
      * @return a model selection.
      */
     public ModelSelection create() {
-        return new ModelSelection(type, (filter == null) ? null : filter.create());
+        return new ModelSelection(type.create(), (filter == null) ? null : filter.create());
     }
 }
