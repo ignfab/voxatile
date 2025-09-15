@@ -27,7 +27,7 @@ public class TileTaskSequenceParams extends TileTaskParams {
      *
      * @see #setModels()
      */
-    private ModelSelectionParams models;
+    public ModelSelectionParams models;
 
     /**
      * Creates a new {@code TileTaskSequenceParams} with required values.
@@ -62,6 +62,9 @@ public class TileTaskSequenceParams extends TileTaskParams {
 
     @Override
     public void validate() {
+        if (tasks.isEmpty())
+            throw new IllegalArgumentException("Sequence must have at least one task");
+
         for (TileTaskParams task : tasks) {
             if (!task.after.isEmpty())
                 throw new IllegalArgumentException("In a sequence, tasks cannot have dependancies");
