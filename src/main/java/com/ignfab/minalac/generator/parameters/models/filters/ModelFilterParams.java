@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import com.ignfab.minalac.generator.models.Model;
+import com.ignfab.minalac.generator.parameters.Params;
 
 /**
  * Abstract parameter class for all model filters parameters.
@@ -19,14 +20,10 @@ import com.ignfab.minalac.generator.models.Model;
     @JsonSubTypes.Type(ModelFilterMetadataInParams.class),
     @JsonSubTypes.Type(ModelFilterHasMetadataParams.class),
     @JsonSubTypes.Type(ModelFilterMetadataLowerThanParams.class),
-    @JsonSubTypes.Type(ModelFilterMetadataGreaterThanParams.class)
+    @JsonSubTypes.Type(ModelFilterMetadataGreaterThanParams.class),
+    @JsonSubTypes.Type(ModelFilterEmptyGeometryParams.class)
 })
-public abstract class ModelFilterParams {
-    /**
-     * Validates params.
-     */
-    public void validate() {}
-
+public abstract class ModelFilterParams implements Params {
     /**
      * Creates a {@code Predicate<Model>} out of these params.
      *

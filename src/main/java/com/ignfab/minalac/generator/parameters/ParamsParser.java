@@ -43,9 +43,6 @@ public class ParamsParser {
      * @throws JsonProcessingException
      */
     public GenerationParams parse(String serialized) throws ParseException, JsonProcessingException {
-        GenerationParams params;
-        SimpleModule module;
-
         // Resolve Yaml anchors and pick up format
         // (Jackson is not able to do it by itself but it is still very good at deserializing)
 
@@ -65,14 +62,18 @@ public class ParamsParser {
         }
 
         // Custom deserializers
-        module = new SimpleModule("MinalacParserModule");
+        SimpleModule module = new SimpleModule("MinalacParserModule");
         module.addDeserializer(OutputFormat.class, formatDeserializer);
         module.setDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
         mapper.registerModule(module);
+        SimpleModule anotherModule = new SimpleModule("MinalacParserModule2_because_why_not?");
+        module.setDeserializerModifier(new Params.BeanModifier());
+        mapper.registerModule(anotherModule);
 
         if (!document.containsKey("format"))
             throw new ParseException("Missing format field!");
 
+        // Deserialize output format only
         OutputFormat format = mapper.readValue(yaml.dump(document.get("format")), OutputFormat.class);
 
         // Register format specific deserializer
@@ -80,17 +81,10 @@ public class ParamsParser {
 
         // Deserialize the whole parameter object
         try {
-            params = mapper.readValue(yaml.dump(document), GenerationParams.class);
+            return mapper.readValue(yaml.dump(document), GenerationParams.class);
         } catch (MismatchedInputException | ValueInstantiationException e) {
             throw new ParseException(e);
         }
-
-        try {
-            params.validate();
-        } catch (IllegalArgumentException e) {
-            throw new ParseException(e);
-        }
-        return params;
     }
 
     /**

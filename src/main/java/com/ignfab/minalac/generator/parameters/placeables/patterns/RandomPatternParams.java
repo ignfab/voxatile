@@ -44,11 +44,6 @@ public class RandomPatternParams extends PatternParams {
     }
 
     @Override
-    public void validate() throws IllegalArgumentException {
-        place.validate();
-    }
-
-    @Override
     public Pattern create(Seed seed) {
         return new RandomPattern(seed.salt(this.seed), place.create(seed), chance);
     }

@@ -56,10 +56,6 @@ public class FetchDataTaskParams extends TileTaskParams {
     public void validate() throws IllegalArgumentException {
         if (modelType.isBlank())
             throw new IllegalArgumentException("The 'modelType' field cannot be empty or contain only whitespace.");
-
-        provider.validate();
-        processor.validate();
-        postProcessing.validate();
     }
 
     @Override

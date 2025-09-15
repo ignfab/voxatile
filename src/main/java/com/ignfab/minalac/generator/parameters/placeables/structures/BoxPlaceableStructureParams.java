@@ -44,13 +44,6 @@ public class BoxPlaceableStructureParams extends PlaceableStructureParams.Varian
     }
 
     @Override
-    public void validate() {
-        // Only validation propagation
-        put.validate();
-        at.validate();
-    }
-
-    @Override
     public void apply(Seed seed, PlaceableStructure structure) {
         Placeable placeable = put.create(seed);
         structure.set(at.create(), placeable);

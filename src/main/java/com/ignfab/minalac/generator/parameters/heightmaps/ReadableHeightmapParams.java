@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationStore;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.parameters.JsonDelegateDeserialize;
+import com.ignfab.minalac.generator.parameters.Params;
 
 /**
  * Base interface for all {@code ReadableHeightmapSpec} parameters.
@@ -28,14 +29,7 @@ import com.ignfab.minalac.generator.parameters.JsonDelegateDeserialize;
     @JsonSubTypes.Type(RemapHeightmapParams.class),
     @JsonSubTypes.Type(WritableHeightmapParams.class)
 })
-public interface ReadableHeightmapParams {
-    /**
-     * Validates parameters.
-     *
-     * @throws IllegalArgumentException if parameters are not valid.
-     */
-    void validate() throws IllegalArgumentException;
-
+public interface ReadableHeightmapParams extends Params {
     /**
      * Creates the corresponding {@code ReadableHeightmap} eventually using stored heightmap declarations from given store.
      *

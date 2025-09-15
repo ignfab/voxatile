@@ -7,7 +7,7 @@ import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
 /**
  * Parameters for a {@link HeightmapDeclaration}.
  */
-public class HeightmapDeclarationParams {
+public class HeightmapDeclarationParams implements Params {
     /**
      * The default value for all heightmap cells.
      * This field is required.
@@ -42,13 +42,6 @@ public class HeightmapDeclarationParams {
             }
         };
     }
-
-    /**
-     * Checks if there are any blatantly invalid parameters.
-     *
-     * @throws IllegalArgumentException is any of the parameters is invalid.
-     */
-    public void validate() throws IllegalArgumentException {}
 
     /**
      * Creates the corresponding {@code Heightmap} declaration.

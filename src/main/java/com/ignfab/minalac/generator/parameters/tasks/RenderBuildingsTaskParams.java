@@ -72,15 +72,6 @@ public class RenderBuildingsTaskParams extends TileTaskParams {
     }
 
     @Override
-    public void validate() throws IllegalArgumentException {
-        heightmap.validate();
-        roof.validate();
-        wall.validate();
-        window.validate();
-        models.validate();
-    }
-
-    @Override
     public TileTask create(Generation generation) {
         return new RenderBuildingsTask(
             models.create(),

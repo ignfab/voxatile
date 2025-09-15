@@ -34,13 +34,6 @@ public final class PlaceableStructureParams extends PlaceableParams {
     }
 
     @Override
-    public void validate() {
-        // Only validation propagation
-        for (Variant param : params)
-            param.validate();
-    }
-
-    @Override
     public PlaceableStructure create(Seed seed) {
         PlaceableStructure structure = new PlaceableStructure();
         for (Variant param : params)

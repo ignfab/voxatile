@@ -40,8 +40,6 @@ public class ModelSelectionParams {
     public void validate() {
         if (type.isBlank())
             throw new IllegalArgumentException("Model type cannot be empty or blank");
-        if (filter != null)
-            filter.validate();
     }
 
     /**

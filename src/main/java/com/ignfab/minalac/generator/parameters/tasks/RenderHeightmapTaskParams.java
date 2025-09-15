@@ -51,13 +51,6 @@ public class RenderHeightmapTaskParams extends TileTaskParams {
         if ((at != null || minimum == null || maximum == null)
             && (at == null || minimum != null || maximum != null))
             throw new IllegalArgumentException("Either at or both minimum and maximum must be provided");
-        if (at != null)
-            at.validate();
-        else {
-            minimum.validate();
-            maximum.validate();
-        }
-        place.validate();
     }
 
     @Override

@@ -21,12 +21,6 @@ public class SequentialPostProcessorParams extends PostProcessorParams {
     }
 
     @Override
-    public void validate() throws IllegalArgumentException {
-        for (PostProcessorParams params : sequence)
-            params.validate();
-    }
-
-    @Override
     public PostProcessor<?, ?> create() {
         if (sequence.isEmpty())
             return IdentityPostProcessor.INSTANCE;

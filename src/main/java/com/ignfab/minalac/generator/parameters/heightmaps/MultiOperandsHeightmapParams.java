@@ -26,8 +26,6 @@ public abstract class MultiOperandsHeightmapParams implements ReadableHeightmapP
     public void validate() throws IllegalArgumentException {
         if (operands.isEmpty())
             throw new IllegalArgumentException("There must be at least one heightmap operand");
-
-        operands.forEach(ReadableHeightmapParams::validate);
     }
 
     @Override

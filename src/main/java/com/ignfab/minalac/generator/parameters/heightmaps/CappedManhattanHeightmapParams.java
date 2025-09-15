@@ -44,7 +44,6 @@ public class CappedManhattanHeightmapParams implements ReadableHeightmapParams {
 
     @Override
     public void validate() throws IllegalArgumentException {
-        manhattan.validate();
         if (maximumDistance < 0)
             throw new IllegalArgumentException("Maximum distance must be positive");
     }

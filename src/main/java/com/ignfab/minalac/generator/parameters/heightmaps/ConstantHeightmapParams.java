@@ -26,9 +26,6 @@ public class ConstantHeightmapParams implements ReadableHeightmapParams {
     }
 
     @Override
-    public void validate() {}
-
-    @Override
     public ReadableHeightmapSpec create(HeightmapDeclarationStore store) {
         return new ConstantHeightmap(constant);
     }

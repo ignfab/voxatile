@@ -57,24 +57,11 @@ public class RenderVectorsTaskParams extends TileTaskParams {
 
     @Override
     public void validate() throws IllegalArgumentException {
-        models.validate();
-
-        heightmap.validate();
-
         if (place == null && inside == null && borders == null)
             throw new IllegalArgumentException("At least one of 'place', 'inside' or 'borders' should be specified");
 
-        if (place != null) {
-            if (inside != null || borders != null)
-                throw new IllegalArgumentException("Incompatible fields: 'place' can't be present along with 'inside' or 'borders'");
-            place.validate();
-        }
-
-        if (inside != null)
-           inside.validate();
-
-        if (borders != null)
-            borders.validate();
+        if (place != null && (inside != null || borders != null))
+            throw new IllegalArgumentException("Incompatible fields: 'place' can't be present along with 'inside' or 'borders'");
     }
 
     @Override

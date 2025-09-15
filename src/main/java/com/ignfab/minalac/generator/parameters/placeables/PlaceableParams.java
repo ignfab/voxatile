@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.ignfab.minalac.generator.parameters.OutputFormat;
+import com.ignfab.minalac.generator.parameters.Params;
 import com.ignfab.minalac.generator.parameters.placeables.patterns.PatternParams;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
@@ -20,7 +21,7 @@ import com.ignfab.minalac.generator.utils.random.Seed;
 /**
  * Base class for all placeable parameters (voxels and structures).
  */
-public abstract class PlaceableParams {
+public abstract class PlaceableParams implements Params {
 
     /**
      * Deserializer for PlaceableParams.
@@ -83,15 +84,6 @@ public abstract class PlaceableParams {
             return format.createVoxelParams(node, codec);
         }
     }
-
-    /**
-     * Validates parameters.
-     *
-     * Should be called wherever used from another {@code validate} method.
-     *
-     * @throws IllegalArgumentException if parameters are not valid.
-     */
-     public void validate() throws IllegalArgumentException {}
 
     /**
      * Creates a new {@code Placeable} out of parameters.

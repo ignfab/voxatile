@@ -30,11 +30,6 @@ public class ModelFilterNotParams extends ModelFilterParams {
     }
 
     @Override
-    public void validate() {
-        not.validate();
-    }
-
-    @Override
     public Predicate<Model> create() {
         return not.create().negate();
     }

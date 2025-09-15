@@ -46,11 +46,6 @@ public class SetSpawnTaskParams extends TileTaskParams {
     }
 
     @Override
-    public void validate() {
-        heightmap.validate();
-    }
-
-    @Override
     public TileTask create(Generation generation) {
         WorldCoords2d spawn = new WorldCoords2d(x, y);
 

@@ -54,12 +54,6 @@ public class RemapHeightmapParams implements ReadableHeightmapParams {
     }
 
     @Override
-    public void validate() throws IllegalArgumentException {
-        remap.validate();
-        mapping.keySet().forEach(IntegerIntervalParams::validate);
-    }
-
-    @Override
     public ReadableHeightmapSpec create(HeightmapDeclarationStore store) {
         LinkedHashMap<IntegerInterval, Integer> map = new LinkedHashMap<>();
         mapping.forEach(((intervalParams, integer) -> map.put(intervalParams.create(), integer)));

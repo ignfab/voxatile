@@ -55,13 +55,6 @@ public class LevelGroundTaskParams extends TileTaskParams {
     }
 
     @Override
-    public void validate() throws IllegalArgumentException {
-        heightmap.validate();
-        models.validate();
-        filling.validate();
-    }
-
-    @Override
     public TileTask create(Generation generation) {
         return new LevelGroundTask(
             models.create(),

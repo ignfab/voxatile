@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import com.ignfab.minalac.generator.parameters.Params;
 import com.ignfab.minalac.generator.utils.IntegerInterval;
 
 /**
@@ -39,18 +40,13 @@ import com.ignfab.minalac.generator.utils.IntegerInterval;
     @Type(IntegerIntervalParams.FromToParams.class),
     @Type(IntegerIntervalParams.ValueParams.class)
 })
-public abstract class IntegerIntervalParams {
+public abstract class IntegerIntervalParams implements Params {
     /**
      * Creates an {@code IntegerInterval} from these parameters.
      *
      * @return {@code IntegerInterval} created out of parameters.
      */
     public abstract IntegerInterval create();
-
-    /**
-     * Validates these parameters.
-     */
-    public void validate() {}
 
     /**
      * Parameter class for "from: to:" form.

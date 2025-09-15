@@ -49,13 +49,6 @@ public class CopyHeightmapTaskParams extends TileTaskParams {
     }
 
     @Override
-    public void validate() {
-        models.validate();
-        from.validate();
-        to.validate();
-    }
-
-    @Override
     public TileTask create(Generation generation) {
         return new CopyHeightmapTask(
             models.create(),

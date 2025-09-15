@@ -34,10 +34,6 @@ public class ModelFilterAndParams extends ModelFilterParams {
     public void validate() {
         if (and.isEmpty())
             throw new IllegalArgumentException("There must be at least one sub-filter");
-
-        for (ModelFilterParams filter : and) {
-            filter.validate();
-        }
     }
 
     @Override

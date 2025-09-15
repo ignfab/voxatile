@@ -39,12 +39,6 @@ public class PopulateHeightmapTaskParams extends TileTaskParams {
     }
 
     @Override
-    public void validate() throws IllegalArgumentException {
-        heightmap.validate();
-        models.validate();
-    }
-
-    @Override
     public TileTask create(Generation generation) {
         return new PopulateHeightmapTask(
             models.create(),

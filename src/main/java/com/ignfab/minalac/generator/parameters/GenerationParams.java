@@ -22,7 +22,7 @@ import com.ignfab.minalac.generator.parameters.tasks.TileTaskParams;
  * Refer to docs/usage/parameters/Parameters.md for parameters format.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GenerationParams {
+public class GenerationParams implements Params {
     // For now :
     // - field mapName is not yet implemented (should probably be)
 
@@ -100,11 +100,7 @@ public class GenerationParams {
         this.format = format;
     }
 
-    /**
-     * Checks if there are any blatantly invalid parameters.
-     *
-     * @throws IllegalArgumentException is any of the parameters is invalid.
-     */
+    @Override
     public void validate() throws IllegalArgumentException {
         if (verticalScale <= 0)
             throw new IllegalArgumentException("The field verticalScale must be greater than 0");
@@ -119,11 +115,6 @@ public class GenerationParams {
             throw new IllegalArgumentException("The field extentX must be greater than 0");
         if (area.extentY <= 0)
             throw new IllegalArgumentException("The field extentY must be greater than 0");
-
-        for (HeightmapDeclarationParams params : heightmaps.values())
-            params.validate();
-        for (TileTaskParams params : forEachTile.values())
-            params.validate();
     }
 
     /**

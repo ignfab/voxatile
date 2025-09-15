@@ -130,10 +130,6 @@ public class BlueprintPlaceableStructureParams extends PlaceableStructureParams.
 
     @Override
     public void validate() {
-        // Validation propagation
-        for (PlaceableParams placeable : with.values())
-            placeable.validate();
-
         // Ensure blueprint structure corresponds to number of axes.
         switch (axes.size()) {
             case 1 -> {

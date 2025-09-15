@@ -48,13 +48,6 @@ public class ConditionalPostProcessorParams extends PostProcessorParams {
     }
 
     @Override
-    public void validate() throws IllegalArgumentException {
-        condition.validate();
-        postProcessorIfTrue.validate();
-        postProcessorIfFalse.validate();
-    }
-
-    @Override
     @SuppressWarnings("unchecked") // Types will be validated later
     public PostProcessor<?, ?> create() {
         return new ConditionalPostProcessor<>(

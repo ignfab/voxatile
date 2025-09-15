@@ -38,7 +38,6 @@ public class LocalMinimumHeightmapParams implements ReadableHeightmapParams {
 
     @Override
     public void validate() throws IllegalArgumentException {
-        localMin.validate();
         if (range < 0)
             throw new IllegalArgumentException("range can not be negative");
     }

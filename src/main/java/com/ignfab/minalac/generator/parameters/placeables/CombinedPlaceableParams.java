@@ -35,12 +35,6 @@ public class CombinedPlaceableParams extends PlaceableParams {
     }
 
     @Override
-    public void validate() {
-        for (PlaceableParams placeable : placeableParams)
-            placeable.validate();
-    }
-
-    @Override
     public Placeable create(Seed seed) {
         CombinedPlaceable combined = new CombinedPlaceable();
         for (PlaceableParams placeable : placeableParams)
