@@ -67,7 +67,7 @@ public class ParamsParser {
         module.setDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
         mapper.registerModule(module);
         SimpleModule anotherModule = new SimpleModule("MinalacParserModule2_because_why_not?");
-        module.setDeserializerModifier(new Params.BeanModifier());
+        anotherModule.setDeserializerModifier(new Params.BeanModifier());
         mapper.registerModule(anotherModule);
 
         if (!document.containsKey("format"))
