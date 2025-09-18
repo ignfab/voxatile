@@ -61,6 +61,8 @@ public class MCVoxelTile extends VoxelTile {
 
         if (isOutOfLimits(blockX, blockY, blockZ)) return;
         getOrCreateRegion(blockX, blockZ).file().setBlockStateAt(blockX, blockY, blockZ, block, false);
+        // (In-Game coords to world coords) X/Z/-Y => X/Y/Z
+        updateHeightmaps(blockX, -(blockZ + 1), blockY);
     }
 
     // In-Game coords
