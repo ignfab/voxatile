@@ -20,7 +20,7 @@ public class MapToWorldConverter {
      *
      * @param converter base converter to use
      */
-    protected MapToWorldConverter(Converter converter) {
+    private MapToWorldConverter(Converter converter) {
         this.converter = converter;
     }
 
