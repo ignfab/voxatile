@@ -15,6 +15,7 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`renderBuildings`](#renderbuildings)
   * [`setSpawn`](#setspawn)
   * [`renderVoxels`](#rendervoxels)
+  * [`findVoxels`](#findvoxels)
 * [Tasks operating on heightmaps](#tasks-operating-on-heightmaps)
   * [`populateHeightmap`](#populateheightmap)
   * [`copyHeightmap`](#copyheightmap)
@@ -177,6 +178,36 @@ type: renderVoxels
 models:
   type: lidar
 place: default:stone
+```
+
+### `findVoxels`
+
+Finds the lowest and/or highest voxels placed over the model and adds results as metadata.
+
+#### Extra parameters
+
+- `models` (required, models must be 2d points): [Selection of models](ModelSelection.md) to use.
+- `only` (optional, default none): [Placeable(s)](Placeables.md) used to select which voxels to match (can be a single voxel or a list).
+- `except` (optional, default none): [Placeable(s)](Placeables.md) used to select which voxels not to match (can be a single voxel or a list).
+- `find` (required): Specifies which voxels to find
+  - `lowest` (optional): Metadata where to store the z-coordinate of the lowest voxel found.
+  - `highest` (optional): Metadata where to store the z-coordinate of the highest voxel found.
+
+When both `only` and `except` are absent, any voxel (including air) is matched.
+
+**NOTE**: Fields `only` and `except` are mutually exclusive.
+
+**NOTE**: At least one of `lowest` or `highest` field is required.
+
+#### Example
+
+```yaml
+type: findVoxels
+models:
+  type: trees
+only: default:leaves
+find:
+  highest: highest-leaves
 ```
 
 ## Tasks operating on heightmaps
