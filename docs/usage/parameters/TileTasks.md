@@ -14,6 +14,7 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`fillBetweenHeightmapAndMetadata`](#fillbetweenheightmapandmetadata)
   * [`renderBuildings`](#renderbuildings)
   * [`setSpawn`](#setspawn)
+  * [`renderVoxels`](#rendervoxels)
 * [Tasks operating on heightmaps](#tasks-operating-on-heightmaps)
   * [`populateHeightmap`](#populateheightmap)
   * [`copyHeightmap`](#copyheightmap)
@@ -158,6 +159,24 @@ type: setSpawn
 heightmap: ground
 x: 2
 y: -1
+```
+
+### `renderVoxels`
+
+Renders models by placing a voxel at each coordinate within the model.
+
+#### Extra parameters
+
+- `models`: [Selection of models](ModelSelection.md) to render (required, models must be voxelizable in 3d)
+- `place`: [Placeable](Placeables.md) used to render voxels.
+
+#### Example
+
+```yaml
+type: renderVoxels
+models:
+  type: lidar
+place: default:stone
 ```
 
 ## Tasks operating on heightmaps
