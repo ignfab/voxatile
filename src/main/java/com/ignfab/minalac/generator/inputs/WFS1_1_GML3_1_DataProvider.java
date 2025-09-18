@@ -197,7 +197,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             if (iterator != null)
                 iterator.close();
         }
