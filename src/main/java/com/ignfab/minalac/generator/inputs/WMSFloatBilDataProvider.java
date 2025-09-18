@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Iterator;
 
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
@@ -63,7 +62,7 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
     }
 
     @Override
-    public Provider.Result<FloatGeographicDataMatrix2d> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
+    public Result<FloatGeographicDataMatrix2d> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
 
         ReferencedEnvelope envelope;
         try {
@@ -128,35 +127,6 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
 
         ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer().get(result.data());
 
-        return new Result(result);
-    }
-
-    /**
-     * Result returned by provide method. Here, only one result is provided.
-     */
-    private class Result implements Provider.Result<FloatGeographicDataMatrix2d> {
-        private final Iterator<FloatGeographicDataMatrix2d> iterator;
-
-        Result(FloatGeographicDataMatrix2d data) {
-            iterator = Iterators.iterator(data);
-        }
-
-        @Override
-        public CoordinateReferenceSystem crs() {
-            return crs;
-        }
-
-        @Override
-        public void close() {}
-
-        @Override
-        public boolean hasNext() {
-            return iterator.hasNext();
-        }
-
-        @Override
-        public FloatGeographicDataMatrix2d next() {
-            return iterator.next();
-        }
+        return new SimpleResult<>(crs, Iterators.iterator(result));
     }
 }

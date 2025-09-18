@@ -1,7 +1,5 @@
 package com.ignfab.minalac.generator.tasks;
 
-import java.io.IOException;
-
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
@@ -73,13 +71,17 @@ public class FetchDataTask implements TileTask {
                 } catch (IgnorableException e) {
                     // TODO Add an exception handling policy
                     // To fail even on ignorable exceptions:
-                    // throw e;
+                    // throw new GenerationFailedException(e);
                 }
             }
         } catch (RetryableException e) {
             // TODO Implement a retry mechanism
             throw new RuntimeException(e);
-        } catch (IOException | GenerationFailedException e) {
+        } catch (IgnorableException e) {
+            // TODO Handle this according to the policy
+            // This can be thrown if unable to close a Provider.Result
+            throw new RuntimeException(e);
+        } catch (GenerationFailedException e) {
             throw new RuntimeException(e);
         }
     }

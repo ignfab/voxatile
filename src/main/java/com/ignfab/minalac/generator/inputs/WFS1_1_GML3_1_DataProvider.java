@@ -82,7 +82,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
     }
 
     @Override
-    public Provider.Result<SimpleFeature> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
+    public Result<SimpleFeature> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
 
         ReferencedEnvelope envelope;
         try {
@@ -125,21 +125,21 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
             throw new GenerationFailedException(e);
         }
 
-        // Then we give hand to `Result` class for the rest.
-        return new Result(url, count);
+        // Then we give hand to `WFSResult` class for the rest.
+        return new WFSResult(url, count);
     }
 
    /**
      * A Result class for WFS that will fetch more features when needed.
      */
-    private class Result implements Provider.Result<SimpleFeature> {
+    private class WFSResult implements Result<SimpleFeature> {
 
         private final ParameterizedURL url;
         private final int total;
         private int remaining;
         private SimpleFeatureIterator iterator;
 
-        Result(ParameterizedURL url, int total) {
+        WFSResult(ParameterizedURL url, int total) {
             this.url = url;
             this.total = total;
             remaining = total;
@@ -154,7 +154,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
         /**
          * Fetches more results from URL.
          */
-        private void fetchmore() throws RetryableException, GenerationFailedException {
+        private void fetchMore() throws RetryableException, GenerationFailedException {
             InputStream stream;
 
             try {
@@ -197,7 +197,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             if (iterator != null)
                 iterator.close();
         }
@@ -208,7 +208,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
                 return;
 
             if (iterator == null || !iterator.hasNext())
-                fetchmore();
+                fetchMore();
         }
 
         @Override

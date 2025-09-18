@@ -2,7 +2,6 @@ package com.ignfab.minalac.generator.inputs;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import javax.media.jai.iterator.RandomIter;
 import javax.media.jai.iterator.RandomIterFactory;
 
@@ -81,25 +80,6 @@ public class GeoTiffDataProvider implements Provider<FloatGeographicDataMatrix2d
             envelope.getHeight() / gridEnvelope.height
         );
 
-        return new Result(crs, result);
-    }
-
-    private record Result(CoordinateReferenceSystem crs, Iterator<FloatGeographicDataMatrix2d> iterator) implements Provider.Result<FloatGeographicDataMatrix2d> {
-        Result(CoordinateReferenceSystem crs, FloatGeographicDataMatrix2d data) {
-            this(crs, Iterators.iterator(data));
-        }
-
-        @Override
-        public void close() {}
-
-        @Override
-        public boolean hasNext() {
-            return iterator.hasNext();
-        }
-
-        @Override
-        public FloatGeographicDataMatrix2d next() {
-            return iterator.next();
-        }
+        return new SimpleResult<>(crs, Iterators.iterator(result));
     }
 }
