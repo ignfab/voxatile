@@ -99,4 +99,24 @@ public abstract class VoxelTile {
         if (z < minimum.get(x, y))
             minimum.set(x, y, z);
     }
+
+    /**
+     * Returns the z-coordinate of the minimum (lowest) voxel placed in the (x, y) column.
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @return z-coordinate
+     */
+    public int minVoxelZ(int x, int y) {
+        return minimum.get(x, y);
+    }
+
+    /**
+     * Returns the z-coordinate of the maximum (highest) voxel placed in the (x, y) column.
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @return z-coordinate
+     */
+    public int maxVoxelZ(int x, int y) {
+        return maximum.get(x, y);
+    }
 }
