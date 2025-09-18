@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
@@ -16,11 +17,14 @@ public abstract class VoxelTile {
      */
     private WorldBBox3d limits;
     /**
-     * Heightmap representing the altitude of the highest voxels.
+     * Heightmap below which no voxel has been placed.
+     * It keeps track of the lowest voxels ever placed, but does not necessarily represent the current lowest voxels.
      */
     protected Heightmap minimum;
+
     /**
-     * Heightmap representing the altitude of the lowest voxels.
+     * Heightmap above which no voxel has been placed.
+     * It keeps track of the highest voxels ever placed, but does not necessarily represent the current highest voxels.
      */
     protected Heightmap maximum;
 
@@ -98,5 +102,23 @@ public abstract class VoxelTile {
             maximum.set(x, y, z);
         if (z < minimum.get(x, y))
             minimum.set(x, y, z);
+    }
+
+    /**
+     * {@return a read-only heightmap below which no voxel has been placed}
+     * Can be used as a starting point to find the lowest voxels.
+     * Please note that its values might decrease as it is updated when voxels are placed.
+     */
+    public ReadableHeightmap minimum() {
+        return minimum;
+    }
+
+    /**
+     * {@return a read-only heightmap above which no voxel has been placed}
+     * Can be used as a starting point to find the highest voxels.
+     * Please note that its values might increase as it is updated when voxels are placed.
+     */
+    public ReadableHeightmap maximum() {
+        return maximum;
     }
 }
