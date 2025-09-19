@@ -15,6 +15,7 @@ Each post-processor has a field `type` which is used to identify it.
   * [Metadata parse](#metadata-parse)
   * [Metadata remap](#metadata-remap)
   * [Metadata truncate](#metadata-truncate)
+  * [Metadata explode](#metadata-explode)
 * [Geometry post-processors](#geometry-post-processors)
   * [Geometry buffer](#geometry-buffer)
 
@@ -223,6 +224,16 @@ Avaliable policies:
 | `removeMetadata` | The metadata is removed (no effect for `ifMissing`). |
 | `ignore`         | Metadata is not modified.                            |
 | `error`          | An error occurs, and the generation stops.           |
+
+### Metadata explode
+
+A post-processor exploding a nested metadata map into flat values.
+
+**Type**: `explode`
+
+**Extra parameters**:
+- `metadata` (required, `text`): Name of the metadata to explode. The metadata must be a map (can be the result of parsing an `hstore`).
+- `prefix` (optional, `text`, default none): Optional prefix to prepend to exploded metadata names.
 
 ## Geometry post-processors
 
