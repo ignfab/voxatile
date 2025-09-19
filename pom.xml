@@ -96,6 +96,11 @@
             <artifactId>gt-geotiff</artifactId>
             <version>${geotools.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotools.jdbc</groupId>
+            <artifactId>gt-jdbc-postgis</artifactId>
+            <version>${geotools.version}</version>
+        </dependency>
         <!--
             Required to identify coordinates reference systems
             Example error: No code "EPSG:4326" from authority "EPSG"
