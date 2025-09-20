@@ -62,7 +62,7 @@ public abstract class MultiOperandsHeightmapParams implements ReadableHeightmapP
      */
     public static class Product extends MultiOperandsHeightmapParams {
         /**
-         * The list of heightmaps to product (required).
+         * Constructor used to ensure that the required fields are present during deserialization.
          *
          * @param product list of heightmaps.
          */

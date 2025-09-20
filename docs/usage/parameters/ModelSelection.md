@@ -25,6 +25,8 @@ Models are always selected on their type and that selection may be narrowed down
 
 ## Example
 
+This model selection will match `buildings` models with `height` metadata defined and `classification` metadata value other than `Monument`, `Castle`, `Chapel` or `Church`.
+
 ```yaml
 models:
   type: buildings
