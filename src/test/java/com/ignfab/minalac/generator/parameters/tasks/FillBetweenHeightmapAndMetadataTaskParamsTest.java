@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
+import com.ignfab.minalac.generator.parameters.models.values.MetadataValueParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,53 +16,53 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FillBetweenHeightmapAndMetadataTaskParamsTest {
     @Test
     void testValidate() {
-        FillBetweenHeightmapAndMetadataTaskParams params;
+        FillBetweenHeightmapAndValueTaskParams params;
 
-        params = new FillBetweenHeightmapAndMetadataTaskParams(
+        params = new FillBetweenHeightmapAndValueTaskParams(
             TestingModelSelectionParams.VALID,
             TestingHeightmapParams.VALID,
-            "altitude"
+            new MetadataValueParams("altitude")
         );
         params.placeAbove = new TestingVoxelParams("above");
         params.placeBelow = new TestingVoxelParams("below");
         assertDoesNotThrow(params::validate);
 
-        params = new FillBetweenHeightmapAndMetadataTaskParams(
+        params = new FillBetweenHeightmapAndValueTaskParams(
             TestingModelSelectionParams.VALID,
             TestingHeightmapParams.VALID,
-            "altitude"
+            new MetadataValueParams("altitude")
         );
         params.placeAbove = new TestingVoxelParams("above");
         assertDoesNotThrow(params::validate);
 
-        params = new FillBetweenHeightmapAndMetadataTaskParams(
+        params = new FillBetweenHeightmapAndValueTaskParams(
             TestingModelSelectionParams.INVALID,
             TestingHeightmapParams.VALID,
-            "altitude"
+            new MetadataValueParams("altitude")
         );
         params.placeAbove = new TestingVoxelParams("above");
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new FillBetweenHeightmapAndMetadataTaskParams(
+        params = new FillBetweenHeightmapAndValueTaskParams(
             TestingModelSelectionParams.VALID,
             TestingHeightmapParams.INVALID,
-            "altitude"
+            new MetadataValueParams("altitude")
         );
         params.placeAbove = new TestingVoxelParams("above");
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new FillBetweenHeightmapAndMetadataTaskParams(
+        params = new FillBetweenHeightmapAndValueTaskParams(
             TestingModelSelectionParams.VALID,
             TestingHeightmapParams.VALID,
-            ""
+            new MetadataValueParams("")
         );
         params.placeAbove = new TestingVoxelParams("above");
 
         assertThrows(IllegalArgumentException.class, params::validate);
-        params = new FillBetweenHeightmapAndMetadataTaskParams(
+        params = new FillBetweenHeightmapAndValueTaskParams(
             TestingModelSelectionParams.VALID,
             TestingHeightmapParams.VALID,
-            "altitude"
+            new MetadataValueParams("altitude")
         );
         assertThrows(IllegalArgumentException.class, params::validate);
     }
@@ -69,19 +70,19 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
     @Test
     void testDeserialization() {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        mapper.registerSubtypes(new NamedType(FillBetweenHeightmapAndMetadataTaskParams.class, "filling"));
+        mapper.registerSubtypes(new NamedType(FillBetweenHeightmapAndValueTaskParams.class, "filling"));
 
-        FillBetweenHeightmapAndMetadataTaskParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(FillBetweenHeightmapAndMetadataTaskParams.class, """
+        FillBetweenHeightmapAndValueTaskParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(FillBetweenHeightmapAndValueTaskParams.class, """
         type: filling
         models:
           type: models
         heightmap: heightmap
-        altitudeMetadata: altitude
+        altitudeValue: altitude
         placeAbove: voxelA
         placeBelow: voxelB
         """, mapper));
         assertEquals("models", params.models.type);
-        assertEquals("altitude", params.altitudeMetadata);
+        assertEquals("altitude", assertInstanceOf(MetadataValueParams.class, params.altitudeValue).metadata);
         assertEquals("voxelA", assertInstanceOf(TestingVoxelParams.class, params.placeAbove).name);
         assertEquals("voxelB", assertInstanceOf(TestingVoxelParams.class, params.placeBelow).name);
     }

@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.tasks;
 
+import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
@@ -20,9 +21,13 @@ public abstract class ModelTask<M extends Model> implements TileTask {
 
     @Override
     public void run(GenerationTile tile) {
-        for (Model model : selection.forTile(tile))
-            if (cls.isInstance(model))
-                run(cls.cast(model), tile);
+        for (Model model : selection.forTile(tile)) {
+            if (cls.isInstance(model)) {
+                try {
+                    run(cls.cast(model), tile);
+                } catch (IgnorableException ignored) {}
+            }
+        }
     }
 
     /**
@@ -31,5 +36,5 @@ public abstract class ModelTask<M extends Model> implements TileTask {
      * @param model concerned model
      * @param tile tile to render into
      */
-    protected abstract void run(M model, GenerationTile tile);
+    protected abstract void run(M model, GenerationTile tile) throws IgnorableException;
 }
