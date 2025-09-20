@@ -57,7 +57,9 @@ public class TestingModel extends ModelImpl {
 
     @Override
     public String salt() {
-        throw new UnsupportedOperationException("Unimplemented method 'salt'");
+        if (name == null)
+            throw new UnsupportedOperationException("This testing model was created without a name. Anonymous testing models have no salt!");
+        return name;
     }
 
     @Override

@@ -45,9 +45,11 @@ public interface ReadableHeightmapParams {
     /**
      * Deserializer for {@code ReadableHeightmap}.
      * Deserialization is done in three ways:
-     * 1 - If the value is an integer, {@code ConstantHeightmapParams} is used.
-     * 2 - If the value is a string, {@code StoredHeightmapParams} is used.
-     * 3 - Otherwise, deserialization is done using Jackson deduction mechanism.
+     * <ol>
+     *  <li>If the value is an integer, {@code ConstantHeightmapParams} is used.</li>
+     *  <li>If the value is a string, {@code StoredHeightmapParams} is used.</li>
+     *  <li>Otherwise, deserialization is done using Jackson deduction mechanism.</li>
+     * </ol>
      */
     class Deserializer extends DelegatingDeserializer {
         /**

@@ -16,6 +16,7 @@ Only root Yaml parameters are described here. More specific aspects could be fou
 * [FetchDataTask.md](FetchDataTask.md): Description of tasks for fetching data (see [TileTasks.md](TileTasks.md)).
 * [Heightmaps.md](Heightmaps.md): Declaration and usage of heightmaps.
 * [ModelSelection.md](ModelSelection.md): Selection of models (see [TileTasks.md](TileTasks.md)).
+* [ModelValues.md](ModelValues.md): Dynamic numeric values computed from models (see [TileTasks.md](TileTasks.md)).
 * [Placeables.md](Placeables.md): Description of things that can be placed in resulting world (see [TileTasks.md](TileTasks.md)).
 * [TileTasks.md](TileTasks.md): Tasks that can be run on a generation tile.
 
