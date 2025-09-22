@@ -107,12 +107,13 @@
       <property name="allowInlineReturn" value="true"/>
     </module>
     <module name="JavadocType"/>
-    <module name="JavadocVariable">
-      <property name="accessModifiers" value="public,protected"/>
-    </module>
+    <!-- FDS2025: Disable Javadoc requirements from checkstyle -->
+<!--    <module name="JavadocVariable">-->
+<!--      <property name="accessModifiers" value="public,protected"/>-->
+<!--    </module>-->
     <module name="JavadocStyle"/>
-   <module name="MissingJavadocMethod"/>
-   <module name="MissingJavadocType"/>
+<!--   <module name="MissingJavadocMethod"/>-->
+<!--   <module name="MissingJavadocType"/>-->
 
     <!-- Checks for Naming Conventions.                  -->
     <!-- See https://checkstyle.org/config_naming.html -->

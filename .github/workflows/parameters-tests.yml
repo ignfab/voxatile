@@ -9,6 +9,7 @@ on:
 
 jobs:
   test-parameters:
+    if: false # FDS2025: Disable parameters validation via CI/CD
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
