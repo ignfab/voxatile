@@ -64,6 +64,19 @@ public class MTVoxelTile extends VoxelTile {
     }
 
     /**
+     * Tests if the voxel at the given coordinates is air or not set.
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @param z z-coordinate
+     * @return {@code true} if the voxel is {@code null} or equivalent to air, {@code false} otherwise
+     * @see #getVoxel(int, int, int)
+     */
+    protected boolean isAir(int x, int y, int z) {
+        MTVoxel voxel = getVoxel(x, y, z);
+        return voxel == null || voxel.getType().equals("air") || voxel.getType().equals("default:air");
+    }
+
+    /**
      * {@inheritDoc}
      * This tile is exported in a format for Minetest.
      */
@@ -82,7 +95,7 @@ public class MTVoxelTile extends VoxelTile {
      * It may be an air node created when a {@link Block} is initialized.
      */
     @Override
-    public Placeable getVoxel(int x, int y, int z) {
+    public MTVoxel getVoxel(int x, int y, int z) {
         // X/Y/Z => X/Z/Y
         Block block = getBlock(x >> 4, z >> 4, y >> 4);
 

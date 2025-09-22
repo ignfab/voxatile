@@ -13,22 +13,14 @@ references:
   - &path default:dirt_with_coniferous_litter
   - &forest-grass default:junglegrass
   - &forest-tree1
-    structure:
-      - put:
-          pattern:
-            place: default:leaves
-            chance: 0.8
-        at: [ -3..3, -3..3, 4..10 ]
-      - put: default:tree
-        at: [ 0, 0, 0..5 ]
+    schematic:
+      file: examples/formats/minetest/apple_tree.mts
+      xOffset: 2
+      yOffset: 2
   - &forest-tree2
-    structure:
-      - put:
-          pattern:
-            place: default:aspen_leaves
-            chance: 0.8
-        at: [ -3..3, -3..3, 4..10 ]
-      - put: default:aspen_tree
-        at: [ 0, 0, 0..5 ]
+    schematic:
+      file: examples/formats/minetest/aspen_tree.mts
+      xOffset: 2
+      yOffset: 2
   - &voxel-water default:water_source
   - &voxel-air air

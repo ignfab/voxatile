@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.ignfab.minalac.generator.parameters.OutputFormat;
 import com.ignfab.minalac.generator.parameters.placeables.patterns.PatternParams;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
+import com.ignfab.minalac.generator.parameters.placeables.voxels.MTSchematicParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
@@ -76,6 +77,9 @@ public abstract class PlaceableParams {
                     // For patterns, relies on PatternParams type deduction
                     case "pattern":
                         return codec.treeToValue(property.getValue(), PatternParams.class);
+                    // TODO find a better way to handle this!
+                    case "schematic":
+                        return codec.treeToValue(property.getValue(), MTSchematicParams.class);
                 }
             }
 
