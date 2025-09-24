@@ -37,6 +37,16 @@ public class ThickLineString3dIndexedIterator implements Iterator<Indexed2dPosit
         this.thickness = thickness;
     }
 
+    private Vector2d computeBevelDirection(Line3d line, Vector2d normal) {
+        if (line == null)
+            return normal;
+        Vector2d direction = normal.add(line.direction().to2d().normal());
+        // In case of other line in perfect opposite direction:
+        if (direction.isZero())
+            return normal;
+        return direction;
+    }
+
     private void prepare() {
         while ((lineIterator == null || !lineIterator.hasNext()) && index < lineString.size()) {
             if (currentLine != null)
@@ -45,16 +55,15 @@ public class ThickLineString3dIndexedIterator implements Iterator<Indexed2dPosit
             Line3d line = lineString.get(index);
             Vector2d normal = line.direction().to2d().normal();
 
-            // Pure vertical lines
+            // Discard pure vertical lines
             if (!normal.isZero()) {
                 Line3d next = lineString.get(index + 1);
                 Line3d previous = lineString.get(index - 1);
 
-                // Previous & next horizontal direction may be zero (pure vertical line) but anyway, that will work
-                Vector2d startBevelDirection = previous == null ? normal : normal.add(previous.direction().to2d().normal());
-                Vector2d endBevelDirection = next == null ? normal.opposite() : normal.add(next.direction().to2d().normal()).opposite();
-
-                lineIterator = new ThickLine3dIterator(line, thickness, startBevelDirection, endBevelDirection);
+                lineIterator = new ThickLine3dIterator(line, thickness,
+                    computeBevelDirection(previous, normal),
+                    computeBevelDirection(next, normal).opposite()
+                );
                 currentLine = line.to2d();
             }
             index++;
