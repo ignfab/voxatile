@@ -34,3 +34,7 @@ references:
         at: [ 0, 0, 0..5 ]
   - &voxel-water default:water_source
   - &voxel-air air
+  - &voxel-trash-cans wool:grey
+  - &voxel-fire-hydrants wool:red
+  - &voxel-benches default:wood
+  - &voxel-fences default:fence_aspen_wood

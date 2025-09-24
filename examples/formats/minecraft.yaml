@@ -40,3 +40,7 @@ references:
         at: [ 0, 0, 0..5 ]
   - &voxel-water minecraft:water
   - &voxel-air minecraft:air
+  - &voxel-trash-cans minecraft:gray_wool
+  - &voxel-fire-hydrants minecraft:red_wool
+  - &voxel-benches minecraft:oak_planks
+  - &voxel-fences minecraft:oak_fence
