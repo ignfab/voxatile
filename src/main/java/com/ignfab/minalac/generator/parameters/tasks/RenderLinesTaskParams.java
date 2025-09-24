@@ -30,6 +30,12 @@ public class RenderLinesTaskParams extends TileTaskParams {
     public PlaceableStructureParams structure;
 
     /**
+     * If specified, resulting voxels will be placed on this heightmap (optional, default use voxelized altitude).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public ReadableHeightmapParams stickToHeightmap;
+
+    /**
      * Render only when above this heightmap (optional, default render always).
      */
     @JsonSetter(nulls = Nulls.SKIP)
@@ -53,18 +59,24 @@ public class RenderLinesTaskParams extends TileTaskParams {
         models.validate();
         if (renderOnlyWhenAbove != null)
             renderOnlyWhenAbove.validate();
+        if (stickToHeightmap != null)
+            stickToHeightmap.validate();
     }
 
     @Override
     public TileTask create(Generation generation) {
-        ReadableHeightmapSpec heightmap = null;
+        ReadableHeightmapSpec renderOnlyWhenAboveSpec = null;
+        ReadableHeightmapSpec stickToHeightmapSpec = null;
         if (renderOnlyWhenAbove != null)
-            heightmap = renderOnlyWhenAbove.create(generation.heightmaps());
+            renderOnlyWhenAboveSpec = renderOnlyWhenAbove.create(generation.heightmaps());
+        if (stickToHeightmap != null)
+            stickToHeightmapSpec = stickToHeightmap.create(generation.heightmaps());
 
         return new RenderLinesTask(
             models.create(),
             structure.create(generation.seed()),
-            heightmap
+            stickToHeightmapSpec,
+            renderOnlyWhenAboveSpec
         );
     }
 }

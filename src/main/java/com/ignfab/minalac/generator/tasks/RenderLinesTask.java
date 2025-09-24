@@ -18,6 +18,7 @@ import com.ignfab.minalac.generator.voxelization.shape3d.voxelizer.ThickLinearIn
 public class RenderLinesTask extends ModelTask<Shape3dConvertibleModel> {
     // In structure, X is for linear direction (starting at 0, looping over bbox max x), Y for both orthogonal directions (0 is central axis).
     private final PlaceableStructure structure;
+    private final ReadableHeightmapSpec stickToHeightmapSpec;
     private final ReadableHeightmapSpec renderOnlyWhenAboveSpec;
     private final ThickLinearIndexedVoxelizer3d voxelizer;
 
@@ -30,23 +31,27 @@ public class RenderLinesTask extends ModelTask<Shape3dConvertibleModel> {
      *
      * @param selection Selection of models to render
      * @param structure Structure to use as template
-     * @param heightmapSpec If not null, lines will be rendered only if they have a part over that heightmap
+     * @param stickToHeightmapSpec If not null, lines will be rendered at that heightmap
+     * @param renderOnlyWhenAboveSpec If not null, lines will be rendered only if they have a part over that heightmap
      */
     public RenderLinesTask(
             ModelSelection selection,
             PlaceableStructure structure,
-            ReadableHeightmapSpec heightmapSpec) {
+            ReadableHeightmapSpec stickToHeightmapSpec,
+            ReadableHeightmapSpec renderOnlyWhenAboveSpec) {
 
         super(Shape3dConvertibleModel.class, selection);
 
         this.structure = structure;
-        renderOnlyWhenAboveSpec = heightmapSpec;
+        this.renderOnlyWhenAboveSpec = renderOnlyWhenAboveSpec;
+        this.stickToHeightmapSpec = stickToHeightmapSpec;
         voxelizer = new ThickLinearIndexedVoxelizer3d(structure.limits().maxY() * 2 + 1); // 1 for central position and * 2 for each side
     }
 
     @Override
     protected void run(Shape3dConvertibleModel model, GenerationTile tile) {
         ReadableHeightmap renderOnlyWhenAbove = renderOnlyWhenAboveSpec == null ? null : tile.heightmaps().get(renderOnlyWhenAboveSpec);
+        ReadableHeightmap stickToHeightmap = stickToHeightmapSpec == null ? null : tile.heightmaps().get(stickToHeightmapSpec);
 
         WorldBBox3d limits = structure.limits();
 
@@ -58,11 +63,12 @@ public class RenderLinesTask extends ModelTask<Shape3dConvertibleModel> {
             Vector2d index = pos.index();
             int x = Math.floorMod((int) Math.round(index.x()), limits.sizeX()) + limits.minX();
             int y = (int) Math.round(Math.abs(index.y()));
+            int zOffset = stickToHeightmap == null ? pos.coords().z() : stickToHeightmap.get(pos.coords().x(), pos.coords().y());
 
             for (int z = limits.minZ(); z <= limits.maxZ(); z++) {
                 Placeable placeable = structure.get(x, y, z);
                 if (placeable != null)
-                    placeable.place(tile.voxels(), pos.coords().x(), pos.coords().y(), pos.coords().z() + z);
+                    placeable.place(tile.voxels(), pos.coords().x(), pos.coords().y(), zOffset + z);
             }
         }
     }
