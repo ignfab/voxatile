@@ -1,8 +1,8 @@
 package com.ignfab.minalac.generator.tasks;
 
+import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.generation.GenerationTile;
-import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
-import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
+import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
 import com.ignfab.minalac.generator.placeables.Placeable;
@@ -17,7 +17,7 @@ import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.SurfaceVoxeli
  * Placement can be done on borders (for all sorts of geometry) and/or inside (for polygon geometries) or everywhere.
  */
 public class RenderSurfacesTask extends ModelTask<Shape2dConvertibleModel> {
-    private final ReadableHeightmapSpec heightmapSpec;
+    private final GetZ atZ;
     private final Placeable placeable;
 
     private final SurfaceVoxelizer2d voxelizer = new SurfaceVoxelizer2d();
@@ -26,22 +26,25 @@ public class RenderSurfacesTask extends ModelTask<Shape2dConvertibleModel> {
      * Creates a new {@code RenderVectorsTask}.
      *
      * @param selection the model selection containing the wanted models to render (only ShapesVoxelizable2d ones will be)
-     * @param heightmapSpec Heightmap of the ground (on which features will be placed)
+     * @param atZ Getter for the altitude at which features will be placed
      * @param placeable What to place on surface
      */
-    public RenderSurfacesTask(ModelSelection selection, ReadableHeightmapSpec heightmapSpec, Placeable placeable) {
+    public RenderSurfacesTask(ModelSelection selection, GetZ atZ, Placeable placeable) {
         super(Shape2dConvertibleModel.class, selection);
-        this.heightmapSpec = heightmapSpec;
+        this.atZ = atZ;
         this.placeable = placeable;
     }
 
     @Override
-    protected void run(Shape2dConvertibleModel model, GenerationTile tile) {
-        ReadableHeightmap heightmap = tile.heightmaps().get(heightmapSpec);
-
+    protected void run(Shape2dConvertibleModel model, GenerationTile tile) throws IgnorableException {
         for (Positioned2d voxel : tile.clip2d(voxelizer.voxelize(model))) {
             WorldCoords2d c = voxel.coords();
-            placeable.place(tile.voxels(), c.x(), c.y(), heightmap.get(c));
+            placeable.place(tile.voxels(), c.x(), c.y(), atZ.get(tile, model, c));
         }
+    }
+
+    @FunctionalInterface
+    public interface GetZ {
+        int get(GenerationTile tile, Model model, WorldCoords2d coords) throws IgnorableException;
     }
 }
