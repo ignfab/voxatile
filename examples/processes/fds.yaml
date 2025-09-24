@@ -64,16 +64,6 @@ forEachTile:
     processor:
       type: geoToolsVector
 
-  fetchRoads:
-    type: fetchData
-    modelType: road
-    provider:
-      type: wfs
-      url: https://data.geopf.fr/wfs/wfs
-      features: BDTOPO_V3:troncon_de_route
-    processor:
-      type: geoToolsVector
-
   setAltitude:
     after: fetchAltitude
     type: populateHeightmap
@@ -109,12 +99,8 @@ forEachTile:
     at: ground
     place:
       structure:
-        - put: *voxel-grass
-          at: [0, 0, 0]
-        - put: *voxel-dirt
-          at: [0, 0, -3..-1]
-        - put: *voxel-stone
-          at: [0, 0, -20..-4]
+        - put: default:stone
+          at: [0, 0, -20..0]
 
   computeBuildingsAltitude:
     after:
@@ -252,67 +238,114 @@ forEachTile:
       - put: *voxel-air
         at: [ 0, -1..1, 1..2 ]
 
-  renderBridges:
-    after: path
-    type: renderLines
-    models:
-      type: road
-      filter:
-        metadata: nature
-        in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
-    renderOnlyWhenAbove:
-      sum:
-        - ground
-        - 1
-    structure:
-      # Half bridge structure (sectional view)
-      axes: [ z, y ]
-      blueprint:
-        - "     ▒▒"
-        - "▒▒▒▒▒▒▒"
-      with:
-        "▒": *voxel-stone
-      zOffset: -1
+  # Routes
+  fetchRoads:
+    type: fetchData
+    modelType: road
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:troncon_de_route
+    processor:
+      type: geoToolsVector
 
-  renderRoadsPass1:
-    after: renderBridges
-    type: renderLines
-    models:
-      type: road
-      filter:
-        metadata: nature
-        in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
-    structure:
-      # Road border lines and air to clean eventual voxels (sectional view)
-      axes: [ z, y ]
-      blueprint:
-        - "·····"
-        - "·····"
-        - "····█"
-      with:
-        "█": *road-paint
-        "·": *voxel-air
+  fetchCrosswalks:
+    type: fetchData
+    modelType: crosswalks
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: crosswalks
+    processor:
+      type: geoToolsVector
 
-  renderRoadsPass2:
-    after: renderRoadsPass1
+  renderRoadsSidewalks:
+    after:
+      - fetchRoads
+      - renderGround
     type: renderLines
     models:
       type: road
       filter:
         metadata: nature
         in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
+    stickToHeightmap: ground
     structure:
-      # Road central line and tar (view from above)
-      axes: [ x, y ]
+      axes: [ y ]
       blueprint:
-        - "█░░░"
-        - "█░░░"
-        - "█░░░"
-        - "░░░░"
-        - "░░░░"
+        "███████████"
       with:
-        "█": *road-paint
-        "░": *road-tar
+        "█": default:stone_block
+
+  renderRoads:
+    after:
+      - renderRoadsSidewalks
+    type: renderLines
+    models:
+      type: road
+      filter:
+        metadata: nature
+        in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
+    stickToHeightmap: ground
+    structure:
+      axes: [ y ]
+      blueprint:
+        "██████████"
+      with:
+        "█": stairs:slab_cobble
+
+  renderRoadsLines:
+    after:
+      - renderRoads
+    type: renderLines
+    models:
+      type: road
+      filter:
+        metadata: nature
+        in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
+    stickToHeightmap: ground
+    structure:
+      axes: [ x ]
+      blueprint:
+        "   ███"
+      with:
+        "█": stairs:slab_silver_sandstone
+
+  renderRoadsCrosswalksWipe:
+    after:
+      - renderRoadsLines
+      - fetchCrosswalks
+    type: renderLines
+    models:
+      type: crosswalks
+    stickToHeightmap: ground
+    structure:
+      axes: [ y, x ]
+      blueprint:
+        - "--"
+        - "--"
+        - "--"
+        - "--"
+        - "--"
+      with:
+        "-": stairs:slab_cobble
+
+  renderRoadsCrosswalks:
+    after: renderRoadsCrosswalksWipe
+    type: renderLines
+    models:
+      type: crosswalks
+    stickToHeightmap: ground
+    structure:
+      axes: [ y, x ]
+      blueprint:
+        - " █"
+        - " █"
+        - " █"
+      with:
+        "█": stairs:slab_silver_sandstone
+
+  # Batiments 3D
 
   fetchBatiCity:
     type: fetchData
@@ -343,31 +376,12 @@ forEachTile:
     place:
       pattern:
         repeatStructure:
-          axes: [ z, x, y ]
-          with:
-            O: default:glass
-            X: *default-wall
-          blueprint:
-            - - "XXXX"
-              - "XXXX"
-              - "XXXX"
-              - "XXXX"
-            - - "OOXX"
-              - "OOXX"
-              - "XXOO"
-              - "XXOO"
-            - - "OOXX"
-              - "OOXX"
-              - "XXOO"
-              - "XXOO"
-            - - "XXXX"
-              - "XXXX"
-              - "XXXX"
-              - "XXXX"
-            - - "XXXX"
-              - "XXXX"
-              - "XXXX"
-              - "XXXX"
+          - at: [ 0..3, 0..3, 0..6 ]
+            put: *default-wall
+          - at: [ 0..1, 0..1, 3..5 ]
+            put: default:glass
+          - at: [ 2..3, 2..3, 3..5 ]
+            put: default:glass
 
   renderBati3dRoofs:
     after:
@@ -430,5 +444,8 @@ forEachTile:
     heightmap: ground
     altitudeValue:
       sum: [highest-leaves, -1]
-    placeBelow: default:tree
+    placeBelow:
+      structure:
+        at: [0..1, 0..1, 0]
+        put: default:tree
 

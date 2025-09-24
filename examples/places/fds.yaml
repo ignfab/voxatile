@@ -5,6 +5,6 @@ area:
   center:
     latitude: 48.8659
     longitude: 2.35531
-  extentX: 200
-  extentY: 200
+  extentX: 500
+  extentY: 500
   angle: -21
