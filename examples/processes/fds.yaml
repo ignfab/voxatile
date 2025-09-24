@@ -432,3 +432,45 @@ forEachTile:
       sum: [highest-leaves, -1]
     placeBelow: default:tree
 
+  renderFakeTreeCrown:
+    after: renderTrunks
+    type: renderSurfaces
+    models:
+      type: trees
+    altitude:
+      sum: [highest-leaves, -1]
+    place:
+      structure:
+        axes: [ z, x, y ]
+        with:
+          $: default:leaves
+        blueprint:
+          - - "     "
+            - "  $  "
+            - " $$$ "
+            - "  $  "
+            - "     "
+          - - " $$$ "
+            - "$$$$$"
+            - "$$$$$"
+            - "$$$$$"
+            - " $$$ "
+          - - " $$$ "
+            - "$$$$$"
+            - "$$ $$"
+            - "$$$$$"
+            - " $$$ "
+          - - " $$$ "
+            - "$$$$$"
+            - "$$ $$"
+            - "$$$$$"
+            - " $$$ "
+          - - "     "
+            - "  $  "
+            - " $ $ "
+            - "  $  "
+            - "     "
+        xOffset: -2
+        yOffset: -2
+        zOffset: -2
+
