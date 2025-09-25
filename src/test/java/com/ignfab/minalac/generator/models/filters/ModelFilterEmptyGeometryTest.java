@@ -17,7 +17,7 @@ import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ModelFilterEmptyGeometryTest {
-    private static final MapToWorldConverter IDENTITY_CONVERTER = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
+    private static final MapToWorldConverter IDENTITY_CONVERTER = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation(), 0.0, 1.0);
     private static final GeometryFactory FACTORY = new GeometryFactory();
 
     @Test

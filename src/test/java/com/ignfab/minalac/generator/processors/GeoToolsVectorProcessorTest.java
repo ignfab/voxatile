@@ -19,7 +19,7 @@ import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GeoToolsVectorProcessorTest {
-    private static final MapToWorldConverter IDENTITY_CONVERTER = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
+    private static final MapToWorldConverter IDENTITY_CONVERTER = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation(), 0.0, 1.0);
 
     @Test
     public void test() throws SchemaException, FactoryException {

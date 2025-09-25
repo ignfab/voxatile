@@ -29,8 +29,8 @@ public class WorldToMapConverter {
      * @return Corresponding coordinates in voxels, in decimal numbers
      * @throws TransformException if unable to perform transformation.
      */
-    public MapCoordinates convert(WorldCoords2d coords) throws TransformException {
-        return converter.convert(new MapCoordinates(coords.x(), coords.y()));
+    public MapCoordinates2d convert(WorldCoords2d coords) throws TransformException {
+        return converter.convert(new MapCoordinates2d(coords.x(), coords.y()));
     }
 
     /**

@@ -2,7 +2,7 @@ package com.ignfab.minalac.generator.models;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
-import com.ignfab.minalac.generator.utils.coordinates.MapCoordinates;
+import com.ignfab.minalac.generator.utils.coordinates.MapCoordinates2d;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
@@ -39,10 +39,10 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
         double maxY = data.offsetY() + data.sizeY() * data.cellSizeY() - 1.0;
 
         this.bbox = new WorldBBox2d(
-            mapToWorld.convert(new MapCoordinates(data.offsetX(), data.offsetY())),
-            mapToWorld.convert(new MapCoordinates(data.offsetX(), maxY)),
-            mapToWorld.convert(new MapCoordinates(maxX, data.offsetY())),
-            mapToWorld.convert(new MapCoordinates(maxX, maxY))
+            mapToWorld.convert(new MapCoordinates2d(data.offsetX(), data.offsetY())),
+            mapToWorld.convert(new MapCoordinates2d(data.offsetX(), maxY)),
+            mapToWorld.convert(new MapCoordinates2d(maxX, data.offsetY())),
+            mapToWorld.convert(new MapCoordinates2d(maxX, maxY))
         );
     }
 
@@ -55,7 +55,7 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
     public Float get(WorldCoords2d coords) {
         // Here we perform coordinates conversion and value interpolation
 
-        MapCoordinates coordinates;
+        MapCoordinates2d coordinates;
         try {
             coordinates = worldToMap.convert(coords);
         } catch (TransformException e) {
@@ -79,6 +79,10 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
 
         return (1 - fy) * ((1 - fx) * data.getFloat(xf, yf) + fx * data.getFloat(xc, yf))
             + fy * ((1 - fx) * data.getFloat(xf, yc) + fx * data.getFloat(xc, yc));
+    }
+
+    public int convertAltitude(float altitude) {
+        return mapToWorld.convertAltitude(altitude);
     }
 
     @Override
