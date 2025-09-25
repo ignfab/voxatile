@@ -12,17 +12,18 @@ public interface Pattern extends Placeable {
     /**
      * Returns placeable corresponding to pattern at a given position.
      *
+     * @param tile current voxel tile given as context element for some patterns
      * @param x position x-coordinate
      * @param y position y-coordinate
      * @param z position z-coordinate
      *
      * @return placeable, should not be null (return {@code NoVoxel.INSTANCE} instead)
      */
-    Placeable get(int x, int y, int z);
+    Placeable get(VoxelTile tile, int x, int y, int z);
 
     // Default place implementation allowing to use any pattern as placeable.
     @Override
     default void place(VoxelTile tile, int x, int y, int z) {
-        get(x, y, z).place(tile, x, y, z);
+        get(tile, x, y, z).place(tile, x, y, z);
     }
 }

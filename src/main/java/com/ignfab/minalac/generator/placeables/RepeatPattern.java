@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.placeables;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A pattern that repeats a {@link PlaceableStructure}.
@@ -63,7 +64,7 @@ public class RepeatPattern implements Pattern {
     }
 
     @Override
-    public Placeable get(int x, int y, int z) {
+    public Placeable get(VoxelTile tile, int x, int y, int z) {
         int nx = Math.floorDiv(x, sizeX);
         int ny = Math.floorDiv(y, sizeY);
         int nz = Math.floorDiv(z, sizeZ);
