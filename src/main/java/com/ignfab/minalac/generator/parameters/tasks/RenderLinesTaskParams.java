@@ -10,6 +10,7 @@ import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
+import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.tasks.RenderLinesTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
 
@@ -72,9 +73,10 @@ public class RenderLinesTaskParams extends TileTaskParams {
         if (stickToHeightmap != null)
             stickToHeightmapSpec = stickToHeightmap.create(generation.heightmaps());
 
+        PlaceableStructure structure = this.structure.create(generation.seed());
         return new RenderLinesTask(
             models.create(),
-            structure.create(generation.seed()),
+            ignored -> structure,
             stickToHeightmapSpec,
             renderOnlyWhenAboveSpec
         );
