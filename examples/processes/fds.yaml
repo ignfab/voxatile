@@ -348,12 +348,26 @@ forEachTile:
             O: default:glass
             X: *default-wall
           blueprint:
-            - - "XX"
-              - "XX"
-            - - "OX"
-              - "XO"
-            - - "XX"
-              - "XX"
+            - - "XXXX"
+              - "XXXX"
+              - "XXXX"
+              - "XXXX"
+            - - "OOXX"
+              - "OOXX"
+              - "XXOO"
+              - "XXOO"
+            - - "OOXX"
+              - "OOXX"
+              - "XXOO"
+              - "XXOO"
+            - - "XXXX"
+              - "XXXX"
+              - "XXXX"
+              - "XXXX"
+            - - "XXXX"
+              - "XXXX"
+              - "XXXX"
+              - "XXXX"
 
   renderBati3dRoofs:
     after:

@@ -24,8 +24,7 @@ import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.models.CityBuildingModel;
 import com.ignfab.minalac.generator.utils.coordinates.CoordsConverterProvider;
-import com.ignfab.minalac.generator.utils.coordinates.MapCoordinates;
-import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+import com.ignfab.minalac.generator.utils.coordinates.MapCoordinates3d;
 import com.ignfab.minalac.generator.utils.world3d.Vector3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.voxelization.PlanarPolygon;
@@ -93,13 +92,12 @@ public class CityJSONBuildingProcessor extends ConvertingProcessor<AbstractCityO
 
         // Center of the building (approximated to the center of the bbox)
         DirectPosition mapCenter = building.getBoundedBy().getEnvelope().getCenter();
-        WorldCoords2d center2d;
+        WorldCoords3d center;
         try {
-            center2d = converter.convert(new MapCoordinates(mapCenter.getValue().get(0), mapCenter.getValue().get(1)));
+            center = converter.convert(new MapCoordinates3d(mapCenter.getValue().get(0), mapCenter.getValue().get(1), mapCenter.getValue().get(2)));
         } catch (TransformException e) {
             throw new IgnorableException(e);
         }
-        WorldCoords3d center = center2d.to3d((int) Math.round(mapCenter.getValue().get(2)));
 
         CityBuildingModel model = new CityBuildingModel(ground, walls, roof, center);
 
@@ -115,13 +113,13 @@ public class CityJSONBuildingProcessor extends ConvertingProcessor<AbstractCityO
         List<Double> ring = linearRing.toCoordinateList3D();
         List<Vector3d> coords = new ArrayList<>(ring.size() / 3);
         for (int i = 0; i < ring.size(); i += 3) {
-            MapCoordinates convert;
+            MapCoordinates3d convert;
             try {
-                convert = converter.convertRaw(new MapCoordinates(ring.get(i), ring.get(i + 1)));
+                convert = converter.convertRaw(new MapCoordinates3d(ring.get(i), ring.get(i + 1), ring.get(i + 2)));
             } catch (TransformException e) {
                 throw new IgnorableException(e);
             }
-            coords.add(new Vector3d(convert.x(), convert.y(), ring.get(i + 2)));
+            coords.add(new Vector3d(convert.x(), convert.y(), convert.z()));
         }
         return coords;
     }

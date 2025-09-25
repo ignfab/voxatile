@@ -12,7 +12,7 @@ import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.inputs.LASPointAndHeader;
 import com.ignfab.minalac.generator.models.LASMergedModel;
 import com.ignfab.minalac.generator.utils.coordinates.CoordsConverterProvider;
-import com.ignfab.minalac.generator.utils.coordinates.MapCoordinates;
+import com.ignfab.minalac.generator.utils.coordinates.MapCoordinates3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 /**
@@ -58,10 +58,11 @@ public class LASPointMergedModelProcessor extends ConvertingProcessor<LASPointAn
         });
         WorldCoords3d coords;
         try {
-            coords = converter.convert(new MapCoordinates(
+            coords = converter.convert(new MapCoordinates3d(
                 object.header().getXOffset() + object.point().getX() * object.header().getXScaleFactor(),
-                object.header().getYOffset() + object.point().getY() * object.header().getYScaleFactor()
-            )).to3d((int) Math.round(object.header().getZOffset() + object.point().getZ() * object.header().getZScaleFactor()));
+                object.header().getYOffset() + object.point().getY() * object.header().getYScaleFactor(),
+                object.header().getZOffset() + object.point().getZ() * object.header().getZScaleFactor()
+            ));
         } catch (TransformException e) {
             throw new IgnorableException(e);
         }
