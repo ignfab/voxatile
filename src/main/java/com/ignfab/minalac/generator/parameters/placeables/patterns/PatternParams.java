@@ -14,6 +14,7 @@ import com.ignfab.minalac.generator.utils.random.Seed;
 @JsonSubTypes({
     @JsonSubTypes.Type(RandomPatternParams.class),
     @JsonSubTypes.Type(RepeatPatternParams.class),
+    @JsonSubTypes.Type(InsteadPatternParams.class),
 })
 public abstract class PatternParams extends PlaceableParams {
 

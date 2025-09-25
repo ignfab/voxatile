@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.placeables;
 
 import com.ignfab.minalac.generator.utils.random.Random;
 import com.ignfab.minalac.generator.utils.random.Seed;
+import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A pattern placing something or not according to a simple "dice roll".
@@ -25,7 +26,7 @@ public class RandomPattern implements Pattern {
     }
 
     @Override
-    public Placeable get(int x, int y, int z) {
+    public Placeable get(VoxelTile tile, int x, int y, int z) {
         random.setSeed(x, y, z);
         if (random.nextDouble() < chance)
             return placeable;
