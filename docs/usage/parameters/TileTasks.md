@@ -106,7 +106,7 @@ If the heightmap value is lower than or equal to the altitude, the placeable use
 
 - `models` (required, models must be voxelizable in 2d): [Selection of models](ModelSelection.md) to use.
 - `heightmap` (required): [Heightmap](Heightmaps.md) to use.
-- `altitudeMetadata` (required): Name of the model metadata containing the altitude value.
+- `altitudeMetadata` (required): Name of the model metadata containing the altitude value. Must be expressed in voxel units.
 - `placeAbove` (optional, default [`Nothing`](Placeables.md#nothing)): [Placeable](Placeables.md) placed above the altitude value.
 - `placeBelow` (optional, default [`Nothing`](Placeables.md#nothing)): [Placeable](Placeables.md) placed below the altitude value.
 
@@ -138,7 +138,7 @@ Building height is given by `height` metadata (This task does nothing if the val
 - `window`: [Placeable](Placeables.md) used to render windows.
 
 #### Required model metadata
-
+All the below metadata must be expressed in voxel unit.
 - `height`: Height of the building to render (must be a positive integer). The height is defined as the distance between the minimum ground altitude and the gutter altitude.
 - `minimum-ground-altitude`: Minimum altitude inside the shape of the model.
 - `ground-floor-altitude`: Ground floor altitude of the model.

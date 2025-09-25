@@ -40,9 +40,7 @@ public class JTSGeometryModel extends ModelImpl implements ShapesVoxelizable2d, 
      * @param converter Converter from geometry CRS to world coordinates
      */
     public JTSGeometryModel(Geometry geom, MapToWorldConverter converter) throws TransformException {
-        super();
-        // Until there is no need of it we don't keep original geometry.
-        // Geometry is stored transformed into world coordinates
+        super(converter);
         this.geom = converter.convert(geom);
     }
 

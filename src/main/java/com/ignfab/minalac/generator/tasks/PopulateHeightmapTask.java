@@ -35,7 +35,8 @@ public class PopulateHeightmapTask extends ModelTask<FloatMatrixModel> {
         for (Matrix2d.Value<Float> value : model) {
             WorldCoords2d c = value.coords();
             if (intersection.contains(c))
-                heightmap.set(c, Math.round(value.value()));
+                // TODO: Here we assume that the model always has altitude data, if that change we should create a specific MatrixModel for that
+                heightmap.set(c, model.converter().convertAltitude(value.value()));
         }
     }
 }

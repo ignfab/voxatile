@@ -45,6 +45,7 @@ public class RenderBuildingsTask extends ModelTask<ShapesVoxelizable2d> {
         // Obtain them by executing the 'computeHeightmapStats' task
         //
         // The metadata is hardcoded because this renderer will be deleted
+        // All metadata must be in voxel units
         Integer zMinFoundation = model.getMetadata("minimum-ground-altitude");
         Integer zMaxFoundation = model.getMetadata("ground-floor-altitude");
         if (zMinFoundation == null || zMaxFoundation == null)

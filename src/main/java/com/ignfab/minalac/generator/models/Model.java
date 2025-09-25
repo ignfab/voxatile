@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.models;
 
+import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.random.Salting;
 
 /**
@@ -45,4 +46,10 @@ public interface Model extends Salting {
      * See docs/development/RandomNumbers.md for more detailed information.
      */
     String salt();
+
+    /**
+     * {@return the {@link MapToWorldConverter } of this model.}
+     * It allows to convert the coordinates/distances of this model into world (game) coordinates/distances.
+     */
+    MapToWorldConverter converter();
 }

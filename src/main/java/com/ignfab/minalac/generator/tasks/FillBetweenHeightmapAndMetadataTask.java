@@ -13,6 +13,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
  * A {@link TileTask} which, for each model in {@link ModelSelection},
  * fills with {@link Placeable} the gap between a heightmap and an altitude (given by a model metadata)
  * within the model's boundaries.
+ * The altitude metadata value must be expressed in voxel unit.
  */
 public class FillBetweenHeightmapAndMetadataTask extends ModelTask<Voxelizable2d> {
     private final ReadableHeightmapSpec heightmapSpec;

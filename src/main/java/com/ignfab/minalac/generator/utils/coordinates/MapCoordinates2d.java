@@ -10,14 +10,14 @@ import org.locationtech.jts.geom.Coordinate;
  * @param x The x-component value
  * @param y The y-component value
  */
-public record MapCoordinates(double x, double y) {
+public record MapCoordinates2d(double x, double y) {
     /**
      * Creates a {@code MapCoordinates} from {@code org.locationtech.jts.geom.Coordinate}.
      *
      * @param coordinate {@code Coordinate} to create {@code MapCoordinates} from
      */
-    public MapCoordinates(Coordinate coordinate) {
-        this(coordinate.x, coordinate.y);
+    public MapCoordinates2d(Coordinate coordinate) {
+        this(coordinate.getX(), coordinate.getY());
     }
 
     private static Position check2d(Position position) {
@@ -29,7 +29,7 @@ public record MapCoordinates(double x, double y) {
      *
      * @param pos {@code Position} to create {@code MapCoordinates} from
      */
-    public MapCoordinates(Position pos) {
+    public MapCoordinates2d(Position pos) {
         this(check2d(pos).getOrdinate(0), pos.getOrdinate(1));
     }
 }

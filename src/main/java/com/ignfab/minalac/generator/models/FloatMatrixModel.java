@@ -2,7 +2,7 @@ package com.ignfab.minalac.generator.models;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
-import com.ignfab.minalac.generator.utils.coordinates.MapCoordinates;
+import com.ignfab.minalac.generator.utils.coordinates.MapCoordinates2d;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
@@ -11,24 +11,25 @@ import com.ignfab.minalac.generator.voxelization.Matrix2d;
 
 /**
  * A model based on a matrix of floats (usually a heightmap model).
+ * The coordinates used to access its values are world coordinates.
+ * Beware its values are not converted, it is up to the caller to make the necessary changes (For example convert altitude in world unit)
  */
 public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
-    private FloatGeographicDataMatrix2d data;
-    private MapToWorldConverter mapToWorld;
-    private WorldToMapConverter worldToMap;
-    private WorldBBox2d bbox;
+    private final FloatGeographicDataMatrix2d data;
+    private final WorldToMapConverter worldToMap;
+    private final WorldBBox2d bbox;
 
     /**
      * Creates a new {@code FloatMatrixModel}.
      *
      * @param data underlying geographic data
      * @param converter coordinates converter from matrix to world
-     * @throws TransformException
+     * @throws TransformException if converter is not invertible
      */
     public FloatMatrixModel(FloatGeographicDataMatrix2d data, MapToWorldConverter converter) throws TransformException {
-        mapToWorld = converter;
+        super(converter);
         try {
-            worldToMap = mapToWorld.inverse();
+            worldToMap = converter.inverse();
         } catch (TransformException e) {
             throw new IllegalArgumentException("converter must be invertible");
         }
@@ -39,10 +40,10 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
         double maxY = data.offsetY() + data.sizeY() * data.cellSizeY() - 1.0;
 
         this.bbox = new WorldBBox2d(
-            mapToWorld.convert(new MapCoordinates(data.offsetX(), data.offsetY())),
-            mapToWorld.convert(new MapCoordinates(data.offsetX(), maxY)),
-            mapToWorld.convert(new MapCoordinates(maxX, data.offsetY())),
-            mapToWorld.convert(new MapCoordinates(maxX, maxY))
+            converter.convert(new MapCoordinates2d(data.offsetX(), data.offsetY())),
+            converter.convert(new MapCoordinates2d(data.offsetX(), maxY)),
+            converter.convert(new MapCoordinates2d(maxX, data.offsetY())),
+            converter.convert(new MapCoordinates2d(maxX, maxY))
         );
     }
 
@@ -55,7 +56,7 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
     public Float get(WorldCoords2d coords) {
         // Here we perform coordinates conversion and value interpolation
 
-        MapCoordinates coordinates;
+        MapCoordinates2d coordinates;
         try {
             coordinates = worldToMap.convert(coords);
         } catch (TransformException e) {
