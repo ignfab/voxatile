@@ -6,7 +6,7 @@ import com.github.mreutegg.laszip4j.LASHeader;
 import com.github.mreutegg.laszip4j.LASPoint;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
-import com.ignfab.minalac.generator.utils.coordinates.MapCoordinates;
+import com.ignfab.minalac.generator.utils.coordinates.MapCoordinates2d;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.iterator.Iterators;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
@@ -32,7 +32,7 @@ public class LASPointModel extends ModelImpl implements Voxelizable2d, Voxelizab
      * @throws TransformException if point coordinates cannot be converted
      */
     public LASPointModel(LASHeader header, LASPoint point, MapToWorldConverter converter) throws TransformException {
-        coords = converter.convert(new MapCoordinates(
+        coords = converter.convert(new MapCoordinates2d(
             header.getXOffset() + point.getX() * header.getXScaleFactor(),
             header.getYOffset() + point.getY() * header.getYScaleFactor()
         ));

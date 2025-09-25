@@ -169,7 +169,7 @@ public class Generation {
      * @throws FactoryException If not suitable transformation found for conversion.
      */
     public MapToWorldConverter makeCoordsConverter(CoordinateReferenceSystem sourceCrs) throws FactoryException {
-        return new MapToWorldConverter(CRS.findMathTransform(sourceCrs, crs), crsToVoxel);
+        return new MapToWorldConverter(CRS.findMathTransform(sourceCrs, crs), crsToVoxel, 0.0, 1.0 / verticalScale);
     }
 
     /**

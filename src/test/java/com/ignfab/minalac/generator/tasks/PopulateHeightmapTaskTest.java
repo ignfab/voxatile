@@ -23,7 +23,7 @@ public class PopulateHeightmapTaskTest {
         TestingGenerationTile tile = new TestingGenerationTile(new WorldBBox3d(-1, -2, 0, 3, 3, 1));
         TestingHeightmap heightmap = tile.newStoredHeightmap("heightmap", 0);
 
-        MapToWorldConverter converter = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
+        MapToWorldConverter converter = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation(), 0.0, 1.0);
         // Beware, Y is upside down in this matrix
         float[] values = {
             9.0f, 10.0f, 11.0f,

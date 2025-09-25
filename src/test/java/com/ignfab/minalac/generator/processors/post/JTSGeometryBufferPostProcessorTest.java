@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class JTSGeometryBufferPostProcessorTest {
     private JTSGeometryModel model;
 
-    private static final MapToWorldConverter IDENTITY_CONVERTER = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
+    private static final MapToWorldConverter IDENTITY_CONVERTER = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation(), 0.0, 1.0);
     private static final WKTReader WKT_READER = new WKTReader();
 
     @BeforeEach

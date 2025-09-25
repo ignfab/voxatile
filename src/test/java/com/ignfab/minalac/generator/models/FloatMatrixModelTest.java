@@ -19,7 +19,7 @@ public class FloatMatrixModelTest {
 
         FloatGeographicDataMatrix2d data = new FloatArrayGeographicDataMatrix2d(3, 4, 1.0, 2.0, 1.0, 1.0);
 
-        MapToWorldConverter converter = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
+        MapToWorldConverter converter = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation(), 0.0, 1.0);
         FloatMatrixModel model = new FloatMatrixModel(data, converter);
 
         assertEquals(new WorldBBox2d(1, 2, 3, 4), model.bbox());
@@ -28,7 +28,7 @@ public class FloatMatrixModelTest {
     @Test
     public void testGet() throws TransformException {
         // Identity converter
-        MapToWorldConverter converter = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
+        MapToWorldConverter converter = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation(), 0.0, 1.0);
         // Beware, Y is upside down in this matrix
         float[] values = {
             9.0f, 0.0f, 13.0f,
@@ -56,7 +56,7 @@ public class FloatMatrixModelTest {
 
     @Test
     public void testGetInterpolation() throws TransformException {
-        MapToWorldConverter converter = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
+        MapToWorldConverter converter = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation(), 0.0, 1.0);
         // Beware, Y is upside down in this matrix
         float[] values = {
             -1.0f, 1.0f,
