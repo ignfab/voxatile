@@ -504,20 +504,14 @@ forEachTile:
     models:
       type: fences
     structure:
-      - put: *voxel-fences
+      - put: default:fence_aspen_wood
         at: [0, 0, 0]
-
-  renderBenches:
-    after:
-      - renderGround
-    type: renderSurfaces
-    models:
-      type: benches
-    place: 
-      structure:
-        - put: *voxel-benches
-          at: [0, 0, 1]
-    heightmap: ground
+      - put: *voxel-stone
+        at: [0, 0, -5..-1]
+    stickToHeightmap:
+      sum:
+        - ground
+        - 1
 
   renderBenchesLinear:
     after:
@@ -527,32 +521,295 @@ forEachTile:
     type: renderLines
     models:
       type: benches_linear
-    structure: *voxel-benches
+    structure:
+      - put:
+          pattern:
+            repeatStructure:
+              with:
+                '-':
+                  node: stairs:slab_junglewood
+                  param2: 23
+                '_':
+                  node: stairs:slab_junglewood
+                  param2: 2
+              axes: [ x, y ]
+              blueprint:
+                - '-__-'
+        at: [0, 0, 0]
+      - put: default:stonebrick
+        at: [0, -1..1, -1]
     stickToHeightmap:
+      sum:
+        - ground
+        - 1
+
+  renderBenches:
+    after:
+      - fetchBenches
+      - renderGround
+    type: renderSurfaces
+    models:
+      type: benches
+    place:
+      structure:
+        - put:  
+            node: stairs:slab_junglewood
+            param2: 23
+          at: [0, -2, 0]
+        - put:  
+            node: stairs:slab_junglewood
+            param2: 2
+          at: [0, -1..1, 0]
+        - put:  
+            node: stairs:slab_junglewood
+            param2: 23
+          at: [0, 2, 0]
+    heightmap: 
       sum:
         - ground
         - 1
 
   renderFireHydrants:
     after:
+      - fetchFireHydrants
       - renderGround
     type: renderSurfaces
     models:
       type: fire_hydrants
     place: 
       structure:
-        - put: *voxel-fire-hydrants
-          at: [0, 0, 1]
-    heightmap: ground
+        - put: wool:red
+          at: [0, 0, 0..2]
+        - put: wool:red
+          at: [0, 1, 1]
+    heightmap:
+      sum:
+        - ground
+        - 1
 
   renderTrashCans:
     after:
+      - fetchTrashCans
       - renderGround
     type: renderSurfaces
     models:
       type: trash_cans
     place: 
       structure:
-        - put: *voxel-trash-cans
+        - put: wool:grey
           at: [0, 0, 1]
     heightmap: ground
+
+  fetchBatiCity:
+    type: fetchData
+    modelType: building-city
+    provider:
+      type: cityjson
+      filePath: data/bati.city.json
+    processor:
+      type: cityjsonBuilding
+
+  renderBati3dGround:
+    after:
+      - fetchBatiCity
+      - renderGround
+    type: renderBuildings3d
+    models:
+      type: building-city
+    surfaceType: ground
+    place: *voxel-cobble
+
+  renderBati3dWalls:
+    after:
+      - renderBati3dGround
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        not:
+          metadata: nature
+          in: [ "Chapelle", "Eglise" ]
+    surfaceType: wall
+    place: *default-wall
+
+  renderBati3dRoofs:
+    after:
+      - renderBati3dWalls
+      - renderBati3dWallsReligieux
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        and:
+          - not:
+              metadata: materiaux_de_la_toiture
+              in: [ "3", "03", "30", "33", "13", "31", "12", "21", "2", "02", "20", "22", "4", "04", "44", "40" ]
+          - not:
+              metadata: nature
+              in: [ "Chapelle", "Eglise" ]
+    surfaceType: roof
+    place: *default-roof
+
+  renderBati3dWallsReligieux:
+    after:
+      - renderBati3dGround
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: nature
+        in: [ "Chapelle", "Eglise" ]
+    surfaceType: wall
+    place: darkage:stone_brick
+
+  renderBati3dWallsRésidentiel:
+    after:
+      - renderBati3dGround
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: usage_1
+        in: [ "Résidentiel" ]
+    surfaceType: wall
+    place:
+      pattern:
+        repeatStructure:
+          with:
+            'V': default:glass
+            'W': *default-wall
+          axes: [ z, x, y ]
+          blueprint:
+            - - "WWWW"
+              - "WWWW"
+              - "WWWW"
+              - "WWWW"
+            - - "VVWW"
+              - "VVWW"
+              - "WWVV"
+              - "WWVV"
+            - - "VVWW"
+              - "VVWW"
+              - "WWVV"
+              - "WWVV"
+            - - "WWWW"
+              - "WWWW"
+              - "WWWW"
+              - "WWWW"
+
+  renderBati3dWallsCommercialServices:
+    after:
+      - renderBati3dGround
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: usage_1
+        in: [ "Commercial et services" ]
+    surfaceType: wall
+    place:
+      pattern:
+        repeatStructure:
+          with:
+            'V': default:glass
+            'W': *default-wall
+          axes: [ z, x, y ]
+          blueprint:
+            - - "WWWW"
+              - "WWWW"
+              - "WWWW"
+              - "WWWW"
+            - - "VVWW"
+              - "VVWW"
+              - "WWVV"
+              - "WWVV"
+            - - "VVWW"
+              - "VVWW"
+              - "WWVV"
+              - "WWVV"
+            - - "VVWW"
+              - "VVWW"
+              - "WWVV"
+              - "WWVV"
+            - - "WWWW"
+              - "WWWW"
+              - "WWWW"
+              - "WWWW"
+
+  renderBati3dRoofsZinc:
+    after:
+      - renderBati3dWalls
+      - renderBati3dWallsReligieux
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: materiaux_de_la_toiture
+        in: [ "3", "03", "30", "33" ]
+    surfaceType: roof
+    place: default:silver_sandstone
+
+  renderBati3dRoofsZincTile:
+    after:
+      - renderBati3dWalls
+      - renderBati3dWallsReligieux
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: materiaux_de_la_toiture
+        in: [ "13", "31" ]
+    surfaceType: roof
+    place: default:silver_sandstone_block
+
+  renderBati3dRoofsChapelleEglise:
+    after:
+      - renderBati3dWalls
+      - renderBati3dWallsReligieux
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: nature
+        in: [ "Chapelle", "Eglise" ]
+    surfaceType: roof
+    place: darkage:basalt_brick
+
+  renderBati3dRoofsSlatesTile:
+    after:
+      - renderBati3dWalls
+      - renderBati3dWallsReligieux
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: materiaux_de_la_toiture
+        in: [ "12", "21" ]
+    surfaceType: roof
+    place: darkage:slate_tile
+
+  renderBati3dRoofsSlates:
+    after:
+      - renderBati3dWalls
+      - renderBati3dWallsReligieux
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: materiaux_de_la_toiture
+        in: [ "2", "02", "20", "22" ]
+    surfaceType: roof
+    place: darkage:slate_block
+
+  renderBati3dRoofsConcrete:
+    after:
+      - renderBati3dWalls
+      - renderBati3dWallsReligieux
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: materiaux_de_la_toiture
+        in: [ "4", "04", "40", "44" ]
+    surfaceType: roof
+    place: darkage:chalk

@@ -38,3 +38,4 @@ references:
   - &voxel-fire-hydrants wool:red
   - &voxel-benches default:wood
   - &voxel-fences default:fence_aspen_wood
+  - &voxel-religieux default:stonebrick

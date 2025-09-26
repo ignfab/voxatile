@@ -1,0 +1,256 @@
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+
+  fetchAltitude:
+    type: fetchData
+    modelType: altitude
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    processor:
+      type: floatMatrix
+
+  fetchTransport:
+    type: fetchData
+    modelType: transport
+    provider:
+      type: gpkg
+      filePath: data/metro.gpkg
+      typeName: metro-parkings
+    processor:
+      type: geoToolsVector
+
+  fetchFences:
+    type: fetchData
+    modelType: fences
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: fences
+    processor:
+      type: geoToolsVector
+
+  fetchBenches:
+    type: fetchData
+    modelType: benches
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: benches
+    processor:
+      type: geoToolsVector
+
+  fetchBenchesLinear:
+    type: fetchData
+    modelType: benches_linear
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: benches_linear
+    processor:
+      type: geoToolsVector
+
+  fetchFireHydrants:
+    type: fetchData
+    modelType: fire_hydrants
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: fire_hydrants
+    processor:
+      type: geoToolsVector
+
+  fetchTrashCans:
+    type: fetchData
+    modelType: trash_cans
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: trash_cans
+    processor:
+      type: geoToolsVector
+
+  setAltitude:
+    after: fetchAltitude
+    type: populateHeightmap
+    models:
+      type: altitude
+    heightmap: ground
+
+  setSpawn:
+    after: setAltitude
+    type: setSpawn
+    heightmap:
+      sum: [ground, 1]
+    x: 0
+    y: 0
+
+  renderGround:
+    after:
+      - setAltitude
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - put: *voxel-grass
+          at: [0, 0, 0]
+        - put: *voxel-dirt
+          at: [0, 0, -3..-1]
+        - put: *voxel-stone
+          at: [0, 0, -20..-4]
+
+  renderTransport:
+    after:
+      - fetchTransport
+      - renderGround
+    type: renderSurfaces
+    models:
+      type: transport
+    place:
+      structure:
+        - put: *voxel-air
+          at: [0, 0, -5..0]
+    heightmap: ground
+  
+  renderFences:
+    after:
+      - fetchFences
+      - renderGround
+      - renderTransport
+    type: renderLines
+    models:
+      type: fences
+    structure:
+      - put: default:fence_aspen_wood
+        at: [0, 0, 0]
+      - put: *voxel-stone
+        at: [0, 0, -5..-1]
+    stickToHeightmap:
+      sum:
+        - ground
+        - 1
+
+  renderBenchesLinear:
+    after:
+      - fetchBenchesLinear
+      - renderGround
+      - renderTransport
+    type: renderLines
+    models:
+      type: benches_linear
+    structure:
+      - put: default:wood
+        at: [0, 0, 0]
+    stickToHeightmap:
+      sum:
+        - ground
+        - 1
+
+  renderBenches:
+    after:
+      - fetchBenches
+      - renderGround
+    type: renderSurfaces
+    models:
+      type: benches
+    place: 
+      structure:
+        - put: default:wood
+          at: [0, 0, 1]
+    heightmap: ground
+
+  renderFireHydrants:
+    after:
+      - fetchFireHydrants
+      - renderGround
+    type: renderSurfaces
+    models:
+      type: fire_hydrants
+    place: 
+      structure:
+        - put: wool:red
+          at: [0, 0, 1]
+    heightmap: ground
+
+  renderTrashCans:
+    after:
+      - fetchTrashCans
+      - renderGround
+    type: renderSurfaces
+    models:
+      type: trash_cans
+    place: 
+      structure:
+        - put: wool:grey
+          at: [0, 0, 1]
+    heightmap: ground
+
+  fetchBatiCity:
+    type: fetchData
+    modelType: building-city
+    provider:
+      type: cityjson
+      filePath: data/bati.city.json
+    processor:
+      type: cityjsonBuilding
+
+  renderBati3dGround:
+    after:
+      - fetchBatiCity
+      - renderGround
+    type: renderBuildings3d
+    models:
+      type: building-city
+    surfaceType: ground
+    place: *voxel-cobble
+
+  renderBati3dWalls:
+    after:
+      - renderBati3dGround
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        not:
+          metadata: usage_1
+          in: [ "Religieux" ]
+    surfaceType: wall
+    place: *default-wall
+
+  renderBati3dRoofs:
+    after:
+      - renderBati3dWalls
+      - renderBati3dReligieux
+    type: renderBuildings3d
+    models:
+      type: building-city
+    surfaceType: roof
+    place: *default-roof
+
+  renderBati3dReligieux:
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: usage_1
+        in: [ "Religieux" ]
+    surfaceType: wall
+    place: default:stonebrick
+
+  renderBati3dZinc:
+    after:
+      - renderBati3dRoofs
+      - renderBati3dWalls
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: materiaux_de_la_toiture
+        in: [ "3", "03", "30", "33" ]
+    surfaceType: roof
+    place: default:steelblock
+
