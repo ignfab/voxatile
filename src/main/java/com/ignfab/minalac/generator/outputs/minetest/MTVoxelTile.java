@@ -14,6 +14,7 @@ import com.ignfab.minalac.generator.world.VoxelTile;
  * Implementation of {@link VoxelTile} for Minetest.
  */
 public class MTVoxelTile extends VoxelTile {
+
     private final SQLiteMapWriter mapWriter;
 
     private final Long2ObjectMap<Block> blocks = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
@@ -86,7 +87,7 @@ public class MTVoxelTile extends VoxelTile {
         // X/Y/Z => X/Z/Y
         Block block = getBlock(x >> 4, z >> 4, y >> 4);
 
-        if (block == null) return null;
+        if (block == null) return MTVoxel.DEFAULTVOXEL;
 
         // X/Y/Z => X/Z/Y
         return block.get(x & 0x0f, z & 0x0f, y & 0x0f);

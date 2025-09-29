@@ -15,6 +15,13 @@ import com.ignfab.minalac.generator.world.VoxelTile;
  * A voxel in Minecraft, known as block, consists of two parameters: type and state properties.
  */
 public class MCVoxel implements Placeable {
+
+    /**
+     * Default voxel used on map initialization.
+     */
+    public static final MCVoxel DEFAULTVOXEL = new MCVoxel("minecraft:air", new HashMap<>());
+
+
     /**
      * The block type string.
      * @see <a href="https://minecraft.wiki/w/Block">List of block types (Minecraft Wiki)</a>
