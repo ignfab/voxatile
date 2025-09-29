@@ -1,7 +1,6 @@
 package com.ignfab.minalac.generator.voxelization;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.ignfab.minalac.generator.utils.iterator.Iterators;
@@ -19,7 +18,6 @@ public class PlanarPolygon {
     private final Polygon3d polygon;
     private final Polygon2d projected;
     private final ProjectedRef ref;
-    private final boolean discard;
 
     public PlanarPolygon(List<Vector3d> shell, List<List<Vector3d>> holes) throws IllegalPolygonException {
         List<Vector3d> points = new ArrayList<>(shell);
@@ -42,9 +40,6 @@ public class PlanarPolygon {
         for (List<Vector3d> hole : holes)
             holes3d.add(roundPoints(hole));
         polygon = new Polygon3d(shell3d, holes3d);
-
-        // HACK : try to discard small surfaces to avoid unwanted artefacts
-        discard = cross.length() < 10.0;
     }
 
     private Vector3d[] threeMostDistantPoints(List<Vector3d> points) throws IllegalPolygonException {
@@ -87,10 +82,7 @@ public class PlanarPolygon {
     }
 
     public Iterable<Positioned3d> iterable() {
-        if (discard)
-            return Collections.emptyList();
-        else
-            return () -> Iterators.remap(new Polygon2dIterator(projected, true), c -> ref.revert((WorldCoords2d) c));
+        return () -> Iterators.remap(new Polygon2dIterator(projected, true), c -> ref.revert((WorldCoords2d) c));
     }
 
     public record ProjectedRef(Vector3d origin, Vector3d i, Vector3d j, double scale) {
