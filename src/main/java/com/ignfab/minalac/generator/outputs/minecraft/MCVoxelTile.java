@@ -97,7 +97,7 @@ public class MCVoxelTile extends VoxelTile {
     public Placeable getVoxel(int x, int y, int z) {
         Region region = regions.get(Region.computeKeyFromBlock(x, -y - 1));
 
-        if (region == null) return null;
+        if (region == null) return MCVoxel.DEFAULTVOXEL;
 
         // (World coords to In-Game coords) X/Y/Z => X/Z/-Y-1
         return region.getBlock(x, z, -y - 1);
