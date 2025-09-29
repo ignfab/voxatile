@@ -11,6 +11,12 @@ import com.ignfab.minalac.generator.world.VoxelTile;
  * @see <a href="https://github.com/minetest/minetest/blob/master/src/mapnode.h#L138">Minetest's MapNode class</a> for more information about the node's parameters
  */
 public class MTVoxel implements Placeable {
+
+    /**
+     * Default voxel used on map initialization.
+     */
+    public static final MTVoxel DEFAULT_VOXEL = new MTVoxel("air", (byte) 0, (byte) 0);
+
     /**
      * The node type string.
      * @see <a href="https://wiki.minetest.net/Games/Minetest_Game/Nodes">List of node types (Minetest Wiki)</a>

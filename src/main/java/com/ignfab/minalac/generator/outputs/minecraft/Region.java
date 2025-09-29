@@ -107,7 +107,7 @@ public record Region(int regionX, int regionZ, MCAFile file) {
      */
     public MCVoxel getBlock(int blockX, int blockY, int blockZ) {
         CompoundTag block = file().getBlockStateAt(blockX, blockY, blockZ);
-        return (block == null) ? null : MCVoxel.fromBlockState(block);
+        return (block == null) ? MCVoxel.DEFAULT_VOXEL : MCVoxel.fromBlockState(block);
     }
 
     /**

@@ -14,6 +14,7 @@ import com.ignfab.minalac.generator.world.VoxelTile;
  * Implementation of {@link VoxelTile} for Minetest.
  */
 public class MTVoxelTile extends VoxelTile {
+
     private final SQLiteMapWriter mapWriter;
 
     private final Long2ObjectMap<Block> blocks = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
@@ -79,14 +80,16 @@ public class MTVoxelTile extends VoxelTile {
     /**
      * {@inheritDoc}
      * The returned voxel is not necessarily one placed using {@link Placeable#place}.
-     * It may be an air node created when a {@link Block} is initialized.
+     * It may be an air node created when the world is initialized.
+     * <p>
+     * If you try to get a voxel outside the tile limits, it will return {@link MTVoxel#DEFAULT_VOXEL}.
      */
     @Override
     public Placeable getVoxel(int x, int y, int z) {
         // X/Y/Z => X/Z/Y
         Block block = getBlock(x >> 4, z >> 4, y >> 4);
 
-        if (block == null) return null;
+        if (block == null) return MTVoxel.DEFAULT_VOXEL;
 
         // X/Y/Z => X/Z/Y
         return block.get(x & 0x0f, z & 0x0f, y & 0x0f);
