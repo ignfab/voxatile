@@ -14,7 +14,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 /**
  * Parameters for creating a {@link SetSpawnTask}.
  */
-public class SetSpawnTaskParams extends TileTaskParams {
+public class SetSpawnTaskParams extends TaskParams {
     /**
      * The heightmap to use for the spawn z-coordinate.
      */

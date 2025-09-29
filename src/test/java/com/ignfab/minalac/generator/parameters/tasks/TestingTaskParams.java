@@ -12,7 +12,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * A TileTaskParams class for testing purposes.
  */
-public class TestingTaskParams extends TileTaskParams {
+public class TestingTaskParams extends TaskParams {
 
     private static final Task TASK = new Task();
 
@@ -37,7 +37,7 @@ public class TestingTaskParams extends TileTaskParams {
     }
 
     @Override
-    public TileTask create(Generation generation) {
+    public Task create(Generation generation) {
         return TASK;
     }
 

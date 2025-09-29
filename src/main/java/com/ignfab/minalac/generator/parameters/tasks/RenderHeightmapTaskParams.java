@@ -16,7 +16,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
  * Parameters for creating a {@link RenderHeightmapTask}.
  * Can be used by providing either at field or both minimum and maximum fields.
  */
-public class RenderHeightmapTaskParams extends TileTaskParams {
+public class RenderHeightmapTaskParams extends TaskParams {
     /**
      * The heightmap to use.
      */

@@ -9,12 +9,12 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.PolymorphicParams;
-import com.ignfab.minalac.generator.tasks.TileTask;
+import com.ignfab.minalac.generator.tasks.Task;
 
 /**
- * Abstract class for parameters of all {@link TileTask}.
+ * Parameters for a {@link Task}.
  */
-public abstract class TileTaskParams extends PolymorphicParams {
+public abstract class TaskParams extends PolymorphicParams {
     /**
      * Dependencies (optional).
      */
@@ -23,10 +23,10 @@ public abstract class TileTaskParams extends PolymorphicParams {
     public List<String> after = new ArrayList<>();
 
     /**
-     * Creates the corresponding {@code TileTask}.
+     * Creates the corresponding {@code Task}.
      *
      * @param generation the generation context.
      * @return the corresponding task
      */
-    public abstract TileTask create(Generation generation);
+    public abstract Task create(Generation generation);
 }

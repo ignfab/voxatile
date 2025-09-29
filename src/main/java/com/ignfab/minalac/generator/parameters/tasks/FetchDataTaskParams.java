@@ -15,7 +15,7 @@ import com.ignfab.minalac.generator.tasks.FetchDataTask;
 /**
  * Parameters for creating a {@link FetchDataTask}.
  */
-public class FetchDataTaskParams extends TileTaskParams {
+public class FetchDataTaskParams extends TaskParams {
     /**
      * Type to give to provided models (required).
      */

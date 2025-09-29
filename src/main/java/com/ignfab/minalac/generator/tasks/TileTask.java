@@ -5,7 +5,7 @@ import com.ignfab.minalac.generator.generation.GenerationTile;
 /**
  * A task running on a generation tile.
  */
-public abstract class TileTask implements Runnable {
+public abstract class TileTask implements Task {
 
 
     @Override
