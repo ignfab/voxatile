@@ -59,7 +59,7 @@ public abstract class VoxelTile {
      * @param x x-coordinate
      * @param y y-coordinate
      * @param z z-coordinate
-     * @return the corresponding voxel and {@code null} if the voxel doesn't exist.
+     * @return the corresponding voxel
      */
     public abstract Placeable getVoxel(int x, int y, int z);
 

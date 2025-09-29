@@ -91,13 +91,15 @@ public class MCVoxelTile extends VoxelTile {
     /**
      * {@inheritDoc}
      * The returned voxel is not necessarily one placed using {@link Placeable#place}.
-     * It may be an air block created when a {@link Region} is initialized.
+     * It may be an air block created when the world is initialized.
+     * <p>
+     * If you try to get a voxel outside the tile limits, it will return {@link MCVoxel#DEFAULT_VOXEL}.
      */
     @Override
     public Placeable getVoxel(int x, int y, int z) {
         Region region = regions.get(Region.computeKeyFromBlock(x, -y - 1));
 
-        if (region == null) return null;
+        if (region == null) return MCVoxel.DEFAULT_VOXEL;
 
         // (World coords to In-Game coords) X/Y/Z => X/Z/-Y-1
         return region.getBlock(x, z, -y - 1);
