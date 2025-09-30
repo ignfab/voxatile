@@ -83,6 +83,7 @@ public class MTVoxelWorld extends VoxelWorld {
             FileHelpers.write(new File(destination, "map_meta.txt"), """
                 mapgen_limit = 31000
                 mg_name = singlenode
+                seed = 0
                 [end_of_params]
                 """);
             FileHelpers.write(new File(destination, "worldmods/ign_spawn/init.lua"), """
