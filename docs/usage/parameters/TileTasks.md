@@ -19,6 +19,7 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
 * [Tasks operating on heightmaps](#tasks-operating-on-heightmaps)
   * [`populateHeightmap`](#populateheightmap)
   * [`copyHeightmap`](#copyheightmap)
+  * [`setHeightmap`](#setheightmap)
   * [`computeHeightmapStats`](#computeheightmapstats)
 
 ## Tasks fetching data
@@ -248,6 +249,26 @@ models:
   type: water
 from: 1
 to: water
+```
+
+### `setHeightmap`
+
+Sets a value in a heightmap all coordinates within the model's shape.
+
+##### Extra parameters
+
+- `models`: [Selection of models](ModelSelection.md) to use as a filter (required, models must be voxelizable in 2d).
+- `value`: Value to set. This value can be fetched from model metadata.
+- `to`: [Heightmap](Heightmaps.md) receiving the values. It should be a [stored heightmap](Heightmaps.md#stored-heightmap).
+
+##### Example
+
+```yaml
+type: setHeightmap
+models:
+  type: batiment
+from: base-altitude
+to: ground
 ```
 
 ### `computeHeightmapStats`
