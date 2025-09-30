@@ -16,6 +16,7 @@ public class FindVoxelsTask extends ModelTask<Shape2dConvertibleModel> {
     private final Predicate<Placeable> filter;
     private final String lowest;
     private final String highest;
+    private final String average;
 
     /**
      * Creates a new {@code FindVoxelsTask}.
@@ -24,11 +25,12 @@ public class FindVoxelsTask extends ModelTask<Shape2dConvertibleModel> {
      * @param lowest metadata where to store z-coordinate of lowest voxel found
      * @param highest metadata where to store z-coordinate of highest voxel found
      */
-    public FindVoxelsTask(ModelSelection selection, Predicate<Placeable> filter, String lowest, String highest) {
+    public FindVoxelsTask(ModelSelection selection, Predicate<Placeable> filter, String lowest, String highest, String average) {
         super(Shape2dConvertibleModel.class, selection);
         this.filter = filter;
         this.lowest = lowest;
         this.highest = highest;
+        this.average = average;
     }
 
     @Override
@@ -58,6 +60,20 @@ public class FindVoxelsTask extends ModelTask<Shape2dConvertibleModel> {
                         break;
                     }
                 }
+            }
+
+            if (average != null) {
+                int total = 0;
+                int number = 0;
+                for (int z = maxZ; z >= minZ; z--) {
+                    Placeable voxel = tile.voxels().getVoxel(c.x(), c.y(), z);
+                    if (voxel != null && filter.test(voxel)) {
+                        number ++;
+                        total += z;
+                    }
+                }
+                if (number > 0)
+                    model.setMetadata(average, (int) Math.round(total/number));
             }
         }
     }

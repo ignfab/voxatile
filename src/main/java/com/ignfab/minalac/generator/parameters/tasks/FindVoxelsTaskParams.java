@@ -64,6 +64,12 @@ public class FindVoxelsTaskParams extends TileTaskParams {
          */
         @JsonSetter(nulls = Nulls.SKIP)
         public String highest;
+
+        /**
+         * Metadata where to store average z-coordinate of voxels found (optional).
+         */
+        @JsonSetter(nulls = Nulls.SKIP)
+        public String average;
     }
 
     /**
@@ -94,12 +100,14 @@ public class FindVoxelsTaskParams extends TileTaskParams {
             except.forEach(PlaceableParams::validate);
         }
 
-        if (find.lowest == null && find.highest == null)
-            throw new IllegalArgumentException("At least one of 'lowest' or 'highest' field is required.");
+        if (find.lowest == null && find.highest == null && find.average == null)
+            throw new IllegalArgumentException("At least one of 'lowest', 'highest' or 'average' field is required.");
         if (find.lowest != null && find.lowest.isBlank())
             throw new IllegalArgumentException("Field 'lowest' cannot be empty or contain only whitespace.");
         if (find.highest != null && find.highest.isBlank())
             throw new IllegalArgumentException("Field 'highest' cannot be empty or contain only whitespace.");
+        if (find.average != null && find.average.isBlank())
+            throw new IllegalArgumentException("Field 'average' cannot be empty or contain only whitespace.");
     }
 
     @Override
@@ -111,7 +119,7 @@ public class FindVoxelsTaskParams extends TileTaskParams {
             filter = createContainsFilter(except, generation).negate();
         else
             filter = v -> true;
-        return new FindVoxelsTask(models.create(), filter, find.lowest, find.highest);
+        return new FindVoxelsTask(models.create(), filter, find.lowest, find.highest, find.average);
     }
 
     private static Predicate<Placeable> createContainsFilter(List<PlaceableParams> voxels, Generation generation) {
