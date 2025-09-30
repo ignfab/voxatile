@@ -38,9 +38,18 @@ public class RenderDynamicLinesTaskParams extends TileTaskParams {
 
     /**
      * If specified, resulting voxels will be placed on this heightmap (optional, default use voxelized altitude).
+     * Cannot be specified along with stickToAltitude.
      */
     @JsonSetter(nulls = Nulls.SKIP)
     public ReadableHeightmapParams stickToHeightmap;
+
+    /**
+     * If specified, resulting voxels will be placed at this altitude (optional, default use voxelized altitude).
+     * Cannot be specified along with stickToHeightmap.
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public ModelValueParams stickToAltitude;
+
 
     /**
      * Render only when above this heightmap (optional, default render always).
@@ -57,6 +66,8 @@ public class RenderDynamicLinesTaskParams extends TileTaskParams {
 
     @Override
     public void validate() throws IllegalArgumentException {
+        if (stickToHeightmap != null && stickToAltitude != null)
+            throw new IllegalArgumentException("Can not use both stickToHeightmap and stickToAltitude fields");
         models.validate();
         width.validate();
         repeated.validate();
@@ -66,16 +77,24 @@ public class RenderDynamicLinesTaskParams extends TileTaskParams {
             renderOnlyWhenAbove.validate();
         if (stickToHeightmap != null)
             stickToHeightmap.validate();
+        if (stickToAltitude != null)
+            stickToAltitude.validate();
     }
 
     @Override
     public TileTask create(Generation generation) {
         ReadableHeightmapSpec renderOnlyWhenAboveSpec = null;
-        ReadableHeightmapSpec stickToHeightmapsSpec = null;
         if (renderOnlyWhenAbove != null)
             renderOnlyWhenAboveSpec = renderOnlyWhenAbove.create(generation.heightmaps());
-        if (stickToHeightmap != null)
-            stickToHeightmapsSpec = stickToHeightmap.create(generation.heightmaps());
+
+        RenderLinesTask.GetZ stickToZ;
+        if (stickToHeightmap != null) {
+            ReadableHeightmapSpec stickToHeightmapSpec = stickToHeightmap.create(generation.heightmaps());
+            stickToZ = (tile, model, coords) -> tile.heightmaps().get(stickToHeightmapSpec).get(coords);
+        } else {
+            ModelValue stickToAltitudeValue = stickToAltitude.create(generation);
+            stickToZ = (tile, model, coords) -> stickToAltitudeValue.getAsInt(model).orElseThrow(() -> new IgnorableException("Missing altitude value"));
+        }
 
         PlaceableStructure repeatedStructure = repeated.create(generation.seed());
         if (repeatedStructure.limits().sizeY() != 1)
@@ -101,7 +120,7 @@ public class RenderDynamicLinesTaskParams extends TileTaskParams {
                                 structure.set(x, width + y, z, extraStructure.get(x, y, z));
                 return structure;
             },
-            stickToHeightmapsSpec,
+            stickToZ,
             renderOnlyWhenAboveSpec
         );
     }
