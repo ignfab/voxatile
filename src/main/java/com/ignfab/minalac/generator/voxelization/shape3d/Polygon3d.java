@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.voxelization.shape3d;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.world3d.Bounded3d;
@@ -27,17 +28,25 @@ public class Polygon3d implements Bounded3d, Shape3d {
         this.holes = holes;
     }
 
-    /**
-     * Returns a new iterable over voxels on the edge of this polygon.
-     *
-     * @return the border iterable of this polygon.
-     */
+    @Override
+    public WorldBBox3d bbox() {
+        return shell.bbox();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "{shell=%s, holes=%s}".formatted(shell, String.join(", ", holes.stream().map(Object::toString).toList()));
+    }
+
+    // Shape3d implementation
+
+    @Override
     public Iterable<Line3d> lines() {
         return Iterables.union(shell.lines(), Iterables.unwrap(Iterables.remap(holes, LinearRing3d::lines)));
     }
 
     @Override
-    public WorldBBox3d bbox() {
-        return shell.bbox();
+    public Iterable<LineString3d> lineStrings() {
+        return Iterables.union(Collections.singleton(shell), holes);
     }
 }
