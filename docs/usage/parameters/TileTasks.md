@@ -183,7 +183,7 @@ place: default:stone
 
 ### `findVoxels`
 
-Finds the lowest and/or highest voxels placed over the model and adds results as metadata.
+Finds the lowest, highest and average altitude of voxels placed over the model and adds results as metadata.
 
 #### Extra parameters
 
@@ -193,12 +193,13 @@ Finds the lowest and/or highest voxels placed over the model and adds results as
 - `find` (required): Specifies which voxels to find
   - `lowest` (optional): Metadata where to store the z-coordinate of the lowest voxel found.
   - `highest` (optional): Metadata where to store the z-coordinate of the highest voxel found.
+  - `average` (optional): Metadata where to store the average z-coordinate of all voxels found.
 
 When both `only` and `except` are absent, any voxel (including air) is matched.
 
 **NOTE**: Fields `only` and `except` are mutually exclusive.
 
-**NOTE**: At least one of `lowest` or `highest` field is required.
+**NOTE**: At least one of `lowest`, `highest` or `average` field is required.
 
 #### Example
 
