@@ -1,0 +1,54 @@
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+
+  fetchRoads:
+    type: fetchData
+    modelType: road
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:troncon_de_route
+    processor:
+      type: geoToolsVector
+
+  setSpawn:
+    type: setSpawn
+    heightmap:
+      sum: [ground, 85]
+    x: -50
+    y: 20
+
+  renderRoads:
+    type: renderLines
+    after: [ fetchRoads ]
+    models:
+      type: road
+    structure:
+      axes: [ y, z, x ]
+      blueprint:
+        - - "████"
+          - "▒▒▒▒"
+          - "▒░░▒"
+          - "▒░░▒"
+          - "▒▒▒▒"
+          - "████"
+        - - "████"
+          - "    "
+          - "    "
+          - "    "
+          - "    "
+          - "████"
+        - - "████"
+          - "    "
+          - "    "
+          - "    "
+          - "    "
+          - "████"
+      with:
+        "█": default:stone
+        "▒": default:sandstone
+        "░": default:glass
+
