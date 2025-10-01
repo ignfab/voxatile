@@ -1,0 +1,61 @@
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+
+  fetchAltitude:
+    type: fetchData
+    modelType: altitude
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    processor:
+      type: floatMatrix
+
+  fetchVegetation:
+    type: fetchData
+    modelType: vegetation
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:zone_de_vegetation
+    processor:
+      type: geoToolsVector
+
+  setAltitude:
+    after: fetchAltitude
+    type: populateHeightmap
+    models:
+      type: altitude
+    heightmap: ground
+
+  setSpawn:
+    after: setAltitude
+    type: setSpawn
+    heightmap:
+      sum: [ground, 1]
+    x: 0
+    y: 0
+
+  renderGround:
+    after:
+      - setAltitude
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        at: [ 0, 0, -10..0 ]
+        put: default:stone
+
+  renderForest:
+    after:
+      - renderGround
+      - fetchVegetation
+    type: renderSurfaces
+    models:
+      type: vegetation
+    heightmap: ground
+    place: default:dirt_with_grass
+
