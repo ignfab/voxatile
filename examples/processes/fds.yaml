@@ -854,6 +854,7 @@ forEachTile:
     after:
       - fetchTrafficLights
       - ground
+      - renderBenchesLinear #race cond
     type: renderSurfaces
     models:
       type: traffic_lights
@@ -876,7 +877,6 @@ forEachTile:
 
   # https://opendata.paris.fr/explore/dataset/eclairage-public/export/?disjunctive.lib_domain&disjunctive.lib_ouvrag&disjunctive.nature_voi&disjunctive.lib_voiedo&disjunctive.materiau_s&disjunctive.modele_lum&disjunctive.lib_lumi_1&disjunctive.lib_lampef&disjunctive.lib_regime&disjunctive.type_suppo&refine.lib_ouvrag=Cand%C3%A9labre&refine.lib_regi_1=STV+Centre&basemap=jawg.dark&location=16,48.86511,2.36013
 
-
   fetchLights:
     type: fetchData
     modelType: lights
@@ -890,6 +890,7 @@ forEachTile:
     after:
       - fetchLights
       - ground
+      - renderTrafficLights # Try to avoid race condition bug on heightmaps
     type: renderSurfaces
     models:
       type: lights
@@ -961,6 +962,7 @@ forEachTile:
     after:
       - fetchTrashCans
       - altitude
+      - renderFireHydrants #  race cond
     type: renderSurfaces
     models:
       type: trash_cans
@@ -984,6 +986,7 @@ forEachTile:
     after:
       - fetchPicNic
       - altitude
+      - renderTrashCans # race cond
     type: renderSurfaces
     models:
       type: picnic
