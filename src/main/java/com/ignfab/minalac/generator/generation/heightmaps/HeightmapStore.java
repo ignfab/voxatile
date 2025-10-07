@@ -36,10 +36,13 @@ public class HeightmapStore {
      * @return resulting {@link ReadableHeightmap}
      */
     public ReadableHeightmap get(ReadableHeightmapSpec spec) {
-        ReadableHeightmap heightmap = heightmaps.get(spec);
-        if (heightmap == null) {
-            heightmap = spec.create(this);
-            heightmaps.put(spec, heightmap);
+        ReadableHeightmap heightmap;
+        synchronized(heightmaps) {
+            heightmap = heightmaps.get(spec);
+            if (heightmap == null) {
+                heightmap = spec.create(this);
+                heightmaps.put(spec, heightmap);
+            }
         }
         return heightmap;
     }
@@ -51,7 +54,10 @@ public class HeightmapStore {
      * @return resulting {@link Heightmap}
      */
     public WritableHeightmap get(WritableHeightmapSpec spec) {
-        ReadableHeightmap heightmap = heightmaps.get(spec);
+        ReadableHeightmap heightmap;
+        synchronized(heightmaps) {
+            heightmap = heightmaps.get(spec);
+        }
         if (heightmap == null)
             throw new IndexOutOfBoundsException("Writable heightmap not found");
 
