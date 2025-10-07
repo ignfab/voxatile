@@ -88,6 +88,7 @@ public class MTVoxelWorld extends VoxelWorld {
                 """);
             FileHelpers.write(new File(destination, "worldmods/ign_spawn/init.lua"), """
                 minetest.setting_set("static_spawnpoint", "%d, %d, %d")
+                core.register_on_joinplayer(function(player) player:set_sky{ clouds = false } end)
                 """.formatted(metadata.getSpawn().x(), metadata.getSpawn().z(), metadata.getSpawn().y())); // XYZ => XZY
         } catch (Exception e) {
             throw new MapWriteException(e);
