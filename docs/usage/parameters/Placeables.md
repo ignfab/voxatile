@@ -7,7 +7,7 @@ A placeable is something that can be placed in voxel world at a given position: 
 
 * [Voxels](#voxels)
   * [Minecraft voxel description](#minecraft-voxel-description)
-  * [Minetest voxel description](#minetest-voxel-description)
+  * [Luanti voxel description](#luanti-voxel-description)
   * [Disambiguation](#disambiguation)
 * [Nothing](#nothing)
 * [Structures](#structures)
@@ -32,53 +32,28 @@ place:
 
 ## Voxels
 
-Voxel descriptions depend on chosen game format. In both Minecraft and Minetest, voxels are mainly defined by a string (block type or node type). They may have some extra optional parameters (like metadata).
+Voxel descriptions depend on chosen game format. In both Minecraft and Luanti, voxels are mainly defined by a string (block type or node type). They may have some extra optional parameters (like metadata).
 
-When a string is given as value for a placeable field, it is interpreted as block type for Minecraft and node type for Minetest. All other parameters are set to default (see Minecraft and Minetest sections below). Other future formats may accept or not this shortcut.
+When a string is given as value for a placeable field, it is interpreted as the voxel short form, if supported by the format. Otherwise, full voxel format should be used (object with fields).
 
 Example of a simple voxel value for `place` field:
 ```yaml
-place: default:stone # Stone node in Minetest
+place: default:stone # Stone node in Minetest Game
 ```
 
-When parameters others than block/node type has to be provided, voxel description must be an object with fields. These fields depends on the game format.
+Note: Format-specific voxel short form cannot be used to represent a voxel named `nothing`, as it would collide with the [Nothing](#nothing) placeable short form.
 
 ### Minecraft voxel description
 
-Example of a Minecraft voxel description for `place` field:
+See [Minecraft voxel placeable](Minecraft.md#voxel-placeable-description) documentation.
 
-```yaml
-place:
-  block: oak_leaves
-  properties:
-    persistent: true
-```
+### Luanti voxel description
 
-Fields:
-  - `block`: Block name in Minecraft (required)
-  - `properties`: Block properties (optional, default none)
-    - _`<property name>`_: Property value (refer to [Minecraft Wiki](https://minecraft.wiki/w/Block_states) for more information)
-
-### Minetest voxel description
-
-Example of a Minetest voxel description for `place` field:
-
-```yaml
-place:
-  node: stairs:stair_stone
-  param2: 2
-```
-
-Fields:
-  - `node`: Node type name in Minetest (required)
-  - `param1`: Node param1 (integer, optional, default `0`)
-  - `param2`: Node param2 (integer, optional, default `0`)
-
-`param1` and `param2` meaning depends on node type. Refer to Minetest documentation for more information.
+See [Luanti voxel placeable](Luanti.md#voxel-placeable-description) documentation.
 
 ### Disambiguation
 
-Another working notation uses an extra `voxel:` field. It gives exactly the same result and so is useless until a game field name conflicts with some generator keywords:
+Another working notation uses an extra `voxel:` field. It gives exactly the same result and so is useless unless a game field name conflicts with some other placeable keywords:
 
 ```yaml
 place:
@@ -89,7 +64,7 @@ place:
 
 ## Nothing
 
-Places nothing. This convenient if placeable is required but you want to place nothing:
+Places nothing. This is convenient if placeable is required, but you don't want to place anything:
 
 ```yaml
 place:

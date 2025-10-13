@@ -107,7 +107,7 @@ forEachTile:
 - `verticalScale`: Vertical size of voxels (in map units, usually meters)
 - `horizontalScale`: Horizontal size of voxels (in map units, usually meters)
 - `crs`: Coordinate Reference System to be used for projecting geographical data into voxel world
-- `format`: Output format (`minetest` or `minecraft`)
+- `format`: Output format ([`luanti`](Luanti.md) or [`minecraft`](Minecraft.md))
 - `heightmaps`: [Heightmaps](Heightmaps.md) used for the generation
   - _`<name>`_: Unique name of the heightmap
       - `default`: Default value for all heightmap cells (integer or one of `minimal`, `min`, `maximal` or `max`)

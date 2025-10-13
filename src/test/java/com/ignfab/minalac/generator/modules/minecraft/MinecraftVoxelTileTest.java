@@ -2,11 +2,11 @@ package com.ignfab.minalac.generator.modules.minecraft;
 
 import java.util.Map;
 
+import io.github.ensgijs.nbt.tag.CompoundTag;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.MapWriteException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,7 +21,7 @@ public class MinecraftVoxelTileTest {
     }
 
     @Test
-    public void testIsOutOfLimits() throws MapWriteException {
+    public void testIsOutOfLimits() {
         MinecraftVoxelTile tile = initTile(new WorldBBox3d(new WorldCoords3d(-10, -20, 0), new WorldCoords3d(20, 30, 40)));
 
         // X/Y/Z => X/Z/-Y
@@ -39,7 +39,7 @@ public class MinecraftVoxelTileTest {
     }
 
     @Test
-    public void testGetVoxel() throws MapWriteException {
+    public void testGetVoxel() {
         MinecraftVoxelTile tile = initTile(new WorldBBox3d(new WorldCoords3d(-20, -20, 0), new WorldCoords3d(50, 50, 255)));
         MinecraftVoxel barrel = new MinecraftVoxel("minecraft:barrel", Map.of(
             "facing", "south",
@@ -60,6 +60,24 @@ public class MinecraftVoxelTileTest {
         // Minecraft zMin
         barrel.place(tile, -9, -8, 0);
         assertEquals(barrel, tile.getVoxel(-9, -8, 0));
+    }
+
+    @Test
+    public void testGetBlockEntityVoxel() {
+        MinecraftVoxelTile tile = initTile(new WorldBBox3d(new WorldCoords3d(-20, -20, 0), new WorldCoords3d(50, 50, 255)));
+        CompoundTag data = new CompoundTag();
+        data.putInt("OutputSignal", 7);
+        MinecraftBlockEntityVoxel comparator = new MinecraftBlockEntityVoxel("minecraft:comparator", "minecraft:comparator", Map.of(
+            "facing", "south",
+            "mode", "compare",
+            "powered", "true"
+        ), null);
+        MinecraftBlockEntityVoxel daylightDetector = new MinecraftBlockEntityVoxel("minecraft:daylight_detector", "minecraft:daylight_detector", null, null);
+        comparator.place(tile, -9, -8, 1);
+        daylightDetector.place(tile, -7, 5, 55);
+
+        assertEquals(comparator, tile.getVoxel(-9, -8, 1));
+        assertEquals(daylightDetector, tile.getVoxel(-7, 5, 55));
     }
 
     @Test

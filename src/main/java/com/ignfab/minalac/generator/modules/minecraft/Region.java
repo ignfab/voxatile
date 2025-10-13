@@ -3,10 +3,11 @@ package com.ignfab.minalac.generator.modules.minecraft;
 import java.io.File;
 import java.io.IOException;
 
-import net.querz.mca.Chunk;
-import net.querz.mca.MCAFile;
-import net.querz.mca.MCAUtil;
-import net.querz.nbt.tag.CompoundTag;
+import io.github.ensgijs.nbt.mca.McaRegionFile;
+import io.github.ensgijs.nbt.mca.TerrainChunk;
+import io.github.ensgijs.nbt.mca.io.McaFileHelpers;
+import io.github.ensgijs.nbt.tag.CompoundTag;
+import io.github.ensgijs.nbt.tag.ListTag;
 
 /**
  * Represents a Minecraft region.
@@ -14,11 +15,11 @@ import net.querz.nbt.tag.CompoundTag;
  *
  * @param regionX the x-coordinate of this region
  * @param regionZ the y-coordinate of this region
- * @param file the {@link MCAFile} representing the file used by Minecraft
+ * @param file the {@link McaRegionFile} representing the file used by Minecraft
  * @see <a href="https://minecraft.wiki/w/Region_file_format">Region (Minecraft Wiki)</a>
  * @see <a href="https://minecraft.wiki/w/Chunk">Chunk (Minecraft Wiki)</a>
  */
-public record Region(int regionX, int regionZ, MCAFile file) {
+public record Region(int regionX, int regionZ, McaRegionFile file) {
 
     /**
      * Region size, used for tiling.
@@ -30,9 +31,10 @@ public record Region(int regionX, int regionZ, MCAFile file) {
      *
      * @param regionX the x-coordinate of this region
      * @param regionZ the y-coordinate of this region
+     * @see McaFileHelpers#blockToRegion(int)
      */
     public Region(int regionX, int regionZ) {
-        this(regionX, regionZ, new MCAFile(regionX, regionZ));
+        this(regionX, regionZ, new McaRegionFile(regionX, regionZ));
     }
 
     /**
@@ -46,17 +48,24 @@ public record Region(int regionX, int regionZ, MCAFile file) {
     }
 
     /**
-     * Returns the {@link Chunk} at the specified coordinates or creates it if it doesn't exist.
+     * Returns the {@link TerrainChunk} at the specified coordinates or creates it if it doesn't exist.
      *
      * @param chunkX the x-coordinate of the chunk
      * @param chunkZ the z-coordinate of the chunk
      * @return the corresponding chunk
+     * @throws IndexOutOfBoundsException if chunk coordinates are out of bounds
+     * @see McaFileHelpers#blockToChunk(int)
      */
-    public Chunk getOrCreateChunk(int chunkX, int chunkZ) {
-        Chunk chunk = file.getChunk(chunkX, chunkZ);
+    public TerrainChunk getOrCreateChunk(int chunkX, int chunkZ) {
+        TerrainChunk chunk = file.getChunk(chunkX, chunkZ);
         if (chunk == null) {
-            chunk = Chunk.newChunk();
-            file.setChunk(chunkX, chunkZ, chunk);
+            synchronized (file) {
+                chunk = file.getChunk(chunkX, chunkZ);
+                if (chunk == null) {
+                    chunk = file.createChunk();
+                    file.setChunk(chunkX, chunkZ, chunk);
+                }
+            }
         }
         return chunk;
     }
@@ -65,7 +74,7 @@ public record Region(int regionX, int regionZ, MCAFile file) {
      * {@return the filename of this region}
      */
     public String getFileName() {
-        return MCAUtil.createNameFromRegionLocation(regionX, regionZ);
+        return McaFileHelpers.createNameFromRegionLocation(regionX, regionZ);
     }
 
     /**
@@ -75,39 +84,63 @@ public record Region(int regionX, int regionZ, MCAFile file) {
      * @throws IOException if something goes wrong while saving
      */
     public void save(File regionDirectory) throws IOException {
-        file.cleanupPalettesAndBlockStates();
-        for (int i = 0; i < 1024; i++) {
-            Chunk chunk = file.getChunk(i);
+        for (TerrainChunk chunk : file)
             if (chunk != null)
                 chunk.setStatus("minecraft:full");
-        }
-        MCAUtil.write(file, new File(regionDirectory, getFileName()), true);
+        McaFileHelpers.write(file, new File(regionDirectory, getFileName()), true);
     }
 
     /**
-     * Loads a {@code Region} from a file region.
+     * Loads a {@code Region} from a region file.
      *
      * @param regionsDirectory the directory where the region file is located
      * @param regionX the x-value of the location of the region
      * @param regionZ the z-value of the location of the region
-     * @return a new {@link Region} corresponding to the file region
-     * @throws IOException if something goes wrong while deserializing the file region
+     * @return a new {@link Region} corresponding to the region file
+     * @throws IOException if something goes wrong while deserializing the region file
      */
     public static Region load(String regionsDirectory, int regionX, int regionZ) throws IOException {
-        return new Region(regionX, regionZ, MCAUtil.read(new File(regionsDirectory, MCAUtil.createNameFromRegionLocation(regionX, regionZ))));
+        return new Region(regionX, regionZ, McaFileHelpers.readAuto(new File(regionsDirectory, McaFileHelpers.createNameFromRegionLocation(regionX, regionZ))));
     }
 
     /**
-     * Returns a block as a new {@link MinecraftVoxel}.
+     * Returns the block state at the given coordinates.
      *
      * @param blockX the in-game x-coordinate
      * @param blockY the in-game y-coordinate
      * @param blockZ the in-game z-coordinate
-     * @return the corresponding voxel, or {@code null} if it doesn't exist
+     * @return the corresponding block state, or {@code null} if it doesn't exist
      */
-    public MinecraftVoxel getBlock(int blockX, int blockY, int blockZ) {
-        CompoundTag block = file().getBlockStateAt(blockX, blockY, blockZ);
-        return (block == null) ? MinecraftVoxel.DEFAULT_VOXEL : MinecraftVoxel.fromBlockState(block);
+    public CompoundTag getBlockState(int blockX, int blockY, int blockZ) {
+        TerrainChunk chunk = file.getChunk(McaFileHelpers.blockToChunk(blockX), McaFileHelpers.blockToChunk(blockZ));
+        return chunk == null ? null : chunk.getBlockAtByRef(
+            McaFileHelpers.blockAbsoluteToChunkRelative(blockX),
+            blockY,
+            McaFileHelpers.blockAbsoluteToChunkRelative(blockZ)
+        );
+    }
+
+    /**
+     * Returns the block entity at the given coordinates.
+     *
+     * @param blockX the in-game x-coordinate
+     * @param blockY the in-game y-coordinate
+     * @param blockZ the in-game z-coordinate
+     * @return the corresponding block entity, or {@code null} if it doesn't exist
+     */
+    public CompoundTag getBlockEntity(int blockX, int blockY, int blockZ) {
+        TerrainChunk chunk = file.getChunk(McaFileHelpers.blockToChunk(blockX), McaFileHelpers.blockToChunk(blockZ));
+        if (chunk == null)
+            return null;
+        ListTag<CompoundTag> blockEntities = chunk.getTileEntities();
+        if (blockEntities == null)
+            return null;
+        synchronized (blockEntities) {
+            for (CompoundTag blockEntity : blockEntities)
+                if (MinecraftHelpers.xyzEquals(blockEntity, blockX, blockY, blockZ))
+                    return blockEntity;
+        }
+        return null;
     }
 
     /**
@@ -115,9 +148,10 @@ public record Region(int regionX, int regionZ, MCAFile file) {
      * @param blockX the x-coordinate of the block
      * @param blockZ the z-coordinate of the block
      * @return the region key
+     * @see #computeKey(int, int)
      */
     public static int computeKeyFromBlock(int blockX, int blockZ) {
-        return computeKey(MCAUtil.blockToRegion(blockX), MCAUtil.blockToRegion(blockZ));
+        return computeKey(McaFileHelpers.blockToRegion(blockX), McaFileHelpers.blockToRegion(blockZ));
     }
 
     /**
@@ -125,6 +159,8 @@ public record Region(int regionX, int regionZ, MCAFile file) {
      * @param regionX the x-coordinate of the region
      * @param regionZ the z-coordinate of the region
      * @return the region key
+     * @see #keyToRegionX(int)
+     * @see #keyToRegionZ(int)
      */
     public static int computeKey(int regionX, int regionZ) {
         return (regionX << 16) | (regionZ & 0xFFFF);
@@ -134,6 +170,7 @@ public record Region(int regionX, int regionZ, MCAFile file) {
      * Extracts the x-coordinate of the region from its key.
      * @param regionKey the region key
      * @return the x-coordinate of the region
+     * @see #computeKey(int, int)
      */
     public static int keyToRegionX(int regionKey) {
         return (short) ((regionKey >> 16) & 0xFFFF); // cast to short to properly restore sign
@@ -143,6 +180,7 @@ public record Region(int regionX, int regionZ, MCAFile file) {
      * Extracts the z-coordinate of the region from its key.
      * @param regionKey the region key
      * @return the z-coordinate of the region
+     * @see #computeKey(int, int)
      */
     public static int keyToRegionZ(int regionKey) {
         return (short) (regionKey & 0xFFFF); // cast to short to properly restore sign
