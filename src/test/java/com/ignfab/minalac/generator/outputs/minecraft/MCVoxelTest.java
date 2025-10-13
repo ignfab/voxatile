@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.outputs.minecraft;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.querz.nbt.tag.CompoundTag;
+import io.github.ensgijs.nbt.tag.CompoundTag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

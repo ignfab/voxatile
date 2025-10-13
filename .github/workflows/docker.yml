@@ -50,3 +50,6 @@ jobs:
         context: .
         push: true
         tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.set_docker_tag.outputs.tag }}
+        build-args: |
+          github_actor=${{ github.actor }}
+          github_token=${{ github.token }}

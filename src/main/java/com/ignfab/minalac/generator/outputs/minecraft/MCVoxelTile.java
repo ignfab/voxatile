@@ -3,13 +3,13 @@ package com.ignfab.minalac.generator.outputs.minecraft;
 import java.io.File;
 import java.io.IOException;
 
+import io.github.ensgijs.nbt.mca.TerrainChunk;
+import io.github.ensgijs.nbt.mca.io.McaFileHelpers;
+import io.github.ensgijs.nbt.tag.CompoundTag;
+import io.github.ensgijs.nbt.tag.ListTag;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.querz.mca.Chunk;
-import net.querz.mca.MCAUtil;
-import net.querz.nbt.tag.CompoundTag;
-import net.querz.nbt.tag.ListTag;
 
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -60,7 +60,15 @@ public class MCVoxelTile extends VoxelTile {
         // after the check for existing block inside palette).
 
         if (isOutOfLimits(blockX, blockY, blockZ)) return;
-        getOrCreateRegion(blockX, blockZ).file().setBlockStateAt(blockX, blockY, blockZ, block, false);
+        TerrainChunk chunk = getOrCreateRegion(blockX, blockZ).getOrCreateChunk(McaFileHelpers.blockToChunk(blockX), McaFileHelpers.blockToChunk(blockZ));
+        if (!chunk.containsSection(blockY / 16))
+            chunk.createSection(blockY / 16);
+        chunk.setBlockAt(
+            McaFileHelpers.blockAbsoluteToChunkRelative(blockX),
+            blockY,
+            McaFileHelpers.blockAbsoluteToChunkRelative(blockZ),
+            block
+        );
         // (In-Game coords to world coords) X/Z/-Y => X/Y/Z
         updateHeightmaps(blockX, -(blockZ + 1), blockY);
     }
@@ -68,7 +76,7 @@ public class MCVoxelTile extends VoxelTile {
     // In-Game coords
     /* package-private */ void addBlockEntity(int blockX, int blockY, int blockZ, CompoundTag block)  {
         if (isOutOfLimits(blockX, blockY, blockZ)) return;
-        Chunk chunk = getOrCreateRegion(blockX, blockZ).getOrCreateChunk(MCAUtil.blockToChunk(blockX), MCAUtil.blockToChunk(blockZ));
+        TerrainChunk chunk = getOrCreateRegion(blockX, blockZ).getOrCreateChunk(McaFileHelpers.blockToChunk(blockX), McaFileHelpers.blockToChunk(blockZ));
         ListTag<CompoundTag> blockEntities = chunk.getTileEntities();
         if (blockEntities == null) {
             blockEntities = new ListTag<>(CompoundTag.class);

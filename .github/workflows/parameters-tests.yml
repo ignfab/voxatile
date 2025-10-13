@@ -20,10 +20,13 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: maven
 
       - name: Build with Maven
         run: |
           mvn --batch-mode --no-transfer-progress --update-snapshots -Dmaven.test.skip=true package
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Run generator to validate example parameters
         run: |

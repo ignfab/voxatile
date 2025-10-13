@@ -22,3 +22,5 @@ jobs:
           cache: maven
       - name: Test with Maven
         run: mvn --batch-mode --no-transfer-progress --update-snapshots test
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

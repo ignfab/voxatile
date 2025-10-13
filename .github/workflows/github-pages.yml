@@ -36,6 +36,8 @@ jobs:
           cache: maven
       - name: Generate Javadoc with Maven
         run: mvn --batch-mode --no-transfer-progress --update-snapshots javadoc:javadoc
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload GitHub Pages artifact

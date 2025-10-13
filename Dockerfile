@@ -14,11 +14,15 @@ ARG http_proxy_port
 # Home directory definition
 ENV HOME="/root"
 
+# GitHub Maven authentication info
+ARG github_actor
+ARG github_token
+
 # Update, upgrade and install necessary packages
 RUN <<EOF
-    apt-get update -y
-    apt-get upgrade -y
-    apt-get install -y gettext
+    apt-get -qq -o=Dpkg::Use-Pty=0 update -y
+    apt-get -qq -o=Dpkg::Use-Pty=0 upgrade -y
+    apt-get -qq -o=Dpkg::Use-Pty=0 install -y gettext
 EOF
 
 # Copy sources in working directory
@@ -30,13 +34,19 @@ RUN <<EOF
     mkdir $HOME/.m2
     if [ -n "$http_proxy_host" ] && [ -n "$http_proxy_port" ] && [ -n "$http_proxy_protocol" ]
     then
-        envsubst < .m2-settings.xml > $HOME/.m2/settings.xml
+        export http_proxy_active=true
+    else
+        export http_proxy_active=false
+        export http_proxy_host=no-proxy
+        export http_proxy_port=80
+        export http_proxy_protocol=http
     fi
+    envsubst < .m2-settings.xml > $HOME/.m2/settings.xml
     rm .m2-settings.xml
 EOF
 
 # Build
-RUN mvn -Dmaven.test.skip=true clean package
+RUN mvn --batch-mode --no-transfer-progress --update-snapshots -Dmaven.test.skip=true package
 
 #
 # Package stage
