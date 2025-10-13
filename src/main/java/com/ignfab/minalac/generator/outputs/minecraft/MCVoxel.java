@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import net.querz.nbt.tag.CompoundTag;
-import net.querz.nbt.tag.StringTag;
+import io.github.ensgijs.nbt.tag.CompoundTag;
+import io.github.ensgijs.nbt.tag.StringTag;
 
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.world.VoxelTile;
@@ -61,8 +61,8 @@ public class MCVoxel implements Placeable {
         if (propertiesTag != null) {
             Map<String, String> properties = new HashMap<>();
             propertiesTag.forEach(entry -> properties.put(
-                entry.getKey(),
-                ((StringTag) entry.getValue()).getValue()
+                entry.getName(),
+                entry.<StringTag>getTagAutoCast().getValue()
             ));
             return new MCVoxel(type, properties);
         }

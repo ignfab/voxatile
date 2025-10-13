@@ -107,9 +107,10 @@
         </dependency>
         <!-- Minecraft NBT file format -->
         <dependency>
-            <groupId>com.github.Querz</groupId>
-            <artifactId>NBT</artifactId>
-            <version>6.1</version>
+            <groupId>io.github.ensgijs</groupId>
+            <artifactId>ens-nbt</artifactId>
+            <version>0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <!-- Jackson (Yaml/Json deserialization) -->
         <dependency>

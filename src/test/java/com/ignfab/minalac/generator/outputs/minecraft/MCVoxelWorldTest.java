@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import net.querz.nbt.tag.CompoundTag;
+import io.github.ensgijs.nbt.tag.CompoundTag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
