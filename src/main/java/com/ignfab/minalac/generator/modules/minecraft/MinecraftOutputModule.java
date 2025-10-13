@@ -8,9 +8,8 @@ import com.ignfab.minalac.generator.utils.modules.Module;
  * A module for Minecraft format output.
  */
 public class MinecraftOutputModule extends Module {
-
     @Override
     public void registerParams(ParamsParser parser) {
-        parser.registerFormat("minecraft", new OutputFormat(MinecraftVoxelWorld::new, MinecraftVoxelParams.class, MinecraftVoxelParams::new));
+        parser.registerFormat("minecraft", new OutputFormat(MinecraftVoxelWorld::new, MinecraftVoxelParams.class, MinecraftVoxelParams::packed));
     }
 }

@@ -3,34 +3,90 @@ package com.ignfab.minalac.generator.modules.minecraft;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.querz.nbt.tag.CompoundTag;
-import org.junit.jupiter.api.BeforeEach;
+import io.github.ensgijs.nbt.tag.CompoundTag;
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.MapWriteException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MinecraftVoxelTest {
-    private TileMock tileMock;
+    @Test
+    public void testConstructor() {
+        MinecraftVoxel air = new MinecraftVoxel("air");
+        assertEquals("minecraft:air", air.type());
+        assertNotNull(air.properties());
 
-    @BeforeEach
-    public void setUp() throws MapWriteException {
-        WorldBBox3d limits = new WorldBBox3d(new WorldCoords3d(-50, -10, 0), new WorldCoords3d(10, 0, 200));
-        MinecraftVoxelWorld world = new MinecraftVoxelWorld(null);
-        world.setLimits(limits);
-        tileMock = new TileMock(world, limits);
+        Map<String, String> properties = new HashMap<>();
+        properties.put("persistent", "true");
+        MinecraftVoxel oakLeaves = new MinecraftVoxel("oak_leaves", properties);
+        assertEquals(properties, oakLeaves.properties());
+        assertNotSame(properties, oakLeaves.properties());
     }
 
     @Test
-    public void testPlace() {
+    public void testToString() {
+        assertEquals("minecraft:air", new MinecraftVoxel("minecraft:air").toString());
+        assertEquals("minecraft:blue_candle[candles=3,lit=true]", new MinecraftVoxel("minecraft:blue_candle", Map.of(
+            "candles", "3",
+            "lit", "true"
+        )).toString());
+    }
+
+    @Test
+    public void testFromString() {
+        assertEquals(new MinecraftVoxel("minecraft:air"), MinecraftVoxel.fromString("minecraft:air"));
+        assertEquals(new MinecraftVoxel("minecraft:air"), MinecraftVoxel.fromString("minecraft:air[]"));
+        assertEquals(new MinecraftVoxel("minecraft:blue_candle", Map.of(
+            "candles", "3",
+            "lit", "true"
+        )), MinecraftVoxel.fromString("minecraft:blue_candle[candles=3,lit=true]"));
+
+        assertThrows(IllegalArgumentException.class, () -> MinecraftVoxel.fromString("minecraft:unclosed_bracket["));
+        assertThrows(IllegalArgumentException.class, () -> MinecraftVoxel.fromString("minecraft:extra[]data"));
+        assertThrows(IllegalArgumentException.class, () -> MinecraftVoxel.fromString("minecraft:invalid[property]"));
+    }
+
+    @Test
+    public void testFromBlockState() {
+        CompoundTag airState = new CompoundTag();
+        airState.putString("Name", "minecraft:air");
+        assertEquals(new MinecraftVoxel("minecraft:air"), MinecraftVoxel.fromBlockState(airState));
+        CompoundTag candleState = new CompoundTag();
+        candleState.putString("Name", "minecraft:blue_candle");
+        CompoundTag properties = new CompoundTag();
+        properties.putString("candles", "3");
+        properties.putString("lit", "true");
+        candleState.put("Properties", properties);
+        assertEquals(new MinecraftVoxel("minecraft:blue_candle", Map.of(
+            "candles", "3",
+            "lit", "true"
+        )), MinecraftVoxel.fromBlockState(candleState));
+    }
+
+    @Test
+    public void testPlaceSimple() {
+        MinecraftVoxelTileMock tile = new MinecraftVoxelTileMock(new WorldBBox3d(
+            new WorldCoords3d(-50, -10, 0),
+            new WorldCoords3d(10, 0, 200)
+        ));
+
         MinecraftVoxel air = new MinecraftVoxel("minecraft:air");
-        air.place(tileMock, 3, -7, 64);
+        air.place(tile, 3, -7, 64);
+
         CompoundTag expectedAir = new CompoundTag();
         expectedAir.putString("Name", "minecraft:air");
-        tileMock.assertBlockStateAt(3, 64, 6, expectedAir); // X/Y/Z => X/Z/-Y
+        tile.assertBlockStateAt(3, 64, 6, expectedAir); // X/Y/Z => X/Z/-Y
+    }
+
+    @Test
+    public void testPlaceWithProperties() {
+        MinecraftVoxelTileMock tile = new MinecraftVoxelTileMock(new WorldBBox3d(
+            new WorldCoords3d(-50, -10, 0),
+            new WorldCoords3d(10, 0, 200)
+        ));
 
         MinecraftVoxel stairs = new MinecraftVoxel("minecraft:oak_stairs", Map.of(
             "facing", "north",
@@ -38,7 +94,8 @@ public class MinecraftVoxelTest {
             "shape", "straight",
             "waterlogged", "false"
         ));
-        stairs.place(tileMock, -43, 0, 192);
+        stairs.place(tile, -43, 0, 192);
+
         CompoundTag expectedStairs = new CompoundTag();
         expectedStairs.putString("Name", "minecraft:oak_stairs");
         CompoundTag properties = new CompoundTag();
@@ -47,29 +104,12 @@ public class MinecraftVoxelTest {
         properties.putString("shape", "straight");
         properties.putString("waterlogged", "false");
         expectedStairs.put("Properties", properties);
-        tileMock.assertBlockStateAt(-43, 192, -1, expectedStairs); // X/Y/Z => X/Z/-Y
+        tile.assertBlockStateAt(-43, 192, -1, expectedStairs); // X/Y/Z => X/Z/-Y
     }
 
-    private static final class TileMock extends MinecraftVoxelTile {
-        private final Map<String, CompoundTag> blockStates = new HashMap<>();
-
-        TileMock(MinecraftVoxelWorld world, WorldBBox3d limits) {
-            super(null, limits);
-        }
-
-        @Override
-        void setBlockState(int blockX, int blockY, int blockZ, CompoundTag block)  {
-            if (isOutOfLimits(blockX, blockY, blockZ)) return;
-            blockStates.put(key(blockX, blockY, blockZ), block);
-        }
-
-        public void assertBlockStateAt(int blockX, int blockY, int blockZ, CompoundTag block) {
-            CompoundTag state = blockStates.get(key(blockX, blockY, blockZ));
-            assertEquals(block, state, "Block state mismatch at (%d, %d, %d)".formatted(blockX, blockY, blockZ));
-        }
-
-        private String key(int x, int y, int z) {
-            return x + "," + y + "," + z;
-        }
+    @Test
+    public void testPlaceIllegal() {
+        MinecraftVoxel air = new MinecraftVoxel("minecraft:air");
+        assertThrows(IllegalArgumentException.class, () -> air.place(new TestingVoxelTile(WorldBBox3d.EMPTY), 0, 0, 0));
     }
 }

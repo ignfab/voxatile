@@ -6,14 +6,15 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Random;
 
-import net.querz.mca.Chunk;
-import net.querz.nbt.io.NBTUtil;
-import net.querz.nbt.tag.CompoundTag;
-import net.querz.nbt.tag.DoubleTag;
-import net.querz.nbt.tag.FloatTag;
-import net.querz.nbt.tag.IntTag;
-import net.querz.nbt.tag.ListTag;
-import net.querz.nbt.tag.StringTag;
+import io.github.ensgijs.nbt.io.BinaryNbtHelpers;
+import io.github.ensgijs.nbt.io.CompressionType;
+import io.github.ensgijs.nbt.mca.DataVersion;
+import io.github.ensgijs.nbt.tag.CompoundTag;
+import io.github.ensgijs.nbt.tag.DoubleTag;
+import io.github.ensgijs.nbt.tag.FloatTag;
+import io.github.ensgijs.nbt.tag.IntTag;
+import io.github.ensgijs.nbt.tag.ListTag;
+import io.github.ensgijs.nbt.tag.StringTag;
 
 import com.ignfab.minalac.generator.generation.SquareUnitsTileGenerator;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
@@ -29,12 +30,11 @@ import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
  */
 public class MinecraftVoxelWorld extends VoxelWorld {
     // Note: The two z-component values aren't strictly hard-limits.
-    // We can extends from -2032 to 2031 but the client
+    // We can extend from -2032 to 2031 but the client
     // will need higher performances to play the game!
-    // The Querz library does not support extended limits...
     private static final WorldBBox3d MAX_LIMIT = new WorldBBox3d(
-        new WorldCoords3d(-30_000_000, -30_000_000, 0),
-        new WorldCoords3d(30_000_000, 30_000_000, 255)
+        new WorldCoords3d(-30_000_000, -30_000_000, -64),
+        new WorldCoords3d(30_000_000, 30_000_000, 319)
     );
 
     private final File destination;
@@ -49,12 +49,7 @@ public class MinecraftVoxelWorld extends VoxelWorld {
     public MinecraftVoxelWorld(File destination) {
         super(new VoxelWorldMetadata());
         this.destination = destination;
-
-        if (destination == null)
-            regionDirectory = null;
-        else {
-            regionDirectory = new File(destination, "region");
-        }
+        regionDirectory = destination == null ? null : new File(destination, "region");
     }
 
     @Override
@@ -73,9 +68,10 @@ public class MinecraftVoxelWorld extends VoxelWorld {
             return;
 
         if (!destination.exists() || !destination.isDirectory())
-            throw new MapWriteException("Directory %s can not be accessed".formatted(destination));
+            throw new MapWriteException("Directory %s cannot be accessed".formatted(destination));
 
-        regionDirectory.mkdir();
+        if (!regionDirectory.mkdir())
+            throw new MapWriteException("Region directory %s cannot be created".formatted(regionDirectory));
     }
 
     /**
@@ -88,7 +84,7 @@ public class MinecraftVoxelWorld extends VoxelWorld {
             return; // Save disabled if null destination
 
         try {
-            NBTUtil.write(createLevelData(), new File(destination, "level.dat"), true);
+            BinaryNbtHelpers.write(createLevelData(), new File(destination, "level.dat"), CompressionType.GZIP);
         } catch (IOException e) {
             throw new MapWriteException("Unable to save level.dat", e);
         }
@@ -96,6 +92,7 @@ public class MinecraftVoxelWorld extends VoxelWorld {
 
     @SuppressWarnings({ "checkstyle:MethodLength", "checkstyle:AvoidNestedBlocks", "checkstyle:LocalVariableName" })
     private CompoundTag createLevelData() {
+        DataVersion mcVersion = DataVersion.JAVA_1_21_11;
         long seed = new Random().nextLong();
 
         CompoundTag root = new CompoundTag();
@@ -129,7 +126,7 @@ public class MinecraftVoxelWorld extends VoxelWorld {
                 }
                 data.put("DataPacks", dataPacks);
 
-                data.putInt("DataVersion", Chunk.DEFAULT_DATA_VERSION);
+                data.putInt("DataVersion", mcVersion.id());
 
                 data.putLong("DayTime", 0);
 
@@ -151,12 +148,15 @@ public class MinecraftVoxelWorld extends VoxelWorld {
 
                 CompoundTag gameRules = new CompoundTag();
                 {
-                    // Commented out gamerule were added after 1.16.1
+                    gameRules.putString("allowEnteringUsingNetherPortals", "true");
+                    gameRules.putString("allowFireTicksAwayFromPlayer", "false");
                     gameRules.putString("announceAdvancements", "true");
-                    // gameRules.putString("blockExplosionDropDecay", "true"); // 1.19.3
+                    gameRules.putString("blockExplosionDropDecay", "true");
+                    gameRules.putString("commandBlocksEnabled", "true");
                     gameRules.putString("commandBlockOutput", "true");
-                    // gameRules.putString("commandModificationBlockLimit", "32768"); // 1.19.4
+                    gameRules.putString("commandModificationBlockLimit", "32768");
                     gameRules.putString("disableElytraMovementCheck", "false");
+                    gameRules.putString("disablePlayerMovementCheck", "false");
                     gameRules.putString("disableRaids", "false");
                     gameRules.putString("doDaylightCycle", "true");
                     gameRules.putString("doEntityDrops", "true");
@@ -169,49 +169,49 @@ public class MinecraftVoxelWorld extends VoxelWorld {
                     gameRules.putString("doPatrolSpawning", "true");
                     gameRules.putString("doTileDrops", "true");
                     gameRules.putString("doTraderSpawning", "true");
-                    // gameRules.putString("doVinesSpread", "true"); // 1.19.4
+                    gameRules.putString("doVinesSpread", "true");
                     gameRules.putString("doWeatherCycle", "true");
-                    // gameRules.putString("doWardenSpawning", "true"); // 1.19
+                    gameRules.putString("doWardenSpawning", "true");
                     gameRules.putString("drowningDamage", "true");
-                    // gameRules.putString("enderPearlsVanishOnDeath", "true"); // 1.20.2
+                    gameRules.putString("enderPearlsVanishOnDeath", "true");
                     gameRules.putString("fallDamage", "true");
                     gameRules.putString("fireDamage", "true");
                     gameRules.putString("forgiveDeadPlayers", "true");
-                    // gameRules.putString("freezeDamage", "true"); // 1.17
-                    // gameRules.putString("globalSoundEvents", "true"); // 1.19.3
+                    gameRules.putString("freezeDamage", "true");
+                    gameRules.putString("globalSoundEvents", "true");
                     gameRules.putString("keepInventory", "false");
-                    // gameRules.putString("lavaSourceConversion", "false"); // 1.19.3
+                    gameRules.putString("lavaSourceConversion", "false");
+                    gameRules.putString("locatorBar", "true");
                     gameRules.putString("logAdminCommands", "true");
                     gameRules.putString("maxCommandChainLength", "65536");
-                    // gameRules.putString("maxCommandForkCount", "65536"); // 1.20.3
+                    gameRules.putString("maxCommandForkCount", "65536");
                     gameRules.putString("maxEntityCramming", "24");
-                    // gameRules.putString("mobExplosionDropDecay", "true"); // 1.19.3
+                    gameRules.putString("mobExplosionDropDecay", "true");
                     gameRules.putString("mobGriefing", "true");
                     gameRules.putString("naturalRegeneration", "true");
-                    // gameRules.putString("playersNetherPortalCreativeDelay", "1"); // 1.20.3
-                    // gameRules.putString("playersNetherPortalDefaultDelay", "80"); // 1.20.3
-                    // gameRules.putString("playersSleepingPercentage", "100"); // 1.17
-                    // gameRules.putString("projectilesCanBreakBlocks", "true"); // 1.20.3
+                    gameRules.putString("playersNetherPortalCreativeDelay", "1");
+                    gameRules.putString("playersNetherPortalDefaultDelay", "80");
+                    gameRules.putString("playersSleepingPercentage", "100");
+                    gameRules.putString("projectilesCanBreakBlocks", "true");
+                    gameRules.putString("pvp", "true");
                     gameRules.putString("randomTickSpeed", "3");
                     gameRules.putString("reducedDebugInfo", "false");
                     gameRules.putString("sendCommandFeedback", "true");
                     gameRules.putString("showDeathMessages", "true");
-                    // gameRules.putString("snowAccumulationHeight", "1"); // 1.19.3
-                    // gameRules.putString("spawnChunkRadius", "2"); // 1.20.5
+                    gameRules.putString("snowAccumulationHeight", "1");
+                    gameRules.putString("spawnerBlocksEnabled", "true");
+                    gameRules.putString("spawnMonsters", "true");
+                    gameRules.putString("spawnChunkRadius", "2");
                     gameRules.putString("spawnRadius", "10");
                     gameRules.putString("spectatorsGenerateChunks", "true");
-                    // gameRules.putString("tntExplosionDropDecay", "false"); // 1.19.3
+                    gameRules.putString("tntExplodes", "true");
+                    gameRules.putString("tntExplosionDropDecay", "false");
                     gameRules.putString("universalAnger", "false");
-                    // gameRules.putString("waterSourceConversion", "true"); // 1.19.3
+                    gameRules.putString("waterSourceConversion", "true");
                 }
                 data.put("GameRules", gameRules);
 
                 data.putInt("GameType", 1);
-
-                // Legacy (1.15 and below)
-                // data.putString("generatorName", "default");
-                // data.putInt("generatorVersion", 0);
-                // data.putString("generatorOptions", "generatorOptions");
 
                 data.putBoolean("hardcore", false);
 
@@ -258,7 +258,7 @@ public class MinecraftVoxelWorld extends VoxelWorld {
                     }
                     player.put("Brain", brain);
 
-                    player.putInt("DataVersion", Chunk.DEFAULT_DATA_VERSION);
+                    player.putInt("DataVersion", mcVersion.id());
 
                     player.putShort("DeathTime", (short) 0);
 
@@ -381,8 +381,8 @@ public class MinecraftVoxelWorld extends VoxelWorld {
                 data.putInt("version", 19133);
                 CompoundTag version = new CompoundTag();
                 {
-                    version.putInt("Id", Chunk.DEFAULT_DATA_VERSION);
-                    version.putString("Name", "1.16.1");
+                    version.putInt("Id", mcVersion.id());
+                    version.putString("Name", mcVersion.toSimpleString());
                     version.putString("Series", "main");
                     version.putBoolean("Snapshot", false);
                 }
@@ -405,13 +405,11 @@ public class MinecraftVoxelWorld extends VoxelWorld {
                             {
                                 CompoundTag biomeSource = new CompoundTag();
                                 {
-                                    biomeSource.putBoolean("large_biomes", false);
-                                    biomeSource.putLong("seed", seed);
-                                    biomeSource.putString("type", "minecraft:vanilla_layered");
+                                    biomeSource.putString("preset", "minecraft:overworld");
+                                    biomeSource.putString("type", "minecraft:multi_noise");
                                 }
                                 generator.put("biome_source", biomeSource);
 
-                                generator.putLong("seed", seed);
                                 generator.putString("settings", "minecraft:overworld");
                                 generator.putString("type", "minecraft:noise");
                             }
@@ -427,12 +425,10 @@ public class MinecraftVoxelWorld extends VoxelWorld {
                             {
                                 CompoundTag biomeSource = new CompoundTag();
                                 {
-                                    biomeSource.putLong("seed", seed);
                                     biomeSource.putString("type", "minecraft:the_end");
                                 }
                                 generator.put("biome_source", biomeSource);
 
-                                generator.putLong("seed", seed);
                                 generator.putString("settings", "minecraft:end");
                                 generator.putString("type", "minecraft:noise");
                             }
@@ -449,12 +445,10 @@ public class MinecraftVoxelWorld extends VoxelWorld {
                                 CompoundTag biomeSource = new CompoundTag();
                                 {
                                     biomeSource.putString("preset", "minecraft:nether");
-                                    biomeSource.putLong("seed", seed);
                                     biomeSource.putString("type", "minecraft:multi_noise");
                                 }
                                 generator.put("biome_source", biomeSource);
 
-                                generator.putLong("seed", seed);
                                 generator.putString("settings", "minecraft:nether");
                                 generator.putString("type", "minecraft:noise");
                             }
