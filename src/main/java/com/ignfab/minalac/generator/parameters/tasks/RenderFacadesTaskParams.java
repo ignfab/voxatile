@@ -84,8 +84,8 @@ public class RenderFacadesTaskParams extends TileTaskParams {
     @Override
     public TileTask create(Generation generation) {
         return new RenderFacadesTask(
-            models.create(generation.models()),
-            heightmap.create(generation),
+            models.create(),
+            heightmap.create(generation.heightmaps()),
             heightName,
             ground.create(generation.seed()),
             floor.create(generation.seed())

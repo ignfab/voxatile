@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.HeightmapStore;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ModelStore;
@@ -58,6 +59,7 @@ public class RenderFacadesTaskTest {
 
     @Test
     public void testRender() {
+        throw new RuntimeException("Update it");
         /*  y
             ^
           2 |
@@ -68,57 +70,57 @@ public class RenderFacadesTaskTest {
          -3 |
             -----------------> x
              -2 -1  0  1  2 */
-        WorldBBox2d modelBbox = new WorldBBox2d(-1, -2, 3, 4);
-        Model building = new TestingRectangleShapeVoxelizable2dModel(modelBbox);
-
-        int expectedHeight = 20;
-        building.setMetadata("height", expectedHeight);
-        models.add("building", building);
-
-        assertDoesNotThrow(() -> new RenderFacadesTask(
-            new ModelSelection(models, "building", new ModelFilterHasMetadata("height")),
-            heightmap,
-            "height",
-            new PlaceableStructure(createSimpleStructure(2, 2, new TestingVoxel("ground")), 0, null, 0),
-            new PlaceableStructure(createSimpleStructure(2, 2, new TestingVoxel("upperFloor")), 0, null, null)
-        ).run(tile));
-
-        for (WorldCoords3d c : tile.limits()) {
-            int x = c.x();
-            int y = c.y();
-            int z = c.z();
-
-            int minZFacade = heightmap.get(c.x(), c.y()) + 1;
-            int maxZFacade = minZFacade + expectedHeight - 1;
-
-            if (minZFacade <= z && z <= maxZFacade) {
-                /*  y
-                    ^
-                  2 |
-                  1 |    A  B  A
-                  0 |    A     A
-                 -1 |    A     A
-                 -2 |    A  B  A
-                 -3 |
-                    -----------------> x
-                     -2 -1  0  1  2 */
-
-                if (-2 <= y && y <= 1) {
-                    // voxels in 'A'
-                    if (x == -1 || x == 1)
-                        tile.assertVoxelNotNull(x, y, z);
-                    // voxels in 'B'
-                    else if (x == 0 && (y == -2 || y == 1))
-                        tile.assertVoxelNotNull(x, y, z);
-                    else
-                        tile.assertVoxelNull(x, y, z);
-                } else {
-                    tile.assertVoxelNull(x, y, z);
-                }
-            } else {
-                tile.assertVoxelNull(x, y, z);
-            }
-        }
+//        WorldBBox2d modelBbox = new WorldBBox2d(-1, -2, 3, 4);
+//        Model building = new TestingRectangleShapeVoxelizable2dModel(modelBbox);
+//
+//        int expectedHeight = 20;
+//        building.setMetadata("height", expectedHeight);
+//        models.add("building", building);
+//
+//        assertDoesNotThrow(() -> new RenderFacadesTask(
+//            new ModelSelection("building", new ModelFilterHasMetadata("height")),
+//            heightmap,
+//            "height",
+//            new PlaceableStructure(createSimpleStructure(2, 2, new TestingVoxel("ground")), 0, null, 0),
+//            new PlaceableStructure(createSimpleStructure(2, 2, new TestingVoxel("upperFloor")), 0, null, null)
+//        ).run(tile));
+//
+//        for (WorldCoords3d c : tile.limits()) {
+//            int x = c.x();
+//            int y = c.y();
+//            int z = c.z();
+//
+//            int minZFacade = heightmap.get(c.x(), c.y()) + 1;
+//            int maxZFacade = minZFacade + expectedHeight - 1;
+//
+//            if (minZFacade <= z && z <= maxZFacade) {
+//                /*  y
+//                    ^
+//                  2 |
+//                  1 |    A  B  A
+//                  0 |    A     A
+//                 -1 |    A     A
+//                 -2 |    A  B  A
+//                 -3 |
+//                    -----------------> x
+//                     -2 -1  0  1  2 */
+//
+//                if (-2 <= y && y <= 1) {
+//                    // voxels in 'A'
+//                    if (x == -1 || x == 1)
+//                        tile.assertVoxelNotNull(x, y, z);
+//                    // voxels in 'B'
+//                    else if (x == 0 && (y == -2 || y == 1))
+//                        tile.assertVoxelNotNull(x, y, z);
+//                    else
+//                        tile.assertVoxelNull(x, y, z);
+//                } else {
+//                    tile.assertVoxelNull(x, y, z);
+//                }
+//            } else {
+//                tile.assertVoxelNull(x, y, z);
+//            }
+//        }
     }
 
     // The tests bellow should be moved when "layout" creator class is made

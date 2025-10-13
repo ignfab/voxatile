@@ -2,7 +2,9 @@ package com.ignfab.minalac.generator.tasks;
 
 import java.util.ArrayList;
 
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.ShapesVoxelizable2d;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
@@ -26,7 +28,7 @@ import com.ignfab.minalac.generator.world.VoxelTile;
  * If the building isn't tall enough to hold two floors the ground floor pattern will extend along the z-axis.
  */
 public class RenderFacadesTask extends ModelTask<ShapesVoxelizable2d> {
-    private final ReadableHeightmap heightmap;
+    private final ReadableHeightmapSpec heightmapSpec;
     private final String heightMetadata;
     private final PlaceableStructure groundFloorPattern;
     private final PlaceableStructure upperFloorPattern;
@@ -35,27 +37,28 @@ public class RenderFacadesTask extends ModelTask<ShapesVoxelizable2d> {
      * Creates a new {@code RenderFacadesTask}.
      *
      * @param selection building models selection
-     * @param heightmap heightmap of the ground (on which features will be placed)
+     * @param heightmapSpec heightmap of the ground (on which features will be placed)
      * @param heightMetadata name of the metadata for facade height
      * @param groundFloorPattern extendable {@link PlaceableStructure} for the ground floor. It must be extendable along z-axis and x-axis.
      * @param upperFloorPattern extendable {@link PlaceableStructure} for the upper floors. It must be extendable along x-axis.
      */
     public RenderFacadesTask(
         ModelSelection selection,
-        ReadableHeightmap heightmap,
+        ReadableHeightmapSpec heightmapSpec,
         String heightMetadata,
         PlaceableStructure groundFloorPattern,
         PlaceableStructure upperFloorPattern
     ) {
         super(ShapesVoxelizable2d.class, selection);
-        this.heightmap = heightmap;
+        this.heightmapSpec = heightmapSpec;
         this.heightMetadata = heightMetadata;
         this.groundFloorPattern = groundFloorPattern;
         this.upperFloorPattern = upperFloorPattern;
     }
 
     @Override
-    protected void run(ShapesVoxelizable2d model, VoxelTile tile) {
+    protected void run(ShapesVoxelizable2d model, GenerationTile tile) {
+        ReadableHeightmap heightmap = tile.heightmaps().get(heightmapSpec);
         // TODO-PR: Probably implement a not found policy for the metadata
         // TODO: Implement a post-processor for value rounding to rollback this change
         int height = (int) Math.round(
@@ -83,7 +86,7 @@ public class RenderFacadesTask extends ModelTask<ShapesVoxelizable2d> {
                     int minZ = heightmap.get(c) + 1;
 
                     for (int iZ = 0; iZ < height; iZ++) {
-                        layout.get(iX, iZ).place(tile, c.x(), c.y(), minZ + iZ);
+                        layout.get(iX, iZ).place(tile.voxels(), c.x(), c.y(), minZ + iZ);
                     }
                 }
             }
