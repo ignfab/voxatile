@@ -38,6 +38,7 @@ forEachTile:
       - type: truncate
         metadata: height
         method: round
+        ifMissing: ignore
       - type: default
         metadata: height
         value: 5
