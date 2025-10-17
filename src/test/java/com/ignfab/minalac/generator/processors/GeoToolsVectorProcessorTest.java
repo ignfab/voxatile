@@ -10,12 +10,10 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.data.DataUtilities;
 import org.geotools.feature.SchemaException;
 import org.geotools.referencing.CRS;
-import org.geotools.referencing.operation.transform.IdentityTransform;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.geom.util.AffineTransformation;
 
 import com.ignfab.minalac.generator.models.JTSGeometryModel;
-import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
+import com.ignfab.minalac.generator.utils.coordinates.TestingConverter;
 import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
@@ -25,7 +23,6 @@ import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GeoToolsVectorProcessorTest {
-    private static final MapToWorldConverter IDENTITY_CONVERTER = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
 
     @Test
     public void test() throws SchemaException, FactoryException {
@@ -33,7 +30,7 @@ public class GeoToolsVectorProcessorTest {
         AtomicBoolean initialized = new AtomicBoolean(false);
         GeoToolsVectorProcessor processor = new GeoToolsVectorProcessor(crs -> {
             initialized.set(crs == crs2154);
-            return IDENTITY_CONVERTER;
+            return TestingConverter.IDENTITY;
         });
         assertDoesNotThrow(() -> processor.initialize(crs2154)); // layerCrs is only validated but not actually used by the converter provider we gave above
         assertTrue(initialized.get(), "processor initialized with given CRS");
