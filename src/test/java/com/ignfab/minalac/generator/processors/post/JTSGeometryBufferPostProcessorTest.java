@@ -1,29 +1,26 @@
 package com.ignfab.minalac.generator.processors.post;
 
-import org.geotools.referencing.operation.transform.IdentityTransform;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.util.AffineTransformation;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.models.JTSGeometryModel;
-import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
+import com.ignfab.minalac.generator.utils.coordinates.TestingConverter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class JTSGeometryBufferPostProcessorTest {
     private JTSGeometryModel model;
 
-    private static final MapToWorldConverter IDENTITY_CONVERTER = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
     private static final WKTReader WKT_READER = new WKTReader();
 
     @BeforeEach
     public void setUp() throws ParseException, TransformException {
-        model = new JTSGeometryModel(WKT_READER.read("POLYGON ((0 0, 5 0, 5 5, 0 5, 0 0))"), IDENTITY_CONVERTER);
+        model = new JTSGeometryModel(WKT_READER.read("POLYGON ((0 0, 5 0, 5 5, 0 5, 0 0))"), TestingConverter.IDENTITY);
     }
 
     private JTSGeometryModel process(double buffer) {
