@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
 import com.ignfab.minalac.generator.tasks.RenderLinesTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
@@ -15,13 +14,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for {@link RenderLinesTask}.
  */
-public class RenderLinesTaskParams extends TileTaskParams {
-    /**
-     * Models to render (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
-
+public class RenderLinesTaskParams extends ModelTaskParams {
     /**
      * Structure to place and repeat along lines (required).
      */
@@ -37,19 +30,17 @@ public class RenderLinesTaskParams extends TileTaskParams {
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
-     * @param models selection of models to render
      * @param structure structure to place along lines
      */
-    @ConstructorProperties({"models", "structure"})
-    public RenderLinesTaskParams(ModelSelectionParams models, PlaceableStructureParams structure) {
-        this.models = models;
+    @ConstructorProperties({"structure"})
+    public RenderLinesTaskParams(PlaceableStructureParams structure) {
         this.structure = structure;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
+        super.validate();
         structure.validate();
-        models.validate();
         if (renderOnlyWhenAbove != null)
             renderOnlyWhenAbove.validate();
     }
