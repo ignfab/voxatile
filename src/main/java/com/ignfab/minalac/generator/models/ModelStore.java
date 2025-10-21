@@ -20,6 +20,9 @@ public class ModelStore {
      * @param model Model to be stored
      */
     public void add(String type, Model model) {
+        if (type == null || type.isEmpty())
+            throw new IllegalArgumentException("Type must be a non empty string");
+
         List<Model> list = byType.get(type);
         if (list == null) {
             list = new LinkedList<>();

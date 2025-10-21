@@ -10,7 +10,6 @@ import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
-import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,18 +44,6 @@ public class PopulateHeightmapTaskParamsTest {
                 PopulateHeightmapTaskParams.class,
                 """
                 type: matrixToHeightmap
-                heightmap: ground
-                """,
-                builder
-            )
-        );
-
-        assertThrows(
-            JacksonException.class,
-            () -> ParamsTester.deserialize(
-                PopulateHeightmapTaskParams.class,
-                """
-                type: matrixToHeightmap
                 models:
                   type: mnt
                 """,
@@ -67,17 +54,10 @@ public class PopulateHeightmapTaskParamsTest {
 
     @Test
     public void testValidate() {
-        PopulateHeightmapTaskParams paramsWithInvalidModels = new PopulateHeightmapTaskParams(
-            TestingModelSelectionParams.INVALID,
-            TestingHeightmapParams.VALID
-        );
-
-        assertThrows(IllegalArgumentException.class, paramsWithInvalidModels::validate);
-
         PopulateHeightmapTaskParams paramsWithInvalidHeightmap = new PopulateHeightmapTaskParams(
-            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.INVALID
         );
+        paramsWithInvalidHeightmap.models.type = "Ok";
 
         assertThrows(IllegalArgumentException.class, paramsWithInvalidHeightmap::validate);
     }
