@@ -18,10 +18,14 @@ public class RenderBuildingsTaskParamsTest {
         RenderBuildingsTaskParams params;
         TestingVoxelParams placeable = new TestingVoxelParams("voxel");
 
-        params = new RenderBuildingsTaskParams(TestingModelSelectionParams.VALID, placeable, placeable, placeable);
+        RenderBuildingsTaskParams paramsWithoutModels = new RenderBuildingsTaskParams(placeable, placeable, placeable);
+        assertThrows(IllegalArgumentException.class, paramsWithoutModels::validate);
+
+        params = new RenderBuildingsTaskParams(placeable, placeable, placeable);
+        params.models = TestingModelSelectionParams.VALID;
         assertDoesNotThrow(params::validate);
 
-        params = new RenderBuildingsTaskParams(TestingModelSelectionParams.INVALID, placeable, placeable, placeable);
+        params = new RenderBuildingsTaskParams(placeable, placeable, placeable);
         assertThrows(IllegalArgumentException.class, params::validate);
     }
 

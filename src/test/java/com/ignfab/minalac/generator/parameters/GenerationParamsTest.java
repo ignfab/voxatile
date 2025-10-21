@@ -123,12 +123,15 @@ public class GenerationParamsTest {
         params.forEachTile.put("source2", new FetchDataTaskParams("models2", new TestingProviderParams("value5"), new TestingProcessorParams("value6")));
 
         TestingVoxelParams placeable = new TestingVoxelParams("voxel");
-        params.forEachTile.put("building", new RenderBuildingsTaskParams(
-            new ModelSelectionParams("building"),
+        RenderBuildingsTaskParams task = new RenderBuildingsTaskParams(
             placeable,
             placeable,
             placeable
-        ));
+        );
+        task.models = new ModelSelectionParams();
+        task.models.type = "building";
+
+        params.forEachTile.put("building", task);
         Generation generation = params.create(100);
 
         assertNotNull(generation);
