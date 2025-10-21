@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.models;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -12,6 +13,11 @@ import com.ignfab.minalac.generator.utils.iterator.Iterables;
 public class ModelSelection {
     private final String type;
     private final Predicate<Model> filter;
+
+    /**
+     * A selection of no models.
+     */
+    public static final ModelSelection NONE = new None();
 
     /**
      * Constructs a new {@code ModelSelection}.
@@ -33,5 +39,16 @@ public class ModelSelection {
     public Iterable<Model> forTile(GenerationTile tile) {
         List<Model> models = tile.models().getByType(type);
         return filter == null ? models : Iterables.filter(models, filter);
+    }
+
+    private static class None extends ModelSelection {
+        None() {
+            super(null, null);
+        }
+
+        @Override
+        public Iterable<Model> forTile(GenerationTile tile) {
+            return () -> Collections.emptyIterator();
+        }
     }
 }

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.tasks.RenderBuildingsTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
@@ -14,12 +13,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for creating a {@link RenderBuildingsTask}.
  */
-public class RenderBuildingsTaskParams extends TileTaskParams {
-    /**
-     * Type of models to render (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
+public class RenderBuildingsTaskParams extends ModelTaskParams {
 
     /**
      * {@code Placeable} used to render the roof of the models (required).
@@ -43,19 +37,16 @@ public class RenderBuildingsTaskParams extends TileTaskParams {
      * Constructor used to ensure that the required fields are present during
      * deserialization.
      *
-     * @param models type of models to render
      * @param roof {@code Placeable} for roofs
      * @param wall {@code Placeable} for walls
      * @param window {@code Placeable} for windows
      */
-    @ConstructorProperties({ "models", "roof", "wall", "window" })
+    @ConstructorProperties({ "roof", "wall", "window" })
     public RenderBuildingsTaskParams(
-        ModelSelectionParams models,
         PlaceableParams roof,
         PlaceableParams wall,
         PlaceableParams window
     ) {
-        this.models = models;
         this.roof = roof;
         this.wall = wall;
         this.window = window;
@@ -63,7 +54,7 @@ public class RenderBuildingsTaskParams extends TileTaskParams {
 
     @Override
     public void validate() throws IllegalArgumentException {
-        models.validate();
+        super.validate();
         roof.validate();
         wall.validate();
         window.validate();

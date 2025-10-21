@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.NothingParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.tasks.FillBetweenHeightmapAndMetadataTask;
@@ -16,13 +15,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for creating a {@link FillBetweenHeightmapAndMetadataTask}.
  */
-public class FillBetweenHeightmapAndMetadataTaskParams extends TileTaskParams {
-    /**
-     * {@code ModelSelection} to use (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
-
+public class FillBetweenHeightmapAndMetadataTaskParams extends ModelTaskParams {
     /**
      * {@code ReadableHeightmap} to use (required).
      */
@@ -49,24 +42,21 @@ public class FillBetweenHeightmapAndMetadataTaskParams extends TileTaskParams {
      * Constructor used to ensure that the required fields are present during
      * deserialization.
      *
-     * @param models {@code ModelSelection} to use
      * @param heightmap {@code ReadableHeightmap} to use
      * @param altitudeMetadata name of the model metadata containing the altitude value
      */
-    @ConstructorProperties({ "models", "heightmap", "altitudeMetadata" })
+    @ConstructorProperties({ "heightmap", "altitudeMetadata" })
     public FillBetweenHeightmapAndMetadataTaskParams(
-        ModelSelectionParams models,
         ReadableHeightmapParams heightmap,
         String altitudeMetadata
     ) {
-        this.models = models;
         this.heightmap = heightmap;
         this.altitudeMetadata = altitudeMetadata;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
-        models.validate();
+        super.validate();
         heightmap.validate();
         placeAbove.validate();
         placeBelow.validate();

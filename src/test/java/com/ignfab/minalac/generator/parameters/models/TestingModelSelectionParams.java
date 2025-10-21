@@ -26,7 +26,7 @@ public class TestingModelSelectionParams extends ModelSelectionParams {
      * @param valid testing field
      */
     public TestingModelSelectionParams(boolean valid) {
-        super("testing");
+        super();
         this.valid = valid;
     }
 

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.tasks.RenderSurfacesTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
@@ -15,12 +14,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for creating a {@link RenderSurfacesTask}.
  */
-public class RenderSurfacesTaskParams extends TileTaskParams {
-    /**
-     * Models to render (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
+public class RenderSurfacesTaskParams extends ModelTaskParams {
     /**
      * Heightmap to render on (required).
      */
@@ -35,20 +29,18 @@ public class RenderSurfacesTaskParams extends TileTaskParams {
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
-     * @param models Selection of models to render.
      * @param heightmap heightmap to render on.
      * @param place what to place on surface.
      */
-    @ConstructorProperties({"models", "heightmap", "place"})
-    public RenderSurfacesTaskParams(ModelSelectionParams models, ReadableHeightmapParams heightmap, PlaceableParams place) {
-        this.models = models;
+    @ConstructorProperties({ "heightmap", "place"})
+    public RenderSurfacesTaskParams(ReadableHeightmapParams heightmap, PlaceableParams place) {
         this.heightmap = heightmap;
         this.place = place;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
-        models.validate();
+        super.validate();
         heightmap.validate();
         place.validate();
     }
