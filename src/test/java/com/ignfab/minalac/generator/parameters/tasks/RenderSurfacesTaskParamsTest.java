@@ -11,11 +11,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RenderSurfacesTaskParamsTest {
     @Test
     public void testValidate() {
-        ModelSelectionParams selection = new ModelSelectionParams("building");
+        ModelSelectionParams selection = new ModelSelectionParams();
+        selection.type = "building";
         RenderSurfacesTaskParams params;
 
         // Test required arguments
-        params = new RenderSurfacesTaskParams(new ModelSelectionParams(""), TestingPlaceableParams.VALID);
+        params = new RenderSurfacesTaskParams(new ModelSelectionParams(), TestingPlaceableParams.VALID);
         params.heightmap = TestingHeightmapParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 

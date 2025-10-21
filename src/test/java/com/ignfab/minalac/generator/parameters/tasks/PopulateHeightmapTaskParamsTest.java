@@ -12,7 +12,6 @@ import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
-import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -51,17 +50,6 @@ public class PopulateHeightmapTaskParamsTest {
                 PopulateHeightmapTaskParams.class,
                 """
                 type: matrixToHeightmap
-                heightmap: ground
-                """,
-                mapper
-            ));
-
-        assertThrows(
-            JacksonException.class,
-            () -> ParamsTester.deserialize(
-                PopulateHeightmapTaskParams.class,
-                """
-                type: matrixToHeightmap
                 models:
                   type: mnt
                 """,
@@ -72,17 +60,17 @@ public class PopulateHeightmapTaskParamsTest {
 
     @Test
     public void testValidate() {
-        PopulateHeightmapTaskParams paramsWithInvalidModels = new PopulateHeightmapTaskParams(
-            TestingModelSelectionParams.INVALID,
+        PopulateHeightmapTaskParams paramsWithNoModels = new PopulateHeightmapTaskParams(
             TestingHeightmapParams.VALID
         );
 
-        assertThrows(IllegalArgumentException.class, paramsWithInvalidModels::validate);
+        assertThrows(IllegalArgumentException.class, paramsWithNoModels::validate);
 
         PopulateHeightmapTaskParams paramsWithInvalidHeightmap = new PopulateHeightmapTaskParams(
-            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.INVALID
         );
+        paramsWithInvalidHeightmap.models = new ModelSelectionParams();
+        paramsWithInvalidHeightmap.models.type = "Ok";
 
         assertThrows(IllegalArgumentException.class, paramsWithInvalidHeightmap::validate);
     }
