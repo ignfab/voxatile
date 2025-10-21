@@ -13,7 +13,8 @@ public class RenderLinesTaskParamsTest {
 
     @Test
     public void testValidate() throws JsonProcessingException {
-        ModelSelectionParams selection = new ModelSelectionParams("test");
+        ModelSelectionParams selection = new ModelSelectionParams();
+        selection.type = "test";
         RenderLinesTaskParams params;
 
         // Prepare invalid and valid structure params
@@ -23,7 +24,7 @@ public class RenderLinesTaskParamsTest {
         assertThrows(IllegalArgumentException.class, invalidStruct::validate);
 
         // Test required arguments
-        params = new RenderLinesTaskParams(new ModelSelectionParams(""), validStruct);
+        params = new RenderLinesTaskParams(new ModelSelectionParams(), validStruct);
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new RenderLinesTaskParams(selection, invalidStruct);
