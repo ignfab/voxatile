@@ -16,7 +16,6 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
         FillBetweenHeightmapAndMetadataTaskParams params;
 
         params = new FillBetweenHeightmapAndMetadataTaskParams(
-            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.VALID,
             "altitude"
         );
@@ -25,7 +24,6 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
         assertDoesNotThrow(params::validate);
 
         params = new FillBetweenHeightmapAndMetadataTaskParams(
-            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.VALID,
             "altitude"
         );
@@ -33,15 +31,14 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
         assertDoesNotThrow(params::validate);
 
         params = new FillBetweenHeightmapAndMetadataTaskParams(
-            TestingModelSelectionParams.INVALID,
             TestingHeightmapParams.VALID,
             "altitude"
         );
         params.placeAbove = new TestingVoxelParams("above");
+        params.models = TestingModelSelectionParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new FillBetweenHeightmapAndMetadataTaskParams(
-            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.INVALID,
             "altitude"
         );
@@ -49,7 +46,6 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new FillBetweenHeightmapAndMetadataTaskParams(
-            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.VALID,
             ""
         );
@@ -57,7 +53,6 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
 
         assertThrows(IllegalArgumentException.class, params::validate);
         params = new FillBetweenHeightmapAndMetadataTaskParams(
-            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.VALID,
             "altitude"
         );

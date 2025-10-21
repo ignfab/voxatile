@@ -1,11 +1,12 @@
 package com.ignfab.minalac.generator.parameters.models;
 
-import java.beans.ConstructorProperties;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.models.ModelSelection;
+import com.ignfab.minalac.generator.parameters.models.filters.ModelFilterAndParams;
 import com.ignfab.minalac.generator.parameters.models.filters.ModelFilterParams;
 
 /**
@@ -13,9 +14,9 @@ import com.ignfab.minalac.generator.parameters.models.filters.ModelFilterParams;
  */
 public class ModelSelectionParams {
     /**
-     * Type of model (required).
+     * Type of model (optional).
      */
-    @JsonSetter(nulls = Nulls.FAIL)
+    @JsonSetter(nulls = Nulls.SKIP)
     public String type;
 
     /**
@@ -25,21 +26,30 @@ public class ModelSelectionParams {
     public ModelFilterParams filter = null;
 
     /**
-     * Creates a new {@code ModelFilterParams}.
+     * Narrows this selection params down according to the given selection params
+     * This will select only models also fitting other selection params.
+     * <p>
+     * This may lead to empty selection, in particular if other selection params has a different model type than this.
      *
-     * @param type Type of model to select.
+     * @param params other selection params
      */
-    @ConstructorProperties({"type"})
-    public ModelSelectionParams(String type) {
-        this.type = type;
+    public void narrowDown(ModelSelectionParams params) {
+        if (type != null && params.type != null && !type.equals(params.type))
+            throw new IllegalArgumentException("Model selection cannot have two different model types (it would select nothing)");
+
+        if (type == null)
+            type = params.type;
+
+        if (params.filter != null)
+            filter = filter == null ? params.filter : new ModelFilterAndParams(List.of(filter, params.filter));
     }
 
     /**
      * Validates params.
      */
     public void validate() {
-        if (type.isBlank())
-            throw new IllegalArgumentException("Model type cannot be empty or blank");
+        if (type != null && type.isBlank())
+            throw new IllegalArgumentException("Model type cannot be blank");
         if (filter != null)
             filter.validate();
     }
@@ -50,6 +60,10 @@ public class ModelSelectionParams {
      * @return a model selection.
      */
     public ModelSelection create() {
+        // Type presence cannot be checked at validation because it could be given later (selection narrowing)
+        if (type == null)
+            throw new IllegalArgumentException("Model selection must have a model type");
+
         return new ModelSelection(type, (filter == null) ? null : filter.create());
     }
 }

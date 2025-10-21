@@ -22,13 +22,14 @@ public class RenderLinesTaskParamsTest {
         assertThrows(IllegalArgumentException.class, invalidStruct::validate);
 
         // Test required arguments
-        params = new RenderLinesTaskParams(TestingModelSelectionParams.INVALID, validStruct);
+        params = new RenderLinesTaskParams(validStruct);
+        params.models = TestingModelSelectionParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderLinesTaskParams(TestingModelSelectionParams.VALID, invalidStruct);
+        params = new RenderLinesTaskParams(invalidStruct);
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderLinesTaskParams(TestingModelSelectionParams.VALID, validStruct);
+        params = new RenderLinesTaskParams(validStruct);
         assertDoesNotThrow(params::validate);
     }
 }
