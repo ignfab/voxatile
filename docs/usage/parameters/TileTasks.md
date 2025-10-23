@@ -7,6 +7,9 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
 ## Table of contents
 
 * [Organizational tasks](#organizational-tasks)
+  * [`noOperation`](OrganizationalTasks.md#nooperation)
+  * [`sequence`](OrganizationalTasks.md#sequence)
+  * [`schedule`](OrganizationalTasks.md#schedule)
 * [Tasks fetching data](#tasks-fetching-data)
   * [`fetchData`](#fetchdata)
 * [Tasks operating on world](#tasks-operating-on-world)
@@ -23,20 +26,8 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
 
 ## Organizational tasks
 
-### `noOperation`
-
-Does nothing. Its only purpose is to wait for other tasks and gather them under one generic name.
-
-#### Example
-```yaml
-allBuildsDone:
-  type: noOperation
-  after:
-    - buildWalls
-    - buildRoof
-    - buildFloors
-```
-This task can be used in `after` fields of other task needing buildings to be set up before they start.
+Organizational tasks don't perform processing, but help in organizing other tasks.
+They are detailed in [OrganizationalTasks.md](OrganizationalTasks.md).
 
 ## Tasks fetching data
 

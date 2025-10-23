@@ -47,6 +47,7 @@ public class SetSpawnTaskParams extends TileTaskParams {
 
     @Override
     public void validate() {
+        super.validate();
         heightmap.validate();
     }
 

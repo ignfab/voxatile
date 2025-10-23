@@ -21,36 +21,30 @@ public class HeightmapStatsTaskParamsTest {
         compute.maximum = "max";
         compute.minimum = "min";
         params = new HeightmapStatsTaskParams(TestingHeightmapParams.VALID, compute);
-        params.models = TestingModelSelectionParams.VALID;
         assertDoesNotThrow(params::validate);
 
         params = new HeightmapStatsTaskParams(TestingHeightmapParams.VALID, compute);
-        assertThrows(IllegalArgumentException.class, params::validate);
         params.models = TestingModelSelectionParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new HeightmapStatsTaskParams(TestingHeightmapParams.INVALID, compute);
-        params.models = TestingModelSelectionParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         // Nothing specified to compute
         compute = new HeightmapStatsTaskParams.ComputeParams();
         params = new HeightmapStatsTaskParams(TestingHeightmapParams.VALID, compute);
-        params.models = TestingModelSelectionParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         compute = new HeightmapStatsTaskParams.ComputeParams();
         compute.maximum = "max";
         compute.minimum = "";
         params = new HeightmapStatsTaskParams(TestingHeightmapParams.VALID, compute);
-        params.models = TestingModelSelectionParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         compute = new HeightmapStatsTaskParams.ComputeParams();
         compute.maximum = "";
         compute.minimum = "min";
         params = new HeightmapStatsTaskParams(TestingHeightmapParams.VALID, compute);
-        params.models = TestingModelSelectionParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
     }
 

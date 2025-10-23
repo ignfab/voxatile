@@ -21,7 +21,6 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
             TestingHeightmapParams.VALID,
             "altitude"
         );
-        params.models = TestingModelSelectionParams.VALID;
         params.placeAbove = new TestingVoxelParams("above");
         params.placeBelow = new TestingVoxelParams("below");
         assertDoesNotThrow(params::validate);
@@ -30,7 +29,6 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
             TestingHeightmapParams.VALID,
             "altitude"
         );
-        params.models = TestingModelSelectionParams.VALID;
         params.placeAbove = new TestingVoxelParams("above");
         assertDoesNotThrow(params::validate);
 
@@ -39,7 +37,6 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
             "altitude"
         );
         params.placeAbove = new TestingVoxelParams("above");
-        assertThrows(IllegalArgumentException.class, params::validate);
         params.models = TestingModelSelectionParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
@@ -47,7 +44,6 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
             TestingHeightmapParams.INVALID,
             "altitude"
         );
-        params.models = TestingModelSelectionParams.VALID;
         params.placeAbove = new TestingVoxelParams("above");
         assertThrows(IllegalArgumentException.class, params::validate);
 
@@ -55,7 +51,6 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
             TestingHeightmapParams.VALID,
             ""
         );
-        params.models = TestingModelSelectionParams.VALID;
         params.placeAbove = new TestingVoxelParams("above");
 
         assertThrows(IllegalArgumentException.class, params::validate);
@@ -63,7 +58,6 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
             TestingHeightmapParams.VALID,
             "altitude"
         );
-        params.models = TestingModelSelectionParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
     }
 

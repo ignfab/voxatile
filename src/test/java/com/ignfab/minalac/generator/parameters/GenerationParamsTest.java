@@ -29,7 +29,7 @@ public class GenerationParamsTest {
         OutputFormat format = new OutputFormat(TestingVoxelWorld::new, TestingVoxelParams.class, TestingVoxelParams::new);
         params = new GenerationParams(area, format);
         params.heightmaps = new HashMap<>();
-        params.forEachTile = new HashMap<>();
+        params.forEachTile = new TileScheduleParams();
     }
 
     @Test
