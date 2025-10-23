@@ -12,6 +12,7 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.tasks.TileTask;
 import com.ignfab.minalac.generator.utils.random.Seed;
+import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * This class is used to create a new {@link Generation} from {@link GenerationParams} parameters.
@@ -43,8 +44,10 @@ public final class GenerationCreator {
             throw new RuntimeException("Wasn't able to convert the coordinates", e);
         }
 
+        VoxelWorld world = params.format.createWorld();
+        world.getMetadata().setWorldName(params.worldName);
         Generation generation = new Generation(
-            params.format.createWorld(),
+            world,
             new Seed(params.seed),
             targetCrs,
             center[0],
