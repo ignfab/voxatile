@@ -14,9 +14,6 @@ public class RenderSurfacesTaskParamsTest {
         RenderSurfacesTaskParams params;
 
         // Test required arguments
-        params = new RenderSurfacesTaskParams(TestingHeightmapParams.VALID, TestingPlaceableParams.VALID);
-        assertThrows(IllegalArgumentException.class, params::validate);
-
         params = new RenderSurfacesTaskParams(TestingHeightmapParams.INVALID, TestingPlaceableParams.VALID);
         params.models = TestingModelSelectionParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);

@@ -47,10 +47,13 @@ public class RenderHeightmapTaskParams extends TileTaskParams {
 
     @Override
     public void validate() {
-        // Validity of fields combination
+         // Validity of fields combination
         if ((at != null || minimum == null || maximum == null)
             && (at == null || minimum != null || maximum != null))
             throw new IllegalArgumentException("Either at or both minimum and maximum must be provided");
+
+        super.validate();
+
         if (at != null)
             at.validate();
         else {

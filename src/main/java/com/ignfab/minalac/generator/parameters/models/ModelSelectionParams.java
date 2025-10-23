@@ -57,8 +57,8 @@ public class ModelSelectionParams {
     public void validate() {
         if (isNone)
             return;
-        if (type == null || type.isBlank())
-            throw new IllegalArgumentException("Model type cannot be empty or blank");
+        if (type != null && type.isBlank())
+            throw new IllegalArgumentException("Model type cannot be blank");
         if (filter != null)
             filter.validate();
     }
@@ -71,6 +71,10 @@ public class ModelSelectionParams {
     public ModelSelection create() {
         if (isNone)
             return ModelSelection.NONE;
+
+        // Type presence cannot be checked at validation because it could be given later (selection narrowing)
+        if (type == null)
+            throw new IllegalArgumentException("Model selection must have a model type");
 
         return new ModelSelection(type, (filter == null) ? null : filter.create());
     }

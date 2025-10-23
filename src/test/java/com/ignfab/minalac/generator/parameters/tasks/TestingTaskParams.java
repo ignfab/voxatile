@@ -14,12 +14,23 @@ import com.ignfab.minalac.generator.tasks.TileTask;
  */
 public class TestingTaskParams extends TileTaskParams {
 
+    /**
+     * A valid task params for tests.
+     */
+    public static final TestingTaskParams VALID = new TestingTaskParams();
+
+    /**
+     * An invalid task params for tests.
+     */
+    public static final TestingTaskParams INVALID = new TestingTaskParams(null);
+
     private static final Task TASK = new Task();
 
     /**
      * A required field.
      */
     public String requiredField;
+
     /**
      * An optional field.
      */
@@ -34,6 +45,19 @@ public class TestingTaskParams extends TileTaskParams {
     @ConstructorProperties({"requiredField"})
     public TestingTaskParams(String requiredField) {
         this.requiredField = requiredField;
+    }
+
+    /**
+     * Constructs a valid {@code TestingTaskParams} with no arguments.
+     */
+    public TestingTaskParams() {
+        this("dummy");
+    }
+
+    @Override
+    public void validate() {
+        if (requiredField == null)
+            throw new IllegalArgumentException();
     }
 
     @Override

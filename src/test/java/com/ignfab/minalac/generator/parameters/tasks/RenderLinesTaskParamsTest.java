@@ -22,9 +22,6 @@ public class RenderLinesTaskParamsTest {
         assertThrows(IllegalArgumentException.class, invalidStruct::validate);
 
         // Test required arguments
-        params = new RenderLinesTaskParams(validStruct);
-        assertThrows(IllegalArgumentException.class, params::validate);
-
         params = new RenderLinesTaskParams(invalidStruct);
         params.models = TestingModelSelectionParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);

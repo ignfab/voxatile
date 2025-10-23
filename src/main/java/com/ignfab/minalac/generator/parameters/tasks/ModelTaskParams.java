@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 
 /**
- * Abstract class for {@link TileTaskParams} having a modifiable model selection.
+ $ Abstract class for {@link TileTaskParams} having a model selection modifiable by {@link SequenceTaskParams} and {@link ScheduleTaskParams}.
  */
 public abstract class ModelTaskParams extends TileTaskParams {
     /**
@@ -16,10 +16,11 @@ public abstract class ModelTaskParams extends TileTaskParams {
      * a non null valid model selection (it could get it from composite tasks like sequences).
      */
     @JsonSetter(nulls = Nulls.SKIP)
-    public ModelSelectionParams models;
+    public ModelSelectionParams models = new ModelSelectionParams();
 
     @Override
     public void validate() {
+        super.validate();
         if (models == null)
             throw new IllegalArgumentException("Missing \"models\" field");
         models.validate();
