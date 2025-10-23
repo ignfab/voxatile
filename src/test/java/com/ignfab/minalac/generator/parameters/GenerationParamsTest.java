@@ -104,7 +104,14 @@ public class GenerationParamsTest {
     }
 
     @Test
+    public void testValidateWorldName() {
+        params.worldName = " ";
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
     public void testCreate() throws ParseException {
+        params.worldName = "test";
         params.verticalScale = 3.0;
         params.horizontalScale = 4.0;
         params.crs = "EPSG:5643";
@@ -128,6 +135,7 @@ public class GenerationParamsTest {
         Generation generation = params.create(100);
 
         assertNotNull(generation);
+        assertEquals("test", generation.world().getMetadata().getWorldName());
         assertEquals(50, generation.world().limits().sizeX());
         assertEquals(75, generation.world().limits().sizeY());
         assertEquals(3.0, generation.getVerticalScale(), 0.001);

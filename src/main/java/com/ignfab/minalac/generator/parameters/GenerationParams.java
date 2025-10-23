@@ -22,8 +22,11 @@ import com.ignfab.minalac.generator.generation.Generation;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GenerationParams {
-    // For now :
-    // - field mapName is not yet implemented (should probably be)
+    /**
+     * World name.
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public String worldName = "Minalac";
 
     /**
      * A placeholder for Yaml references than does not go anywhere else.
@@ -105,6 +108,8 @@ public class GenerationParams {
      * @throws IllegalArgumentException is any of the parameters is invalid.
      */
     public void validate() throws IllegalArgumentException {
+        if (worldName.isBlank())
+            throw new IllegalArgumentException("The field worldName cannot be empty or contain only whitespace.");
         if (verticalScale <= 0)
             throw new IllegalArgumentException("The field verticalScale must be greater than 0");
         if (horizontalScale <= 0)
