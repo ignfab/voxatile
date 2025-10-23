@@ -1,7 +1,8 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -20,13 +21,45 @@ public abstract class TileTaskParams extends PolymorphicParams {
      */
     @JsonSetter(nulls = Nulls.SKIP)
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    public List<String> after = new ArrayList<>();
+    public Set<String> after = new HashSet<>();
+
+    @Override
+    public void validate() {
+        after.forEach(TileTaskParams::validateTaskName);
+    }
 
     /**
-     * Creates the corresponding {@code TileTask}.
+     * Creates the corresponding {@code TileTask} if there's only one.
      *
      * @param generation the generation context.
      * @return the corresponding task
      */
     public abstract TileTask create(Generation generation);
+
+    /**
+     * Create aditional {@link TileTaskParams} if task needs to.
+     * This is the case of {@link ScheduleTaskParams} and {@link SequenceTaskParams}.
+     * <P>
+     * Warning: this may change current object and should be used only once during
+     * schedule creation from params.
+     *
+     * @param prefix prefix added to eventual subtask names
+     * @return aditional tasks indexed by their name
+     */
+    public Map<String, TileTaskParams> createAditionalTaskParams(String prefix) {
+        return Map.of();
+    }
+
+    /**
+     * Separator used to build subtask names.
+     */
+    protected static final String SEPARATOR = ":";
+
+    protected static void validateTaskName(String name) {
+        if (name.contains(SEPARATOR))
+            throw new IllegalArgumentException(
+                "Task name \"%s\" contains invalid \"%s\" char".formatted(name, SEPARATOR)
+            );
+    }
+
 }

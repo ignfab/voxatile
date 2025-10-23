@@ -13,5 +13,4 @@ public class NoOperationTaskParams extends TileTaskParams {
     public TileTask create(Generation generation) {
          return NoOperationTask.INSTANCE;
     }
-
 }

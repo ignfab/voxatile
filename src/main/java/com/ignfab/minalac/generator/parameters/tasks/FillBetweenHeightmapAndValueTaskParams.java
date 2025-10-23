@@ -67,6 +67,7 @@ public class FillBetweenHeightmapAndValueTaskParams extends TileTaskParams {
 
     @Override
     public void validate() throws IllegalArgumentException {
+        super.validate();
         models.validate();
         heightmap.validate();
         placeAbove.validate();

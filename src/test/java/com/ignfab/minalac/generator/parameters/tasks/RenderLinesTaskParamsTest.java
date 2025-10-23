@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.parameters.ParamsTester;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
+import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,8 +13,6 @@ public class RenderLinesTaskParamsTest {
 
     @Test
     public void testValidate() throws JsonProcessingException {
-        ModelSelectionParams selection = new ModelSelectionParams();
-        selection.type = "test";
         RenderLinesTaskParams params;
 
         // Prepare invalid and valid structure params
@@ -24,13 +22,13 @@ public class RenderLinesTaskParamsTest {
         assertThrows(IllegalArgumentException.class, invalidStruct::validate);
 
         // Test required arguments
-        params = new RenderLinesTaskParams(new ModelSelectionParams(), validStruct);
+        params = new RenderLinesTaskParams(TestingModelSelectionParams.INVALID, validStruct);
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderLinesTaskParams(selection, invalidStruct);
+        params = new RenderLinesTaskParams(TestingModelSelectionParams.VALID, invalidStruct);
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderLinesTaskParams(selection, validStruct);
+        params = new RenderLinesTaskParams(TestingModelSelectionParams.VALID, validStruct);
         assertDoesNotThrow(params::validate);
     }
 }

@@ -6,15 +6,31 @@ heightmaps:
 
 forEachTile:
 
-  fetchAltitude:
-    type: fetchData
-    modelType: altitude
-    provider:
-      type: wmsFloat
-      url: https://data.geopf.fr/wms-r/wms
-      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
-    processor:
-      type: floatMatrix
+  altitude:
+    type: sequence
+    do:
+    - type: fetchData
+      modelType: altitude
+      provider:
+        type: wmsFloat
+        url: https://data.geopf.fr/wms-r/wms
+        layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+      processor:
+        type: floatMatrix
+    - type: sequence
+      do:
+        - type: noOperation
+        - type: noOperation
+        - type: noOperation
+    - type: populateHeightmap
+      models:
+        type: altitude
+      heightmap: ground
+    - type: setSpawn
+      heightmap:
+        sum: [ground, 1]
+      x: 0
+      y: 0
 
   fetchBuildings:
     type: fetchData
@@ -42,16 +58,6 @@ forEachTile:
         metadata: height
         value: 5
         as: integer
-
-  fetchVegetation:
-    type: fetchData
-    modelType: vegetation
-    provider:
-      type: wfs
-      url: https://data.geopf.fr/wfs/wfs
-      features: BDTOPO_V3:zone_de_vegetation
-    processor:
-      type: geoToolsVector
 
   fetchWater:
     type: fetchData
@@ -91,7 +97,7 @@ forEachTile:
   flattenWater:
     after:
       - fetchWater
-      - setAltitude
+      - altitude
     type: copyHeightmap
     models:
       type: water
@@ -102,7 +108,7 @@ forEachTile:
 
   renderGround:
     after:
-      - setAltitude
+      - altitude
       - flattenWater
     type: renderHeightmap
     at: ground
@@ -218,7 +224,7 @@ forEachTile:
       - computeWaterDepth
       # Vegetation and water vector data overlap in certain areas. (Because of vegetation representing canopy)
       # The dependency and air voxel below should be removed when cropping is implemented on vector data.
-      - renderForest
+      - forest
     type: renderHeightmap
     minimum:
       sum:
