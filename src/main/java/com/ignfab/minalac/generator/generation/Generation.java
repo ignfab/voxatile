@@ -43,7 +43,7 @@ public class Generation {
     private final VoxelWorld world;
     private final HeightmapDeclarationStore heightmaps = new HeightmapDeclarationStore();
 
-    private final Scheduler<GenerationTile> scheduler = new Scheduler<>();
+    private Scheduler<GenerationTile> scheduler;
 
     private final int maxTileSize;
     private final Collection<WorldBBox2d> tiles;
@@ -126,6 +126,15 @@ public class Generation {
      */
     public HeightmapDeclarationStore heightmaps() {
         return heightmaps;
+    }
+
+    /**
+     * Set the main scheduler for this generation.
+     *
+     * @param scheduler Schedurler to set.
+     */
+    public void setScheduler(Scheduler<GenerationTile> scheduler) {
+        this.scheduler = scheduler;
     }
 
     /**

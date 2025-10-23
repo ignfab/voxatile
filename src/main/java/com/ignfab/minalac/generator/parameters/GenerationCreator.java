@@ -10,7 +10,6 @@ import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.tasks.TileTask;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
 /**
@@ -62,14 +61,7 @@ public final class GenerationCreator {
         );
 
         // ForEachTile scheduling
-        params.forEachTile.forEach((name, taskParams) -> {
-            TileTask task = taskParams.create(generation);
-            generation.scheduler().schedule(name, task);
-        });
-        params.forEachTile.forEach((name, taskParams) -> {
-            for (String depName : taskParams.after)
-                generation.scheduler().addDependency(name, depName);
-        });
+        generation.setScheduler(params.forEachTile.create(generation));
 
         return generation;
     }
