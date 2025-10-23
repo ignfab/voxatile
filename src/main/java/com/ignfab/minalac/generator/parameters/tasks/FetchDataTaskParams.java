@@ -57,6 +57,7 @@ public class FetchDataTaskParams extends TaskParams {
         if (modelType.isBlank())
             throw new IllegalArgumentException("The 'modelType' field cannot be empty or contain only whitespace.");
 
+        super.validate();
         provider.validate();
         processor.validate();
         postProcessing.validate();

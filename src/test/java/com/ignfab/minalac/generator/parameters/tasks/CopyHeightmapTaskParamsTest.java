@@ -87,13 +87,6 @@ public class CopyHeightmapTaskParamsTest {
     @Test
     public void testValidate() {
 
-        CopyHeightmapTaskParams paramsWithNullModels = new CopyHeightmapTaskParams(
-            TestingHeightmapParams.VALID,
-            TestingHeightmapParams.VALID
-        );
-
-        assertThrows(IllegalArgumentException.class, paramsWithNullModels::validate);
-
         CopyHeightmapTaskParams paramsWithInvalidFrom = new CopyHeightmapTaskParams(
             TestingHeightmapParams.INVALID,
             TestingHeightmapParams.VALID

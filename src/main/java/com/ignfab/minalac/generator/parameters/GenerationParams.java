@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.Nulls;
 import tools.jackson.databind.JsonNode;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.parameters.tasks.TaskParams;
 
 /**
  * GenerationParams represents the parameters used during the generation.
@@ -90,7 +89,7 @@ public class GenerationParams {
         nulls = Nulls.SKIP,
         contentNulls = Nulls.FAIL
     )
-    public Map<String, TaskParams> forEachTile = new LinkedHashMap<>();
+    public ScheduleParams forEachTile = new ScheduleParams();
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
@@ -128,8 +127,8 @@ public class GenerationParams {
 
         for (HeightmapDeclarationParams params : heightmaps.values())
             params.validate();
-        for (TaskParams params : forEachTile.values())
-            params.validate();
+
+        forEachTile.validate();
     }
 
     /**

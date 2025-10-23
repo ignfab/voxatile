@@ -46,6 +46,8 @@ import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderLinesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderSurfacesTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.ScheduleTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.SequenceTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.SetSpawnTaskParams;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
@@ -103,6 +105,8 @@ public final class MinalacGenerator {
         // TODO: Static method that provides a ParamsParser with all default renderers
         // If those name values are modified, update the documentation accordingly
         parser.registerParams("noOperation", NoOperationTaskParams.class);
+        parser.registerParams("sequence", SequenceTaskParams.class);
+        parser.registerParams("schedule", ScheduleTaskParams.class);
         parser.registerParams("copyHeightmap", CopyHeightmapTaskParams.class);
         parser.registerParams("computeHeightmapStats", HeightmapStatsTaskParams.class);
         parser.registerParams("fetchData", FetchDataTaskParams.class);

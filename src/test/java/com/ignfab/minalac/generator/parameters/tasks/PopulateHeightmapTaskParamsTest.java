@@ -54,16 +54,9 @@ public class PopulateHeightmapTaskParamsTest {
 
     @Test
     public void testValidate() {
-        PopulateHeightmapTaskParams paramsWithNoModels = new PopulateHeightmapTaskParams(
-            TestingHeightmapParams.VALID
-        );
-
-        assertThrows(IllegalArgumentException.class, paramsWithNoModels::validate);
-
         PopulateHeightmapTaskParams paramsWithInvalidHeightmap = new PopulateHeightmapTaskParams(
             TestingHeightmapParams.INVALID
         );
-        paramsWithInvalidHeightmap.models = new ModelSelectionParams();
         paramsWithInvalidHeightmap.models.type = "Ok";
 
         assertThrows(IllegalArgumentException.class, paramsWithInvalidHeightmap::validate);

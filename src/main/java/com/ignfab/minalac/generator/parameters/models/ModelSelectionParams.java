@@ -14,7 +14,7 @@ import com.ignfab.minalac.generator.parameters.models.filters.ModelFilterParams;
  */
 public class ModelSelectionParams {
     /**
-     * Type of model (required).
+     * Type of model (optional).
      */
     @JsonSetter(nulls = Nulls.SKIP)
     public String type;
@@ -28,7 +28,8 @@ public class ModelSelectionParams {
     private boolean isNone = false;
 
     /**
-     * Narrows down this selection params accorging to given selection params will select only models also fitting other selection params.
+     * Narrows this selection params down according to the given selection params
+     * This will select only models also fitting other selection params.
      * <p>
      * This may lead to empty selection, in particular if other selection params has a different model type than this.
      *
@@ -57,8 +58,8 @@ public class ModelSelectionParams {
     public void validate() {
         if (isNone)
             return;
-        if (type == null || type.isBlank())
-            throw new IllegalArgumentException("Model type cannot be empty or blank");
+        if (type != null && type.isBlank())
+            throw new IllegalArgumentException("Model type cannot be blank");
         if (filter != null)
             filter.validate();
     }
@@ -71,6 +72,10 @@ public class ModelSelectionParams {
     public ModelSelection create() {
         if (isNone)
             return ModelSelection.NONE;
+
+        // Type presence cannot be checked at validation because it could be given later (selection narrowing)
+        if (type == null)
+            throw new IllegalArgumentException("Model selection must have a model type");
 
         return new ModelSelection(type, (filter == null) ? null : filter.create());
     }

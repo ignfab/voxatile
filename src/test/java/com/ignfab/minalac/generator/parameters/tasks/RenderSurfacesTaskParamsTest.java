@@ -15,20 +15,16 @@ public class RenderSurfacesTaskParamsTest {
 
         // Test required arguments
         params = new RenderSurfacesTaskParams(TestingHeightmapParams.VALID, TestingPlaceableParams.VALID);
-        assertThrows(IllegalArgumentException.class, params::validate);
         params.models = TestingModelSelectionParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new RenderSurfacesTaskParams(TestingHeightmapParams.INVALID, TestingPlaceableParams.VALID);
-        params.models = TestingModelSelectionParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new RenderSurfacesTaskParams(TestingHeightmapParams.VALID,  TestingPlaceableParams.INVALID);
-        params.models = TestingModelSelectionParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new RenderSurfacesTaskParams(TestingHeightmapParams.VALID, TestingPlaceableParams.VALID);
-        params.models = TestingModelSelectionParams.VALID;
         assertDoesNotThrow(params::validate);
     }
 }

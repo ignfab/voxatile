@@ -18,7 +18,7 @@ public class ModelSelectionParamsTest {
         // Testing basic ModelSelectionParams validation
 
         params = new ModelSelectionParams();
-        assertThrows(IllegalArgumentException.class, params::validate);
+        assertDoesNotThrow(params::validate);
 
         params.type = "";
         assertThrows(IllegalArgumentException.class, params::validate);

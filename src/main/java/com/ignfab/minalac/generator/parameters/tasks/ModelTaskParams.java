@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 
 /**
- * Abstract class for {@link TileTaskParams} having a modifiable model selection.
+ * Abstract class for {@link TileTaskParams} having a model selection
+ * modifiable by {@link SequenceTaskParams} and {@link ScheduleTaskParams}.
  */
 public abstract class ModelTaskParams extends TaskParams {
     /**
