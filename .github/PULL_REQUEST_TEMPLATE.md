@@ -113,6 +113,6 @@ Example:
 - [ ] The code has Javadoc Comments associated
 - [ ] Complex / Unexpected code is explained / justified with a small comment
 - [ ] Relevant documentation inside the `/docs` folder has been updated
-- [ ] All examples in `docs/usage/Examples.md` work the same (or have been adapted if subject to changes in this PR)
+- [ ] All examples in `examples/` work the same (or have been adapted if subject to changes in this PR)
 - [ ] Git history is clean (each commit accomplish a single task and describe it accordingly)
 - [ ] The texts have been proofread (documentation, error messages, logs, comments...)
