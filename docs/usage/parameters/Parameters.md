@@ -24,6 +24,7 @@ Only root Yaml parameters are described here. More specific aspects could be fou
 Here is a basic generation parameters set that generates a map of 1000x1000 voxels around IGN building at Saint-Mandé (FR), in Minetest format, with 1 meter voxels in every direction:
 
 ```yaml
+worldName: My World
 references:
   - &voxel-surface default:cobble
   - &voxel-border default:stone
@@ -96,6 +97,7 @@ forEachTile:
 
 ## Fields description
 
+- `worldName`: World name (text, default `Minalac`)
 - `references`: Ignored field where references (or other content) can be put in
 - `area`: Area to be rendered
   - `center`: Coordinates of the area's center point, expressed in the commonly used coordinate system (EPSG:4326)

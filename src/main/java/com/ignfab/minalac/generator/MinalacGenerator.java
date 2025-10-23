@@ -48,7 +48,6 @@ import com.ignfab.minalac.generator.parameters.tasks.SetSpawnTaskParams;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
 import com.ignfab.minalac.generator.world.MapWriteException;
-import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
 /**
  * Main class of Minalac project.
@@ -173,9 +172,6 @@ public final class MinalacGenerator {
         System.out.printf("%nAll %d tiles generated and saved.%nSpent %ds generating and %ds saving.%n", numberOfTiles, generatingDuration.toSeconds(), mapSavingDuration.toSeconds());
 
         Instant finalizationStart = Instant.now();
-
-        VoxelWorldMetadata metadata = generation.world().getMetadata();
-        metadata.setWorldName("Minalac");
 
         generation.world().finalizeAndSave();
         System.out.printf("Generation finalization took %ds.%n", Duration.between(finalizationStart, Instant.now()).toSeconds());
