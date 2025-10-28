@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.placeables.Pattern;
-import com.ignfab.minalac.generator.placeables.RandomPattern;
+import com.ignfab.minalac.generator.placeables.patterns.RandomPattern;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
 /**
