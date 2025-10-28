@@ -1,5 +1,8 @@
-package com.ignfab.minalac.generator.placeables;
+package com.ignfab.minalac.generator.placeables.patterns;
 
+import com.ignfab.minalac.generator.placeables.Nothing;
+import com.ignfab.minalac.generator.placeables.Pattern;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Random;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
