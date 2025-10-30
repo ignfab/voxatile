@@ -4,6 +4,8 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
+import java.io.File;
+
 import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -64,6 +66,9 @@ public class MTVoxelTile extends VoxelTile {
         updateHeightmaps(x, z, y);
     }
 
+
+    private static MTMapper mapper = new MTMapper(new File("colors.txt"));
+
     /**
      * {@inheritDoc}
      * This tile is exported in a format for Minetest.
@@ -75,6 +80,8 @@ public class MTVoxelTile extends VoxelTile {
 
         for (Long2ObjectMap.Entry<Block> entry : Long2ObjectMaps.fastIterable(blocks))
             mapWriter.insertBlock(entry.getLongKey(), entry.getValue());
+
+        mapper.saveMinimap(this);
     }
 
     /**
@@ -94,4 +101,6 @@ public class MTVoxelTile extends VoxelTile {
         // X/Y/Z => X/Z/Y
         return block.get(x & 0x0f, z & 0x0f, y & 0x0f);
     }
+
+
 }
