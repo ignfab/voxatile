@@ -11,13 +11,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.PlacedVoxel;
 
 public class MTMapper {
 
-    private Map<String, Integer> colors = new HashMap<>();
+    private Map<String, Color> colors = new HashMap<>();
 
     public MTMapper(File colorFile) {
 
@@ -29,12 +28,13 @@ public class MTMapper {
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.matches()) {
 
-                    colors.put(matcher.group(1),
-                        (new Color(
+                    colors.put(
+                        matcher.group(1),
+                        new Color(
                             Integer.parseInt(matcher.group(2)),
                             Integer.parseInt(matcher.group(3)),
                             Integer.parseInt(matcher.group(4))
-                        )).getRGB()
+                        )
                     );
                 }
             }
@@ -45,20 +45,29 @@ public class MTMapper {
 
     public void saveMinimap(MTVoxelTile tile) throws MapWriteException {
         BufferedImage image = new BufferedImage(tile.limits().sizeX(), tile.limits().sizeY(), BufferedImage.TYPE_INT_RGB);
+        for (int x = tile.limits().minX(); x <= tile.limits().maxX(); x++) {
+            int lastZ = 0;
+            for (int y = tile.limits().minY(); y <= tile.limits().maxY(); y++) {
+                for (PlacedVoxel pv : tile.voxels(x, y)) {
+                    if (pv.voxel() instanceof MTVoxel voxel) {
+                        if (voxel.type != "air") {
+                            int diff = lastZ - pv.coords().z();
+                            lastZ = pv.coords().z();
+                            Color color = colors.get(voxel.type);
+                            if (color != null) {
+                                if (diff < 0)
+                                    color = color.darker();
+                                if (diff > 0)
+                                    color = color.brighter();
 
-        for (WorldCoords2d pos : tile.limits().to2d()) {
-            for (PlacedVoxel pv : tile.voxels(pos.x(), pos.y())) {
-                if (pv.voxel() instanceof MTVoxel voxel) {
-                    if (voxel.type != "air") {
-                        Integer color = colors.get(voxel.type);
-                        if (color != null)
-                            image.setRGB(pos.x() - tile.limits().minX(), pos.y() - tile.limits().minY(), color);
-                        break;
+                                image.setRGB(x - tile.limits().minX(), tile.limits().maxY() - y, color.getRGB());
+                            }
+                            break;
+                        }
                     }
                 }
             }
         }
-
         try {
             javax.imageio.ImageIO.write(image, "png", new File("tilemap-" + tile.limits().minX() + "-" + tile.limits().maxX() + "," + tile.limits().minY() + "-" + tile.limits().maxY() + ".png"));
         } catch (IOException e) {
