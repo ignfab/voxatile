@@ -1,6 +1,8 @@
 package com.ignfab.minalac.generator;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
@@ -120,7 +122,8 @@ public final class MinalacGenerator {
         parser.registerParams("geometryBuffer", JTSGeometryBufferPostProcessorParams.class);
         parser.registerParams("remap", MetadataValueMappingPostProcessorParams.class);
 
-        Generation generation = parser.parse(cli.readParameters()).create(maxTileSize);
+        String parameters = cli.readParameters();
+        Generation generation = parser.parse(parameters).create(maxTileSize);
 
         System.out.printf("Generation initialization took %ds.%n", Duration.between(initializationStart, Instant.now()).toSeconds());
         if (cli.generationDisabled()) {
@@ -174,6 +177,18 @@ public final class MinalacGenerator {
         Instant finalizationStart = Instant.now();
 
         generation.world().finalizeAndSave();
+        File parametersFile = new File(destination, "minalac.yaml");
+        try {
+            parametersFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try (FileWriter writer = new FileWriter(parametersFile)) {
+            writer.write(parameters);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         System.out.printf("Generation finalization took %ds.%n", Duration.between(finalizationStart, Instant.now()).toSeconds());
         System.out.printf("Total: %ds.%nDone.%n", Duration.between(start, Instant.now()).toSeconds());
     }
