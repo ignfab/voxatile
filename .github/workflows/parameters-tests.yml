@@ -35,7 +35,7 @@ jobs:
           for FORMAT in $FORMATS; do
             for PLACE in $PLACES; do
               for PROCESS in $PROCESSES; do
-                output=$(./generate.sh -g $FORMAT $PROCESS $PLACE 2>&1)
+                output=$(./generate.sh -g -s $FORMAT $PROCESS $PLACE 2>&1)
                 if [ $? -ne 0 ]; then
                   echo "::group::Error parsing parameters: format=$FORMAT, place=$PLACE, process=$PROCESS"
                   echo "Parameters used:"

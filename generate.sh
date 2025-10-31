@@ -40,7 +40,6 @@ while [[ "$1" == "-"* ]]; do
     case $opt in
         -g)
             generator_opt="$generator_opt --generation-disabled"
-            unset output_dir_needed
             ;;
         -s)
             generator_opt="$generator_opt --save-disabled"
