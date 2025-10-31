@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +46,7 @@ import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderVectorsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.SetSpawnTaskParams;
+import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
 import com.ignfab.minalac.generator.world.MapWriteException;
@@ -73,12 +75,20 @@ public final class MinalacGenerator {
         // Command line arguments parsing & basic processing
         MinalacGeneratorCLI cli = new MinalacGeneratorCLI();
         cli.parse(args);
-        File destination;
 
+        File destination;
+        String parameters = cli.readParameters();
         if (cli.saveDisabled())
             destination = null;
-        else
+        else {
             destination = cli.outputPath().toFile();
+            // Write the parameters file in the world root directory
+            try {
+                FileHelpers.write(new File(destination, "parameters.yaml"), parameters);
+            } catch (IOException e) {
+                throw new MapWriteException("Failed to write parameters.yaml", e);
+            }
+        }
 
         Integer maxTileSize = cli.maxTileSize();
 
@@ -120,7 +130,7 @@ public final class MinalacGenerator {
         parser.registerParams("geometryBuffer", JTSGeometryBufferPostProcessorParams.class);
         parser.registerParams("remap", MetadataValueMappingPostProcessorParams.class);
 
-        Generation generation = parser.parse(cli.readParameters()).create(maxTileSize);
+        Generation generation = parser.parse(parameters).create(maxTileSize);
 
         System.out.printf("Generation initialization took %ds.%n", Duration.between(initializationStart, Instant.now()).toSeconds());
         if (cli.generationDisabled()) {
