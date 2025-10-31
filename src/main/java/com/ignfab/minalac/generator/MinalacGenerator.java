@@ -27,6 +27,7 @@ import com.ignfab.minalac.generator.parameters.processors.post.ConditionalPostPr
 import com.ignfab.minalac.generator.parameters.processors.post.DiscardPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.IdentityPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.JTSGeometryBufferPostProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.post.MetadataConvertPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataCopyPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataDefaultPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataParsePostProcessorParams;
@@ -129,6 +130,7 @@ public final class MinalacGenerator {
         parser.registerParams("truncate", MetadataTruncatePostProcessorParams.class);
         parser.registerParams("geometryBuffer", JTSGeometryBufferPostProcessorParams.class);
         parser.registerParams("remap", MetadataValueMappingPostProcessorParams.class);
+        parser.registerParams("conversion", MetadataConvertPostProcessorParams.class);
 
         Generation generation = parser.parse(parameters).create(maxTileSize);
 

@@ -39,6 +39,10 @@ forEachTile:
         metadata: height
         method: round
         ifMissing: ignore
+      - type: conversion
+        metadata: height
+        convertAs: verticalDistance
+        ifMissing: ignore
       - type: default
         metadata: height
         value: 5
