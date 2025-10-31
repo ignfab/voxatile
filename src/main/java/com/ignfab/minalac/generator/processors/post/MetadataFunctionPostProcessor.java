@@ -1,42 +1,36 @@
 package com.ignfab.minalac.generator.processors.post;
 
-import java.util.function.Function;
-
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.models.Model;
 
 /**
- * Post-processor parsing a metadata value in-place.
+ * Post-processor applying a function to a metadata value.
  *
  * @param <T> type of the resulting value
  */
 public class MetadataFunctionPostProcessor<T> extends PostProcessor.Generic {
     private final String name;
-    private final Class<T> type;
-    private final Function<Object, ? extends T> function;
+    private final ModelFunctionProvider<T> provider;
     private final FailurePolicy ifMissingMetadata;
     private final FailurePolicy ifFunctionFails;
 
     /**
      * Creates a new post-processor that applies a function on a metadata value.
      *
-     * @param type type of the resulting value
      * @param name name of the metadata to process
-     * @param function function to apply
+     * @param provider model function provider containing function to apply
      * @param ifMissingMetadata policy to apply when the metadata is absent
      * @param ifFunctionFails policy to apply when the {@code function} returns an error
      */
     public MetadataFunctionPostProcessor(
-        Class<T> type,
         String name,
-        Function<Object, ? extends T> function,
+        ModelFunctionProvider<T> provider,
         FailurePolicy ifMissingMetadata,
         FailurePolicy ifFunctionFails
     ) {
-        this.type = type;
         this.name = name;
-        this.function = function;
+        this.provider = provider;
         this.ifMissingMetadata = ifMissingMetadata;
         this.ifFunctionFails = ifFunctionFails;
     }
@@ -53,12 +47,9 @@ public class MetadataFunctionPostProcessor<T> extends PostProcessor.Generic {
             }
 
         Object value = model.getMetadata(name);
-        if (type.isInstance(value))
-            return model;
 
         try {
-            T parsed = function.apply(value);
-            model.setMetadata(name, parsed);
+            model.setMetadata(name, provider.function(model).apply(value));
         } catch (Throwable e) {
             switch (ifFunctionFails) {
                 case IGNORE -> {}

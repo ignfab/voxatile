@@ -62,9 +62,8 @@ public class MetadataTruncatePostProcessorParams extends PostProcessorParams {
     @Override
     public PostProcessor<Model, Model> create() {
         return new MetadataFunctionPostProcessor<>(
-            Integer.class,
             metadata,
-            method.create(),
+            (model) -> method.create(),
             ifMissing.create(),
             ifTruncationFail.create()
         );

@@ -32,9 +32,8 @@ public class MetadataFunctionPostProcessorTest {
     @Test
     public void testSimpleParse() {
         TestingModel processed = getProcessed(new MetadataFunctionPostProcessor<>(
-            String.class,
             "int",
-            Objects::toString,
+            (model) -> Objects::toString,
             // Failure policy is irrelevant for this test as there is no failure
             FailurePolicy.ERROR,
             FailurePolicy.ERROR
@@ -46,7 +45,6 @@ public class MetadataFunctionPostProcessorTest {
     @Test
     public void testParsingError() {
         assertThrows(GenerationFailedException.class, () -> new MetadataFunctionPostProcessor<>(
-            String.class,
             "int",
             obj -> {
                 throw new RuntimeException();
@@ -59,9 +57,8 @@ public class MetadataFunctionPostProcessorTest {
     @Test
     public void testMissingAllowed() {
         TestingModel processed = getProcessed(new MetadataFunctionPostProcessor<>(
-            String.class,
             "missing",
-            Objects::toString,
+            (model) -> Objects::toString,
             FailurePolicy.IGNORE,
             FailurePolicy.IGNORE
         ));
@@ -71,9 +68,8 @@ public class MetadataFunctionPostProcessorTest {
     @Test
     public void testMissingForbidden() {
         assertThrows(GenerationFailedException.class, () -> new MetadataFunctionPostProcessor<>(
-            String.class,
             "missing",
-            Objects::toString,
+            (model) -> Objects::toString,
             FailurePolicy.ERROR,
             FailurePolicy.ERROR
         ).process(model));
@@ -82,7 +78,6 @@ public class MetadataFunctionPostProcessorTest {
     @Test
     public void testNullAllowed() {
         TestingModel processed = getProcessed(new MetadataFunctionPostProcessor<>(
-            String.class,
             "int",
             obj -> null,
             FailurePolicy.ERROR,
@@ -94,7 +89,6 @@ public class MetadataFunctionPostProcessorTest {
     @Test
     public void testFailurePolicyIgnore() {
         TestingModel processed = getProcessed(new MetadataFunctionPostProcessor<>(
-            String.class,
             "int",
             obj -> {
                 throw new RuntimeException();
@@ -108,7 +102,6 @@ public class MetadataFunctionPostProcessorTest {
     @Test
     public void testFailurePolicyRemove() {
         TestingModel processed = getProcessed(new MetadataFunctionPostProcessor<>(
-            String.class,
             "int",
             obj -> {
                 throw new RuntimeException();
@@ -122,7 +115,6 @@ public class MetadataFunctionPostProcessorTest {
     @Test
     public void testFailurePolicySkip() {
         assertThrows(IgnorableException.class, () -> new MetadataFunctionPostProcessor<>(
-            String.class,
             "int",
             obj -> {
                 throw new RuntimeException();
@@ -135,7 +127,6 @@ public class MetadataFunctionPostProcessorTest {
     @Test
     public void testFailurePolicyError() {
         assertThrows(GenerationFailedException.class, () -> new MetadataFunctionPostProcessor<>(
-            String.class,
             "int",
             obj -> {
                 throw new RuntimeException();
