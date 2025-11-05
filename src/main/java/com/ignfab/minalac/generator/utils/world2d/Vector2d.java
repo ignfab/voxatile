@@ -80,6 +80,14 @@ public record Vector2d(double x, double y) {
         return new Vector2d(-x, -y);
     }
 
+    public Vector2d unit() {
+        double l = length();
+        if (l > 0.0)
+            return new Vector2d(x / l, y / l);
+        else
+            return this;
+    }
+
     /**
      * {@return rounded vector coordinates as a new {@link WorldCoords2d}}.
      */
