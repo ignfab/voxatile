@@ -35,7 +35,7 @@ public class RenderSurfacesTask extends ModelTask<Shape2dConvertibleModel> {
 
     @Override
     protected void run(Shape2dConvertibleModel model, GenerationTile tile) {
-        ReadableHeightmap heightmap = tile.heightmaps().get(heightmapSpec);
+        ReadableHeightmap heightmap = tile.heightmap(heightmapSpec);
 
         for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(model))) {
             WorldCoords2d c = voxel.coords();
