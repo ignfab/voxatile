@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.voxelization.shape2d;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -23,8 +24,10 @@ public class Polygon2d implements Shape2d {
      * @param holes the collection of holes of the polygon.
      */
     public Polygon2d(LinearRing2d shell, Collection<LinearRing2d> holes) {
-        this.shell = shell;
-        this.holes = holes;
+        this.shell = shell.toClockwise();
+        this.holes = new ArrayList<>(holes.size());
+        for (LinearRing2d hole : holes)
+            this.holes.add(hole.toCounterClockwise());
     }
 
     /**
@@ -35,13 +38,6 @@ public class Polygon2d implements Shape2d {
      */
     public Polygon2d(LinearRing2d shell, LinearRing2d... holes) {
         this(shell, Arrays.asList(holes));
-    }
-
-    /**
-     * {@return all segments of the polygon}
-     */
-    public Iterable<Segment2d> segments() {
-        return Iterables.unwrap(Iterables.remap(lineStrings(), LineString2d::segments));
     }
 
     @Override
@@ -57,6 +53,13 @@ public class Polygon2d implements Shape2d {
     @Override
     public Iterable<Point2d> points() {
         return Iterables.unwrap(Iterables.remap(lineStrings(), LineString2d::points));
+    }
+
+    /**
+     * {@return iterable over all segments in the shape}
+     */
+    public Iterable<Segment2d> segments() {
+        return Iterables.unwrap(Iterables.remap(lineStrings(), LineString2d::segments));
     }
 
     @Override

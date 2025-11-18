@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.voxelization.shape3d;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -23,8 +24,10 @@ public class Polygon3d implements Shape3d {
      * @param holes the collection of holes of the polygon.
      */
     public Polygon3d(LinearRing3d shell, Collection<LinearRing3d> holes) {
-        this.shell = shell;
-        this.holes = holes;
+        this.shell = shell.toClockwiseXY();
+        this.holes = new ArrayList<>(holes.size());
+        for (LinearRing3d hole : holes)
+            this.holes.add(hole.toCounterClockwiseXY());
     }
 
     /**
@@ -35,13 +38,6 @@ public class Polygon3d implements Shape3d {
      */
     public Polygon3d(LinearRing3d shell, LinearRing3d... holes) {
         this(shell, Arrays.asList(holes));
-    }
-
-    /**
-     * {@return all segments of the polygon}
-     */
-    public Iterable<Segment3d> segments() {
-        return Iterables.unwrap(Iterables.remap(lineStrings(), LineString3d::segments));
     }
 
     @Override
@@ -59,6 +55,12 @@ public class Polygon3d implements Shape3d {
         return Iterables.unwrap(Iterables.remap(lineStrings(), LineString3d::points));
     }
 
+    /**
+     * {@return iterable over all segments in the shape}
+     */
+    public Iterable<Segment3d> segments() {
+        return Iterables.unwrap(Iterables.remap(lineStrings(), LineString3d::segments));
+    }
 
     @Override
     public Iterable<LineString3d> lineStrings() {
