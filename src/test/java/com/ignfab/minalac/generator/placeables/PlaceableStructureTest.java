@@ -40,26 +40,28 @@ public class PlaceableStructureTest {
         ^       |B B| |CDE| |   |
         |       |  B| | C | |   |
         + - > x +---+ +---+ +---+ */
-        PlaceableStructure structure = new PlaceableStructure();
+        PlaceableStructure structure = PlaceableStructure.builder()
 
-        // z = -1 : fill with B
-        structure.set(new WorldBBox3d(-1, -1, -1, 3, 3, 1), vtB);
-        // z = -1 : remove the voxel at the middle -> |B B|
-        structure.set(0, 0, -1, null);
-        // z = -1 : remove the two voxels -> |  B|
-        structure.remove(new WorldBBox3d(-1, -1, -1, 2, 1, 1));
+            // z = -1 : fill with B
+            .set(new WorldBBox3d(-1, -1, -1, 3, 3, 1), vtB)
+            // z = -1 : remove the voxel at the middle -> |B B|
+            .set(0, 0, -1, null)
+            // z = -1 : remove the two voxels -> |  B|
+            .remove(new WorldBBox3d(-1, -1, -1, 2, 1, 1))
 
-        // z = 0 | E |
-        structure.set(0, 1, 0, vtE);
-        // z = 0 |CDE|
-        structure.set(-1, 0, 0, vtC);
-        structure.set(0, 0, 0, vtD);
-        structure.set(1, 0, 0, vtE);
-        // z = 0 | C |
-        structure.set(0, -1, 0, vtC);
+            // z = 0 | E |
+            .set(0, 1, 0, vtE)
+            // z = 0 |CDE|
+            .set(-1, 0, 0, vtC)
+            .set(0, 0, 0, vtD)
+            .set(1, 0, 0, vtE)
+            // z = 0 | C |
+            .set(0, -1, 0, vtC)
 
-        // z = 1 |B  |
-        structure.set(-1, 1, 1, vtB);
+            // z = 1 |B  |
+            .set(-1, 1, 1, vtB)
+
+            .build();
 
         // Structure is placed at the center of the world
         structure.place(tile, 0, -1, -2);
@@ -128,7 +130,7 @@ public class PlaceableStructureTest {
         TestingVoxel vt = new TestingVoxel("*");
         vt.place(tile, 4, 4, 5);
 
-        PlaceableStructure structure = new PlaceableStructure();
+        PlaceableStructure structure = PlaceableStructure.EMPTY;
         structure.place(tile, 3, 4, 5);
         structure.place(tile, 4, 4, 5);
 
@@ -141,9 +143,10 @@ public class PlaceableStructureTest {
         Placeable vtA = new TestingVoxel("A");
         Placeable vtB = new TestingVoxel("B");
 
-        PlaceableStructure structure = new PlaceableStructure();
-        structure.set(1, 2, 3, vtA);
-        structure.set(3, 2, 1, vtB);
+        PlaceableStructure structure = PlaceableStructure.builder()
+            .set(1, 2, 3, vtA)
+            .set(3, 2, 1, vtB)
+            .build();
 
         assertEquals(vtA, structure.get(1, 2, 3));
         assertEquals(vtB, structure.get(3, 2, 1));
@@ -153,26 +156,65 @@ public class PlaceableStructureTest {
     @Test
     public void testLimits() {
         Placeable vt = new TestingVoxel("X");
-        PlaceableStructure structure = new PlaceableStructure();
+        PlaceableStructure structure = PlaceableStructure.EMPTY;
 
         // Basic checks
-        structure.set(1, 2, 3, vt);
+        structure = structure.toBuilder().set(1, 2, 3, vt).build();
         assertEquals(new WorldBBox3d(1, 2, 3, 1, 1, 1), structure.limits());
 
-        structure.set(0, 0, 0, vt);
+        structure = structure.toBuilder().set(0, 0, 0, vt).build();
         assertEquals(new WorldBBox3d(0, 0, 0, 2, 3, 4), structure.limits());
 
         // Check adding novoxel extends limits
-        structure.set(6, 7, 8, Nothing.INSTANCE);
+        structure = structure.toBuilder().set(6, 7, 8, Nothing.INSTANCE).build();
         assertEquals(new WorldBBox3d(0, 0, 0, 7, 8, 9), structure.limits());
 
         // Check remove shrinks limits
-        structure.remove(0, 0, 0);
+        structure = structure.toBuilder().remove(0, 0, 0).build();
         assertEquals(new WorldBBox3d(1, 2, 3, 6, 6, 6), structure.limits());
 
         // Check underlying placeable does not extend limits
-        PlaceableStructure superStructure = new PlaceableStructure();
-        superStructure.set(3, 2, 1, structure);
+        PlaceableStructure superStructure = PlaceableStructure.builder()
+            .set(3, 2, 1, structure)
+            .build();
         assertEquals(new WorldBBox3d(3, 2, 1, 1, 1, 1), superStructure.limits());
+    }
+
+    @Test
+    public void testMerge() {
+        TestingVoxel vtA = new TestingVoxel("A");
+        TestingVoxel vtB = new TestingVoxel("B");
+        TestingVoxel vtC = new TestingVoxel("C");
+        TestingVoxel vtD = new TestingVoxel("D");
+        TestingVoxel vtE = new TestingVoxel("E");
+
+        PlaceableStructure subStruct = PlaceableStructure.builder().set(0, 0, 0, vtE).build();
+
+        PlaceableStructure structure = PlaceableStructure.builder()
+            .set(1, 2, 3, vtA)
+            .set(3, 2, 1, vtB)
+            .merge(1, 0, 0, PlaceableStructure.builder()
+                .set(0, 2, 3, vtC) // Overwrites vtA
+                .set(1, 1, 1, vtD)
+                .set(-1, -2, -3, subStruct)
+                .build())
+            .build();
+
+        // Original untouched structure content is preserved
+        assertEquals(vtB, structure.get(3, 2, 1));
+
+        // Other content from merged structure is present
+        assertEquals(vtD, structure.get(2, 1, 1));
+
+        // Merged structure has overwritten original content at same offset
+        assertEquals(vtC, structure.get(1, 2, 3));
+
+        // Sub-structures from merged are not flattened
+        assertEquals(subStruct, structure.get(0, -2, -3));
+    }
+
+    @Test
+    public void testEmptyBuilder() {
+        assertSame(PlaceableStructure.EMPTY, PlaceableStructure.builder().build());
     }
 }
