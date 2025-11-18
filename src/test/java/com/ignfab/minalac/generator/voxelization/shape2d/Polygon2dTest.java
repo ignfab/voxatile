@@ -51,6 +51,21 @@ public class Polygon2dTest {
     }
 
     @Test
+    public void testLines() {
+        assertBrowsesAllOnce(List.of(
+            new Segment2d(new WorldCoords2d(3, 0), new WorldCoords2d(-3, 0)),
+            new Segment2d(new WorldCoords2d(0, 6), new WorldCoords2d(3, 0)),
+            new Segment2d(new WorldCoords2d(-3, 0), new WorldCoords2d(0, 6)),
+            new Segment2d(new WorldCoords2d(-1, 1), new WorldCoords2d(-1, 2)),
+            new Segment2d(new WorldCoords2d(-1, 2), new WorldCoords2d(-2, 1)),
+            new Segment2d(new WorldCoords2d(-2, 1), new WorldCoords2d(-1, 1)),
+            new Segment2d(new WorldCoords2d(1, 1), new WorldCoords2d(2, 1)),
+            new Segment2d(new WorldCoords2d(2, 1), new WorldCoords2d(1, 2)),
+            new Segment2d(new WorldCoords2d(1, 2), new WorldCoords2d(1, 1))
+        ),  assertDoesNotThrow(polygon::segments).iterator());
+    }
+
+    @Test
     public void testLineStrings() {
         assertBrowsesAllOnce(List.of(
                 LinearRing2d.fromPoints(List.of(
@@ -64,9 +79,9 @@ public class Polygon2dTest {
                     new WorldCoords2d(-2, 1)
                 )),
                 LinearRing2d.fromPoints(List.of(
-                    new WorldCoords2d(1, 1),
+                    new WorldCoords2d(2, 1),
                     new WorldCoords2d(1, 2),
-                    new WorldCoords2d(2, 1)
+                    new WorldCoords2d(1, 1)
                 ))
             ),
             assertDoesNotThrow(polygon::lineStrings).iterator()

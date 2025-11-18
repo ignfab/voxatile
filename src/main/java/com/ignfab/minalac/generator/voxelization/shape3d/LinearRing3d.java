@@ -1,7 +1,9 @@
 package com.ignfab.minalac.generator.voxelization.shape3d;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
@@ -59,5 +61,54 @@ public class LinearRing3d extends LineString3d {
             return null;
 
         return segments.get(Math.floorMod(index, segments.size()));
+    }
+
+    /**
+     * Determines if the ring is oriented clockwise on XY plane (ignoring Z).
+     *
+     * @return true if the ring is oriented clockwise, false otherwise
+     */
+    public boolean isClockwiseXY() {
+        // The code below follows this algorithm:
+        // https://en.wikipedia.org/wiki/Shoelace_formula#Shoelace_formula
+        //
+        // The result of the shoelace formula provides two information:
+        // - Its signs gives the ring orientation;
+        // - Its absolute value is twice the ring area (should be used if we need to compute that area)
+        int sum = 0;
+        for (Segment3d segment : segments) {
+            WorldCoords3d p1 = segment.start();
+            WorldCoords3d p2 = segment.end();
+
+            sum += p1.x() * p2.y() - p2.x() * p1.y();
+        }
+        // Result is positive for positively oriented (counter-clockwise)
+        // polygons and negative for negatively oriented (clockwise) ones
+        return sum < 0;
+    }
+
+    /**
+     * {@return a new {@code LinearRing3d} with the order of points reversed}
+     */
+    public LinearRing3d invert() {
+        List<WorldCoords3d> points = new ArrayList<>(size());
+        ListIterator<Segment3d> iterator = segments.listIterator(size());
+        while (iterator.hasPrevious())
+            points.add(iterator.previous().start());
+        return fromPoints(points);
+    }
+
+    /**
+     * {@return a LinearRing3d oriented clockwise on XY plane}
+     */
+    public LinearRing3d toClockwiseXY() {
+        return isClockwiseXY() ? this : invert();
+    }
+
+    /**
+     * {@return a LinearRing3d oriented counterclockwise on XY plane}
+     */
+    public LinearRing3d toCounterClockwiseXY() {
+        return isClockwiseXY() ? invert() : this;
     }
 }

@@ -10,6 +10,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
 import static org.junit.jupiter.api.Assertions.*;
+
 public class Polygon3dTest {
     private Polygon3d polygon;
 
@@ -50,6 +51,21 @@ public class Polygon3dTest {
     }
 
     @Test
+    public void testLines() {
+        assertBrowsesAllOnce(List.of(
+            new Segment3d(new WorldCoords3d(3, 0, 5), new WorldCoords3d(-3, 0, 5)),
+            new Segment3d(new WorldCoords3d(0, 6, 5), new WorldCoords3d(3, 0, 5)),
+            new Segment3d(new WorldCoords3d(-3, 0, 5), new WorldCoords3d(0, 6, 5)),
+            new Segment3d(new WorldCoords3d(-1, 1, 5), new WorldCoords3d(-1, 2, 5)),
+            new Segment3d(new WorldCoords3d(-1, 2, 5), new WorldCoords3d(-2, 1, 5)),
+            new Segment3d(new WorldCoords3d(-2, 1, 5), new WorldCoords3d(-1, 1, 5)),
+            new Segment3d(new WorldCoords3d(1, 1, 5), new WorldCoords3d(2, 1, 5)),
+            new Segment3d(new WorldCoords3d(2, 1, 5), new WorldCoords3d(1, 2, 5)),
+            new Segment3d(new WorldCoords3d(1, 2, 5), new WorldCoords3d(1, 1, 5))
+        ),  assertDoesNotThrow(polygon::segments).iterator());
+    }
+
+    @Test
     public void testLineStrings() {
         assertBrowsesAllOnce(
             List.of(
@@ -64,9 +80,9 @@ public class Polygon3dTest {
                     new WorldCoords3d(-2, 1, 5)
                 )),
                 LinearRing3d.fromPoints(List.of(
-                    new WorldCoords3d(1, 1, 5),
+                    new WorldCoords3d(2, 1, 5),
                     new WorldCoords3d(1, 2, 5),
-                    new WorldCoords3d(2, 1, 5)
+                    new WorldCoords3d(1, 1, 5)
                 ))
             ),
             assertDoesNotThrow(polygon::lineStrings).iterator()
