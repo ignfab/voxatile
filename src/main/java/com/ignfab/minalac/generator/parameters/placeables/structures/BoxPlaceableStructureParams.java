@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.parameters.utils.WorldBBox3dParams;
-import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
@@ -51,8 +50,7 @@ public class BoxPlaceableStructureParams extends PlaceableStructureParams.Varian
     }
 
     @Override
-    public void apply(Seed seed, PlaceableStructure structure) {
-        Placeable placeable = put.create(seed);
-        structure.set(at.create(), placeable);
+    public void apply(Seed seed, PlaceableStructure.Builder structureBuilder) {
+        structureBuilder.set(at.create(), put.create(seed));
     }
 }

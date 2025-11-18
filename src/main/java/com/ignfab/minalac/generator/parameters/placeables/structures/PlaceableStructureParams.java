@@ -42,11 +42,11 @@ public final class PlaceableStructureParams extends PlaceableParams {
 
     @Override
     public PlaceableStructure create(Seed seed) {
-        PlaceableStructure structure = new PlaceableStructure();
+        PlaceableStructure.Builder structureBuilder = PlaceableStructure.builder();
         for (Variant param : params)
-            param.apply(seed, structure);
+            param.apply(seed, structureBuilder);
 
-        return structure;
+        return structureBuilder.build();
     }
 
     /**
@@ -96,12 +96,12 @@ public final class PlaceableStructureParams extends PlaceableParams {
 
         /**
          * Applies this parameters content to the given structure.
-         *
+         * <p>
          * It is used rather than a {@code create} method to allow merging several parameters into one structure.
          *
          * @param seed Random seed to use for this {@code PlaceableStructure}.
-         * @param structure Structure which put created voxels into
+         * @param structureBuilder Structure builder to put created placeables into
          */
-        public abstract void apply(Seed seed, PlaceableStructure structure);
+        public abstract void apply(Seed seed, PlaceableStructure.Builder structureBuilder);
     }
 }
