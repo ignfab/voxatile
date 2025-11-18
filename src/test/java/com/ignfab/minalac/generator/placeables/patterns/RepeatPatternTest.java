@@ -15,7 +15,7 @@ public class RepeatPatternTest {
     @Test
     public void testConstructor() {
         assertDoesNotThrow(() -> new RepeatPattern(
-            new PlaceableStructure(),
+            PlaceableStructure.EMPTY,
             new WorldCoords3d(0, 0, 0),
             new WorldCoords3d(0, 0, 0),
             new WorldCoords3d(0, 0, 0)
@@ -29,10 +29,11 @@ public class RepeatPatternTest {
 
         TestingVoxel o = new TestingVoxel("O");
         TestingVoxel y = new TestingVoxel("Y");
-        struc = new PlaceableStructure();
-        struc.set(0, 0, 0, o);
-        struc.set(1, 0, 0, X);
-        struc.set(2, 0, 0, y);
+        struc = PlaceableStructure.builder()
+            .set(0, 0, 0, o)
+            .set(1, 0, 0, X)
+            .set(2, 0, 0, y)
+            .build();
 
         pattern = new RepeatPattern(
             struc,
@@ -50,10 +51,11 @@ public class RepeatPatternTest {
         assertEquals(X, pattern.get(7, 0, 0));
         assertEquals(y, pattern.get(8, 0, 0));
 
-        struc = new PlaceableStructure();
-        struc.set(0, 0, 0, o);
-        struc.set(0, 1, 0, X);
-        struc.set(0, 2, 0, y);
+        struc = PlaceableStructure.builder()
+            .set(0, 0, 0, o)
+            .set(0, 1, 0, X)
+            .set(0, 2, 0, y)
+            .build();
 
         pattern = new RepeatPattern(
             struc,
@@ -71,10 +73,11 @@ public class RepeatPatternTest {
         assertEquals(X, pattern.get(0, 7, 0));
         assertEquals(y, pattern.get(0, 8, 0));
 
-        struc = new PlaceableStructure();
-        struc.set(0, 0, 0, o);
-        struc.set(0, 0, 1, X);
-        struc.set(0, 0, 2, y);
+        struc = PlaceableStructure.builder()
+            .set(0, 0, 0, o)
+            .set(0, 0, 1, X)
+            .set(0, 0, 2, y)
+            .build();
 
         pattern = new RepeatPattern(
             struc,
@@ -99,9 +102,10 @@ public class RepeatPatternTest {
         PlaceableStructure struc;
 
         // Each Z -> Shift X and Y
-        struc = new PlaceableStructure();
-        struc.set(0, 0, 0, X);
-        struc.set(2, 2, 0, Nothing.INSTANCE);
+        struc = PlaceableStructure.builder()
+            .set(0, 0, 0, X)
+            .set(2, 2, 0, Nothing.INSTANCE)
+            .build();
         pattern = new RepeatPattern(
             struc,
             new WorldCoords3d(0, 0, 0),
@@ -118,9 +122,10 @@ public class RepeatPatternTest {
         assertEquals(X, pattern.get(5, 1, 2));
 
         // Each Y -> Shift X and Z
-        struc = new PlaceableStructure();
-        struc.set(0, 0, 0, X);
-        struc.set(2, 0, 2, Nothing.INSTANCE);
+        struc = PlaceableStructure.builder()
+            .set(0, 0, 0, X)
+            .set(2, 0, 2, Nothing.INSTANCE)
+            .build();
         pattern = new RepeatPattern(
             struc,
             new WorldCoords3d(0, 0, 0),
@@ -138,9 +143,10 @@ public class RepeatPatternTest {
 
 
         // Each X -> Shift Y and Z
-        struc = new PlaceableStructure();
-        struc.set(0, 0, 0, X);
-        struc.set(0, 2, 2, Nothing.INSTANCE);
+        struc = PlaceableStructure.builder()
+            .set(0, 0, 0, X)
+            .set(0, 2, 2, Nothing.INSTANCE)
+            .build();
         pattern = new RepeatPattern(
             struc,
             new WorldCoords3d(0, 2, 1),
@@ -158,8 +164,7 @@ public class RepeatPatternTest {
     }
 
     public void testSpacing() {
-        PlaceableStructure struc = new PlaceableStructure();
-        struc.set(0, 0, 0, X);
+        PlaceableStructure struc = PlaceableStructure.builder().set(0, 0, 0, X).build();
 
         RepeatPattern pattern = new RepeatPattern(
             struc,

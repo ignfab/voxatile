@@ -23,7 +23,6 @@ class RenderLinesTaskTest {
     private WorldBBox3d bbox;
     private TestingGenerationTile tile;
     private ModelSelection modelSelection;
-    private PlaceableStructure structure;
 
     @BeforeEach
     public void setUp() {
@@ -31,20 +30,21 @@ class RenderLinesTaskTest {
         bbox = new WorldBBox3d(-1, -2, -3, 4, 5, 6);
         tile = new TestingGenerationTile(bbox);
         modelSelection = new ModelSelection("testing", null);
-        structure = new PlaceableStructure();
     }
 
     @Test
     public void testConstructor() {
-        assertDoesNotThrow(() -> new RenderLinesTask(modelSelection, structure, new ConstantHeightmap(0)));
-        assertDoesNotThrow(() -> new RenderLinesTask(modelSelection, structure, null));
+        assertDoesNotThrow(() -> new RenderLinesTask(modelSelection, PlaceableStructure.EMPTY, new ConstantHeightmap(0)));
+        assertDoesNotThrow(() -> new RenderLinesTask(modelSelection, PlaceableStructure.EMPTY, null));
     }
 
     @Test
     public void testRenderWithoutHeightmap() {
 
         tile.models().add("testing", new TestingShape3dModel(LineString3d.fromPoints(bbox.min(), bbox.max())));
-        structure.set(new WorldCoords3d(0, 0, 0), new TestingVoxel("TEST"));
+        PlaceableStructure structure = PlaceableStructure.builder()
+            .set(new WorldCoords3d(0, 0, 0), new TestingVoxel("TEST"))
+            .build();
 
         // Test rendering works
         assertDoesNotThrow(() -> new RenderLinesTask(modelSelection, structure, null).run(tile), "Render should not throw");
@@ -71,7 +71,9 @@ class RenderLinesTaskTest {
     public void testRenderWithHeightmap() {
 
         tile.models().add("testing", new TestingShape3dModel(LineString3d.fromPoints(bbox.min(), bbox.max())));
-        structure.set(new WorldCoords3d(0, 0, 0), new TestingVoxel("TEST"));
+        PlaceableStructure structure = PlaceableStructure.builder()
+            .set(new WorldCoords3d(0, 0, 0), new TestingVoxel("TEST"))
+            .build();
 
         // Test rendering works
         assertDoesNotThrow(() -> new RenderLinesTask(modelSelection, structure, new ConstantHeightmap(-1)).run(tile), "Render should not throw");
@@ -84,7 +86,7 @@ class RenderLinesTaskTest {
             throw new Exception("No voxel rendered");
         }, "Voxel expected to be rendered");
 
-        // Test all rendererd voxels are over or on heightmap ("render only above")
+        // Test all rendered voxels are over or on heightmap ("render only above")
         for (WorldCoords3d pos : bbox)
             if (tile.voxels().get(pos) != null)
                 assertTrue(pos.z() >= -1, "Voxel at %s expected to be over or on heightmap".formatted(pos));
