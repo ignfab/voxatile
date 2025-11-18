@@ -26,7 +26,7 @@ public class SetSpawnTask implements TileTask {
     @Override
     public void run(GenerationTile tile) {
         if (tile.limits().bbox().to2d().contains(spawn)) {
-            int spawnZ = tile.heightmaps().get(heightmapSpec).get(spawn);
+            int spawnZ = tile.heightmap(heightmapSpec).get(spawn);
             tile.generation().world().getMetadata().setSpawn(spawn.to3d(spawnZ));
         }
     }

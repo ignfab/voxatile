@@ -28,7 +28,7 @@ public class MultiOperandsHeightmapParamsTest {
         generation.heightmaps().add(heightmapSpec);
 
         GenerationTile tile = new GenerationTile(generation, new WorldBBox3d(0, 0, 0, 3, 1, 1));
-        WritableHeightmap ground = tile.heightmaps().get(heightmapSpec.spec());
+        WritableHeightmap ground = tile.heightmap(heightmapSpec.spec());
 
         ground.set(0, 0, 0);
         ground.set(1, 0, 2);
@@ -45,7 +45,7 @@ public class MultiOperandsHeightmapParamsTest {
 
         assertDoesNotThrow(params::validate);
         ReadableHeightmapSpec spec = assertDoesNotThrow(() -> params.create(generation.heightmaps()));
-        ReadableHeightmap result = tile.heightmaps().get(spec);
+        ReadableHeightmap result = tile.heightmap(spec);
 
         assertEquals(11, result.get(0, 0), "0 + 5 + 6");
         assertEquals(13, result.get(1, 0), "2 + 5 + 6");
@@ -59,7 +59,7 @@ public class MultiOperandsHeightmapParamsTest {
         generation.heightmaps().add(heightmapSpec);
 
         GenerationTile tile = new GenerationTile(generation, new WorldBBox3d(0, 0, 0, 3, 1, 1));
-        WritableHeightmap ground = tile.heightmaps().get(heightmapSpec.spec());
+        WritableHeightmap ground = tile.heightmap(heightmapSpec.spec());
 
         ground.set(0, 0, 0);
         ground.set(1, 0, 2);
@@ -76,7 +76,7 @@ public class MultiOperandsHeightmapParamsTest {
 
         assertDoesNotThrow(params::validate);
         ReadableHeightmapSpec spec = assertDoesNotThrow(() -> params.create(generation.heightmaps()));
-        ReadableHeightmap result = tile.heightmaps().get(spec);
+        ReadableHeightmap result = tile.heightmap(spec);
 
         assertEquals(0, result.get(0, 0), "0 * 5 * 7");
         assertEquals(70, result.get(1, 0), "2 * 5 * 7");

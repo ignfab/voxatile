@@ -45,7 +45,7 @@ public class RenderLinesTask extends ModelTask<Shape3dConvertibleModel> {
 
     @Override
     protected void run(Shape3dConvertibleModel model, GenerationTile tile) {
-        ReadableHeightmap renderOnlyWhenAbove = renderOnlyWhenAboveSpec == null ? DEFAULT_HEIGHTMAP : tile.heightmaps().get(renderOnlyWhenAboveSpec);
+        ReadableHeightmap renderOnlyWhenAbove = tile.heightmap(renderOnlyWhenAboveSpec, DEFAULT_HEIGHTMAP);
         WorldBBox3d limits = structure.limits();
 
         // Always align structure center to the line axis.

@@ -48,7 +48,7 @@ public class FillBetweenHeightmapAndMetadataTask extends ModelTask<Shape2dConver
 
     @Override
     protected void run(Shape2dConvertibleModel model, GenerationTile tile) {
-        ReadableHeightmap heightmap = tile.heightmaps().get(heightmapSpec);
+        ReadableHeightmap heightmap = tile.heightmap(heightmapSpec);
         Integer altitude = model.getMetadata(altitudeMetadata);
         // TODO should we use a FailurePolicy ?
         if (altitude == null)

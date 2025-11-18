@@ -40,7 +40,7 @@ public class HeightmapStatsTask extends ModelTask<Shape2dConvertibleModel> {
 
     @Override
     protected void run(Shape2dConvertibleModel model, GenerationTile tile) {
-        ReadableHeightmap heightmap = tile.heightmaps().get(heightmapSpec);
+        ReadableHeightmap heightmap = tile.heightmap(heightmapSpec);
 
         boolean empty = true;
         int min = Integer.MAX_VALUE;

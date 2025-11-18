@@ -30,7 +30,7 @@ public class RemapHeightmapParamsTest {
         generation.heightmaps().add(heightmapSpec);
 
         GenerationTile tile = new GenerationTile(generation, new WorldBBox3d(-3, 0, 0, 8, 1, 0));
-        WritableHeightmap base = tile.heightmaps().get(heightmapSpec.spec());
+        WritableHeightmap base = tile.heightmap(heightmapSpec.spec());
 
         for (int i = -3; i <= 4; i++)
             base.set(i, 0, i);
@@ -46,7 +46,7 @@ public class RemapHeightmapParamsTest {
         ));
 
         ReadableHeightmapSpec spec = assertDoesNotThrow(() -> params.create(generation.heightmaps()));
-        ReadableHeightmap result = tile.heightmaps().get(spec);
+        ReadableHeightmap result = tile.heightmap(spec);
         assertEquals(21, result.get(0, 0), "Should match first interval [0; 1] -> 21");
         assertEquals(34, result.get(2, 0), "Should match second interval [-3; 3] -> 34");
         assertEquals(34, result.get(-3, 0), "Should match second interval [-3; 3] -> 34");
