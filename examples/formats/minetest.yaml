@@ -30,5 +30,17 @@ references:
         at: [ -3..3, -3..3, 4..10 ]
       - put: default:aspen_tree
         at: [ 0, 0, 0..5 ]
+  - &apple-tree
+    structure:
+      - put:
+          - pattern:
+              place: default:leaves
+              chance: 0.6
+          - pattern:
+              place: default:apple
+              chance: 0.06
+        at: [ -3..3, -3..3, 3..9 ]
+      - put: default:tree
+        at: [ 0, 0, 0..4 ]
   - &voxel-water default:water_source
   - &voxel-air air

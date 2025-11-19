@@ -124,7 +124,6 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
         } catch (ParserConfigurationException e) {
             throw new GenerationFailedException(e);
         }
-
         // Then we give hand to `WFSResult` class for the rest.
         return new WFSResult(url, count);
     }
@@ -179,7 +178,9 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
             }
 
             // Invalidate schema declaration because GML version 3.1 is not used in this schema (version is unspecified, defaulting to 3.2)
-            String string = new String(bytes).replace("http://BDTOPO_V3", "explicitly-invalid");
+            String string = new String(bytes);
+            string = string.replace("http://BDTOPO_V3", "explicitly-invalid");
+            string = string.replace("http://RPG.LATEST", "explicitly-invalid");
             stream = new ByteArrayInputStream(string.getBytes());
             try {
                 // This is the "clean but not working" (see below) way to do things:

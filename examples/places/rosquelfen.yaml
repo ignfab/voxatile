@@ -1,0 +1,10 @@
+# Countryside with fields around a little village
+worldName: Rosquelfen
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 48.226
+    longitude: -3.161
+  extentX: 1000
+  extentY: 1000

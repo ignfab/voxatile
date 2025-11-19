@@ -32,6 +32,21 @@ forEachTile:
       x: 0
       y: 0
 
+  ground:
+    after:
+      - altitude
+      - flattenWater
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - put: *voxel-grass
+          at: [0, 0, 0]
+        - put: *voxel-dirt
+          at: [0, 0, -3..-1]
+        - put: *voxel-stone
+          at: [0, 0, -20..-4]
+
   fetchBuildings:
     type: fetchData
     modelType: buildings
@@ -92,25 +107,10 @@ forEachTile:
       range: 9
     to: ground
 
-  renderGround:
-    after:
-      - altitude
-      - flattenWater
-    type: renderHeightmap
-    at: ground
-    place:
-      structure:
-        - put: *voxel-grass
-          at: [0, 0, 0]
-        - put: *voxel-dirt
-          at: [0, 0, -3..-1]
-        - put: *voxel-stone
-          at: [0, 0, -20..-4]
-
   computeBuildingsAltitude:
     after:
       - fetchBuildings
-      - renderGround
+      - ground
     type: computeHeightmapStats
     models:
       type: buildings
@@ -144,7 +144,7 @@ forEachTile:
 
   forest:
     type: sequence
-    using: renderGround
+    using: ground
     do:
       - type: fetchData
         modelType: vegetation
@@ -155,7 +155,7 @@ forEachTile:
         processor:
           type: geoToolsVector
       - type: renderSurfaces
-        after: renderGround
+        after: ground
         models:
           type: vegetation
           filter:
@@ -215,7 +215,7 @@ forEachTile:
 
   renderWater:
     after:
-      - renderGround
+      - ground
       - computeWaterDepth
       # Vegetation and water vector data overlap in certain areas. (Because of vegetation representing canopy)
       # The dependency and air voxel below should be removed when cropping is implemented on vector data.
@@ -238,8 +238,8 @@ forEachTile:
   path:
     after:
       - fetchRoads
-      - renderGround
-      - renderForest
+      - ground
+      - forest
     type: renderLines
     models:
       type: road
@@ -313,3 +313,198 @@ forEachTile:
       with:
         "█": *road-paint
         "░": *road-tar
+
+  agriculture:
+    type: sequence
+    after: [ground, forest]
+    do:
+      - type: fetchData
+        modelType: fields
+        provider:
+          type: wfs
+          url: https://data.geopf.fr/wfs/wfs
+          features: RPG.LATEST:parcelles_graphiques
+        processor:
+          type: geoToolsVector
+        # postProcessing:
+        #   - type: copy
+        #     metadata: code_cultu
+        #     to: crop
+        #   - type: remap
+        #     metadata: crop
+        #     toFrom:
+        #       banana: [BCA, BCC, BCF, BCI, BCP, BCR, BEA, BEF, BEI, BEP, BER, Y1, Y2, YB]
+        #       barley: [AVH, AVP, OH, OP, ORH, ORP]
+        #       carot: [CAF, CAR, CB, CT]
+        #       rapeseed: [CH, CP, CS, CZH, CZP]
+        #       corn: [MA, MD, ME, MID, MIE, MIS, MS]
+        #       cucumber: [CCN]
+        #       flower: [AF, FB, FC, FN, GER, Y6, Y7]
+        #       hemp: [C7, C8, CHV, CO, CSE, CU, CV, CW, CX, CY, CZ]
+        #       lavender: [LA, LAV, LV]
+        #       linen: [LIF, LIH, LIP, LJ, LM, LN, LO, LS, LT, LU, LW, LX, LY, LZ]
+        #       market: [ART, AUB, EPI, FLA, FLP, FNO, FP, LC, LI, LSA, MC, MU, MV, MW, MX, MY, Y8, YG]
+        #       meadow: [DH, DS, ES, F1, F2, F3, FA, FAG, FI, J5M, J6P, J6S, JA, JNO, NE, PAQ, PRL, PT, PTR, PX, RGA, SF, SPH, SPL, TR5, TR7, TR8, TRD, TRE]
+        #       oat: [AH, AP, AV]
+        #       orchard: [AD, AE, AM, BV, BW, CBT, CNA, CNE, CR, NS, NX, OA, OL, OLI, ON, PEP, PG, PK, PRU, PU, PVT, PWT, SBO, VC, VE, VGD]
+        #       potato: [P1, P2, PE, PF, PTC, PTF]
+        #       rice: [R1, R2, R3, R4, RIZ, RT, RZ]
+        #       rye: [SE, SGH, SGP]
+        #       soya: [SJ, SO, SOJ]
+        #       sunflower: [TS]
+        #       tomato: [TC, TM, TN, TOM, TOT, TT, TU]
+        #       vegetable: [A1, AI, FG, HA, LG, MR, OC, P3, P7, P8, PB, PD, PJ, SC, SL]
+        #       vine: [RE, RVI, VG, VI, VN, VRG, VRN, VRT, VT, VU, VV, VX, VY, VZ]
+        #       wheat: [AS, BA, BB, BC, BD, BDH, BDP, BDT, BG, BH, BP, BTH, BTP, CGF, CGH, CGO, CGP, CGS, CHA, CHH, CHS, CHT, EP, EPE, ET, EX, MCR, SB]
+      - type: schedule
+        after: ground
+        models:
+          type: fields
+        do:
+          wheat:
+            type: renderSurfaces
+            models:
+               type: none
+  #            filter:
+  #              metadata: crop
+  #              in: [barley, corn, oat, soya, wheat]
+            heightmap: ground
+            place:
+              - default:dirt
+              - structure:
+                - at: [0, 0, 1]
+                  put:
+                    pattern:
+                      repeatStructure:
+                        - at: [0, 0, 0]
+                          put: farming:wheat_8
+                        - at: [0, 1, 0]
+                          put:
+                            pattern:
+                              chance: 0.02
+                              place: flowers:rose
+
+# MISSING: A simple line renderer on a heightmap (for fences)
+# MAYBE MISSING: A 2D line renderer + heightmap
+
+          meadow:
+            type: renderSurfaces
+            models:
+              type: none
+  #            filter:
+  #              metadata: crop
+  #              equals: meadow
+            heightmap: ground
+            place:
+              - default:dirt_with_grass
+              - structure:
+                - at: [0, 0, 1]
+                  put:
+                    - pattern:
+                        chance: 0.3
+                        place: default:grass_5
+                    - pattern:
+                        chance: 0.25
+                        place: default:grass_4
+                    - pattern:
+                        chance: 0.2
+                        place: default:grass_3
+                    - pattern:
+                        chance: 0.15
+                        place: default:grass_2
+                    - pattern:
+                        chance: 0.1
+                        place: default:grass_1
+                    - pattern:
+                        chance: 0.01
+                        place:
+                          - flowers:mushroom_brown
+                          - pattern:
+                              seed: flower1
+                              chance: 0.8
+                              place: flowers:dandelion_yellow
+                          - pattern:
+                              seed: flower2
+                              chance: 0.6
+                              place: flowers:dandelion_white
+                          - pattern:
+                              seed: flower3
+                              chance: 0.4
+                              place: flowers:viola
+                          - pattern:
+                              seed: flower4
+                              chance: 0.2
+                              place: flowers:chrysanthemum_green
+
+          linen:
+            type: renderSurfaces
+            models:
+              type: none
+  #            filter:
+  #              metadata: crop
+  #              in: [barley, corn, oat, soya, wheat]
+            heightmap: ground
+            place:
+              - default:dirt
+              - structure:
+                - at: [0, 0, 1]
+                  put:
+                    pattern:
+                      repeatStructure:
+                        - at: [0, 0, 0]
+                          put: flowers:geranium
+                        - at: [0, 1, 0]
+                          put:
+                            pattern:
+                              chance: 0.02
+                              place: default:grass_1
+
+          orchard:
+            type: renderSurfaces
+            models:
+              type: none
+  #            filter:
+  #              metadata: crop
+  #              in: [barley, corn, oat, soya, wheat]
+            heightmap: ground
+            place:
+              - structure:
+                  at: [0, 0, 1]
+                  put:
+                    - pattern:
+                        chance: 0.2
+                        place: default:grass_3
+                    - pattern:
+                        chance: 0.15
+                        place: default:grass_2
+                    - pattern:
+                        chance: 0.1
+                        place: default:grass_1
+              - pattern:
+                  repeatStructure:
+                    - at: [0..8, 0..8, 0]
+                      put: default:dirt_with_grass
+                    - at: [0, 0, 0]
+                      put: *apple-tree
+
+          corn:
+            type: renderSurfaces
+            #models:
+  #            filter:
+  #              metadata: crop
+  #              in: [barley, corn, oat, soya, wheat]
+            heightmap: ground
+            place:
+              - default:dirt
+              - structure:
+                - at: [0, 0, 1]
+                  put:
+                    pattern:
+                      repeatStructure:
+                        - at: [0, 0, 0]
+                          put: default:junglegrass
+                        - at: [1, 0, 0]
+                          put:
+                            pattern:
+                              chance: 0.02
+                              place: default:grass_1
