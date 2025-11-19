@@ -71,6 +71,14 @@ public class MetadataValueMappingPostProcessorParamsTest {
         assertDoesNotThrow(params::validate);
 
         params = new MetadataValueMappingPostProcessorParams("metadata");
+        params.toFrom = Map.of("b", Set.of("a", "c", "d"), "e", Set.of("f", "g", "h"));
+        params.fromTo = new HashMap<>();
+        params.defaultValue = "a";
+        assertDoesNotThrow(params::validate);
+
+        params = new MetadataValueMappingPostProcessorParams("metadata");
+        params.toFrom = Map.of("b", Set.of("a", "c", "d"), "e", Set.of("f", "g", "h"));
+        params.fromTo = new HashMap<>();
         params.defaultValue = "a";
         params.ifNoMatchFound = FailurePolicyParams.ERROR;
         assertThrows(IllegalArgumentException.class, params::validate);
@@ -97,6 +105,11 @@ public class MetadataValueMappingPostProcessorParamsTest {
         MetadataValueMappingPostProcessorParams params;
         params = new MetadataValueMappingPostProcessorParams("metadata");
         params.fromTo = Map.of("a", "b", "c", "d");
+        assertDoesNotThrow(params::create);
+
+        params = new MetadataValueMappingPostProcessorParams("metadata");
+        params.fromTo = Map.of("a", "b", "c", "d");
+        params.defaultValue = "z";
         assertDoesNotThrow(params::create);
 
         params = new MetadataValueMappingPostProcessorParams("metadata");

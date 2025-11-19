@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.parameters.processors.post;
 import java.beans.ConstructorProperties;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -60,7 +61,7 @@ public class MetadataValueMappingPostProcessorParams extends PostProcessorParams
      * Policy to use when there is no match for the metadata value in the mappings (optional).
      */
     @JsonSetter(nulls = Nulls.SKIP)
-    public FailurePolicyParams ifNoMatchFound = FailurePolicyParams.ERROR;
+    public FailurePolicyParams ifNoMatchFound;
 
     /**
      * Constructor used to ensure that the required fields
@@ -100,8 +101,10 @@ public class MetadataValueMappingPostProcessorParams extends PostProcessorParams
             });
 
         Object defaultValue = this.defaultValue;
-        if (defaultValue != null)
+        if (defaultValue != null) {
             defaultValue = as.parse(defaultValue);
+            ifNoMatchFound = FailurePolicyParams.IGNORE;
+        }
 
         return new MetadataValueMappingPostProcessor<>(
             as.type(),
@@ -109,7 +112,7 @@ public class MetadataValueMappingPostProcessorParams extends PostProcessorParams
             valueMapping,
             defaultValue,
             ifMissing.create(),
-            ifNoMatchFound.create()
+            Objects.requireNonNullElse(ifNoMatchFound, FailurePolicyParams.ERROR).create()
         );
     }
 }
