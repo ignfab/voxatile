@@ -185,6 +185,34 @@ forEachTile:
               seed: tree2
               chance: 0.003
               place: *forest-tree2
+      - type: renderSurfaces
+        after: ground
+        models:
+          type: vegetation
+          filter:
+            metadata: nature
+            equals:  "Haie"
+        heightmap: ground
+        place:
+          - structure:
+              at: [0, 0, 1..3]
+              put:
+                - pattern:
+                    seed: haie
+                    chance: 0.7
+                    place: default:bush_leaves
+                - pattern:
+                    seed: haie
+                    chance: 0.3
+                    place: default:blueberry_bush_leaves
+                - pattern:
+                    seed: haie
+                    chance: 0.05
+                    place: default:blueberry_bush_leaves_with_berries
+          - pattern:
+              seed: haie
+              chance: 0.003
+              place: *forest-tree1
 
   populateWaterPresence:
     after: fetchWater
@@ -326,36 +354,38 @@ forEachTile:
           features: RPG.LATEST:parcelles_graphiques
         processor:
           type: geoToolsVector
-        # postProcessing:
-        #   - type: copy
-        #     metadata: code_cultu
-        #     to: crop
-        #   - type: remap
-        #     metadata: crop
-        #     toFrom:
-        #       banana: [BCA, BCC, BCF, BCI, BCP, BCR, BEA, BEF, BEI, BEP, BER, Y1, Y2, YB]
-        #       barley: [AVH, AVP, OH, OP, ORH, ORP]
-        #       carot: [CAF, CAR, CB, CT]
-        #       rapeseed: [CH, CP, CS, CZH, CZP]
-        #       corn: [MA, MD, ME, MID, MIE, MIS, MS]
-        #       cucumber: [CCN]
-        #       flower: [AF, FB, FC, FN, GER, Y6, Y7]
-        #       hemp: [C7, C8, CHV, CO, CSE, CU, CV, CW, CX, CY, CZ]
-        #       lavender: [LA, LAV, LV]
-        #       linen: [LIF, LIH, LIP, LJ, LM, LN, LO, LS, LT, LU, LW, LX, LY, LZ]
-        #       market: [ART, AUB, EPI, FLA, FLP, FNO, FP, LC, LI, LSA, MC, MU, MV, MW, MX, MY, Y8, YG]
-        #       meadow: [DH, DS, ES, F1, F2, F3, FA, FAG, FI, J5M, J6P, J6S, JA, JNO, NE, PAQ, PRL, PT, PTR, PX, RGA, SF, SPH, SPL, TR5, TR7, TR8, TRD, TRE]
-        #       oat: [AH, AP, AV]
-        #       orchard: [AD, AE, AM, BV, BW, CBT, CNA, CNE, CR, NS, NX, OA, OL, OLI, ON, PEP, PG, PK, PRU, PU, PVT, PWT, SBO, VC, VE, VGD]
-        #       potato: [P1, P2, PE, PF, PTC, PTF]
-        #       rice: [R1, R2, R3, R4, RIZ, RT, RZ]
-        #       rye: [SE, SGH, SGP]
-        #       soya: [SJ, SO, SOJ]
-        #       sunflower: [TS]
-        #       tomato: [TC, TM, TN, TOM, TOT, TT, TU]
-        #       vegetable: [A1, AI, FG, HA, LG, MR, OC, P3, P7, P8, PB, PD, PJ, SC, SL]
-        #       vine: [RE, RVI, VG, VI, VN, VRG, VRN, VRT, VT, VU, VV, VX, VY, VZ]
-        #       wheat: [AS, BA, BB, BC, BD, BDH, BDP, BDT, BG, BH, BP, BTH, BTP, CGF, CGH, CGO, CGP, CGS, CHA, CHH, CHS, CHT, EP, EPE, ET, EX, MCR, SB]
+        postProcessing:
+          - type: copy
+            metadata: code_cultu
+            to: crop
+          - type: remap
+            metadata: crop
+            toFrom:
+              banana: [BCA, BCC, BCF, BCI, BCP, BCR, BEA, BEF, BEI, BEP, BER, Y1, Y2, YB]
+              barley: [AVH, AVP, OH, OP, ORH, ORP]
+              carot: [CAF, CAR, CB, CT]
+              rapeseed: [CH, CP, CS, CZH, CZP]
+              corn: [MA, MD, ME, MID, MIE, MIS, MS]
+              cucumber: [CCN]
+              flower: [AF, FB, FC, FN, GER, Y6, Y7]
+              hemp: [C7, C8, CHV, CO, CSE, CU, CV, CW, CX, CY, CZ]
+              lavender: [LA, LAV, LV]
+              linen: [LIF, LIH, LIP, LJ, LM, LN, LO, LS, LT, LU, LW, LX, LY, LZ]
+              market: [ART, AUB, EPI, FLA, FLP, FNO, FP, LC, LI, LSA, MC, MU, MV, MW, MX, MY, Y8, YG]
+              meadow: [DH, DS, ES, F1, F2, F3, FA, FAG, FI, J5M, J6P, J6S, JA, JNO, NE, PAQ, PPH, PRL, PT, PTR, PX, RGA, SF, SPH, SPL, TR5, TR7, TR8, TRD, TRE]
+              oat: [AH, AP, AV]
+              orchard: [AD, AE, AM, BV, BW, CBT, CNA, CNE, CR, NS, NX, OA, OL, OLI, ON, PEP, PG, PK, PRU, PU, PVT, PWT, SBO, VC, VE, VGD]
+              potato: [P1, P2, PE, PF, PTC, PTF]
+              rice: [R1, R2, R3, R4, RIZ, RT, RZ]
+              rye: [SE, SGH, SGP]
+              soya: [SJ, SO, SOJ]
+              sunflower: [TS]
+              tomato: [TC, TM, TN, TOM, TOT, TT, TU]
+              vegetable: [A1, AI, FG, HA, LG, MR, OC, P3, P7, P8, PB, PD, PJ, SC, SL]
+              vine: [RE, RVI, VG, VI, VN, VRG, VRN, VRT, VT, VU, VV, VX, VY, VZ]
+              wheat: [AS, BA, BB, BC, BD, BDH, BDP, BDT, BG, BH, BP, BTH, BTP, CGF, CGH, CGO, CGP, CGS, CHA, CHH, CHS, CHT, EP, EPE, ET, EX, MCR, SB]
+              none: [BFP, BFS, BOR, BR, BTA, EL, SNA, SNE]
+            default: unknown
       - type: schedule
         after: ground
         models:
@@ -365,9 +395,9 @@ forEachTile:
             type: renderSurfaces
             models:
                type: none
-  #            filter:
-  #              metadata: crop
-  #              in: [barley, corn, oat, soya, wheat]
+               filter:
+                 metadata: crop
+                 in: [barley, corn, oat, soya, wheat]
             heightmap: ground
             place:
               - default:dirt
@@ -387,13 +417,21 @@ forEachTile:
 # MISSING: A simple line renderer on a heightmap (for fences)
 # MAYBE MISSING: A 2D line renderer + heightmap
 
+          unknown:
+            type: renderSurfaces
+            models:
+              filter:
+                metadata: crop
+                equals: unknown
+            heightmap: ground
+            place: unknown:unknown
+
           meadow:
             type: renderSurfaces
             models:
-              type: none
-  #            filter:
-  #              metadata: crop
-  #              equals: meadow
+              filter:
+                metadata: crop
+                equals: meadow
             heightmap: ground
             place:
               - default:dirt_with_grass
@@ -439,10 +477,9 @@ forEachTile:
           linen:
             type: renderSurfaces
             models:
-              type: none
-  #            filter:
-  #              metadata: crop
-  #              in: [barley, corn, oat, soya, wheat]
+              filter:
+                metadata: crop
+                equals: linen
             heightmap: ground
             place:
               - default:dirt
@@ -462,10 +499,9 @@ forEachTile:
           orchard:
             type: renderSurfaces
             models:
-              type: none
-  #            filter:
-  #              metadata: crop
-  #              in: [barley, corn, oat, soya, wheat]
+              filter:
+                metadata: crop
+                equals: orchard
             heightmap: ground
             place:
               - structure:
@@ -489,10 +525,10 @@ forEachTile:
 
           corn:
             type: renderSurfaces
-            #models:
-  #            filter:
-  #              metadata: crop
-  #              in: [barley, corn, oat, soya, wheat]
+            models:
+              filter:
+                metadata: crop
+                equals: corn
             heightmap: ground
             place:
               - default:dirt
