@@ -360,44 +360,65 @@ forEachTile:
             to: crop
           - type: remap
             metadata: crop
+              # Special values:
+              # "none" is set for surfaces that won't be rendered (not a field).
+              # "common" is set for all type of culture we don't want a specific rendering.
+              # "unknown" is set for all unknown "code_cultu". Could be replaced later with "common".
             toFrom:
-              banana: [BCA, BCC, BCF, BCI, BCP, BCR, BEA, BEF, BEI, BEP, BER, Y1, Y2, YB]
-              barley: [AVH, AVP, OH, OP, ORH, ORP]
-              carot: [CAF, CAR, CB, CT]
-              rapeseed: [CH, CP, CS, CZH, CZP]
-              corn: [MA, MD, ME, MID, MIE, MIS, MS]
+              none: [BFS, BOR, BTA, CSS, MRS, SNE, TCR]
+              common: [ACP, AFG, CAC, CAG, CID, CIT, CML, CPL, CSA, LDH, LDP, LEC, LOT, LUZ, MCS, MLC, MLF, MLG, MLT, MOH, MPC, MSW, OAG, OHR, PAG, PHF, PHI, PHS, PPR, SAG, SHD, SOG, SRS, ZZZ]
+              banana: [BCA, BEF]
+              barley: [AVH, AVP, ORH, ORP]
+              carot: [CAR]
+              corn: [MID, MIS]
               cucumber: [CCN]
-              flower: [AF, FB, FC, FN, GER, Y6, Y7]
-              hemp: [C7, C8, CHV, CO, CSE, CU, CV, CW, CX, CY, CZ]
-              lavender: [LA, LAV, LV]
-              linen: [LIF, LIH, LIP, LJ, LM, LN, LO, LS, LT, LU, LW, LX, LY, LZ]
-              market: [ART, AUB, EPI, FLA, FLP, FNO, FP, LC, LI, LSA, MC, MU, MV, MW, MX, MY, Y8, YG]
-              meadow: [DH, DS, ES, F1, F2, F3, FA, FAG, FI, J5M, J6P, J6S, JA, JNO, NE, PAQ, PPH, PRL, PT, PTR, PX, RGA, SF, SPH, SPL, TR5, TR7, TR8, TRD, TRE]
-              oat: [AH, AP, AV]
-              orchard: [AD, AE, AM, BV, BW, CBT, CNA, CNE, CR, NS, NX, OA, OL, OLI, ON, PEP, PG, PK, PRU, PU, PVT, PWT, SBO, VC, VE, VGD]
-              potato: [P1, P2, PE, PF, PTC, PTF]
-              rice: [R1, R2, R3, R4, RIZ, RT, RZ]
-              rye: [SE, SGH, SGP]
-              soya: [SJ, SO, SOJ]
-              sunflower: [TS]
-              tomato: [TC, TM, TN, TOM, TOT, TT, TU]
-              vegetable: [A1, AI, FG, HA, LG, MR, OC, P3, P7, P8, PB, PD, PJ, SC, SL]
-              vine: [RE, RVI, VG, VI, VN, VRG, VRN, VRT, VT, VU, VV, VX, VY, VZ]
-              wheat: [AS, BA, BB, BC, BD, BDH, BDP, BDT, BG, BH, BP, BTH, BTP, CGF, CGH, CGO, CGP, CGS, CHA, CHH, CHS, CHT, EP, EPE, ET, EX, MCR, SB]
-              none: [BFP, BFS, BOR, BR, BTA, EL, SNA, SNE]
+              flower: [HPC]
+              hemp: [CHV, CSE]
+              herb: [AAR, AME, ARP, GES, OEI, PME, PRF, SAI, SGE, TAB, VES, VNL]
+              hop: [HBL]
+              lavender: [LAV]
+              linen: [LIF, LIH, LIP]
+              meadow: [GRA, JAC, JNO, PPH, PTR, SIN, SNU, SPH, SPL, TRE]
+              orchard: [AGR, ANA, CBT, CNA, CNE, OLI, PEP, PEV, PPP, PRU, PVT, PWT, SBO]
+              potato: [PTC]
+              rapeseed: [CZH, CZP]
+              rice: [RIZ]
+              rye: [SGH, SGP]
+              soya: [SOJ]
+              sunflower: [TRN]
+              tomato: [TOM]
+              trees: [CAE, CEE, CTG, NOS, NOX, TRU]
+              vegetable: [AIL, ARA, ART, BTN, CEL, CHU, EPI, FEV, FLA, FLP, FNU, FRA, FVL, FVP, LBF, MDI, MLO, MOT, NVT, OIG, PCH, PFR, POR, POT, PSL, PVP, RDI, TBT]
+              vine: [VRC, VRG]
+              wheat: [BDH, BDP, BTH, BTP, CAH, EPE, MCR, TTH, TTP]
             default: unknown
       - type: schedule
         after: ground
         models:
           type: fields
         do:
-          wheat:
+
+# MISSING: A simple line renderer on a heightmap (for fences)
+# MAYBE MISSING: A 2D line renderer + heightmap
+
+          # Likely to be removed - display unknwown crops as "unknown" nodes
+          unknown:
             type: renderSurfaces
             models:
-               type: none
+              filter:
+                metadata: crop
+                equals: unknown
+            heightmap: ground
+            place: unknown:unknown
+
+          # common -Generic undetermined field
+          # also : barley, corn, oat, soya, rice, rye, wheat
+          common:
+            type: renderSurfaces
+            models:
                filter:
                  metadata: crop
-                 in: [barley, corn, oat, soya, wheat]
+                 in: [common, barley, corn, oat, soya, rice, rye, wheat]
             heightmap: ground
             place:
               - default:dirt
@@ -414,18 +435,21 @@ forEachTile:
                               chance: 0.02
                               place: flowers:rose
 
-# MISSING: A simple line renderer on a heightmap (for fences)
-# MAYBE MISSING: A 2D line renderer + heightmap
-
-          unknown:
+          # vegetables - Generic vegetable field
+          vegetable:
             type: renderSurfaces
             models:
-              filter:
-                metadata: crop
-                equals: unknown
+               filter:
+                 metadata: crop
+                 in: [vegetable, carot, cucumber]
             heightmap: ground
-            place: unknown:unknown
+            place:
+              - default:dirt
+              - structure:
+                - at: [0, 0, 1]
+                  put: default:fern_1
 
+          # meadow - Meadows and like
           meadow:
             type: renderSurfaces
             models:
@@ -474,6 +498,74 @@ forEachTile:
                               chance: 0.2
                               place: flowers:chrysanthemum_green
 
+          # orchard - Fruit tree culture
+          # also: banana, tree : all kind of tree culture
+          orchard:
+            type: renderSurfaces
+            models:
+              filter:
+                metadata: crop
+                in: [orchard, banana, trees]
+            heightmap: ground
+            place:
+              - structure:
+                  at: [0, 0, 1]
+                  put:
+                    - pattern:
+                        chance: 0.2
+                        place: default:grass_3
+                    - pattern:
+                        chance: 0.15
+                        place: default:grass_2
+                    - pattern:
+                        chance: 0.1
+                        place: default:grass_1
+              - pattern:
+                  repeatStructure:
+                    - at: [0..8, 0..8, 0]
+                      put: default:dirt_with_grass
+                    - at: [0, 0, 0]
+                      put: *apple-tree
+
+
+          flowers:
+            type: renderSurfaces
+            models:
+              filter:
+                metadata: crop
+                equals: flowers
+            heightmap: ground
+            place:
+              - default:dirt_with_grass
+              - structure:
+                - at: [0, 0, 1]
+                  put:
+                    - pattern:
+                        seed: flower1
+                        chance: 0.6
+                        place: flowers:flowers:geranium
+                    - pattern:
+                        seed: flower1
+                        chance: 0.5
+                        place: flowers:dandelion_yellow
+                    - pattern:
+                        seed: flower2
+                        chance: 0.4
+                        place: flowers:dandelion_white
+                    - pattern:
+                        seed: flower3
+                        chance: 0.3
+                        place: flowers:viola
+                    - pattern:
+                        seed: flower4
+                        chance: 0.2
+                        place: flowers:rose
+                    - pattern:
+                        seed: flower4
+                        chance: 0.1
+                        place: flowers:tulip
+
+          #
           linen:
             type: renderSurfaces
             models:
@@ -496,39 +588,14 @@ forEachTile:
                               chance: 0.02
                               place: default:grass_1
 
-          orchard:
-            type: renderSurfaces
-            models:
-              filter:
-                metadata: crop
-                equals: orchard
-            heightmap: ground
-            place:
-              - structure:
-                  at: [0, 0, 1]
-                  put:
-                    - pattern:
-                        chance: 0.2
-                        place: default:grass_3
-                    - pattern:
-                        chance: 0.15
-                        place: default:grass_2
-                    - pattern:
-                        chance: 0.1
-                        place: default:grass_1
-              - pattern:
-                  repeatStructure:
-                    - at: [0..8, 0..8, 0]
-                      put: default:dirt_with_grass
-                    - at: [0, 0, 0]
-                      put: *apple-tree
 
+          #
           corn:
             type: renderSurfaces
             models:
               filter:
                 metadata: crop
-                equals: corn
+                in: [corn, hemp]
             heightmap: ground
             place:
               - default:dirt
