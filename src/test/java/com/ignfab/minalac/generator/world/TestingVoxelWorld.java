@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.world;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -25,7 +26,16 @@ public class TestingVoxelWorld extends VoxelWorld {
      * Creates a new TestingVoxelWorld.
      */
     public TestingVoxelWorld() {
-        super(new VoxelWorldMetadata());
+        super(new VoxelWorldMetadata(), null);
+    }
+
+    /**
+     * Creates a new {@code TestingVoxelWorld}.
+     *
+     * @param destination destination folder for the world
+     */
+    public TestingVoxelWorld(File destination) {
+        super(new VoxelWorldMetadata(), destination);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.ignfab.minalac.generator.world;
 
 
-import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
@@ -42,7 +41,7 @@ public class TestingVoxelTile extends VoxelTile {
     }
 
     protected void set(int x, int y, int z, TestingVoxel voxel) {
-        set(x, y, z, voxel.getName());
+        set(x, y, z, voxel.getTypeIdentifier());
     }
 
     /**
@@ -61,7 +60,7 @@ public class TestingVoxelTile extends VoxelTile {
     }
 
     @Override
-    public Placeable getVoxel(int x, int y, int z) {
+    public Voxel getVoxel(int x, int y, int z) {
         if (!limits().contains(x, y, z)) return null;
         String name = voxels[index(x, y, z)];
         return name == null ? null : new TestingVoxel(name);

@@ -15,21 +15,23 @@ public class ColorDeserializer extends ValueDeserializer<Color> {
 
     @Override
     public Color deserialize(JsonParser parser, DeserializationContext context) throws JacksonException {
-        JsonNode node = parser.readValueAsTree();            
+        JsonNode node = parser.readValueAsTree();
 
         if (node.isString()) {
             String string = node.asString();
             try {
                 return Color.decode(string);
             } catch (NumberFormatException e) {
-                return (Color) context.handleWeirdStringValue(Color.class, string, "The color %s cannot be interpreted", string);
+                return (Color) context.handleWeirdStringValue(Color.class, string, "String value %s cannot be interpreted as a color", string);
             }
         }
 
         if (node.isArray()) {
             int size = node.size();
             if (size < 3 || size > 4)
-                return (Color) context.reportInputMismatch(Color.class, "Color array must have 3 or 4 components, got %d.", size);
+                return context.reportInputMismatch(Color.class, "Color array must have 3 or 4 components, got %d.", size);
+            if (!node.get(0).isInt() || !node.get(1).isInt() || !node.get(2).isInt() || (size == 4 && !node.get(3).isInt()))
+                return context.reportInputMismatch(Color.class, "Color array must contain only integer values.");
 
             int red = node.get(0).asInt();
             int green = node.get(1).asInt();

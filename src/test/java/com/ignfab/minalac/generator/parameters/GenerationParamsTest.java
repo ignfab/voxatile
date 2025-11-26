@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.parameters;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -110,6 +111,7 @@ public class GenerationParamsTest {
     @Test
     public void testCreate() throws ParseException {
         params.worldName = "test";
+        params.minimaps = Map.of("test", new MinimapParams());
         params.verticalScale = 3.0;
         params.horizontalScale = 4.0;
         params.crs = "EPSG:5643";
