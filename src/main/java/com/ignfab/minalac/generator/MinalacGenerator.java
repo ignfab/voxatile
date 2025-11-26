@@ -41,6 +41,7 @@ import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.FillBetweenHeightmapAndMetadataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.HeightmapStatsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.PopulateHeightmapTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.PopulateMinimapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderVectorsTaskParams;
@@ -96,6 +97,7 @@ public final class MinalacGenerator {
         parser.registerParams("fetchData", FetchDataTaskParams.class);
         parser.registerParams("fillBetweenHeightmapAndMetadata", FillBetweenHeightmapAndMetadataTaskParams.class);
         parser.registerParams("populateHeightmap", PopulateHeightmapTaskParams.class);
+        parser.registerParams("populateMinimap", PopulateMinimapTaskParams.class);
         parser.registerParams("renderBuildings", RenderBuildingsTaskParams.class);
         parser.registerParams("renderHeightmap", RenderHeightmapTaskParams.class);
         parser.registerParams("renderVectors", RenderVectorsTaskParams.class);
@@ -173,6 +175,7 @@ public final class MinalacGenerator {
 
         Instant finalizationStart = Instant.now();
 
+        generation.minimap().save();
         generation.world().finalizeAndSave();
         System.out.printf("Generation finalization took %ds.%n", Duration.between(finalizationStart, Instant.now()).toSeconds());
         System.out.printf("Total: %ds.%nDone.%n", Duration.between(start, Instant.now()).toSeconds());

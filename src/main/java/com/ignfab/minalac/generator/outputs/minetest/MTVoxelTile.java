@@ -1,10 +1,10 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
+import java.io.File;
+
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-
-import java.io.File;
 
 import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
 import com.ignfab.minalac.generator.placeables.Placeable;

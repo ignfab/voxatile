@@ -120,6 +120,13 @@ public class Generation {
     }
 
     /**
+     * {@return the minimap}
+     */
+    public Minimap minimap() {
+        return world().minimap();
+    }
+
+    /**
      * Returns the {@link HeightmapDeclarationStore} for the stored heightmaps.
      *
      * @return the heightmap declaration store.

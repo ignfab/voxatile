@@ -2,6 +2,8 @@ package com.ignfab.minalac.generator.world;
 
 import java.util.Collection;
 
+import com.ignfab.minalac.generator.generation.Minimap;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
@@ -19,6 +21,11 @@ public abstract class VoxelWorld {
      * The metadata of the world.
      */
     protected final VoxelWorldMetadata metadata;
+
+    /**
+     * The minimap of the world.
+     */
+    protected Minimap minimap;
 
     protected VoxelWorld(VoxelWorldMetadata metadata) {
         limits = WorldBBox3d.EMPTY;
@@ -59,6 +66,13 @@ public abstract class VoxelWorld {
      */
     public VoxelWorldMetadata getMetadata() {
         return metadata;
+    }
+
+    /**
+     * {@return the minimap}
+     */
+    public Minimap minimap() {
+        return minimap;
     }
 
     /**
@@ -105,4 +119,9 @@ public abstract class VoxelWorld {
      * @return a list of boxes representing resulting tiles
      */
     public abstract Collection<WorldBBox2d> tiles(int maxTileSize);
+
+    /**
+     * {@return the default voxel}
+     */
+    public abstract Placeable defaultVoxel();
 }

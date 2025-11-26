@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.outputs.testing;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
@@ -57,5 +58,10 @@ public class TestingVoxelWorld extends VoxelWorld {
     @Override
     public Collection<WorldBBox2d> tiles(int maxTileSize) {
         return Collections.singleton(maxLimits().to2d());
+    }
+
+    @Override
+    public Placeable defaultVoxel() {
+        return null;
     }
 }

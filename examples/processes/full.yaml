@@ -224,3 +224,11 @@ forEachTile:
         # This a dirt fix to remove vegetation on water
         - put: *voxel-air
           at: [ 0, 0, 1..12 ]
+
+  populateMinimap:
+    type: populateMinimap
+    after:
+      - renderWater
+      - renderForest
+      - renderGround
+      - renderBuildings

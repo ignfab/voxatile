@@ -120,5 +120,10 @@ public class VoxelWorldTest {
         public Collection<WorldBBox2d> tiles(int maxTileSize) {
             return Collections.singleton(maxLimits().to2d());
         }
+
+        @Override
+        public Placeable defaultVoxel() {
+            return null;
+        }
     }
 }

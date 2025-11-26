@@ -3,8 +3,10 @@ package com.ignfab.minalac.generator.outputs.minetest;
 import java.io.File;
 import java.util.Collection;
 
+import com.ignfab.minalac.generator.generation.Minimap;
 import com.ignfab.minalac.generator.generation.SquareUnitsTileGenerator;
 import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -58,6 +60,8 @@ public class MTVoxelWorld extends VoxelWorld {
 
         mapWriter = new SQLiteMapWriter(new File(destination, "map.sqlite"));
         mapWriter.createDatabase();
+
+        minimap = new Minimap(limits());
     }
 
     /**
@@ -99,5 +103,10 @@ public class MTVoxelWorld extends VoxelWorld {
     public Collection<WorldBBox2d> tiles(int maxTileSize) {
         SquareUnitsTileGenerator tileGenerator = new SquareUnitsTileGenerator(Block.SIZE, limits().to2d());
         return tileGenerator.getTiles(maxTileSize);
+    }
+
+    @Override
+    public Placeable defaultVoxel() {
+        return MTVoxel.DEFAULT_VOXEL;
     }
 }

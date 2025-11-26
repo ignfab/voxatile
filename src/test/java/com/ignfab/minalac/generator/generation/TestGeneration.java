@@ -14,6 +14,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
@@ -122,6 +123,11 @@ public class TestGeneration {
         @Override
         public Collection<WorldBBox2d> tiles(int maxTileSize) {
             return Collections.singleton(maxLimits().to2d());
+        }
+
+        @Override
+        public Placeable defaultVoxel() {
+            return null;
         }
     }
 }

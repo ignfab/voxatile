@@ -15,7 +15,9 @@ import net.querz.nbt.tag.IntTag;
 import net.querz.nbt.tag.ListTag;
 import net.querz.nbt.tag.StringTag;
 
+import com.ignfab.minalac.generator.generation.Minimap;
 import com.ignfab.minalac.generator.generation.SquareUnitsTileGenerator;
+import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
@@ -76,6 +78,8 @@ public class MCVoxelWorld extends VoxelWorld {
             throw new MapWriteException("Directory %s can not be accessed".formatted(destination));
 
         regionDirectory.mkdir();
+
+        minimap = new Minimap(limits());
     }
 
     /**
@@ -481,5 +485,10 @@ public class MCVoxelWorld extends VoxelWorld {
     public Collection<WorldBBox2d> tiles(int maxTileSize) {
         SquareUnitsTileGenerator tileGenerator = new SquareUnitsTileGenerator(Region.SIZE, limits().to2d());
         return tileGenerator.getTiles(maxTileSize);
+    }
+
+    @Override
+    public Placeable defaultVoxel() {
+        return MCVoxel.DEFAULT_VOXEL;
     }
 }
