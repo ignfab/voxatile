@@ -2,7 +2,6 @@ package fr.ign.voxatile.core.world;
 
 import java.util.Iterator;
 
-import fr.ign.voxatile.core.placeables.Placeable;
 import fr.ign.voxatile.core.utils.world3d.WorldCoords3d;
 
 /**
@@ -15,7 +14,7 @@ public class VoxelColumnIterator implements Iterator<PlacedVoxel> {
     private final int y;
     private final int zMin;
     private int currentZ;
-    private Placeable currentVoxel;
+    private Voxel currentVoxel;
 
     /**
      * Constructs a new {@code VoxelColumnIterator}.

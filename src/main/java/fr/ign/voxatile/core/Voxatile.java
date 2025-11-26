@@ -34,6 +34,7 @@ import fr.ign.voxatile.core.parameters.providers.OverpassProviderParams;
 import fr.ign.voxatile.core.parameters.providers.ShapefileProviderParams;
 import fr.ign.voxatile.core.parameters.providers.WFSProviderParams;
 import fr.ign.voxatile.core.parameters.providers.WMSFloatBilProviderParams;
+import fr.ign.voxatile.core.parameters.tasks.ApplyShadingMinimapTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.BuildLayoutTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.CopyHeightmapTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.FetchDataTaskParams;
@@ -41,6 +42,7 @@ import fr.ign.voxatile.core.parameters.tasks.FillBetweenHeightmapAndValueTaskPar
 import fr.ign.voxatile.core.parameters.tasks.HeightmapStatsTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.NoOperationTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.PopulateHeightmapTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.PopulateMinimapTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.RenderBuildingsTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.RenderFacadesTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.RenderHeightmapTaskParams;
@@ -49,6 +51,7 @@ import fr.ign.voxatile.core.parameters.tasks.RenderLinesTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.RenderPoints2dTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.RenderPointsTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.RenderSurfacesTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.SaveMinimapTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.ScheduleTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.SequenceTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.SetSpawnTaskParams;
@@ -120,6 +123,8 @@ public final class Voxatile {
 
         // TODO: Static method that provides a ParamsParser with all default renderers
         // If those name values are modified, update the documentation accordingly
+        parser.registerParams("applyShadingMinimap", ApplyShadingMinimapTaskParams.class);
+        parser.registerParams("buildLayout", BuildLayoutTaskParams.class);
         parser.registerParams("noOperation", NoOperationTaskParams.class);
         parser.registerParams("sequence", SequenceTaskParams.class);
         parser.registerParams("schedule", ScheduleTaskParams.class);
@@ -128,6 +133,7 @@ public final class Voxatile {
         parser.registerParams("fetchData", FetchDataTaskParams.class);
         parser.registerParams("fillBetweenHeightmapAndValue", FillBetweenHeightmapAndValueTaskParams.class);
         parser.registerParams("populateHeightmap", PopulateHeightmapTaskParams.class);
+        parser.registerParams("populateMinimap", PopulateMinimapTaskParams.class);
         parser.registerParams("renderBuildings", RenderBuildingsTaskParams.class);
         parser.registerParams("renderHeightmap", RenderHeightmapTaskParams.class);
         parser.registerParams("renderSurfaces", RenderSurfacesTaskParams.class);
@@ -135,9 +141,9 @@ public final class Voxatile {
         parser.registerParams("renderLines2d", RenderLines2dTaskParams.class);
         parser.registerParams("renderPoints", RenderPointsTaskParams.class);
         parser.registerParams("renderPoints2d", RenderPoints2dTaskParams.class);
-        parser.registerParams("setSpawn", SetSpawnTaskParams.class);
         parser.registerParams("renderFacades", RenderFacadesTaskParams.class);
-        parser.registerParams("buildLayout", BuildLayoutTaskParams.class);
+        parser.registerParams("saveMinimap", SaveMinimapTaskParams.class);
+        parser.registerParams("setSpawn", SetSpawnTaskParams.class);
 
         parser.registerParams("wfs", WFSProviderParams.class);
         parser.registerParams("gpkg", GeoPackageProviderParams.class);
