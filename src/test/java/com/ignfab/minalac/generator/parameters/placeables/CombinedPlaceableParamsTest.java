@@ -5,12 +5,12 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import tools.jackson.core.JacksonException;
 
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.placeables.CombinedPlaceable;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.placeables.TestingPlaceable;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.world.TestingVoxelTile;
 
 import static org.junit.jupiter.api.Assertions.*;
 

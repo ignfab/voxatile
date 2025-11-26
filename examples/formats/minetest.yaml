@@ -32,3 +32,19 @@ references:
         at: [ 0, 0, 0..5 ]
   - &voxel-water default:water_source
   - &voxel-air air
+  - &minimap-color-palette
+      # https://github.com/luanti-org/minetestmapper/blob/master/colors.txt
+      default:stone: [97, 94, 93]
+      default:dirt: [97, 67, 43]
+      default:cobble: [89, 86, 84]
+      default:stonebrick: [102, 99, 98]
+      default:dirt_with_grass: [64, 111, 26]
+      default:dirt_with_rainforest_litter: [76, 39, 10]
+      default:dirt_with_coniferous_litter: [109, 90, 71]
+      default:junglegrass: [67, 110, 28]
+      default:leaves: [36, 55, 29]
+      default:aspen_leaves: [72, 105, 29]
+      default:water_source: [39, 66, 106, 128]
+      wool:white: [220, 220, 220]
+      wool:black: [30, 30, 30]
+      default:snowblock: [225, 225, 238]

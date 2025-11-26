@@ -1,15 +1,12 @@
-package com.ignfab.minalac.generator.outputs.testing;
+package com.ignfab.minalac.generator.world;
 
 import java.util.Objects;
-
-import com.ignfab.minalac.generator.placeables.Placeable;
-import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A dummy voxel for {@code TestingVoxelWorld} and {@code TestingVoxelTile}.
  * All testing voxels are represented by simple strings.
  */
-public class TestingVoxel implements Placeable {
+public class TestingVoxel implements Voxel {
     /**
      * Name of the voxel.
      */
@@ -41,7 +38,8 @@ public class TestingVoxel implements Placeable {
      *
      * @return Voxel as string
      */
-    protected String getName() {
+    @Override
+    public String getTypeIdentifier() {
         return name;
     }
 

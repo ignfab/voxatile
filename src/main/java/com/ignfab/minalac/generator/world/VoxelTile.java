@@ -5,7 +5,6 @@ import java.util.Iterator;
 
 import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
-import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
@@ -54,14 +53,14 @@ public abstract class VoxelTile {
     public abstract void save() throws MapWriteException;
 
     /**
-     * Returns the voxel located at the given coordinates as a new {@code Placeable}.
+     * Returns the voxel located at the given coordinates as a new {@link Voxel}.
      *
      * @param x x-coordinate
      * @param y y-coordinate
      * @param z z-coordinate
      * @return the corresponding voxel
      */
-    public abstract Placeable getVoxel(int x, int y, int z);
+    public abstract Voxel getVoxel(int x, int y, int z);
 
     /**
      * Returns a descending iterator over the voxels and associated coordinates of a column of this world.

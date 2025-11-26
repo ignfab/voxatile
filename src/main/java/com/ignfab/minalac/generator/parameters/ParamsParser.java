@@ -45,8 +45,6 @@ public class ParamsParser {
         MinalacParserModule module = new MinalacParserModule();
         // TODO OutputFormat handling might be relocated to the MinalacParserModule (not sure)
         module.addDeserializer(OutputFormat.class, formatDeserializer);
-        module.addDeserializer(Color.class, new ColorDeserializer());
-        module.setDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
         mapperBuilder.addModule(module);
 
         YAMLMapper mapper = mapperBuilder.build();
@@ -118,6 +116,7 @@ public class ParamsParser {
 
         @Override
         public void setupModule(SetupContext context) {
+            addDeserializer(Color.class, new ColorDeserializer());
             super.setupModule(context);
             context.addDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
             context.addDeserializerModifier(new JsonWrapper.BeanModifier());
