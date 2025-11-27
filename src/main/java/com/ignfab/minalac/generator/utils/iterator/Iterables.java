@@ -95,7 +95,7 @@ public final class Iterables {
      */
     @SafeVarargs
     public static <T> Iterable<T> union(Iterable<? extends T>... iterables) {
-        return () -> Iterators.unwrap(Iterators.remap(Iterators.array(iterables), Iterable::iterator));
+        return () -> Iterators.unwrapIterables(Iterators.array(iterables));
     }
 
      /**
@@ -108,7 +108,7 @@ public final class Iterables {
      * @param <T> common type returned by iterable iterables
      */
     public static <T> Iterable<T> unwrap(Iterable<? extends Iterable<? extends T>> iterable) {
-        return () -> Iterators.unwrap(Iterators.remap(iterable.iterator(), Iterable::iterator));
+        return () -> Iterators.unwrapIterables(iterable.iterator());
     }
 
     /**
@@ -122,6 +122,22 @@ public final class Iterables {
      */
     public static <T> Iterable<T> unwrapIterators(Iterable<? extends Iterator<? extends T>> iterable) {
         return () -> Iterators.unwrap(iterable.iterator());
+    }
+
+    /**
+     * Remaps then unwraps an iterable, transforming its result into other values using a
+     * provided function.
+     *
+     * @param iterable the iterable to remap
+     * @param mapper the mapping function
+     *
+     * @return an iterable returning transformed results
+     *
+     * @param <T> original type returned by iterable
+     * @param <U> new type returned by resulting iterable
+     */
+    public static <T, U> Iterable<U> flatMap(Iterable<T> iterable, Function<T, Iterable<? extends U>> mapper) {
+        return () -> Iterators.unwrapIterables(Iterators.remap(iterable.iterator(), mapper));
     }
 
 }

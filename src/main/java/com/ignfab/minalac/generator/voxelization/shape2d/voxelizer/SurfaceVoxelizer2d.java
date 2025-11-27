@@ -22,7 +22,7 @@ public class SurfaceVoxelizer2d implements Shape2dVoxelizer {
 
     @Override
     public Iterable<Positioned2d> voxelize(Shape2dConvertible convertible) {
-        return Iterables.unwrap(Iterables.remap(convertible.toShape2d().polygons(), this::voxelize));
+        return Iterables.flatMap(convertible.toShape2d().polygons(), this::voxelize);
     }
 
 }

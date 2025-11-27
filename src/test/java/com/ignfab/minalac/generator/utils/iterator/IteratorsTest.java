@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.utils.iterator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -159,6 +160,23 @@ public class IteratorsTest {
         assertBrowsesAllOnce(
             Arrays.asList("Frodo", "Sam", "Gollum"),
             Iterators.unwrap(list.iterator())
+        );
+    }
+
+    @Test
+    void testFlatMap() {
+        assertBrowsesAllOnce(
+            Arrays.asList(
+                "11",
+                "21", "22",
+                "31", "32", "33"
+            ),
+            Iterators.flatMap(Arrays.asList(0, 1, 2, 3).iterator(), n -> {
+                List<String> list = new ArrayList<>();
+                for (int i = 1; i <= n; i++)
+                    list.add(n + "" + i);
+                return list.iterator();
+            })
         );
     }
 }

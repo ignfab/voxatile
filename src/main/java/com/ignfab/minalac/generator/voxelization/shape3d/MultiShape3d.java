@@ -34,17 +34,17 @@ public class MultiShape3d implements Shape3d {
 
     @Override
     public Iterable<Point3d> points() {
-        return Iterables.unwrap(Iterables.remap(shapes, Shape3d::points));
+        return Iterables.flatMap(shapes, Shape3d::points);
     }
 
     @Override
     public Iterable<LineString3d> lineStrings() {
-        return Iterables.unwrap(Iterables.remap(shapes, Shape3d::lineStrings));
+        return Iterables.flatMap(shapes, Shape3d::lineStrings);
     }
 
     @Override
     public Iterable<Polygon3d> polygons() {
-        return Iterables.unwrap(Iterables.remap(shapes, Shape3d::polygons));
+        return Iterables.flatMap(shapes, Shape3d::polygons);
     }
 
     @Override

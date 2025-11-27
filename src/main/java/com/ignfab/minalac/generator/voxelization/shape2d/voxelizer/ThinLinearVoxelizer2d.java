@@ -19,12 +19,12 @@ public class ThinLinearVoxelizer2d implements Shape2dVoxelizer {
      * @return an iterable over voxelized positions
      */
     public Iterable<Positioned2d> voxelize(LineString2d lineString) {
-        return Iterables.unwrap(Iterables.remap(lineString.segments(), (segment) -> () -> new ThinSegment2dIterator(segment)));
+        return Iterables.flatMap(lineString.segments(), (segment) -> () -> new ThinSegment2dIterator(segment));
     }
 
     @Override
     public Iterable<Positioned2d> voxelize(Shape2dConvertible convertible) {
-        return Iterables.unwrap(Iterables.remap(convertible.toShape2d().lineStrings(), this::voxelize));
+        return Iterables.flatMap(convertible.toShape2d().lineStrings(), this::voxelize);
     }
 
 }

@@ -52,14 +52,14 @@ public class Polygon2d implements Shape2d {
 
     @Override
     public Iterable<Point2d> points() {
-        return Iterables.unwrap(Iterables.remap(lineStrings(), LineString2d::points));
+        return Iterables.flatMap(lineStrings(), LineString2d::points);
     }
 
     /**
      * {@return iterable over all segments in the shape}
      */
     public Iterable<Segment2d> segments() {
-        return Iterables.unwrap(Iterables.remap(lineStrings(), LineString2d::segments));
+        return Iterables.flatMap(lineStrings(), LineString2d::segments);
     }
 
     @Override
