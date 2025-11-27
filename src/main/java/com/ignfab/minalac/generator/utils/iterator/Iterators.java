@@ -116,7 +116,7 @@ public final class Iterators {
      */
     @SafeVarargs
     public static <T> Iterator<T> union(Iterator<? extends T>... iterators) {
-        return new UnwrapIterator<>(new ArrayIterator<>(iterators));
+        return unwrap(array(iterators));
     }
 
     /**
@@ -142,7 +142,23 @@ public final class Iterators {
      * @param <T> common type returned by iterator iterables
      */
     public static <T> Iterator<T> unwrapIterables(Iterator<? extends Iterable<? extends T>> iterator) {
-        return new UnwrapIterator<>(remap(iterator, Iterable::iterator));
+        return flatMap(iterator, Iterable::iterator);
+    }
+
+    /**
+     * Remaps then unwraps an iterator, transforming its result into other values using a
+     * provided function.
+     *
+     * @param iterator the iterator to remap
+     * @param mapper the mapping function
+     *
+     * @return an iterator returning transformed results
+     *
+     * @param <T> original type returned by iterator
+     * @param <U> new type returned by resulting iterator
+     */
+    public static <T, U> Iterator<U> flatMap(Iterator<T> iterator, Function<T, Iterator<? extends U>> mapper) {
+        return unwrap(remap(iterator, mapper));
     }
 
     /*

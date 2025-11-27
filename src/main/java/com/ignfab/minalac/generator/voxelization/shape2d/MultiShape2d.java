@@ -34,17 +34,17 @@ public class MultiShape2d implements Shape2d {
 
     @Override
     public Iterable<Point2d> points() {
-        return Iterables.unwrap(Iterables.remap(shapes, Shape2d::points));
+        return Iterables.flatMap(shapes, Shape2d::points);
     }
 
     @Override
     public Iterable<LineString2d> lineStrings() {
-        return Iterables.unwrap(Iterables.remap(shapes, Shape2d::lineStrings));
+        return Iterables.flatMap(shapes, Shape2d::lineStrings);
     }
 
     @Override
     public Iterable<Polygon2d> polygons() {
-        return Iterables.unwrap(Iterables.remap(shapes, Shape2d::polygons));
+        return Iterables.flatMap(shapes, Shape2d::polygons);
     }
 
     @Override

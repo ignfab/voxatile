@@ -52,14 +52,14 @@ public class Polygon3d implements Shape3d {
 
     @Override
     public Iterable<Point3d> points() {
-        return Iterables.unwrap(Iterables.remap(lineStrings(), LineString3d::points));
+        return Iterables.flatMap(lineStrings(), LineString3d::points);
     }
 
     /**
      * {@return iterable over all segments in the shape}
      */
     public Iterable<Segment3d> segments() {
-        return Iterables.unwrap(Iterables.remap(lineStrings(), LineString3d::segments));
+        return Iterables.flatMap(lineStrings(), LineString3d::segments);
     }
 
     @Override

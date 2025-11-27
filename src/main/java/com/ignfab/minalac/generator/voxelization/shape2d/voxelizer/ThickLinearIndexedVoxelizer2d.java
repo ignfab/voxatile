@@ -39,7 +39,7 @@ public class ThickLinearIndexedVoxelizer2d implements Shape2dVoxelizer {
 
     @Override
     public Iterable<IndexedPosition2d> voxelize(Shape2dConvertible convertible) {
-        return Iterables.unwrap(Iterables.remap(convertible.toShape2d().lineStrings(), this::voxelize));
+        return Iterables.flatMap(convertible.toShape2d().lineStrings(), this::voxelize);
     }
 
 }
