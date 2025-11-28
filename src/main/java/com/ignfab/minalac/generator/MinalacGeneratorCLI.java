@@ -45,6 +45,7 @@ public class MinalacGeneratorCLI {
         options.addOption(new Option(null, "generation-disabled", false, "Stop before starting generation, after parameters parsed"));
         options.addOption(new Option(null, "save-disabled", false, "Stop before saving output file, after generation done"));
         options.addOption(new Option(null, "max-tile-size", true, "Set maximum tile size (may be passed using %s environment variable)".formatted(MAX_TILE_SIZE_ENVVAR_NAME)));
+        options.addOption(new Option(null, "version", false, "Display version and build information then exit"));
     }
 
     /**
@@ -66,6 +67,11 @@ public class MinalacGeneratorCLI {
 
         if (cmd.hasOption("h")) {
             usage();
+            System.exit(0);
+        }
+
+        if (cmd.hasOption("version")) {
+            System.out.println(VersionInfo.asText());
             System.exit(0);
         }
 

@@ -2,8 +2,10 @@ package com.ignfab.minalac.generator;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -60,6 +62,32 @@ public final class MinalacGenerator {
         throw new UnsupportedOperationException();
     }
 
+    private static void writeGenerationInfoFile(MinalacGeneratorCLI cli) throws MapWriteException {
+        String generationInfo = """
+            # Minalac Voxel Generator
+
+            ## Version information
+
+            %s
+
+            ## Generation information
+
+            Date: %s
+            Max tile size: %s
+            """.formatted(
+                VersionInfo.asMarkdown(),
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()),
+                cli.maxTileSize()
+        );
+
+        // Write the information and parameters files into world root directory
+        try {
+            FileHelpers.write(new File(cli.outputPath().toFile(), "generation.md"), generationInfo);
+        } catch (IOException e) {
+            throw new MapWriteException("Failed to write information file", e);
+        }
+    }
+
     /**
      * Serves as the entry point for the program.
      *
@@ -77,17 +105,33 @@ public final class MinalacGenerator {
         MinalacGeneratorCLI cli = new MinalacGeneratorCLI();
         cli.parse(args);
 
+        System.out.printf("""
+
+            =======================
+            Minalac Voxel Generator
+            =======================
+
+            %s
+            Max tile size: %s
+
+            """,
+            VersionInfo.asText(),
+            cli.maxTileSize()
+        );
+
         File destination;
         String parameters = cli.readParameters();
         if (cli.saveDisabled())
             destination = null;
         else {
+            writeGenerationInfoFile(cli);
             destination = cli.outputPath().toFile();
-            // Write the parameters file in the world root directory
+
+            // Write the parameters files into world root directory
             try {
                 FileHelpers.write(new File(destination, "parameters.yaml"), parameters);
             } catch (IOException e) {
-                throw new MapWriteException("Failed to write parameters.yaml", e);
+                throw new MapWriteException("Failed to write parameters file", e);
             }
         }
 
