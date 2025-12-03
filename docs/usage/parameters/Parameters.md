@@ -27,7 +27,6 @@ Here is a basic generation parameters set that generates a map of 1000x1000 voxe
 worldName: My World
 references:
   - &voxel-surface default:cobble
-  - &voxel-border default:stone
   - &ground
     structure:
       - put: default:dirt_with_grass
@@ -87,12 +86,11 @@ forEachTile:
     after:
       - fetchBuildings
       - renderGround
-    type: renderVectors
+    type: renderSurfaces
     models:
       type: building
     heightmap: ground
-    inside: *voxel-surface
-    borders: *voxel-border
+    place: *voxel-surface
 ```
 
 ## Fields description

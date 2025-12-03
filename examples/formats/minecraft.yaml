@@ -8,6 +8,9 @@ references:
   - &voxel-grass minecraft:grass_block
   - &voxel-glass minecraft:glass
   - &voxel-forest-ground minecraft:podzol
+  - &road-paint minecraft:white_concrete
+  - &road-tar minecraft:black_concrete
+  - &path minecraft:grass_path
   - &forest-grass minecraft:fern
   - &forest-tree1
     structure:

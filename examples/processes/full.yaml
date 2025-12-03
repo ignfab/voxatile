@@ -64,6 +64,16 @@ forEachTile:
     processor:
       type: geoToolsVector
 
+  fetchRoads:
+    type: fetchData
+    modelType: road
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:troncon_de_route
+    processor:
+      type: geoToolsVector
+
   setAltitude:
     after: fetchAltitude
     type: populateHeightmap
@@ -145,7 +155,7 @@ forEachTile:
     after:
       - renderGround
       - fetchVegetation
-    type: renderVectors
+    type: renderSurfaces
     models:
       type: vegetation
       filter:
@@ -224,3 +234,82 @@ forEachTile:
         # This a dirt fix to remove vegetation on water
         - put: *voxel-air
           at: [ 0, 0, 1..12 ]
+
+  path:
+    after:
+      - fetchRoads
+      - renderGround
+      - renderForest
+    type: renderLines
+    models:
+      type: road
+      filter:
+        metadata: nature
+        in: [ "Chemin", "Sentier", "Roue empierrée" ]
+    structure:
+      - put: *path
+        at: [ 0, -1..1, 0]
+      - put: *voxel-air
+        at: [ 0, -1..1, 1..2 ]
+
+  renderBridges:
+    after: path
+    type: renderLines
+    models:
+      type: road
+      filter:
+        metadata: nature
+        in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
+    renderOnlyWhenAbove:
+      sum:
+        - ground
+        - 1
+    structure:
+      # Half bridge structure (sectional view)
+      axes: [ z, y ]
+      blueprint:
+        - "▒▒         ▒▒"
+        - "▒▒▒▒▒▒▒▒▒▒▒▒▒"
+      with:
+        "▒": *voxel-stone
+      zOffset: -1
+
+  renderRoadsPass1:
+    after: renderBridges
+    type: renderLines
+    models:
+      type: road
+      filter:
+        metadata: nature
+        in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
+    structure:
+      # Road border lines and air to clean eventual voxels (sectional view)
+      axes: [ z, y ]
+      blueprint:
+        - "·········"
+        - "·········"
+        - "█·······█"
+      with:
+        "█": *road-paint
+        "·": *voxel-air
+
+  renderRoadsPass2:
+    after: renderRoadsPass1
+    type: renderLines
+    models:
+      type: road
+      filter:
+        metadata: nature
+        in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
+    structure:
+      # Road central line and tar (view from above)
+      axes: [ x, y ]
+      blueprint:
+        - "░░░█░░░"
+        - "░░░█░░░"
+        - "░░░█░░░"
+        - "░░░░░░░"
+        - "░░░░░░░"
+      with:
+        "█": *road-paint
+        "░": *road-tar
