@@ -10,7 +10,8 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`fetchData`](#fetchdata)
 * [Tasks operating on world](#tasks-operating-on-world)
   * [`renderHeightmap`](#renderheightmap)
-  * [`renderVectors`](#rendervectors)
+  * [`renderLines`](#renderlines)
+  * [`renderSurfaces`](#rendersurfaces)
   * [`fillBetweenHeightmapAndMetadata`](#fillbetweenheightmapandmetadata)
   * [`renderBuildings`](#renderbuildings)
   * [`setSpawn`](#setspawn)
@@ -61,39 +62,118 @@ maximum: ground
 place: default:water
 ```
 
-### `renderVectors`
+### `renderLines`
 
-Renders 2-D geometries (points, linear things and surfaces) with [placeables](Placeables.md) on a given [heightmap](Heightmaps.md).
+Renders 3-D linearities (lines, line strings, linear rings), repeating a given [structure](Placeables.md#structures) along them.
+
+#### Extra parameters
+
+- `models`: [Selection of models](ModelSelection.md) to render (required, models must be convertible to 3d shapes)
+- `structure`: [Structure](Placeables.md#structures) to use (required, see below for explanations)
+- `renderOnlyWhenAbove`: If this [heightmap](Heightmaps.md) is specified, only parts of that model over it will be rendered (optional)
+
+In given structure, x-axis is along the line, y-axis is in line wideness and z-axis is vertical.
+
+Note that:
+- Z-axis is always vertical, regardless of line pitch.
+- Structure position will always horizontally be adjusted around line center so `yOffset` (see [Structure documentation](Placeables.md#blueprint-structures)) have no effect.
+- As there is no way to know about line orientation (and in most case, this orientation has no sense), it is recommended to use y-axis symmetric structures (like in examples).
+
+![A line to draw zigzaging away with drawn structure repeated along and structure axes following the line](img/render-line-axes.svg)
+
+#### Example
+
+```yaml
+type: renderLines
+models:
+  type: roads
+renderOnlyWhenAbove:
+  sum:
+    - ground
+    - -2
+structure:
+  axes: [ y, x ]
+  blueprint:
+    - "XXXXXX"
+    - "------"
+    - "------"
+    - "------"
+    - "---XXX"
+    - "------"
+    - "------"
+    - "------"
+    - "XXXXXX"
+  with:
+    "X": default:desert_stone
+    "-": default:sandstone
+```
+
+Here, structure is in yx-plane, so it is seen from above. Structure will be placed along the line and repeated from left to right. Bottom and top are the roads borders:
+
+![Roads with turns, dots and borders, made of desert and sand stone voxels, floating in the air](img/render-line-overview.png)
+
+Here, we use a structure in zy-plane (so along height and width):
+
+```yaml
+structure:
+  axes: [ z, y ]
+  blueprint:
+    - "==    =="
+    - "|      |"
+    - "|      |"
+    - "|      |"
+    - "XXXXXXXX"
+  with:
+    "X": default:stone
+    "|": default:sandstone
+    "=": default:glass
+```
+
+This will result in a line long extruded shape:
+
+![U shape made of stone, sandstone and glass voxels, extruded along a line, floating in the air](img/render-line-zy.png)
+
+Three-dimensional structures can be used and same rules apply. X-axis is repeated along line, y-axis is from side to side and z-axis is vertical:
+
+```yaml
+  structure:
+    axes: [ z, y, x ]
+    blueprint:
+      - [ "XXXX", "XXXX", "XXXX", "XXXX", "XXXX" ]
+      - [ "OOOO", "    ", "    ", "    ", "OOOO" ]
+      - [ "O--O", "    ", "    ", "    ", "O--O" ]
+      - [ "O--O", "    ", "    ", "    " ,"O--O" ]
+      - [ "OOOO", "    ", "    ", "    ", "OOOO" ]
+      - [ "XXXX", "XXXX", "XXXX", "XXXX", "XXXX" ]
+    with:
+      "X": default:stone
+      "O": default:sandstone
+      "-": default:glass
+```
+
+The blueprint shows five successive vertical slices of the structure. This will form a sort of long building with windows:
+
+![Several long building-like structures with glass window, stone top and bottom, floating in the air](img/render-line-yzx.png)
+
+### `renderSurfaces`
+
+Renders 2-D shapes surfaces with [placeables](Placeables.md) on a given [heightmap](Heightmaps.md).
 
 #### Extra parameters
 
 - `models`: [Selection of models](ModelSelection.md) to render (required, models must be convertible to 2d shapes)
-- `heightmap`: [Heightmap](Heightmaps.md) to use (required).
-- `place`: [Placeable](Placeables.md) to place on each voxel of shapes (optional)
-- `inside`: [Placeable](Placeables.md) to place on each voxel inside shapes (optional)
-- `borders`: [Placeable](Placeables.md) to place on each voxel of shapes borders (optional)
-
-**NOTE**: `place` cannot be used with `inside` or `borders` (`inside` and `borders` may be used together).
+- `heightmap`: [Heightmap](Heightmaps.md) to use (required)
+- `place`: [Placeable](Placeables.md) to place on each voxel of shapes (required)
 
 #### Examples
 
 Draw "building" shapes with cobble on ground:
 ```yaml
-type: renderVectors
+type: renderSurfaces
 models:
   type: building
 heightmap: ground
 place: default:cobble
-```
-
-Draw same shapes but with wooden borders and glass inside:
-```yaml
-type: vector
-models:
-  type: building
-heightmap: ground
-borders: default:wood
-inside: default:glass
 ```
 
 ### `fillBetweenHeightmapAndMetadata`
@@ -132,7 +212,7 @@ Building height is given by `height` metadata (This task does nothing if the val
 
 #### Extra parameters
 
-- `models`: [Selection of models](ModelSelection.md) to render (required, models must be voxelizable in 2d).
+- `models` (required, models must be convertible to 2d shapes): [Selection of models](ModelSelection.md) to render
 - `roof`: [Placeable](Placeables.md) used to render roofs.
 - `wall`: [Placeable](Placeables.md) used to render walls.
 - `window`: [Placeable](Placeables.md) used to render windows.
