@@ -8,6 +8,9 @@ references:
   - &voxel-grass default:dirt_with_grass
   - &voxel-glass default:glass
   - &voxel-forest-ground default:dirt_with_rainforest_litter
+  - &road-paint wool:white
+  - &road-tar wool:black
+  - &path default:dirt_with_coniferous_litter
   - &forest-grass default:junglegrass
   - &forest-tree1
     structure:

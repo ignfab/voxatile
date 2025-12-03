@@ -16,9 +16,6 @@ import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.ThinLinearVox
  * windows and a roof.
  */
 public class RenderBuildingsTask extends ModelTask<Shape2dConvertibleModel> {
-    /**
-     * {@code Placeable} representing the roof of the building.
-     */
     private final Placeable roof;
     private final Placeable wall;
     private final Placeable window;

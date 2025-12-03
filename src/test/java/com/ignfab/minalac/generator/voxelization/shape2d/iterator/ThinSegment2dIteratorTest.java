@@ -12,7 +12,7 @@ import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
 public class ThinSegment2dIteratorTest {
     @Test
     public void testIterator() {
-        Segment2d line = new Segment2d(
+        Segment2d segment = new Segment2d(
             new WorldCoords2d(-1, -2),
             new WorldCoords2d(4, 3)
         );
@@ -26,7 +26,7 @@ public class ThinSegment2dIteratorTest {
                 new WorldCoords2d(3, 2),
                 new WorldCoords2d(4, 3)
             ),
-            new ThinSegment2dIterator(line)
+            new ThinSegment2dIterator(segment)
         );
     }
 }
