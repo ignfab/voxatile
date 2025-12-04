@@ -12,6 +12,7 @@ import com.ignfab.minalac.generator.utils.random.Seed;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
 @JsonSubTypes({
+    @JsonSubTypes.Type(PerlinPatternParams.class),
     @JsonSubTypes.Type(RandomPatternParams.class),
     @JsonSubTypes.Type(RepeatPatternParams.class),
 })

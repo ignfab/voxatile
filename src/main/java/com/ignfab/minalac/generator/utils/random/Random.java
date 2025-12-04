@@ -36,6 +36,16 @@ public class Random extends java.util.Random {
     }
 
     /**
+     * Sets the seed of this random number generator using two-dimensional coordinates seed.
+     *
+     * @param x Coordinate on x-axis
+     * @param y Coordinate on y-axis
+     */
+    public void setSeed(int x, int y) {
+        setSeed(x ^ (long) y << Integer.SIZE);
+    }
+
+    /**
      * Sets the seed of this random number generator using three dimensional coordinates seed.
      *
      * @param x Coordinate on x-axis

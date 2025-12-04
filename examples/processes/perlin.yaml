@@ -1,0 +1,28 @@
+heightmaps: {}
+
+forEachTile:
+
+  setSpawn:
+    type: setSpawn
+    heightmap: 100
+    x: 0
+    y: 0
+
+#  renderUnderGround:
+#    type: renderHeightmap
+#    minimum: 0
+#    maximum: 99
+#    place:
+#      pattern:
+#        perlin: 0.2
+#        place: *voxel-stone
+
+  renderGround:
+    type: renderHeightmap
+    at: 99
+    place:
+      - *voxel-grass
+      - pattern:
+          perlin: 0.45
+          place: default:permafrost_with_moss
+          ignoreZ: true
