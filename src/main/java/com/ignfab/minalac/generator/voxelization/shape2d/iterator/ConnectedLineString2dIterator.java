@@ -13,7 +13,8 @@ import com.ignfab.minalac.generator.voxelization.shape2d.LineString2d;
  */
  public class ConnectedLineString2dIterator implements Iterator<Positioned2d> {
     private final LineString2d lineString;
-    private final Double delta;
+    private final Double shift;
+    private final boolean connect;
 
     private int index = 0;
     private Iterator<Positioned2d> iterator = null;
@@ -22,11 +23,12 @@ import com.ignfab.minalac.generator.voxelization.shape2d.LineString2d;
      * Creates a new lineString iterator whith thickness.
      *
      * @param lineString the lineString to iterator over.
-     * @param thickness thickness of the line in voxels.
+     * @param shift lines shift distance (0 = no shift)
      */
-    public ConnectedLineString2dIterator(LineString2d lineString, double delta) {
+    public ConnectedLineString2dIterator(LineString2d lineString, double shift, boolean connect) {
         this.lineString = lineString;
-        this.delta = delta;
+        this.shift = shift;
+        this.connect = connect;
     }
 
     private void prepare() {
@@ -43,19 +45,19 @@ import com.ignfab.minalac.generator.voxelization.shape2d.LineString2d;
                 Vector2d startShift;
 
                 if (previous == null) {
-                    startShift = normal.multiply(delta);
+                    startShift = normal.multiply(shift);
                 } else {
                     startShift = normal.add(previous.normal()).unit();
-                    startShift = startShift.multiply(delta / Math.abs(segment.direction().determinant(startShift)));
+                    startShift = startShift.multiply(shift / Math.abs(segment.direction().determinant(startShift)));
                 }
 
                 Vector2d endShift;
 
                 if (next == null) {
-                    endShift = normal.multiply(delta);
+                    endShift = normal.multiply(shift);
                 } else {
                     endShift = normal.add(next.normal()).unit();
-                    endShift = endShift.multiply(delta / Math.abs(segment.direction().determinant(endShift)));
+                    endShift = endShift.multiply(shift / Math.abs(segment.direction().determinant(endShift)));
                 }
 
                 Segment2d shifted = new Segment2d(
@@ -65,7 +67,7 @@ import com.ignfab.minalac.generator.voxelization.shape2d.LineString2d;
 
                 // Don't draw lines in reverse direction
                 if (shifted.length() > 0 && shifted.direction().x() * segment.direction().x() >= 0 && shifted.direction().y() * segment.direction().y() >= 0)
-                    iterator = new ConnectedLine2dIterator(shifted);
+                    iterator = new ConnectedLine2dIterator(shifted, connect);
             }
             index++;
         }

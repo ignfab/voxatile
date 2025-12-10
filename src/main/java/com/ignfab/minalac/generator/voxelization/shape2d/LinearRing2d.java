@@ -1,7 +1,9 @@
 package com.ignfab.minalac.generator.voxelization.shape2d;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
@@ -41,6 +43,10 @@ public class LinearRing2d extends LineString2d {
         return fromPoints(Arrays.asList(points));
     }
 
+    protected LinearRing2d(List<Segment2d> segments, Set<Point2d> points) {
+        super(segments, points);
+    }
+
     protected LinearRing2d(List<WorldCoords2d> points) {
         super(points);
         if (!segments.isEmpty()) {
@@ -52,6 +58,29 @@ public class LinearRing2d extends LineString2d {
     }
 
     protected LinearRing2d() {}
+
+    /**
+     * Basic line string shift.
+     * <p>
+     * This basically shifts linearit may end up in self intersecting geometry.
+     * If result is valid, this will be the shrinked/grown linear ring.
+     *
+     * @param shift distance to shift
+     * @return shifted linear ring
+     */
+    public LinearRing2d shifted(double shift) {
+        List<Segment2d> segments = shiftedSegments(shift);
+
+        if (segments.size() > 0) {
+            Set<Point2d> points = new HashSet<>();
+            for (Segment2d segment: segments)
+                points.add(new Point2d(segment.end()));
+
+            return new LinearRing2d(segments, points);
+        }
+
+        return EMPTY;
+    }
 
     @Override
     public Segment2d get(int index) {

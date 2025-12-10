@@ -3,8 +3,9 @@ package com.ignfab.minalac.generator.voxelization.shape2d.voxelizer;
 import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LineString2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.Segment2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Shape2dConvertible;
-import com.ignfab.minalac.generator.voxelization.shape2d.iterator.ConnectedLineString2dIterator;
+import com.ignfab.minalac.generator.voxelization.shape2d.iterator.ConnectedLine2dIterator;
 
 public class ConnectedLine2dVoxelizer implements Shape2dVoxelizer {
 
@@ -14,8 +15,12 @@ public class ConnectedLine2dVoxelizer implements Shape2dVoxelizer {
         this.delta = delta;
     }
 
+    public Iterable<Positioned2d> voxelize(Segment2d segment) {
+        return () -> new ConnectedLine2dIterator(segment, true);
+    }
+
     public Iterable<Positioned2d> voxelize(LineString2d linestring) {
-        return () -> new ConnectedLineString2dIterator(linestring, delta);
+        return Iterables.unwrap(Iterables.remap(linestring.shifted(delta).segments(), this::voxelize));
     }
 
     @Override

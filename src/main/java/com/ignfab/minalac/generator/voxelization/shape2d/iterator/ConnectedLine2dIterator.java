@@ -11,6 +11,7 @@ public class ConnectedLine2dIterator implements Iterator<Positioned2d> {
     private final Segment2d segment;
     private final int maxIndex;
     private final double indexFactor;
+    private final boolean connect;
 
     private int index;
     private WorldCoords2d last;
@@ -18,12 +19,12 @@ public class ConnectedLine2dIterator implements Iterator<Positioned2d> {
     /**
      * Creates a new iterator on the given line.
      *
-     * @param line the line to iterator over.
-     * @param startIndex in the line (maybe used to extend or shorten line)
-     * @param endIndex in the line (maybe used to extend or shorten line)
+     * @param segment the segment to iterator over.
+     * @param connect whether to connect or not voxels (false = thin line)
      */
-    public ConnectedLine2dIterator(Segment2d segment) {
+    public ConnectedLine2dIterator(Segment2d segment, boolean connect) {
         this.segment = segment;
+        this.connect = connect;
 
         maxIndex = Math.max(segment.bbox().sizeX(), segment.bbox().sizeY()) - 1;
         indexFactor = maxIndex > 0 ? segment.length() / maxIndex : 0;
@@ -41,6 +42,12 @@ public class ConnectedLine2dIterator implements Iterator<Positioned2d> {
         if (index > maxIndex)
             throw new NoSuchElementException();
         WorldCoords2d coords = segment.atIndex(index * indexFactor);
+
+        if (!connect) {
+            index ++;
+            return coords;
+        }
+
         int diff = Math.abs(coords.x() - last.x()) + Math.abs(coords.y() - last.y());
 
         if (diff > 1)

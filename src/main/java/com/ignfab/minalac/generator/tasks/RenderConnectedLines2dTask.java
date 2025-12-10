@@ -15,7 +15,7 @@ import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.ConnectedLine
 /**
  * A task rendering lines by placing structure along them.
  */
-public class RenderConnectedLinesTask extends ModelTask<Shape2dConvertibleModel> {
+public class RenderConnectedLines2dTask extends ModelTask<Shape2dConvertibleModel> {
     private final ReadableHeightmapSpec heightmapSpec;
     private final Placeable placeable;
     private final Set<ConnectedLine2dVoxelizer> voxelizers = new HashSet<>();
@@ -28,7 +28,7 @@ public class RenderConnectedLinesTask extends ModelTask<Shape2dConvertibleModel>
      * @param placeable what to place on the lines
      * @param distances list of distances from main line at which draw lines (0.0 is on the main line)
      */
-    public RenderConnectedLinesTask(
+    public RenderConnectedLines2dTask(
         ModelSelection selection,
         ReadableHeightmapSpec heightmapSpec,
         Placeable placeable,

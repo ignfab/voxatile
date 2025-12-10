@@ -10,7 +10,7 @@ import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
-import com.ignfab.minalac.generator.tasks.RenderConnectedLinesTask;
+import com.ignfab.minalac.generator.tasks.RenderConnectedLines2dTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
 
 /**
@@ -58,7 +58,7 @@ public class RenderConnectedLinesTaskParams extends TileTaskParams {
 
     @Override
     public TileTask create(Generation generation) {
-        return new RenderConnectedLinesTask(
+        return new RenderConnectedLines2dTask(
             models.create(),
             heightmap.create(generation.heightmaps()),
             place.create(generation.seed()),

@@ -157,6 +157,21 @@ public class Segment2d implements Bounded2d {
         return signedDistanceTo(vector.x(), vector.y());
     }
 
+    public WorldCoords2d intersection(Segment2d segment) {
+        double determinant = direction.determinant(segment.direction);
+        if (determinant == 0)
+            return null;
+        // Finding the intersection point is solving a system of two line equations, which can be put in a matrix equation.
+        // The calculation below is simply the result of matrix equation A * X = C  <=> X = A⁻¹ * C
+        // A is matrix of line coefficients.
+        // C is the vector of constants (right-hand side)
+        // X is the intersection point
+        return new WorldCoords2d(
+            (int) Math.round((direction.x() * segment.direction.x() * (start.y() - segment.start.y()) + direction.x() * segment.direction.y() * segment.start.x() - direction.y() * segment.direction.x() * start.x()) / determinant),
+            (int) Math.round((direction.y() * segment.direction.y() * (segment.start.x() - start.x()) + direction.x() * segment.direction.y() * start.y() - direction.y() * segment.direction.x() * segment.start.y()) / determinant)
+        );
+    }
+
     @Override
     public WorldBBox2d bbox() {
         return bbox;
