@@ -1,16 +1,15 @@
 package com.ignfab.minalac.generator.parameters.utils;
 
 import java.beans.ConstructorProperties;
-import java.io.IOException;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import com.ignfab.minalac.generator.utils.IntegerInterval;
 
@@ -125,12 +124,11 @@ public abstract class IntegerIntervalParams {
      *
      * It maps format name to a {@code CustomParams} object.
      */
-    public static class Deserializer extends JsonDeserializer<FallbackParams> {
+    public static class Deserializer extends ValueDeserializer<FallbackParams> {
 
         @Override
-        public FallbackParams deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException, JsonMappingException {
-            return stringToFallbackParams(jp.readValueAs(String.class));
+        public FallbackParams deserialize(JsonParser parser, DeserializationContext context) throws DatabindException {
+            return stringToFallbackParams(parser.readValueAs(String.class));
         }
 
          /**

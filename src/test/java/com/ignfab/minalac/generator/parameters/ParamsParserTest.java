@@ -284,4 +284,31 @@ public class ParamsParserTest {
         assertEquals("juliet", tasksParams.requiredField);
         assertEquals("romeo", tasksParams.optionalField);
     }
+
+    @Test
+    public void testParseNestedReferences() {
+        ParamsParser parser = newParser();
+        parser.registerParams("deathStar", TestingTaskParams.class);
+
+        GenerationParams params = assertDoesNotThrow(() -> parser.parse("""
+            references:
+              - &sith vador
+              - &jedi luke
+            forEachTile:
+              death-star-1: &death-star
+                type: deathStar
+                requiredField: *sith
+                optionalField: *jedi
+              death-star-2: *death-star
+            """
+            + MINIMAL_YAML
+        ));
+
+        TestingTaskParams tasksParams1 = assertInstanceOf(TestingTaskParams.class, params.forEachTile.get("death-star-1"));
+        assertEquals("vador", tasksParams1.requiredField);
+        assertEquals("luke", tasksParams1.optionalField);
+        TestingTaskParams tasksParams2 = assertInstanceOf(TestingTaskParams.class, params.forEachTile.get("death-star-2"));
+        assertEquals("vador", tasksParams2.requiredField);
+        assertEquals("luke", tasksParams2.optionalField);
+    }
 }

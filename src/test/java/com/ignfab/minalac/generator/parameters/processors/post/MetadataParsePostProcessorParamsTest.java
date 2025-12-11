@@ -1,25 +1,15 @@
 package com.ignfab.minalac.generator.parameters.processors.post;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
+import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.ValueParser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MetadataParsePostProcessorParamsTest {
-    private static ObjectMapper mapper;
-
-    @BeforeAll
-    public static void init() {
-        mapper = new ObjectMapper(new YAMLFactory());
-        mapper.registerSubtypes(new NamedType(MetadataParsePostProcessorParams.class, "parse"));
-    }
-
     @Test
     public void testValidate() {
         assertThrows(IllegalArgumentException.class, new MetadataParsePostProcessorParams("", ValueParser.INTEGER)::validate);
@@ -27,7 +17,9 @@ public class MetadataParsePostProcessorParamsTest {
     }
 
     @Test
-    public void testCreate() throws JsonProcessingException {
+    public void testCreate() throws JacksonException {
+        ObjectMapper mapper = ParamsTester.mapperWithParams("parse", MetadataParsePostProcessorParams.class);
+
         String parseYaml = """
         type: parse
         metadata: tata

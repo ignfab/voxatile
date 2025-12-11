@@ -33,6 +33,24 @@
         </repository>
     </repositories>
 
+    <dependencyManagement>
+        <dependencies>
+            <!--
+            BOM DEPENDENCIES
+            ================
+            These dependencies are BOMs (Bill of Materials).
+            They are used to provide the version of other dependencies included below.
+            -->
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>3.1.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <!--
         COMPILE DEPENDENCIES
@@ -113,25 +131,21 @@
         </dependency>
         <!-- Jackson (Yaml/Json deserialization) -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.20.0</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>2.20.0</version>
         </dependency>
         <!-- Transitive dependencies for databind (If missing they might have a NoSuchMethodError)-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.20</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.20.0</version>
         </dependency>
         <!-- Apache command line argument parsing -->
         <dependency>
@@ -253,8 +267,8 @@
                             <excludes>
                                 <exclude>**/module-info.class</exclude>
                                 <exclude>META-INF/MANIFEST.MF</exclude>
-                                <exclude>META-INF/LICENSE*</exclude>
-                                <exclude>META-INF/NOTICE*</exclude>
+                                <exclude>META-INF/*LICENSE*</exclude>
+                                <exclude>META-INF/*NOTICE*</exclude>
                                 <exclude>META-INF/*.SF</exclude>
                                 <exclude>META-INF/*.DSA</exclude>
                                 <exclude>META-INF/*.RSA</exclude>

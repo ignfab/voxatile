@@ -1,9 +1,7 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.cfg.MapperBuilder;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
@@ -15,10 +13,7 @@ import com.ignfab.minalac.generator.parameters.placeables.TestingPlaceableParams
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RenderHeightmapTaskParamsTest {
     @Test
@@ -26,8 +21,7 @@ public class RenderHeightmapTaskParamsTest {
         Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
         generation.heightmaps().add(new HeightmapDeclaration("ground", 5));
 
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        mapper.registerSubtypes(new NamedType(RenderHeightmapTaskParams.class, "heightmapRenderer"));
+        MapperBuilder<?, ?> builder = ParamsTester.mapperBuilderWithParams("heightmapRenderer", RenderHeightmapTaskParams.class);
 
         RenderHeightmapTaskParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(
             RenderHeightmapTaskParams.class,
@@ -36,7 +30,7 @@ public class RenderHeightmapTaskParamsTest {
             at: ground
             place: somethingInvisible
             """,
-            mapper
+            builder
         ));
         assertInstanceOf(WritableHeightmapParams.class, params.at);
         assertEquals("somethingInvisible",  assertInstanceOf(TestingVoxelParams.class, params.place).name);
@@ -51,8 +45,7 @@ public class RenderHeightmapTaskParamsTest {
         generation.heightmaps().add(new HeightmapDeclaration("water", 5));
         generation.heightmaps().add(new HeightmapDeclaration("ground", 25));
 
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        mapper.registerSubtypes(new NamedType(RenderHeightmapTaskParams.class, "heightmapRenderer"));
+        MapperBuilder<?, ?> builder = ParamsTester.mapperBuilderWithParams("heightmapRenderer", RenderHeightmapTaskParams.class);
 
         RenderHeightmapTaskParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(
             RenderHeightmapTaskParams.class,
@@ -62,7 +55,7 @@ public class RenderHeightmapTaskParamsTest {
             maximum: ground
             place: somethingInvisible
             """,
-            mapper
+            builder
         ));
         assertInstanceOf(WritableHeightmapParams.class, params.minimum);
         assertInstanceOf(WritableHeightmapParams.class, params.maximum);

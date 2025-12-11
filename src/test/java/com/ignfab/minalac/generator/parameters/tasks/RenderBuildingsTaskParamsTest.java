@@ -1,10 +1,8 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.InvalidNullException;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.exc.InvalidNullException;
 
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
@@ -27,8 +25,7 @@ public class RenderBuildingsTaskParamsTest {
 
     @Test
     public void testDeserialization() {
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        mapper.registerSubtypes(new NamedType(RenderBuildingsTaskParams.class, "building"));
+        MapperBuilder<?, ?> builder = ParamsTester.mapperBuilderWithParams("building", RenderBuildingsTaskParams.class);
 
         RenderBuildingsTaskParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(RenderBuildingsTaskParams.class, """
         type: building
@@ -37,7 +34,7 @@ public class RenderBuildingsTaskParamsTest {
         roof: voxelA
         wall: voxelB
         window: voxelC
-        """, mapper));
+        """, builder));
         assertEquals("building", params.models.type);
         assertEquals("voxelA", assertInstanceOf(TestingVoxelParams.class, params.roof).name);
         assertEquals("voxelB", assertInstanceOf(TestingVoxelParams.class, params.wall).name);
@@ -50,7 +47,7 @@ public class RenderBuildingsTaskParamsTest {
         roof:
         wall: voxelB
         window: voxelC
-        """, mapper));
+        """, builder));
 
         assertThrows(InvalidNullException.class, () -> ParamsTester.deserialize(RenderBuildingsTaskParams.class, """
         type: building
@@ -59,7 +56,7 @@ public class RenderBuildingsTaskParamsTest {
         roof: voxelA
         wall:
         window: voxelC
-        """, mapper));
+        """, builder));
 
         assertThrows(InvalidNullException.class, () -> ParamsTester.deserialize(RenderBuildingsTaskParams.class, """
         type: building
@@ -68,6 +65,6 @@ public class RenderBuildingsTaskParamsTest {
         roof: voxelA
         wall: voxelB
         window:
-        """, mapper));
+        """, builder));
     }
 }

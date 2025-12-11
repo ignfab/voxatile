@@ -1,12 +1,14 @@
 package com.ignfab.minalac.generator.parameters;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.jsontype.NamedType;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 
@@ -30,24 +32,25 @@ public final class ParamsTester {
      * @param cls class to deserialize to
      * @param serialized text to deserialize
      * @param format output format to use for deserialization
-     * @param mapper mapper to use for deserialization
+     * @param builder mapper builder to use for deserialization
      *
      * @param <T> type of deserialized object
      *
      * @return deserialized object
      */
-    public static <T> T deserialize(Class<T> cls, String serialized, OutputFormat format, ObjectMapper mapper) throws JsonProcessingException {
-        mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
-        mapper.enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
+    public static <T> T deserialize(Class<T> cls, String serialized, OutputFormat format, MapperBuilder<?, ?> builder) throws JacksonException {
+        builder.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+        builder.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
+        builder.enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION);
 
         SimpleModule module = new SimpleModule("ParamsTesterModule");
         module.setDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
-        mapper.registerModule(module);
+        builder.addModule(module);
 
-        format.registerPlaceableDeserializer(mapper);
+        format.registerPlaceableDeserializer(builder);
 
+        ObjectMapper mapper = builder.build();
         JsonNode node = mapper.readValue(serialized, JsonNode.class);
-
         return mapper.treeToValue(node, cls);
     }
 
@@ -62,8 +65,8 @@ public final class ParamsTester {
      *
      * @return deserialized object
      */
-    public static <T> T deserialize(Class<T> cls, String serialized, OutputFormat format) throws JsonProcessingException {
-        return deserialize(cls, serialized, format, new ObjectMapper(new YAMLFactory()));
+    public static <T> T deserialize(Class<T> cls, String serialized, OutputFormat format) throws JacksonException {
+        return deserialize(cls, serialized, format, YAMLMapper.builder());
     }
 
 
@@ -72,14 +75,14 @@ public final class ParamsTester {
      *
      * @param cls class to deserialize to
      * @param serialized text to deserialize
-     * @param mapper mapper to use for deserialization
+     * @param builder mapper builder to use for deserialization
      *
      * @param <T> type of deserialized object
      *
      * @return deserialized object
      */
-    public static <T> T deserialize(Class<T> cls, String serialized, ObjectMapper mapper) throws JsonProcessingException {
-        return deserialize(cls, serialized, OUTPUT_FORMAT, mapper);
+    public static <T> T deserialize(Class<T> cls, String serialized, MapperBuilder<?, ?> builder) throws JacksonException {
+        return deserialize(cls, serialized, OUTPUT_FORMAT, builder);
     }
 
     /**
@@ -92,7 +95,29 @@ public final class ParamsTester {
      *
      * @return deserialized object
      */
-    public static <T> T deserialize(Class<T> cls, String serialized) throws JsonProcessingException {
-        return deserialize(cls, serialized, OUTPUT_FORMAT, new ObjectMapper(new YAMLFactory()));
+    public static <T> T deserialize(Class<T> cls, String serialized) throws JacksonException {
+        return deserialize(cls, serialized, OUTPUT_FORMAT, YAMLMapper.builder());
+    }
+
+    /**
+     * Creates a new {@link YAMLMapper.Builder} with a params class pre-registered.
+     * @param type Type of the params
+     * @param clazz Params class to use
+     * @return A new mapper builder
+     * @see ParamsParser#registerParams(String, Class)
+     */
+    public static YAMLMapper.Builder mapperBuilderWithParams(String type, Class<? extends PolymorphicParams> clazz) {
+        return YAMLMapper.builder().registerSubtypes(new NamedType(clazz, type));
+    }
+
+    /**
+     * Creates a new {@link YAMLMapper} with a params class pre-registered.
+     * @param type Type of the params
+     * @param clazz Params class to use
+     * @return A new mapper ready to use
+     * @see ParamsParser#registerParams(String, Class)
+     */
+    public static YAMLMapper mapperWithParams(String type, Class<? extends PolymorphicParams> clazz) {
+        return mapperBuilderWithParams(type, clazz).build();
     }
 }

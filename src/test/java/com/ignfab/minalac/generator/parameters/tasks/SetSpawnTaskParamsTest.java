@@ -1,9 +1,7 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.cfg.MapperBuilder;
 
 import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
@@ -22,8 +20,7 @@ public class SetSpawnTaskParamsTest {
 
     @Test
     public void testDeserialize() {
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        mapper.registerSubtypes(new NamedType(SetSpawnTaskParams.class, "setSpawn"));
+        MapperBuilder<?, ?> builder = ParamsTester.mapperBuilderWithParams("setSpawn", SetSpawnTaskParams.class);
 
         SetSpawnTaskParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(
             SetSpawnTaskParams.class,
@@ -33,9 +30,8 @@ public class SetSpawnTaskParamsTest {
             x: 2
             y: 5
             """,
-            mapper
-            )
-        );
+            builder
+        ));
 
         assertInstanceOf(WritableHeightmapParams.class, params.heightmap);
         assertEquals(2, params.x);

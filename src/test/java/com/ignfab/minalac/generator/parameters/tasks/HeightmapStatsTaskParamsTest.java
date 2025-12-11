@@ -1,9 +1,7 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.cfg.MapperBuilder;
 
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
@@ -51,8 +49,7 @@ public class HeightmapStatsTaskParamsTest {
     public void testDeserialization() {
         HeightmapStatsTaskParams params;
 
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        mapper.registerSubtypes(new NamedType(HeightmapStatsTaskParams.class, "computeHeightmapStats"));
+        MapperBuilder<?, ?> builder = ParamsTester.mapperBuilderWithParams("computeHeightmapStats", HeightmapStatsTaskParams.class);
 
         params = assertDoesNotThrow(() -> ParamsTester.deserialize(HeightmapStatsTaskParams.class, """
         type: computeHeightmapStats
@@ -61,7 +58,7 @@ public class HeightmapStatsTaskParamsTest {
         heightmap: ground
         compute:
           maximum: max
-        """, mapper));
+        """, builder));
         assertEquals("building", params.models.type);
         assertNotNull(params.heightmap);
         assertEquals("max", params.compute.maximum);
@@ -74,7 +71,7 @@ public class HeightmapStatsTaskParamsTest {
         compute:
           maximum: max
           minimum: min
-        """, mapper));
+        """, builder));
         assertEquals("building", params.models.type);
         assertNotNull(params.heightmap);
         assertEquals("max", params.compute.maximum);

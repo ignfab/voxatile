@@ -1,10 +1,8 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.cfg.MapperBuilder;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
@@ -16,10 +14,7 @@ import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CopyHeightmapTaskParamsTest {
     @Test
@@ -28,8 +23,7 @@ public class CopyHeightmapTaskParamsTest {
         generation.heightmaps().add(new HeightmapDeclaration("ground", 5));
         generation.heightmaps().add(new HeightmapDeclaration("water", 1));
 
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        mapper.registerSubtypes(new NamedType(CopyHeightmapTaskParams.class, "copyHeightmap"));
+        MapperBuilder<?, ?> builder = ParamsTester.mapperBuilderWithParams("copyHeightmap", CopyHeightmapTaskParams.class);
 
         CopyHeightmapTaskParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(
             CopyHeightmapTaskParams.class,
@@ -40,7 +34,7 @@ public class CopyHeightmapTaskParamsTest {
             from: water
             to: ground
             """,
-            mapper
+            builder
         ));
         assertInstanceOf(ModelSelectionParams.class, params.models);
         assertInstanceOf(WritableHeightmapParams.class, params.from);
@@ -58,8 +52,9 @@ public class CopyHeightmapTaskParamsTest {
                 from: water
                 to: ground
                 """,
-            mapper
-        ));
+                builder
+            )
+        );
 
         assertThrows(
             JacksonException.class,
@@ -71,8 +66,9 @@ public class CopyHeightmapTaskParamsTest {
                   type: water
                 to: ground
                 """,
-                mapper
-            ));
+                builder
+            )
+        );
 
         assertThrows(
             JacksonException.class,
@@ -84,8 +80,9 @@ public class CopyHeightmapTaskParamsTest {
                   type: water
                 from: water
                 """,
-                mapper
-            ));
+                builder
+            )
+        );
     }
 
     @Test

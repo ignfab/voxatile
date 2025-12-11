@@ -1,10 +1,8 @@
 package com.ignfab.minalac.generator.parameters.processors.post;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.cfg.MapperBuilder;
 
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 
@@ -14,13 +12,12 @@ public class PostProcessorParamsDeserializerTest {
     @Test
     @DisplayName("Test multiple post-processing steps deserialization using list")
     public void testList() {
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        mapper.registerSubtypes(new NamedType(IdentityPostProcessorParams.class, "identity"));
+        MapperBuilder<?, ?> builder = ParamsTester.mapperBuilderWithParams("identity", IdentityPostProcessorParams.class);
 
         PostProcessorParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(PostProcessorParams.class, """
             - type: identity
             - type: identity
-            """, mapper));
+            """, builder));
         assertInstanceOf(SequentialPostProcessorParams.class, params);
     }
 }

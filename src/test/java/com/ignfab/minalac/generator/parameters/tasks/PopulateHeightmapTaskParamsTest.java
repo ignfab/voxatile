@@ -1,10 +1,8 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.cfg.MapperBuilder;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
@@ -15,10 +13,7 @@ import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PopulateHeightmapTaskParamsTest {
     @Test
@@ -26,8 +21,7 @@ public class PopulateHeightmapTaskParamsTest {
         Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
         generation.heightmaps().add(new HeightmapDeclaration("ground", 5));
 
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        mapper.registerSubtypes(new NamedType(PopulateHeightmapTaskParams.class, "matrixToHeightmap"));
+        MapperBuilder<?, ?> builder = ParamsTester.mapperBuilderWithParams("matrixToHeightmap", PopulateHeightmapTaskParams.class);
 
         PopulateHeightmapTaskParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(
             PopulateHeightmapTaskParams.class,
@@ -37,7 +31,7 @@ public class PopulateHeightmapTaskParamsTest {
               type: mnt
             heightmap: ground
             """,
-            mapper
+            builder
         ));
         assertInstanceOf(ModelSelectionParams.class, params.models);
         assertEquals("ground", params.heightmap.stored);
@@ -53,8 +47,9 @@ public class PopulateHeightmapTaskParamsTest {
                 type: matrixToHeightmap
                 heightmap: ground
                 """,
-                mapper
-            ));
+                builder
+            )
+        );
 
         assertThrows(
             JacksonException.class,
@@ -65,9 +60,9 @@ public class PopulateHeightmapTaskParamsTest {
                 models:
                   type: mnt
                 """,
-                mapper
-            ));
-
+                builder
+            )
+        );
     }
 
     @Test

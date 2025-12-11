@@ -1,21 +1,14 @@
 package com.ignfab.minalac.generator.parameters.processors.post;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+
+import com.ignfab.minalac.generator.parameters.ParamsTester;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MetadataCopyPostProcessorParamsTest {
-    private static ObjectMapper mapper;
-
-    @BeforeAll
-    public static void init() {
-        mapper = new ObjectMapper(new YAMLFactory());
-        mapper.registerSubtypes(new NamedType(MetadataCopyPostProcessorParams.class, "copy"));
-    }
+    private static final ObjectMapper MAPPER = ParamsTester.mapperWithParams("copy", MetadataCopyPostProcessorParams.class);
 
     @Test
     public void testCreate() {
@@ -38,7 +31,7 @@ public class MetadataCopyPostProcessorParamsTest {
             to: height
         """;
 
-        MetadataCopyPostProcessorParams requiredParams = assertDoesNotThrow(() -> mapper.readValue(requiredFields, MetadataCopyPostProcessorParams.class));
+        MetadataCopyPostProcessorParams requiredParams = assertDoesNotThrow(() -> MAPPER.readValue(requiredFields, MetadataCopyPostProcessorParams.class));
         assertEquals("hauteur", requiredParams.metadata);
         assertEquals("height", requiredParams.to);
         assertFalse(requiredParams.abortIfMetadataIsAbsent);
@@ -48,11 +41,11 @@ public class MetadataCopyPostProcessorParamsTest {
             type: copy
             metadata: toto
             to: tata
-            keepExisting: yes
-            abortIfMetadataIsAbsent: yes
+            keepExisting: true
+            abortIfMetadataIsAbsent: true
         """;
 
-        MetadataCopyPostProcessorParams requiredAndOptionalParams = assertDoesNotThrow(() -> mapper.readValue(requiredAndOptionalFields, MetadataCopyPostProcessorParams.class));
+        MetadataCopyPostProcessorParams requiredAndOptionalParams = assertDoesNotThrow(() -> MAPPER.readValue(requiredAndOptionalFields, MetadataCopyPostProcessorParams.class));
         assertEquals("toto", requiredAndOptionalParams.metadata);
         assertEquals("tata", requiredAndOptionalParams.to);
         assertTrue(requiredAndOptionalParams.abortIfMetadataIsAbsent);

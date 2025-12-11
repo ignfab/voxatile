@@ -1,15 +1,14 @@
 package com.ignfab.minalac.generator.parameters;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Class parsing values into different types according to a given type name.
@@ -83,17 +82,15 @@ public record ValueParser<T>(Class<T> type, Function<Object, ? extends T> parser
     /**
      * A custom deserializer for {@code ValueParser}s.
      */
-    static class Deserializer extends JsonDeserializer<ValueParser<?>> {
+    static class Deserializer extends ValueDeserializer<ValueParser<?>> {
 
         @Override
-        public ValueParser<?> deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException {
-
-            String name = jp.readValueAs(String.class);
+        public ValueParser<?> deserialize(JsonParser parser, DeserializationContext context) {
+            String name = parser.readValueAs(String.class);
             try {
                 return ValueParser.get(name);
             } catch (IllegalArgumentException e) {
-                throw new JsonMappingException(jp, "Invalid parser name '%s'. Should be one of %s.".formatted(name, PARSERS.keySet()));
+                throw DatabindException.from(parser, "Invalid parser name '%s'. Should be one of %s.".formatted(name, PARSERS.keySet()));
             }
         }
     }

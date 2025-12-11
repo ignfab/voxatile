@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.parameters.heightmaps;
 
-import com.fasterxml.jackson.core.JacksonException;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;

@@ -1,11 +1,10 @@
 package com.ignfab.minalac.generator.parameters.processors.post;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
+import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataTruncatePostProcessorParams.TruncationMethodParams;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,9 +28,8 @@ public class MetadataTruncatePostProcessorParamsTest {
     }
 
     @Test
-    public void testDeserialize() throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        mapper.registerSubtypes(new NamedType(MetadataTruncatePostProcessorParams.class, "truncate"));
+    public void testDeserialize() throws JacksonException {
+        ObjectMapper mapper = ParamsTester.mapperWithParams("truncate", MetadataTruncatePostProcessorParams.class);
 
         MetadataTruncatePostProcessorParams params = assertDoesNotThrow(() -> mapper.readValue(
             """
