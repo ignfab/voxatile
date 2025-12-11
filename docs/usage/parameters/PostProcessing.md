@@ -104,8 +104,8 @@ A post-processor copying a metadata into another.
 **Extra parameters**:
 - `metadata` (required, `text`): Name of the metadata to copy.
 - `to` (required, `text`): Name of destination metadata.
-- `abortIfMetadataIsAbsent` (optional, default `no`): `yes` to stop the copy if the metadata is missing, `no` to allow the copy to proceed even if the metadata is missing (in this case, the metadata value will be empty).
-- `keepExisting` (optional, default `no`): `no` to overwrite existing data, `yes` to keep existing metadata.
+- `abortIfMetadataIsAbsent` (optional, default `false`): `true` to stop the copy if the metadata is missing, `false` to allow the copy to proceed even if the metadata is missing (in this case, the metadata value will be empty).
+- `keepExisting` (optional, default `false`): `false` to overwrite existing data, `true` to keep existing metadata.
 
 ### Metadata default
 

@@ -1,14 +1,12 @@
 package com.ignfab.minalac.generator.parameters.heightmaps;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.deser.std.DelegatingDeserializer;
-import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.deser.std.DelegatingDeserializer;
+import tools.jackson.databind.jsontype.TypeDeserializer;
 
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationStore;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
@@ -56,21 +54,21 @@ public interface ReadableHeightmapParams {
          * Creates a new instance.
          * @param delegate The default deserializer.
          */
-        public Deserializer(JsonDeserializer<?> delegate) {
+        public Deserializer(ValueDeserializer<?> delegate) {
             super(delegate);
         }
 
         @Override
-        protected JsonDeserializer<?> newDelegatingInstance(JsonDeserializer<?> delegate) {
+        protected ValueDeserializer<?> newDelegatingInstance(ValueDeserializer<?> delegate) {
             return new Deserializer(delegate);
         }
 
         @Override
-        public Object deserializeWithType(JsonParser jsonParser, DeserializationContext deserializationContext, TypeDeserializer typeDeserializer) throws IOException {
-            return switch (jsonParser.currentToken()) {
-                case VALUE_NUMBER_INT -> new ConstantHeightmapParams(jsonParser.getIntValue());
-                case VALUE_STRING -> new WritableHeightmapParams(jsonParser.getText());
-                default -> super.deserializeWithType(jsonParser, deserializationContext, typeDeserializer);
+        public Object deserializeWithType(JsonParser parser, DeserializationContext context, TypeDeserializer typeDeserializer) {
+            return switch (parser.currentToken()) {
+                case VALUE_NUMBER_INT -> new ConstantHeightmapParams(parser.getIntValue());
+                case VALUE_STRING -> new WritableHeightmapParams(parser.getString());
+                default -> super.deserializeWithType(parser, context, typeDeserializer);
             };
         }
     }

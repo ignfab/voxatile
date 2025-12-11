@@ -1,21 +1,19 @@
 package com.ignfab.minalac.generator.parameters;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.jsontype.NamedType;
+import tools.jackson.databind.module.SimpleModule;
 
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.world.VoxelWorld;
@@ -73,31 +71,31 @@ public class OutputFormat {
      * Creates a new {@code PlaceableParams} out of a {@code JsonNode} if a {@code voxelParams} class have been given to constructor.
      *
      * @param node {@code JsonNode} to interpret as {@code PlaceableParams}
-     * @param codec Codec to use for deserialization
+     * @param context Context to use for deserialization
      *
      * @return A new {@code PlaceableParams}
      */
-    public PlaceableParams createVoxelParams(JsonNode node, ObjectCodec codec) throws JsonProcessingException {
+    public PlaceableParams createVoxelParams(JsonNode node, DeserializationContext context) throws JacksonException {
         if (voxelParams == null)
             throw new IllegalArgumentException("Selected format does not have a default voxel type structure, add `type` attribute");
 
-        return codec.treeToValue(node, voxelParams);
-    };
+        return context.readTreeAsValue(node, voxelParams);
+    }
 
     /**
      * Register stuff needed for format deserialization.
      *
-     * @param mapper {@code ObjectMapper} into which register stuff
+     * @param mapperBuilder {@code MapperBuilder} into which register stuff
      */
-    public void registerPlaceableDeserializer(ObjectMapper mapper) {
+    public void registerPlaceableDeserializer(MapperBuilder<?, ?> mapperBuilder) {
         // Register format specific deserializer
         SimpleModule module = new SimpleModule("OutputFormatModule");
         module.addDeserializer(PlaceableParams.class, new PlaceableParams.Deserializer(this));
-        mapper.registerModule(module);
+        mapperBuilder.addModule(module);
 
         // Register base "voxel" type
         if (voxelParams != null)
-            mapper.registerSubtypes(new NamedType(voxelParams, "voxel"));
+            mapperBuilder.registerSubtypes(new NamedType(voxelParams, "voxel"));
     }
 
     /**
@@ -105,7 +103,7 @@ public class OutputFormat {
      *
      * It maps format name to a {@code OutputFormat} object.
      */
-    static class Deserializer extends JsonDeserializer<OutputFormat> {
+    static class Deserializer extends ValueDeserializer<OutputFormat> {
 
         private final Map<String, OutputFormat> formats = new HashMap<>();
 
@@ -114,12 +112,11 @@ public class OutputFormat {
         }
 
         @Override
-        public OutputFormat deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException, JsonMappingException {
+        public OutputFormat deserialize(JsonParser parser, DeserializationContext context) throws DatabindException {
 
-            String name = jp.readValueAs(String.class);
+            String name = parser.readValueAs(String.class);
             if (!formats.containsKey(name))
-                throw new JsonMappingException(jp, "Invalid value for the \"format\" property. Should be one of %s.".formatted(formats.keySet()));
+                throw DatabindException.from(parser, "Invalid value for the \"format\" property. Should be one of %s.".formatted(formats.keySet()));
 
             return formats.get(name);
         }

@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.parameters;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.DatabindException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -84,6 +84,6 @@ public class ValueParserTest {
         ValueParser<?> params = assertDoesNotThrow(() -> ParamsTester.deserialize(ValueParser.class, "integer"));
         assertEquals(Integer.class, params.type());
 
-        assertThrows(JsonMappingException.class, () -> ParamsTester.deserialize(ValueParser.class, "yolo"));
+        assertThrows(DatabindException.class, () -> ParamsTester.deserialize(ValueParser.class, "yolo"));
     }
 }

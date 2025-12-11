@@ -4,20 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+
+import com.ignfab.minalac.generator.parameters.ParamsTester;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MetadataValueMappingPostProcessorParamsTest {
 
     @Test
-    public void testDeserialize() throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        mapper.registerSubtypes(new NamedType(MetadataValueMappingPostProcessorParams.class, "remap"));
+    public void testDeserialize() throws JacksonException {
+        ObjectMapper mapper = ParamsTester.mapperWithParams("remap", MetadataValueMappingPostProcessorParams.class);
 
         assertDoesNotThrow(() -> mapper.readValue("""
         type: remap

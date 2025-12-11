@@ -1,15 +1,13 @@
 package com.ignfab.minalac.generator.parameters.placeables;
 
-import java.io.IOException;
 import java.util.Map.Entry;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.exc.InputCoercionException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.exc.InputCoercionException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ValueDeserializer;
 
 import com.ignfab.minalac.generator.parameters.OutputFormat;
 import com.ignfab.minalac.generator.parameters.placeables.patterns.PatternParams;
@@ -28,7 +26,7 @@ public abstract class PlaceableParams {
      * This deserializer is able to deserialize various forms of {@link PlaceableParams}, depending on {@link OutputFormat}:
      * Nothing, Voxels (short and long description), Structures.
      */
-    public static class Deserializer extends JsonDeserializer<PlaceableParams> {
+    public static class Deserializer extends ValueDeserializer<PlaceableParams> {
         private OutputFormat format;
 
         /**
@@ -41,24 +39,21 @@ public abstract class PlaceableParams {
         }
 
         @Override
-        public PlaceableParams deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException, JacksonException {
+        public PlaceableParams deserialize(JsonParser parser, DeserializationContext context) throws JacksonException {
+            JsonNode node = parser.readValueAsTree();
 
-            ObjectCodec codec = jp.getCodec();
-            JsonNode node = codec.readTree(jp);
-
-            if (node.isTextual()) {
+            if (node.isString()) {
                 // "Nothing" string stands for NoVoxelParams (places nothing)
-                if (node.textValue().equals("nothing"))
+                if (node.asString().equals("nothing"))
                     return new NothingParams();
                 // If value is a string, try to serialize other string using "shortcut" format method.
-                return format.createVoxelParams(node.textValue());
+                return format.createVoxelParams(node.asString());
             }
             if (node.isArray())
-                return new CombinedPlaceableParams(node, codec);
+                return new CombinedPlaceableParams(node, context);
 
             if (!node.isObject())
-                throw new InputCoercionException(jp, "Placeable should be either a string, an object or a list of placeables", node.asToken(), PlaceableParams.class);
+                throw new InputCoercionException(parser, "Placeable should be either a string, an object or a list of placeables", node.asToken(), PlaceableParams.class);
 
             if (node.properties().size() == 1) {
                 // If value is an object with only one property, test if its one of hardcoded keys
@@ -69,18 +64,18 @@ public abstract class PlaceableParams {
                         return new NothingParams();
                     // Explicit way to deserialize voxels (could be handy for disambiguation)
                     case "voxel":
-                        return format.createVoxelParams(property.getValue(), codec);
+                        return format.createVoxelParams(property.getValue(), context);
                     // For structures, relies on PlaceableStructureParams type deduction
                     case "structure":
-                        return codec.treeToValue(property.getValue(), PlaceableStructureParams.class);
+                        return context.readTreeAsValue(property.getValue(), PlaceableStructureParams.class);
                     // For patterns, relies on PatternParams type deduction
                     case "pattern":
-                        return codec.treeToValue(property.getValue(), PatternParams.class);
+                        return context.readTreeAsValue(property.getValue(), PatternParams.class);
                 }
             }
 
             // If none of the above fits, fallback to voxel long description
-            return format.createVoxelParams(node, codec);
+            return format.createVoxelParams(node, context);
         }
     }
 

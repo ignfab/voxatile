@@ -1,9 +1,8 @@
 package com.ignfab.minalac.generator.parameters.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 import com.ignfab.minalac.generator.utils.IntegerInterval;
 
@@ -11,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class IntegerIntervalParamsTest {
 
-    private ObjectReader reader = new ObjectMapper(new YAMLFactory()).readerFor(IntegerIntervalParams.class);
+    private ObjectReader reader = YAMLMapper.shared().readerFor(IntegerIntervalParams.class);
 
     @Test
     void testFromToParams() {

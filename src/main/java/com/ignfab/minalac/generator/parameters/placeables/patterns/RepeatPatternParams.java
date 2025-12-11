@@ -28,7 +28,7 @@ public class RepeatPatternParams extends PatternParams {
     /**
      * Represents shifts along the 3 axes.
      */
-    public class CoordShifts implements Positioned3d {
+    public static class CoordShifts implements Positioned3d {
         /**
          * Number of voxels to shift on the X-axis (optional).
          */

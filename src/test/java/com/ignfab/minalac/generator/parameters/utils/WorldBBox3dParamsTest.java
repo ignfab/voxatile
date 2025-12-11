@@ -1,9 +1,8 @@
 package com.ignfab.minalac.generator.parameters.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
@@ -11,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class WorldBBox3dParamsTest {
 
-    private ObjectReader reader = new ObjectMapper(new YAMLFactory()).readerFor(WorldBBox3dParams.class);
+    private ObjectReader reader = YAMLMapper.shared().readerFor(WorldBBox3dParams.class);
 
     @Test
     void testDeserialization() {

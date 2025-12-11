@@ -1,32 +1,32 @@
 package com.ignfab.minalac.generator.parameters;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.yaml.YAMLAnchorReplayingFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.exc.MismatchedInputException;
+import tools.jackson.databind.exc.ValueInstantiationException;
+import tools.jackson.databind.jsontype.NamedType;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.dataformat.yaml.YAMLAnchorReplayingFactory;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 /**
  * A Json/Yaml parser able to decode parameters into a {@code Generation} object.
  */
 public class ParamsParser {
-    private final ObjectMapper mapper;
+    private final YAMLMapper.Builder mapperBuilder;
     private final OutputFormat.Deserializer formatDeserializer = new OutputFormat.Deserializer();
 
     /**
      * Creates a new Parser.
      */
     public ParamsParser() {
-        mapper = new ObjectMapper(new YAMLAnchorReplayingFactory());
-        mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
-        // To prevent duplicates in map type parameters.
-        mapper.enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION);
+        mapperBuilder = YAMLMapper.builder(new YAMLAnchorReplayingFactory())
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+            .configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true)
+            // To prevent duplicates in map type parameters.
+            .enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION);
     }
 
     /**
@@ -35,9 +35,9 @@ public class ParamsParser {
      * @param serialized A string containing the generation parameters data in Json or Yaml format
      * @return the corresponding generation parameters object.
      * @throws ParseException if an error occurs during deserialization such as an invalid structure
-     * @throws JsonProcessingException
+     * @throws JacksonException
      */
-    public GenerationParams parse(String serialized) throws ParseException, JsonProcessingException {
+    public GenerationParams parse(String serialized) throws ParseException, JacksonException {
         GenerationParams params;
         SimpleModule module;
 
@@ -45,12 +45,14 @@ public class ParamsParser {
         module = new SimpleModule("MinalacParserModule");
         module.addDeserializer(OutputFormat.class, formatDeserializer);
         module.setDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
-        mapper.registerModule(module);
+        mapperBuilder.addModule(module);
+
+        YAMLMapper mapper = mapperBuilder.build();
 
         JsonNode document;
         try {
             document = mapper.readTree(serialized);
-        } catch (JsonParseException e) {
+        } catch (JacksonException e) {
             throw new ParseException(e);
         }
 
@@ -58,14 +60,16 @@ public class ParamsParser {
             throw new ParseException("Missing format field!");
 
         // Deserialize output format only
-        OutputFormat format = mapper.readValue(document.get("format").asText(), OutputFormat.class);
+        OutputFormat format = mapper.readValue(document.get("format").asString(), OutputFormat.class);
 
         // Register format specific deserializer
-        format.registerPlaceableDeserializer(mapper);
+        YAMLMapper.Builder rebuilder = mapper.rebuild();
+        format.registerPlaceableDeserializer(rebuilder);
 
         // Deserialize the whole parameter object
         try {
-            params = mapper.treeToValue(document, GenerationParams.class);
+            // Rebuild the mapper because format-specific configuration was added
+            params = rebuilder.build().treeToValue(document, GenerationParams.class);
         } catch (MismatchedInputException | ValueInstantiationException e) {
             throw new ParseException(e);
         }
@@ -86,7 +90,7 @@ public class ParamsParser {
      * @param <T> The type of the {@code PolymorphicParams} subclass
      */
     public <T extends PolymorphicParams> void registerParams(String name, Class<T> clazz) {
-        mapper.registerSubtypes(new NamedType(clazz, name));
+        mapperBuilder.registerSubtypes(new NamedType(clazz, name));
     }
 
     /**

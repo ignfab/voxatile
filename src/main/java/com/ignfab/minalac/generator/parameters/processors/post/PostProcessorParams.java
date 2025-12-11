@@ -1,15 +1,14 @@
 package com.ignfab.minalac.generator.parameters.processors.post;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.deser.std.DelegatingDeserializer;
-import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.deser.std.DelegatingDeserializer;
+import tools.jackson.databind.jsontype.TypeDeserializer;
 
 import com.ignfab.minalac.generator.parameters.JsonDelegateDeserialize;
 import com.ignfab.minalac.generator.parameters.PolymorphicParams;
@@ -35,24 +34,24 @@ public abstract class PostProcessorParams extends PolymorphicParams {
          * Creates a new instance.
          * @param delegate The default deserializer.
          */
-        public Deserializer(JsonDeserializer<?> delegate) {
+        public Deserializer(ValueDeserializer<?> delegate) {
             super(delegate);
         }
 
         @Override
-        protected JsonDeserializer<?> newDelegatingInstance(JsonDeserializer<?> delegate) {
+        protected ValueDeserializer<?> newDelegatingInstance(ValueDeserializer<?> delegate) {
             return new Deserializer(delegate);
         }
 
         @Override
-        public Object deserializeWithType(JsonParser jsonParser, DeserializationContext deserializationContext, TypeDeserializer typeDeserializer) throws IOException {
-            if (jsonParser.isExpectedStartArrayToken()) {
+        public Object deserializeWithType(JsonParser parser, DeserializationContext context, TypeDeserializer typeDeserializer) {
+            if (parser.isExpectedStartArrayToken()) {
                 List<PostProcessorParams> sequence = new ArrayList<>();
-                while (jsonParser.nextToken() != JsonToken.END_ARRAY)
-                    sequence.add(jsonParser.readValueAs(PostProcessorParams.class));
+                while (parser.nextToken() != JsonToken.END_ARRAY)
+                    sequence.add(parser.readValueAs(PostProcessorParams.class));
                 return new SequentialPostProcessorParams(sequence);
             }
-            return super.deserializeWithType(jsonParser, deserializationContext, typeDeserializer);
+            return super.deserializeWithType(parser, context, typeDeserializer);
         }
     }
 }

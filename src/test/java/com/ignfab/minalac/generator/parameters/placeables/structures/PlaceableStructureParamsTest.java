@@ -1,9 +1,9 @@
 package com.ignfab.minalac.generator.parameters.placeables.structures;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.exc.InvalidTypeIdException;
 
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 
@@ -78,7 +78,7 @@ public class PlaceableStructureParamsTest {
 
     @Test
     @DisplayName("Test PlaceableStructureParams propagates validation errors")
-    void testValidation() throws JsonProcessingException {
+    void testValidation() throws JacksonException {
         PlaceableStructureParams params;
 
         params = ParamsTester.deserialize(

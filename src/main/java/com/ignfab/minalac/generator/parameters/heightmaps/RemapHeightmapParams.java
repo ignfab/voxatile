@@ -1,16 +1,15 @@
 package com.ignfab.minalac.generator.parameters.heightmaps;
 
 import java.beans.ConstructorProperties;
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.IntUnaryOperator;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.KeyDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.KeyDeserializer;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationStore;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
@@ -74,7 +73,7 @@ public class RemapHeightmapParams implements ReadableHeightmapParams {
 
     static class ValuesKeyDeserializer extends KeyDeserializer {
         @Override
-        public Object deserializeKey(String s, DeserializationContext deserializationContext) throws IOException {
+        public Object deserializeKey(String s, DeserializationContext context) {
             return IntegerIntervalParams.FallbackParams.Deserializer.stringToFallbackParams(s);
         }
     }

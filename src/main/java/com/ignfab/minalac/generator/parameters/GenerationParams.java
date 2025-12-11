@@ -4,10 +4,11 @@ import java.beans.ConstructorProperties;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.tasks.TileTaskParams;
@@ -33,7 +34,7 @@ public class GenerationParams {
      * A placeholder for Yaml references than does not go anywhere else.
      * Content of this field will be ignored.
      */
-    @JsonSetter(nulls = Nulls.SKIP)
+    @JsonIgnore
     public JsonNode references;
 
     /**

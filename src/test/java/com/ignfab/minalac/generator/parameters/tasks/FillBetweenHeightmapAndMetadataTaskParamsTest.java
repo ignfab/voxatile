@@ -1,9 +1,7 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.cfg.MapperBuilder;
 
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
@@ -68,8 +66,7 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
 
     @Test
     void testDeserialization() {
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        mapper.registerSubtypes(new NamedType(FillBetweenHeightmapAndMetadataTaskParams.class, "filling"));
+        MapperBuilder<?, ?> builder = ParamsTester.mapperBuilderWithParams("filling", FillBetweenHeightmapAndMetadataTaskParams.class);
 
         FillBetweenHeightmapAndMetadataTaskParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(FillBetweenHeightmapAndMetadataTaskParams.class, """
         type: filling
@@ -79,7 +76,7 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
         altitudeMetadata: altitude
         placeAbove: voxelA
         placeBelow: voxelB
-        """, mapper));
+        """, builder));
         assertEquals("models", params.models.type);
         assertEquals("altitude", params.altitudeMetadata);
         assertEquals("voxelA", assertInstanceOf(TestingVoxelParams.class, params.placeAbove).name);

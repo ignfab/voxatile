@@ -2,8 +2,8 @@ package com.ignfab.minalac.generator.parameters.placeables;
 
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
 
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.placeables.CombinedPlaceable;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CombinedPlaceableParamsTest {
     @Test
-    public void testValidate() throws JsonProcessingException {
+    public void testValidate() throws JacksonException {
         PlaceableParams invalid = new TestingPlaceableParams(null);
         PlaceableParams valid = new TestingPlaceableParams(new TestingPlaceable());
 
@@ -32,7 +32,7 @@ public class CombinedPlaceableParamsTest {
     }
 
     @Test
-    public void testCreate() throws JsonProcessingException {
+    public void testCreate() throws JacksonException {
         TestingPlaceable placeable = new TestingPlaceable();
         CombinedPlaceableParams params = new CombinedPlaceableParams(List.of(), null);
         params.placeableParams.add(new TestingPlaceableParams(placeable));

@@ -5,14 +5,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
-import com.fasterxml.jackson.databind.deser.std.DelegatingDeserializer;
-import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.DeserializationConfig;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.deser.ValueDeserializerModifier;
+import tools.jackson.databind.deser.std.DelegatingDeserializer;
+import tools.jackson.databind.jsontype.TypeDeserializer;
 
 /**
  * Annotation to make Jackson use a custom delegating deserializer for a given class.
@@ -44,22 +44,22 @@ public @interface JsonDelegateDeserialize {
 
     /**
      * Jackson handler to wrap deserializer of annotated beans with the requested one.
-     * This should be registered in the {@link com.fasterxml.jackson.databind.ObjectMapper}:
+     * This should be registered in the {@link tools.jackson.databind.cfg.MapperBuilder}:
      * <pre>{@code
-     *  ObjectMapper mapper = ...;
+     *  MapperBuilder<?, ?> mapperBuilder = ...;
      *  SimpleModule module = new SimpleModule("MyModule");
      *  module.setDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
-     *  mapper.registerModule(module);
+     *  mapperBuilder.addModule(module);
      * }</pre>
      */
-    class BeanModifier extends BeanDeserializerModifier {
+    class BeanModifier extends ValueDeserializerModifier {
         @Override
-        public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc, JsonDeserializer<?> deserializer) {
-            JsonDelegateDeserialize annotation = beanDesc.getClassAnnotations().get(JsonDelegateDeserialize.class);
+        public ValueDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription.Supplier beanDescRef, ValueDeserializer<?> deserializer) {
+            JsonDelegateDeserialize annotation = beanDescRef.getClassAnnotations().get(JsonDelegateDeserialize.class);
             if (annotation == null || annotation.using() == DelegatingDeserializer.class)
                 return deserializer;
             try {
-                return annotation.using().getConstructor(JsonDeserializer.class).newInstance(deserializer);
+                return annotation.using().getConstructor(ValueDeserializer.class).newInstance(deserializer);
             } catch (ReflectiveOperationException e) {
                 throw new IllegalStateException("Failed to construct delegating deserializer from " + annotation.using(), e);
             }

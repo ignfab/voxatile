@@ -1,7 +1,6 @@
 package com.ignfab.minalac.generator.parameters.placeables.structures;
 
 import java.beans.ConstructorProperties;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -12,14 +11,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.exc.InputCoercionException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.exc.InputCoercionException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.placeables.Nothing;
@@ -231,35 +229,32 @@ public class BlueprintPlaceableStructureParams extends PlaceableStructureParams.
      * This deserializer ensures that we can have only : a string, a list of strings or a list of lists of strings.
      * A list mixing strings and lists of strings will be rejected.
      */
-    private static final class BlueprintDeserializer extends JsonDeserializer<Blueprint> {
+    private static final class BlueprintDeserializer extends ValueDeserializer<Blueprint> {
 
         @Override
-        public Blueprint deserialize(JsonParser jp, DeserializationContext ctxt)
-                throws IOException, JacksonException {
-
-            ObjectCodec codec = jp.getCodec();
-            JsonNode node = codec.readTree(jp);
+        public Blueprint deserialize(JsonParser parser, DeserializationContext context) throws JacksonException {
+            JsonNode node = parser.readValueAsTree();
 
             // Two possible exception thrown under various conditions:
-            final InputCoercionException typeError = new InputCoercionException(jp, "Blueprint should be either a string, a list of strings or a list of lists of strings", node.asToken(), PlaceableParams.class);
-            final InputCoercionException dimensionError = new InputCoercionException(jp, "Mixed list levels of strings in blueprint", node.asToken(), PlaceableParams.class);
+            final InputCoercionException typeError = new InputCoercionException(parser, "Blueprint should be either a string, a list of strings or a list of lists of strings", node.asToken(), PlaceableParams.class);
+            final InputCoercionException dimensionError = new InputCoercionException(parser, "Mixed list levels of strings in blueprint", node.asToken(), PlaceableParams.class);
 
              // One dimensional blueprint (single string)
-            if (node.isTextual())
-                return new Blueprint(node.asText(), null, null);
+            if (node.isString())
+                return new Blueprint(node.asString(), null, null);
 
             // Two or three dimensional: should be a non empty array
-            if (node.isArray() && node.elements().hasNext()) {
+            if (node.isArray() && !node.isEmpty()) {
                 // Inspect first element to tell how many dimensions we have
-                JsonNode first = node.elements().next();
+                JsonNode first = node.get(0);
 
                 // Two dimensional blueprint (list of strings)
-                if (first.isTextual()) {
+                if (first.isString()) {
                     LinkedList<String> list = new LinkedList<>();
                     for (JsonNode text : node) {
-                        if (!text.isTextual())
+                        if (!text.isString())
                             throw dimensionError;
-                        list.add(text.asText());
+                        list.add(text.asString());
                     }
                     return new Blueprint(null, list, null);
                 }
@@ -272,9 +267,9 @@ public class BlueprintPlaceableStructureParams extends PlaceableStructureParams.
                             throw dimensionError;
                         LinkedList<String> list = new LinkedList<>();
                         for (JsonNode text : array) {
-                            if (!text.isTextual())
+                            if (!text.isString())
                                 throw typeError;
-                            list.add(text.asText());
+                            list.add(text.asString());
                         }
                         result.add(list);
                     }

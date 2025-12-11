@@ -3,9 +3,9 @@ package com.ignfab.minalac.generator.parameters.placeables;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
 
 import com.ignfab.minalac.generator.placeables.CombinedPlaceable;
 import com.ignfab.minalac.generator.placeables.Placeable;
@@ -27,11 +27,11 @@ public class CombinedPlaceableParams extends PlaceableParams {
      * This class is suposed to be instantiated only from {@link PlaceableParams} custom deserializer.
      *
      * @param array Array of {@code JsonNode} deserializable into {@code Placeable}
-     * @param codec Codec to use to deserialize placeables
+     * @param context Context to use to deserialize placeables
      */
-    public CombinedPlaceableParams(Iterable<JsonNode> array, ObjectCodec codec) throws JsonProcessingException {
+    public CombinedPlaceableParams(Iterable<JsonNode> array, DeserializationContext context) throws JacksonException {
         for (JsonNode node : array)
-            placeableParams.add(codec.treeToValue(node, PlaceableParams.class));
+            placeableParams.add(context.readTreeAsValue(node, PlaceableParams.class));
     }
 
     @Override
