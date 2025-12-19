@@ -2,9 +2,9 @@ package com.ignfab.minalac.generator.inputs;
 
 import java.io.File;
 import java.io.IOException;
-import javax.media.jai.iterator.RandomIter;
-import javax.media.jai.iterator.RandomIterFactory;
 
+import org.eclipse.imagen.iterator.RandomIter;
+import org.eclipse.imagen.iterator.RandomIterFactory;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -50,7 +50,7 @@ public class GeoTiffDataProvider implements Provider<FloatGeographicDataMatrix2d
     public Provider.Result<FloatGeographicDataMatrix2d> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
         GridCoverage2D grid;
         try {
-            grid = new GeoTiffReader(file, crsOverride == null ? null : new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crsOverride)).read(null);
+            grid = new GeoTiffReader(file, crsOverride == null ? null : new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crsOverride)).read();
         } catch (IOException e) {
             throw new RetryableException(e);
         }

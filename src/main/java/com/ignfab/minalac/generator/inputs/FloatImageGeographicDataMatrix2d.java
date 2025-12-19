@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.inputs;
 
-import javax.media.jai.iterator.RandomIter;
+import org.eclipse.imagen.iterator.RandomIter;
 
 /**
  * A matrix of float values.
