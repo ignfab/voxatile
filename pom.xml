@@ -16,7 +16,6 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <geotools.version>31.0</geotools.version>
         <osm4j.version>1.4.1</osm4j.version>
     </properties>
 
@@ -59,6 +58,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-bom</artifactId>
+                <version>34.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -98,32 +104,26 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-main</artifactId>
-            <version>${geotools.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools.xsd</groupId>
             <artifactId>gt-xsd-wfs</artifactId>
-            <version>${geotools.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-referencing</artifactId>
-            <version>${geotools.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-geopkg</artifactId>
-            <version>${geotools.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-shapefile</artifactId>
-            <version>${geotools.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-geotiff</artifactId>
-            <version>${geotools.version}</version>
         </dependency>
         <!--
             Required to identify coordinates reference systems
@@ -132,7 +132,6 @@
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-epsg-hsql</artifactId>
-            <version>${geotools.version}</version>
         </dependency>
         <!-- Minecraft NBT file format -->
         <dependency>
@@ -273,19 +272,15 @@
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <!-- With at least an entry "Main-Class: ..." to make it executable -->
                             <mainClass>com.ignfab.minalac.generator.MinalacGenerator</mainClass>
-                            <!-- And manifest entries from javax.media:jai_imageio, required for GeoTools GeoTiff module -->
-                            <manifestEntries>
-                                <Name>javax/media/jai/</Name>
-                                <Specification-Title>Java Advanced Imaging Image I/O Tools</Specification-Title>
-                                <Specification-Version>1.1</Specification-Version>
-                                <Specification-Vendor>Sun Microsystems, Inc.</Specification-Vendor>
-                                <Implementation-Title>com.sun.media.imageio</Implementation-Title>
-                                <Implementation-Version>1.1</Implementation-Version>
-                                <Implementation-Vendor>Sun Microsystems, Inc.</Implementation-Vendor>
-                            </manifestEntries>
                         </transformer>
-                        <!-- Properly shades all resources, required for GeoTools HSQL embedded databases -->
+                        <!-- Properly shades all resources, required for GeoTools HSQL embedded databases and GeoTIFF module -->
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                            <resource>META-INF/org.eclipse.imagen.registryFile.jai</resource>
+                        </transformer>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                            <resource>META-INF/registryFile.jai</resource>
+                        </transformer>
                     </transformers>
                     <filters>
                         <!-- Removes some duplicated resources being shaded together -->
@@ -311,19 +306,11 @@
                                 <exclude>plugin.properties</exclude>
                             </excludes>
                         </filter>
-                        <!-- Removes JAI-EXT registry files overlapping with each-other -->
+                        <!-- Removes utility class of "scale2" already provided by "scale" -->
                         <filter>
-                            <artifact>*:jt-*</artifact>
+                            <artifact>org.eclipse.imagen:scale2</artifact>
                             <excludes>
-                                <exclude>META-INF/registryFile.jai*</exclude>
-                            </excludes>
-                        </filter>
-                        <!-- Removes some files of jt-scale2 that are already provided by jt-scale -->
-                        <filter>
-                            <artifact>it.geosolutions.jaiext.scale2:jt-scale2</artifact>
-                            <excludes>
-                                <exclude>it/geosolutions/jaiext/scale/JaiI18N.class</exclude>
-                                <exclude>it/geosolutions/jaiext/resources/image/it.geosolutions.jaiext.scale.properties</exclude>
+                                <exclude>org/eclipse/imagen/media/scale/JaiI18N.class</exclude>
                             </excludes>
                         </filter>
                     </filters>
