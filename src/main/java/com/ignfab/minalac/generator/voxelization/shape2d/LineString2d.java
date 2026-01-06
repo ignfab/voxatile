@@ -134,27 +134,23 @@ public class LineString2d implements Shape2d {
             // Normal should never be zero but it costs nothing to check
             if (!normal.isZero()) {
 
-                Vector2d startShift;
+                Vector2d startShift = normal;
 
-                if (previous == null) {
-                    startShift = normal.multiply(shift);
-                } else {
-                    startShift = normal.add(previous.normal()).unit();
-                    startShift = startShift.multiply(shift / Math.abs(current.direction().determinant(startShift)));
+                if (previous != null) {
+                    startShift = startShift.add(previous.normal());
+                    startShift = startShift.multiply(1 - 0.5 * normal.dot(previous.normal()));
                 }
 
-                Vector2d endShift;
+                Vector2d endShift = normal;
 
-                if (next == null) {
-                    endShift = normal.multiply(shift);
-                } else {
-                    endShift = normal.add(next.normal()).unit();
-                    endShift = endShift.multiply(shift / Math.abs(current.direction().determinant(endShift)));
+                if (next != null) {
+                    endShift = endShift.add(next.normal());
+                    endShift = endShift.multiply(1 - 0.5 * normal.dot(next.normal()));
                 }
 
                 Segment2d shifted = new Segment2d(
-                    current.start().toVector().add(startShift).round(),
-                    current.end().toVector().add(endShift).round()
+                    current.start().toVector().add(startShift.multiply(shift)).round(),
+                    current.end().toVector().add(endShift.multiply(shift)).round()
                 );
 
                 if (shifted.length() > 0)
