@@ -24,6 +24,7 @@ public class MinalacGeneratorCLI {
 
     private static final String PARAMS_ENVVAR_NAME = "MINALAC_PARAMS";
     private static final String MAX_TILE_SIZE_ENVVAR_NAME = "MINALAC_MAX_TILE_SIZE";
+    private static final String PLUGINS_PATH_ENVVAR_NAME = "MINALAC_PLUGINS_PATH";
 
     private Path outputPath;
     private Path parametersPath;
@@ -32,6 +33,7 @@ public class MinalacGeneratorCLI {
     private boolean saveDisabled;
 
     private Integer maxTileSize = null;
+    private Path pluginsPath = null;
 
     private final Options options;
 
@@ -45,6 +47,7 @@ public class MinalacGeneratorCLI {
         options.addOption(new Option(null, "generation-disabled", false, "Stop before starting generation, after parameters parsed"));
         options.addOption(new Option(null, "save-disabled", false, "Stop before saving output file, after generation done"));
         options.addOption(new Option(null, "max-tile-size", true, "Set maximum tile size (may be passed using %s environment variable)".formatted(MAX_TILE_SIZE_ENVVAR_NAME)));
+        options.addOption(new Option(null, "plugins-path", true, "Directory where to look for plugins (may be passed using %s environment variable)".formatted(PLUGINS_PATH_ENVVAR_NAME)));
     }
 
     /**
@@ -93,6 +96,25 @@ public class MinalacGeneratorCLI {
                     maxTileSize = parseStrictPositiveInteger(envvar);
                 } catch (NumberFormatException e) {
                     System.out.printf("Warning: Omitting invalid value '%s' in %s environment variable (should have been a positive integer number).%n", envvar, MAX_TILE_SIZE_ENVVAR_NAME);
+                }
+            }
+        }
+
+
+        if (cmd.hasOption("--plugins-path")) {
+            try {
+                pluginsPath = parsePath(cmd.getOptionValue("--plugins-path"), true, false);
+            } catch (InvalidPathException e) {
+                System.err.println("Invalid value for --plugins-path: should be an exsiting directory path");
+                System.exit(1);
+            }
+        } else {
+            String envvar = System.getenv(PLUGINS_PATH_ENVVAR_NAME);
+            if (envvar != null && !envvar.isBlank()) {
+                try {
+                    pluginsPath = parsePath(envvar, true, false);
+                } catch (InvalidPathException e) {
+                    System.out.printf("Warning: Omitting invalid value '%s' in %s environment variable (should have been an exsiting directory path).%n", envvar, PLUGINS_PATH_ENVVAR_NAME);
                 }
             }
         }
@@ -188,12 +210,17 @@ public class MinalacGeneratorCLI {
     }
 
     /**
-     * Returns wanted tiles size if any.
-     *
-     * @return tiles maximum
+     * @return the wanted tiles size if any.
      */
     public Integer maxTileSize() {
         return maxTileSize;
+    }
+
+    /**
+     * @return the plugins directory path
+     */
+    public Path pluginsPath() {
+        return pluginsPath;
     }
 
     private static int parseStrictPositiveInteger(String value) throws NumberFormatException {
@@ -201,5 +228,14 @@ public class MinalacGeneratorCLI {
         if (result <= 0)
             throw new NumberFormatException("Not a positive integer");
         return result;
+    }
+
+    private static Path parsePath(String value, boolean shouldBeDir, boolean shouldBeFile) {
+        Path path = Path.of(value);
+        if (shouldBeDir && !path.toFile().isDirectory())
+            throw new InvalidPathException("Not an existing directory", value);
+        if (shouldBeFile && !path.toFile().isFile())
+            throw new InvalidPathException("Not an existing file", value);
+        return path;
     }
 }

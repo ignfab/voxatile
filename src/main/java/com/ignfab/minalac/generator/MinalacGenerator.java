@@ -92,6 +92,11 @@ public final class MinalacGenerator {
 
         Integer maxTileSize = cli.maxTileSize();
 
+        Plugins plugins = new Plugins();
+
+        if (cli.pluginsPath() != null)
+            plugins.loadFromDirectory(cli.pluginsPath());
+
         // Generation parsing
         ParamsParser parser = new ParamsParser();
 
@@ -129,6 +134,8 @@ public final class MinalacGenerator {
         parser.registerParams("truncate", MetadataTruncatePostProcessorParams.class);
         parser.registerParams("geometryBuffer", JTSGeometryBufferPostProcessorParams.class);
         parser.registerParams("remap", MetadataValueMappingPostProcessorParams.class);
+
+        plugins.registerParams(parser);
 
         Generation generation = parser.parse(parameters).create(maxTileSize);
 
