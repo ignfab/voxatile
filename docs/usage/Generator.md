@@ -25,7 +25,7 @@ Options:
 - `--generation-disabled` Stop before starting generation, after parameters parsed.
 - `--save-disabled` Stop before saving output file, after generation done.
 - `--max-tile-size <size>` Perform tiled generation with tiles no larger than `size` (positive integer) in both dimensions. See also [`MINALAC_MAX_TILE_SIZE`](#minalac_max_tile_size) environment variable.
-
+- `--modules-path <path>` Path to modules directory (see [modules](#modules)).
 
 `<outputPath>`: generation output path (must be an existing and writable directory).
 
@@ -40,6 +40,10 @@ If set, may contain generation parameters to use when `--param-file` command lin
 ### `MINALAC_MAX_TILE_SIZE`
 
 If set to a positive integer, perform tiled generation with tiles no larger than this number. Overridden by `--max-tile-size` command line option.
+
+### `MINALAC_MODULES_PATH`
+
+Path to modules directory (see [modules](#modules)).
 
 ## Compile and run
 
@@ -69,3 +73,13 @@ mvn clean compile exec:java \
   -Dexec.mainClass="com.ignfab.minalac.generator.MinalacGenerator" \
   -Dexec.args="-p parameters.yaml $HOME/.minetest/worlds/minalac"
 ```
+
+# Modules
+
+Modules are Jar files adding features to generator (output formats, source types, task types, ...).
+
+They should be placed in a directory specified either by `--modules-path` command line option or `MINALAC_MODULES_PATH` environment variable. If command line option is set, environment variable is ignored. If none set, no modules will be loaded.
+
+All Jar files in modules directory, but not in subdirectories (no recursive loading), will be loaded. Beware that presence of Jar file that is not a module in that directory will make generation fail.
+
+Once modules loaded, corresponding features can be used in parameters.

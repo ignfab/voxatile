@@ -66,7 +66,7 @@ while [[ "$1" == "-"* ]]; do
                     exit 1
                     ;;
             esac
-            exit 0 
+            exit 0
             ;;
         *)
             echo "Unknown option $opt"
@@ -136,4 +136,4 @@ if [ "$display_only" ]; then
     exit 0
 fi
 
-MINALAC_PARAMS=$params $JAVA_CMD -jar $JAR_PATH $generator_opt "$output_dir"
+MINALAC_PARAMS=$params MINALAC_MODULES_PATH=modules $JAVA_CMD -jar $JAR_PATH $generator_opt "$output_dir"
