@@ -92,7 +92,7 @@ public final class MinalacGenerator {
 
         Integer maxTileSize = cli.maxTileSize();
 
-        Plugins plugins = new Plugins();
+        PluginsManager plugins = new PluginsManager();
 
         if (cli.pluginsPath() != null)
             plugins.loadFromDirectory(cli.pluginsPath());
