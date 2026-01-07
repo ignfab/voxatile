@@ -33,6 +33,27 @@ public final class FileHelpers {
         return Files.isRegularFile(path) && Files.isReadable(path);
     }
 
+
+    /**
+     * Tests if the given file is a readable directory.
+     * Shortcut for {@code FileHelpers.isReadableDirectory(file.toPath())}
+     * @param file the file to test
+     * @return {@code true} if the file is a readable directory, {@code false} otherwise
+     * @see #isReadableDirectory(Path)
+     */
+    public static boolean isReadableDirectory(File file) {
+        return isReadableDirectory(file.toPath());
+    }
+
+    /**
+     * Tests if the given path points to a readable directory.
+     * @param path the path to test
+     * @return {@code true} if the target is a readable directory, {@code false} otherwise
+     */
+    public static boolean isReadableDirectory(Path path) {
+        return Files.isDirectory(path) && Files.isReadable(path);
+    }
+
     /**
      * Puts the given content into the file, creating any necessary directories.
      * @param file the file to write content to

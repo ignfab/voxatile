@@ -54,6 +54,8 @@ import com.ignfab.minalac.generator.parameters.tasks.SequenceTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.SetSpawnTaskParams;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
+import com.ignfab.minalac.generator.utils.modules.ModulesLoader;
+import com.ignfab.minalac.generator.utils.modules.ModulesManager;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
@@ -97,6 +99,13 @@ public final class MinalacGenerator {
         }
 
         Integer maxTileSize = cli.maxTileSize();
+
+        ModulesLoader loader = new ModulesLoader();
+
+        if (cli.modulesPath() != null)
+            loader.loadModulesDirectory(cli.modulesPath().toFile());
+
+        ModulesManager modules = loader.create();
 
         // Generation parsing
         ParamsParser parser = new ParamsParser();
@@ -142,6 +151,8 @@ public final class MinalacGenerator {
         parser.registerParams("truncate", MetadataTruncatePostProcessorParams.class);
         parser.registerParams("geometryBuffer", JTSGeometryBufferPostProcessorParams.class);
         parser.registerParams("remap", MetadataValueMappingPostProcessorParams.class);
+
+        modules.registerParams(parser);
 
         Generation generation = parser.parse(parameters).create(maxTileSize);
 
