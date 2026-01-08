@@ -11,6 +11,5 @@
     Disable VisibilityModifier check for params classes.
     Attributes in those classes are purposely kept public to be deserialized by Jackson
     -->
-    <suppress checks="VisibilityModifier" files=".*[\\/]src[\\/](main|test)[\\/]java[\\/]com[\\/]ignfab[\\/]minalac[\\/]generator[\\/]parameters[\\/].*Params\.java"/>
+    <suppress checks="VisibilityModifier" files=".*[\\/]src[\\/](main|test)[\\/]java[\\/]com[\\/]ignfab[\\/]minalac[\\/]generator[\\/].*Params\.java"/>
 </suppressions>
-

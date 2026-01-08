@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.TestingProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.TestingTaskParams;
+import com.ignfab.minalac.generator.testing.TestingVoxelParams;
+import com.ignfab.minalac.generator.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +26,7 @@ public class GenerationParamsTest {
     void setUp() {
         GenerationParams.Area.LatitudeLongitude center = new GenerationParams.Area.LatitudeLongitude(5.8, 2.4);
         GenerationParams.Area area = new GenerationParams.Area(center, 50, 75);
-        OutputFormat format = new OutputFormat(TestingVoxelWorld::new, TestingVoxelParams.class, TestingVoxelParams::new);
+        OutputFormat format = new OutputFormat(TestingVoxelWorld::create, TestingVoxelParams.class, TestingVoxelParams::new);
         params = new GenerationParams(area, format);
         params.heightmaps = new HashMap<>();
         params.forEachTile = new HashMap<>();
@@ -129,7 +129,7 @@ public class GenerationParamsTest {
             placeable,
             placeable
         ));
-        Generation generation = params.create(100);
+        Generation generation = params.create(null, 100);
 
         assertNotNull(generation);
         assertEquals("test", generation.world().getMetadata().getWorldName());

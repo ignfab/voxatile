@@ -6,7 +6,7 @@ import org.geotools.referencing.CRS;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
+import com.ignfab.minalac.generator.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.*;

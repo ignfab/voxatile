@@ -1,9 +1,14 @@
 package com.ignfab.minalac.generator.parameters;
 
 import java.beans.ConstructorProperties;
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.geotools.api.geometry.Position;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
@@ -12,11 +17,6 @@ import org.geotools.api.referencing.operation.TransformException;
 import org.geotools.geometry.Position2D;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.tasks.TileTaskParams;
@@ -146,10 +146,11 @@ public class GenerationParams {
     /**
      * Creates the corresponding {@link Generation}.
      *
+     * @param destination file/directory where to write generation result
      * @param maxTileSize max tile size if tiling wanted, else null
      * @return the corresponding {@code Generation}
      */
-    public Generation create(Integer maxTileSize) {
+    public Generation create(File destination, Integer maxTileSize) {
         // TODO : If not provided its default value should be calculated by finding the appropriated projected CRS for the provided center point.
         // At the moment the default value is EPSG:2154
         CoordinateReferenceSystem targetCrs;
@@ -165,7 +166,7 @@ public class GenerationParams {
             throw new RuntimeException("Wasn't able to convert the coordinates", e);
         }
 
-        VoxelWorld world = format.createWorld();
+        VoxelWorld world = format.createWorld(destination);
         world.getMetadata().setWorldName(worldName);
         Generation generation = new Generation(
             world,

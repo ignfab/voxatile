@@ -2,8 +2,8 @@ package com.ignfab.minalac.generator.placeables;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
+import com.ignfab.minalac.generator.testing.TestingVoxel;
+import com.ignfab.minalac.generator.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -11,9 +11,9 @@ import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmap;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.utils.IntegerIntervalParams;
+import com.ignfab.minalac.generator.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
+import com.ignfab.minalac.generator.testing.TestingVoxelParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,7 +17,7 @@ public class OutputFormatTest {
     @DisplayName("Simple constructor test")
     public void testConstructor() {
         assertDoesNotThrow(() -> new OutputFormat(
-            () -> null,
+            (destination) -> null,
             TestingVoxelParams.class,
             TestingVoxelParams::new
         ));
@@ -27,7 +27,7 @@ public class OutputFormatTest {
     @DisplayName("Test createVoxelParams using shortcut")
     public void testCreateVoxelParamsShortcut() {
         OutputFormat format = new OutputFormat(
-            () -> null,
+            (destination) -> null,
             TestingVoxelParams.class,
             TestingVoxelParams::new
         );
@@ -41,7 +41,7 @@ public class OutputFormatTest {
     @DisplayName("Test createVoxelParams using default class")
     public void testCreateVoxelParamsDefault() throws JsonProcessingException {
         OutputFormat format = new OutputFormat(
-            () -> null,
+            (destination) -> null,
             TestingVoxelParams.class,
             TestingVoxelParams::new
         );
@@ -60,7 +60,7 @@ public class OutputFormatTest {
     @DisplayName("Test createVoxelParams with null default and shortcut")
     public void testCreateVoxelParamsNull() throws JsonProcessingException {
         OutputFormat format = assertDoesNotThrow(() -> new OutputFormat(
-            () -> null,
+            (destination) -> null,
             null,
             null
         ));

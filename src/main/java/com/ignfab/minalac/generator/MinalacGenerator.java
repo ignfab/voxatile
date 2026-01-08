@@ -12,15 +12,12 @@ import org.geotools.api.referencing.FactoryException;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.extensions.minecraft.MinecraftExtension;
+import com.ignfab.minalac.generator.extensions.minetest.MinetestExtension;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.GenerationTile;
-import com.ignfab.minalac.generator.outputs.minecraft.MCVoxelWorld;
-import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
-import com.ignfab.minalac.generator.parameters.OutputFormat;
 import com.ignfab.minalac.generator.parameters.ParamsParser;
 import com.ignfab.minalac.generator.parameters.ParseException;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.MCVoxelParams;
-import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelParams;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.ConditionalPostProcessorParams;
@@ -94,15 +91,14 @@ public final class MinalacGenerator {
 
         PluginsManager plugins = new PluginsManager();
 
+        plugins.add(new MinecraftExtension());
+        plugins.add(new MinetestExtension());
+
         if (cli.pluginsPath() != null)
             plugins.loadFromDirectory(cli.pluginsPath());
 
         // Generation parsing
         ParamsParser parser = new ParamsParser();
-
-        // Register game formats
-        parser.registerFormat("minecraft", new OutputFormat(() -> new MCVoxelWorld(destination), MCVoxelParams.class, MCVoxelParams::new));
-        parser.registerFormat("minetest", new OutputFormat(() -> new MTVoxelWorld(destination), MTVoxelParams.class, MTVoxelParams::new));
 
         // TODO: Static method that provides a ParamsParser with all default renderers
         // If those name values are modified, update the documentation accordingly
@@ -137,7 +133,7 @@ public final class MinalacGenerator {
 
         plugins.registerParams(parser);
 
-        Generation generation = parser.parse(parameters).create(maxTileSize);
+        Generation generation = parser.parse(parameters).create(destination, maxTileSize);
 
         System.out.printf("Generation initialization took %ds.%n", Duration.between(initializationStart, Instant.now()).toSeconds());
         if (cli.generationDisabled()) {

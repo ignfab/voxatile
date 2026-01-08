@@ -2,7 +2,7 @@ package com.ignfab.minalac.generator.placeables;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
+import com.ignfab.minalac.generator.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 import static org.junit.jupiter.api.Assertions.*;

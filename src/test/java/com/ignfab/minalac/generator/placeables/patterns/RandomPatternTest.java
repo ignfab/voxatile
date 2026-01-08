@@ -2,9 +2,9 @@ package com.ignfab.minalac.generator.placeables.patterns;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.placeables.TestingPlaceable;
+import com.ignfab.minalac.generator.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.utils.random.TestingRandom;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;

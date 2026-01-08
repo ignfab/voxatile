@@ -3,8 +3,8 @@ package com.ignfab.minalac.generator.generation;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationStore;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapStore;
 import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
+import com.ignfab.minalac.generator.testing.TestingVoxelTile;
+import com.ignfab.minalac.generator.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 

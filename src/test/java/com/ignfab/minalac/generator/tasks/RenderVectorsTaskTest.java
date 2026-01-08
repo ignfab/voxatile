@@ -8,7 +8,7 @@ import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.TestingRectangleShapeVoxelizable2dModel;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
+import com.ignfab.minalac.generator.testing.TestingVoxel;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
