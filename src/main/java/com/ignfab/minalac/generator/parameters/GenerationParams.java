@@ -4,6 +4,15 @@ import java.beans.ConstructorProperties;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.geotools.api.geometry.Position;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.TransformException;
+import org.geotools.geometry.Position2D;
+import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -11,6 +20,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.tasks.TileTaskParams;
+import com.ignfab.minalac.generator.tasks.TileTask;
+import com.ignfab.minalac.generator.utils.random.Seed;
+import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * GenerationParams represents the parameters used during the generation.
@@ -138,7 +150,52 @@ public class GenerationParams {
      * @return the corresponding {@code Generation}
      */
     public Generation create(Integer maxTileSize) {
-        return GenerationCreator.create(this, maxTileSize);
+        // TODO : If not provided its default value should be calculated by finding the appropriated projected CRS for the provided center point.
+        // At the moment the default value is EPSG:2154
+        CoordinateReferenceSystem targetCrs;
+        double[] center;
+        try {
+            targetCrs = CRS.decode(crs == null ? "EPSG:2154" : crs);
+            MathTransform mathTransform = CRS.findMathTransform(DefaultGeographicCRS.WGS84, targetCrs);
+            Position position = new Position2D(DefaultGeographicCRS.WGS84, area.center.longitude, area.center.latitude);
+            center = mathTransform.transform(position, position).getCoordinate();
+        } catch (FactoryException e) {
+            throw new RuntimeException("Wasn't able to decode the CRS code", e);
+        } catch (TransformException e) {
+            throw new RuntimeException("Wasn't able to convert the coordinates", e);
+        }
+
+        VoxelWorld world = format.createWorld();
+        world.getMetadata().setWorldName(worldName);
+        Generation generation = new Generation(
+            world,
+            new Seed(seed),
+            targetCrs,
+            center[0],
+            center[1],
+            area.extentX,
+            area.extentY,
+            horizontalScale,
+            verticalScale,
+            Math.toRadians(area.angle),
+            maxTileSize == null || maxTileSize <= 0 ? Math.max(area.extentX, area.extentY) : maxTileSize
+        );
+
+        heightmaps.forEach((name, heightmapParams) ->
+            generation.heightmaps().add(heightmapParams.create(name))
+        );
+
+        // ForEachTile scheduling
+        forEachTile.forEach((name, taskParams) -> {
+            TileTask task = taskParams.create(generation);
+            generation.scheduler().schedule(name, task);
+        });
+        forEachTile.forEach((name, taskParams) -> {
+            for (String depName : taskParams.after)
+                generation.scheduler().addDependency(name, depName);
+        });
+
+        return generation;
     }
 
     /**
