@@ -20,6 +20,14 @@
         <osm4j.version>1.4.1</osm4j.version>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/ignfab/minalac-generator</url>
+        </repository>
+    </distributionManagement>
+
     <repositories>
         <repository>
             <id>osgeo</id>
