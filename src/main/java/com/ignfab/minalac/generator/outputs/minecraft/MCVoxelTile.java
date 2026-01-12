@@ -69,6 +69,7 @@ public class MCVoxelTile extends VoxelTile {
             McaFileHelpers.blockAbsoluteToChunkRelative(blockZ),
             block
         );
+        clearBlockEntity(blockX, blockY, blockZ); // TODO This negatively affects performances and should be optimized!
         // (In-Game coords to world coords) X/Z/-Y => X/Y/Z
         updateHeightmaps(blockX, -(blockZ + 1), blockY);
     }
@@ -82,7 +83,19 @@ public class MCVoxelTile extends VoxelTile {
             blockEntities = new ListTag<>(CompoundTag.class);
             chunk.setTileEntities(blockEntities);
         }
+        block.putInt("x", blockX);
+        block.putInt("y", blockY);
+        block.putInt("z", blockZ);
         blockEntities.add(block);
+    }
+
+    private void clearBlockEntity(int blockX, int blockY, int blockZ) {
+        if (isOutOfLimits(blockX, blockY, blockZ)) return;
+        TerrainChunk chunk = getOrCreateRegion(blockX, blockZ).getOrCreateChunk(McaFileHelpers.blockToChunk(blockX), McaFileHelpers.blockToChunk(blockZ));
+        ListTag<CompoundTag> blockEntities = chunk.getTileEntities();
+        if (blockEntities == null)
+            return;
+        blockEntities.removeIf(blockEntity -> MCHelpers.xyzEquals(blockEntity, blockX, blockY, blockZ));
     }
 
     // In-Game coords
@@ -103,11 +116,21 @@ public class MCVoxelTile extends VoxelTile {
      */
     @Override
     public Placeable getVoxel(int x, int y, int z) {
-        Region region = regions.get(Region.computeKeyFromBlock(x, -y - 1));
-
-        if (region == null) return MCVoxel.DEFAULTVOXEL;
-
         // (World coords to In-Game coords) X/Y/Z => X/Z/-Y-1
-        return region.getBlock(x, z, -y - 1);
+        int blockX = x;
+        int blockY = z;
+        int blockZ = -y - 1;
+
+        Region region = regions.get(Region.computeKeyFromBlock(blockX, blockZ));
+        if (region == null)
+            return MCVoxel.DEFAULTVOXEL;
+
+        CompoundTag blockState = region.getBlockState(blockX, blockY, blockZ);
+        if (blockState == null)
+            return MCVoxel.DEFAULTVOXEL;
+        MCVoxel voxel = MCVoxel.fromBlockState(blockState);
+
+        CompoundTag blockEntity = region.getBlockEntity(blockX, blockY, blockZ);
+        return blockEntity == null ? voxel : MCBlockEntityVoxel.fromBlockEntity(blockEntity, voxel);
     }
 }

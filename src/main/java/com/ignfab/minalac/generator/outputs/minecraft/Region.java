@@ -7,6 +7,7 @@ import io.github.ensgijs.nbt.mca.McaRegionFile;
 import io.github.ensgijs.nbt.mca.TerrainChunk;
 import io.github.ensgijs.nbt.mca.io.McaFileHelpers;
 import io.github.ensgijs.nbt.tag.CompoundTag;
+import io.github.ensgijs.nbt.tag.ListTag;
 
 /**
  * Represents a Minecraft region.
@@ -95,23 +96,41 @@ public record Region(int regionX, int regionZ, McaRegionFile file) {
     }
 
     /**
-     * Returns a block as a new {@link MCVoxel}.
+     * Returns the block state at the given coordinates.
      *
      * @param blockX the in-game x-coordinate
      * @param blockY the in-game y-coordinate
      * @param blockZ the in-game z-coordinate
-     * @return the corresponding voxel, or {@code null} if it doesn't exist
+     * @return the corresponding block state, or {@code null} if it doesn't exist
      */
-    public MCVoxel getBlock(int blockX, int blockY, int blockZ) {
+    public CompoundTag getBlockState(int blockX, int blockY, int blockZ) {
         TerrainChunk chunk = file.getChunk(McaFileHelpers.blockToChunk(blockX), McaFileHelpers.blockToChunk(blockZ));
-        if (chunk == null)
-            return MCVoxel.DEFAULTVOXEL;
-        CompoundTag block = chunk.getBlockAtByRef(
+        return chunk == null ? null : chunk.getBlockAtByRef(
             McaFileHelpers.blockAbsoluteToChunkRelative(blockX),
             blockY,
             McaFileHelpers.blockAbsoluteToChunkRelative(blockZ)
         );
-        return block == null ? MCVoxel.DEFAULTVOXEL : MCVoxel.fromBlockState(block);
+    }
+
+    /**
+     * Returns the block entity at the given coordinates.
+     *
+     * @param blockX the in-game x-coordinate
+     * @param blockY the in-game y-coordinate
+     * @param blockZ the in-game z-coordinate
+     * @return the corresponding block entity, or {@code null} if it doesn't exist
+     */
+    public CompoundTag getBlockEntity(int blockX, int blockY, int blockZ) {
+        TerrainChunk chunk = file.getChunk(McaFileHelpers.blockToChunk(blockX), McaFileHelpers.blockToChunk(blockZ));
+        if (chunk == null)
+            return null;
+        ListTag<CompoundTag> blockEntities = chunk.getTileEntities();
+        if (blockEntities == null)
+            return null;
+        for (CompoundTag blockEntity : blockEntities)
+            if (MCHelpers.xyzEquals(blockEntity, blockX, blockY, blockZ))
+                return blockEntity;
+        return null;
     }
 
     /**

@@ -4,6 +4,8 @@ import java.beans.ConstructorProperties;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.outputs.minecraft.MCVoxel;
@@ -14,6 +16,10 @@ import com.ignfab.minalac.generator.utils.random.Seed;
 /**
  * Parameters for simple Minecraft voxel with only block type name.
  */
+// defaultImpl is needed because Jackson deduction cannot rely on absence of field to determine a subtype
+// See this GitHub issue for more info: https://github.com/FasterXML/jackson-databind/issues/2976
+@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION, defaultImpl = MCVoxelParams.class)
+@JsonSubTypes(@JsonSubTypes.Type(MCBlockEntityVoxelParams.class))
 public class MCVoxelParams extends PlaceableParams {
     /**
      * Block type name (required).
@@ -46,5 +52,21 @@ public class MCVoxelParams extends PlaceableParams {
     @Override
     public Placeable create(Seed seed) {
         return new MCVoxel(block, properties);
+    }
+
+    // TODO probably find a better name
+    public static MCVoxelParams packed(String block) {
+        return new Packed(block);
+    }
+
+    private static final class Packed extends MCVoxelParams {
+        private Packed(String block) {
+            super(block);
+        }
+
+        @Override
+        public Placeable create(Seed seed) {
+            return MCVoxel.fromString(block);
+        }
     }
 }

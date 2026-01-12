@@ -102,7 +102,7 @@ public final class MinalacGenerator {
         ParamsParser parser = new ParamsParser();
 
         // Register game formats
-        parser.registerFormat("minecraft", new OutputFormat(() -> new MCVoxelWorld(destination), MCVoxelParams.class, MCVoxelParams::new));
+        parser.registerFormat("minecraft", new OutputFormat(() -> new MCVoxelWorld(destination), MCVoxelParams.class, MCVoxelParams::packed));
         parser.registerFormat("minetest", new OutputFormat(() -> new MTVoxelWorld(destination), MTVoxelParams.class, MTVoxelParams::new));
 
         // TODO: Static method that provides a ParamsParser with all default renderers
