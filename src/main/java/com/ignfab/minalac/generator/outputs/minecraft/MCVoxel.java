@@ -21,16 +21,8 @@ public class MCVoxel implements Placeable {
      */
     public static final MCVoxel DEFAULTVOXEL = new MCVoxel("minecraft:air");
 
-
-    /**
-     * The block type string.
-     * @see <a href="https://minecraft.wiki/w/Block">List of block types (Minecraft Wiki)</a>
-     */
-    protected final String type;
-    /**
-     * The block state properties.
-     */
-    protected final Map<String, String> properties;
+    private final String type;
+    private final Map<String, String> properties;
 
     // Lazily-initialized reusable block data
     private CompoundTag block;
@@ -51,8 +43,23 @@ public class MCVoxel implements Placeable {
      * @param properties the block state properties
      */
     public MCVoxel(String type, Map<String, String> properties) {
-        this.type = type;
-        this.properties = properties;
+        this.type = MCHelpers.ensureNamespaced(type);
+        this.properties = properties == null ? Map.of() : Map.copyOf(properties);
+    }
+
+    /**
+     * {@return the block type string}
+     * @see <a href="https://minecraft.wiki/w/Block">List of block types (Minecraft Wiki)</a>
+     */
+    public String type() {
+        return type;
+    }
+
+    /**
+     * {@return the block state properties}
+     */
+    public Map<String, String> properties() {
+        return properties;
     }
 
     /**
@@ -77,6 +84,31 @@ public class MCVoxel implements Placeable {
         return new MCVoxel(type);
     }
 
+    /**
+     * Creates a new instance of {@link MCVoxel} from a serialized block state string.
+     * Example: {@code minecraft:blue_candle[candles=3,lit=true]}.
+     * Extra whitespaces are not allowed!
+     *
+     * @param block the string representing a block.
+     * @return a new {@code MCVoxel}
+     */
+    public static MCVoxel fromString(String block) {
+        int bracket = block.indexOf('[');
+        if (bracket == -1)
+            return new MCVoxel(block);
+        if (block.indexOf(']') != block.length() - 1)
+            throw new IllegalArgumentException("Invalid block state definition: " + block);
+        String type = block.substring(0, bracket);
+        Map<String, String> properties = new HashMap<>();
+        for (String property : block.substring(bracket + 1, block.length() - 1).split(",")) {
+            int eq = property.indexOf('=');
+            if (eq == -1)
+                throw new IllegalArgumentException("Invalid property definition: " + property);
+            properties.put(property.substring(0, eq), property.substring(eq + 1));
+        }
+        return new MCVoxel(type, properties);
+    }
+
     @Override
     public void place(VoxelTile tile, int x, int y, int z)  {
         if (tile instanceof MCVoxelTile mcTile) {
@@ -98,7 +130,7 @@ public class MCVoxel implements Placeable {
         if (block == null) {
             block = new CompoundTag();
             block.putString("Name", type);
-            if (properties != null) {
+            if (!properties.isEmpty()) {
                 CompoundTag state = new CompoundTag();
                 properties.forEach(state::putString);
                 block.put("Properties", state);
@@ -112,7 +144,7 @@ public class MCVoxel implements Placeable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MCVoxel that = (MCVoxel) o;
-        return type.equals(that.type) && Objects.equals(properties, that.properties);
+        return type.equals(that.type) && properties.equals(that.properties);
     }
 
     @Override
