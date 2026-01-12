@@ -105,13 +105,13 @@ public record Region(int regionX, int regionZ, McaRegionFile file) {
     public MCVoxel getBlock(int blockX, int blockY, int blockZ) {
         TerrainChunk chunk = file.getChunk(McaFileHelpers.blockToChunk(blockX), McaFileHelpers.blockToChunk(blockZ));
         if (chunk == null)
-            return null;
+            return MCVoxel.DEFAULTVOXEL;
         CompoundTag block = chunk.getBlockAtByRef(
             McaFileHelpers.blockAbsoluteToChunkRelative(blockX),
             blockY,
             McaFileHelpers.blockAbsoluteToChunkRelative(blockZ)
         );
-        return block == null ? null : MCVoxel.fromBlockState(block);
+        return block == null ? MCVoxel.DEFAULTVOXEL : MCVoxel.fromBlockState(block);
     }
 
     /**

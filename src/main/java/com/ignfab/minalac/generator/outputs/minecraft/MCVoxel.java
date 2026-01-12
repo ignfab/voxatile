@@ -19,7 +19,7 @@ public class MCVoxel implements Placeable {
     /**
      * Default voxel used on map initialization.
      */
-    public static final MCVoxel DEFAULTVOXEL = new MCVoxel("minecraft:air", new HashMap<>());
+    public static final MCVoxel DEFAULTVOXEL = new MCVoxel("minecraft:air");
 
 
     /**
