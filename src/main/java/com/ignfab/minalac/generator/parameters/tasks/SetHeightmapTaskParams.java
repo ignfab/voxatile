@@ -9,7 +9,7 @@ import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.models.values.ModelValueParams;
-import com.ignfab.minalac.generator.tasks.SetHeightmpaTask;
+import com.ignfab.minalac.generator.tasks.SetHeightmapTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
 
 /**
@@ -57,7 +57,7 @@ public class SetHeightmapTaskParams extends TileTaskParams {
 
     @Override
     public TileTask create(Generation generation) {
-        return new SetHeightmpaTask(
+        return new SetHeightmapTask(
             models.create(),
             set.create(generation),
             to.create(generation.heightmaps())

@@ -14,7 +14,7 @@ import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.SurfaceVoxeli
 /**
  * A {@link TileTask} setting a value at all coordinates within the model's shape.
  */
-public class SetHeightmpaTask extends ModelTask<Shape2dConvertibleModel> {
+public class SetHeightmapTask extends ModelTask<Shape2dConvertibleModel> {
     private final ModelValue value;
     private final WritableHeightmapSpec toSpec;
     private final SurfaceVoxelizer2d voxelizer;
@@ -25,7 +25,7 @@ public class SetHeightmpaTask extends ModelTask<Shape2dConvertibleModel> {
      * @param value value to set
      * @param toSpec target writable heightmap spec
      */
-    public SetHeightmpaTask(ModelSelection selection, ModelValue value, WritableHeightmapSpec toSpec) {
+    public SetHeightmapTask(ModelSelection selection, ModelValue value, WritableHeightmapSpec toSpec) {
         super(Shape2dConvertibleModel.class, selection);
         this.value = value;
         this.toSpec = toSpec;
@@ -34,8 +34,8 @@ public class SetHeightmpaTask extends ModelTask<Shape2dConvertibleModel> {
 
     @Override
     protected void run(Shape2dConvertibleModel model, GenerationTile tile) {
-        Optional<Integer> option = this.value.getAsInt(model);
-        if (!option.isPresent())
+        Optional<Integer> option = value.getAsInt(model);
+        if (option.isEmpty())
             return;
 
         WritableHeightmap to = tile.heightmaps().get(toSpec);

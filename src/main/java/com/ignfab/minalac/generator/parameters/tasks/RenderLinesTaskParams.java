@@ -4,6 +4,7 @@ import java.beans.ConstructorProperties;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;

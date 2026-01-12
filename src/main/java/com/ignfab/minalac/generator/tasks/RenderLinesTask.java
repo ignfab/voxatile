@@ -33,7 +33,7 @@ public class RenderLinesTask extends ModelTask<Shape3dConvertibleModel> {
      *
      * @param selection Selection of models to render
      * @param structureGenerator Structure to use as template
-     * @param stickToHeightmapSpec If not null, lines will be rendered at that heightmap
+     * @param stickToZ If not null, lines will be rendered at that height
      * @param renderOnlyWhenAboveSpec If not null, lines will be rendered only if they have a part over that heightmap
      */
     public RenderLinesTask(
