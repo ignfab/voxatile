@@ -26,11 +26,11 @@ public class MCVoxel implements Placeable {
      * The block type string.
      * @see <a href="https://minecraft.wiki/w/Block">List of block types (Minecraft Wiki)</a>
      */
-    protected final String type;
+    protected final String type; // TODO Default namespace minecraft: could be enforced when absent for better equality checks
     /**
      * The block state properties.
      */
-    protected final Map<String, String> properties;
+    protected final Map<String, String> properties; // TODO This field should be made non-null & immutable, with an empty Map.of() when no properties are present
 
     // Lazily-initialized reusable block data
     private CompoundTag block;
@@ -75,6 +75,31 @@ public class MCVoxel implements Placeable {
         }
 
         return new MCVoxel(type);
+    }
+
+    /**
+     * Creates a new instance of {@link MCVoxel} from a serialized block state string.
+     * Example: {@code minecraft:blue_candle[candles=3,lit=true]}.
+     * Extra whitespaces are not allowed!
+     *
+     * @param block the string representing a block.
+     * @return a new {@code MCVoxel}
+     */
+    public static MCVoxel fromString(String block) {
+        int bracket = block.indexOf('[');
+        if (bracket == -1)
+            return new MCVoxel(block);
+        if (block.indexOf(']') != block.length() - 1)
+            throw new IllegalArgumentException("Invalid block state definition: " + block);
+        String type = block.substring(0, bracket);
+        Map<String, String> properties = new HashMap<>();
+        for (String property : block.substring(bracket + 1, block.length() - 1).split(",")) {
+            int eq = property.indexOf('=');
+            if (eq == -1)
+                throw new IllegalArgumentException("Invalid property definition: " + property);
+            properties.put(property.substring(0, eq), property.substring(eq + 1));
+        }
+        return new MCVoxel(type, properties);
     }
 
     @Override
