@@ -176,10 +176,11 @@ forEachTile:
       mapping:
         0: 0
         1: 1
-        2: 8
-        3..3: 10
-        4..6: 11
-        7..12: 12
+        2: 3
+        3..4: 4
+        5..6: 5
+        7..11: 6
+        12: 7
     to: water
 
   renderWater:
@@ -209,7 +210,7 @@ forEachTile:
     modelType: building-city
     provider:
       type: cityjson
-      filePath: data/bati.city.json
+      filePath: data/bati-jdc.city.json
     processor:
       type: cityjsonBuilding
 
@@ -448,6 +449,7 @@ forEachTile:
   path:
     after:
       - fetchRoads
+      - renderWater
       - ground
     type: renderLines
     models:
@@ -465,6 +467,7 @@ forEachTile:
   renderRoadsSidewalks:
     after:
       - fetchRoads
+      - renderWater
       - ground
     type: renderDynamicLines
     models:
@@ -472,16 +475,17 @@ forEachTile:
       filter:
         metadata: nature
         in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
-    stickToHeightmap: ground
     width:
       round: width
     repeated:
-      # TODO: We should have 1-voxel structures params
       put: nothing
-      at: [0, 0, 0]
+      at: [0, 0, -2..0]
     extra:
-      put: default:stone_block
-      at: [0, 0, 0]
+      - put: default:stone_block
+        at: [0, 0, 0]
+      - put: default:stonebrick
+        at: [0, 0, -2..-1]
+    updateHeightmap: ground
 
   renderRoads:
     after:
@@ -492,14 +496,21 @@ forEachTile:
       filter:
         metadata: nature
         in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
-    stickToHeightmap: ground
     width:
       round: width
     repeated:
+      - put: air
+        at: [ 0, 0, 1 ]
       - put: stairs:slab_cobble
         at: [ 0, 0, 0 ]
       - put: default:cobble
         at: [ 0, 0, -2..-1 ]
+    updateHeightmap: ground
+
+  roads:
+    type: noOperation
+    after:
+      - renderRoads
 
   renderRoadsLines:
     after:
@@ -510,7 +521,6 @@ forEachTile:
       filter:
         metadata: nature
         in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
-    stickToHeightmap: ground
     structure:
       axes: [ x ]
       blueprint: "   ███"
@@ -577,7 +587,7 @@ forEachTile:
     provider:
       type: lasTiled
       tilesPath: data/lidar
-      tilesFilenameTemplate: LHD_FXX_%04d_%04d_PTS_O_LAMB93_IGN69.copc.laz
+      tilesFilenameTemplate: LHD_FXX_%04d_%04d_PTS_LAMB93_IGN69.copc.laz
       tileSize: 1000
       tileOffsetY: 1000
     processor:
@@ -702,7 +712,6 @@ forEachTile:
   renderMetroStationsSteps:
     after:
       - fetchMetroStations
-      - ground
     type: renderSurfaces
     heightmap: ground
     models:
@@ -853,8 +862,7 @@ forEachTile:
   renderTrafficLights:
     after:
       - fetchTrafficLights
-      - ground
-      - renderBenchesLinear #race cond
+      - roads
     type: renderSurfaces
     models:
       type: traffic_lights
@@ -889,8 +897,7 @@ forEachTile:
   renderLights:
     after:
       - fetchLights
-      - ground
-      - renderTrafficLights # Try to avoid race condition bug on heightmaps
+      - roads
     type: renderSurfaces
     models:
       type: lights
@@ -933,7 +940,7 @@ forEachTile:
   renderFireHydrants:
     after:
       - fetchFireHydrants
-      - altitude
+      - roads
     type: renderSurfaces
     models:
       type: fire_hydrants
@@ -961,8 +968,7 @@ forEachTile:
   renderTrashCans:
     after:
       - fetchTrashCans
-      - altitude
-      - renderFireHydrants #  race cond
+      - roads
     type: renderSurfaces
     models:
       type: trash_cans
@@ -986,7 +992,6 @@ forEachTile:
     after:
       - fetchPicNic
       - altitude
-      - renderTrashCans # race cond
     type: renderSurfaces
     models:
       type: picnic
