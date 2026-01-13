@@ -8,8 +8,10 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
+import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmapSpec;
 import com.ignfab.minalac.generator.models.values.ModelValue;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
+import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.models.values.ModelValueParams;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
@@ -48,6 +50,14 @@ public class RenderLinesTaskParams extends TileTaskParams {
     public ModelValueParams stickToAltitude;
 
     /**
+     * If specified, the given heightmap will be updated with road height. If several road
+     * heights at the same position, the higher wins.
+     * Maybe specified with stickToHeightmap or stickToAltitude but should be useless.
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public WritableHeightmapParams updateHeightmap;
+
+    /**
      * Render only when above this heightmap (optional, default render always).
      */
     @JsonSetter(nulls = Nulls.SKIP)
@@ -77,6 +87,8 @@ public class RenderLinesTaskParams extends TileTaskParams {
             stickToHeightmap.validate();
         if (stickToAltitude != null)
             stickToAltitude.validate();
+        if (updateHeightmap != null)
+            updateHeightmap.validate();
     }
 
     @Override
@@ -95,12 +107,17 @@ public class RenderLinesTaskParams extends TileTaskParams {
             stickToZ = (tile, model, coords) -> stickToAltitudeValue.getAsInt(model).orElseThrow(() -> new IgnorableException("Missing altitude value"));
         }
 
+        WritableHeightmapSpec updateHeightmapSpec = null;
+        if (updateHeightmap != null)
+            updateHeightmapSpec = updateHeightmap.create(generation.heightmaps());
+
         PlaceableStructure structure = this.structure.create(generation.seed());
         return new RenderLinesTask(
             models.create(),
             ignored -> structure,
             stickToZ,
-            renderOnlyWhenAboveSpec
+            renderOnlyWhenAboveSpec,
+            updateHeightmapSpec
         );
     }
 }

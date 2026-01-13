@@ -4,6 +4,8 @@ import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
+import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmapSpec;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.Shape3dConvertibleModel;
@@ -23,7 +25,7 @@ public class RenderLinesTask extends ModelTask<Shape3dConvertibleModel> {
     private final StructureGenerator structureGenerator;
     private final GetZ stickToZ;
     private final ReadableHeightmapSpec renderOnlyWhenAboveSpec;
-
+    private final WritableHeightmapSpec updateHeightmapSpec;
     /**
      * Creates a new {@code RenderLinesTask}.
      *
@@ -35,24 +37,27 @@ public class RenderLinesTask extends ModelTask<Shape3dConvertibleModel> {
      * @param structureGenerator Structure to use as template
      * @param stickToZ If not null, lines will be rendered at that height
      * @param renderOnlyWhenAboveSpec If not null, lines will be rendered only if they have a part over that heightmap
+     * @param updateHeightmapSpec If not null, this heighmap will be raised according to line voxels
      */
     public RenderLinesTask(
         ModelSelection selection,
         StructureGenerator structureGenerator,
         GetZ stickToZ,
-        ReadableHeightmapSpec renderOnlyWhenAboveSpec
+        ReadableHeightmapSpec renderOnlyWhenAboveSpec,
+        WritableHeightmapSpec updateHeightmapSpec
     ) {
         super(Shape3dConvertibleModel.class, selection);
 
         this.structureGenerator = structureGenerator;
-        this.renderOnlyWhenAboveSpec = renderOnlyWhenAboveSpec;
         this.stickToZ = stickToZ;
+        this.renderOnlyWhenAboveSpec = renderOnlyWhenAboveSpec;
+        this.updateHeightmapSpec = updateHeightmapSpec;
     }
 
     @Override
     protected void run(Shape3dConvertibleModel model, GenerationTile tile) throws IgnorableException {
         ReadableHeightmap renderOnlyWhenAbove = renderOnlyWhenAboveSpec == null ? null : tile.heightmaps().get(renderOnlyWhenAboveSpec);
-
+        WritableHeightmap updateHeightmap = updateHeightmapSpec == null ? null : tile.heightmaps().get(updateHeightmapSpec);
         PlaceableStructure structure = structureGenerator.generate(model);
         ThickLinearIndexedVoxelizer3d voxelizer = new ThickLinearIndexedVoxelizer3d(structure.limits().maxY() * 2 + 1); // 1 for central position and * 2 for each side
 
@@ -72,6 +77,8 @@ public class RenderLinesTask extends ModelTask<Shape3dConvertibleModel> {
                 Placeable placeable = structure.get(x, y, z);
                 if (placeable != null)
                     placeable.place(tile.voxels(), pos.coords().x(), pos.coords().y(), zOffset + z);
+                if (updateHeightmap != null && updateHeightmap.get(pos.coords().x(), pos.coords().y()) < zOffset + z)
+                    updateHeightmap.set(pos.coords().x(), pos.coords().y(), zOffset + z);
             }
         }
     }
