@@ -91,11 +91,12 @@ public class RenderDynamicLinesTaskParams extends TileTaskParams {
         if (stickToHeightmap != null) {
             ReadableHeightmapSpec stickToHeightmapSpec = stickToHeightmap.create(generation.heightmaps());
             stickToZ = (tile, model, coords) -> tile.heightmaps().get(stickToHeightmapSpec).get(coords);
-        } else {
+        } else if (stickToAltitude != null) {
             ModelValue stickToAltitudeValue = stickToAltitude.create(generation);
             stickToZ = (tile, model, coords) -> stickToAltitudeValue.getAsInt(model).orElseThrow(() -> new IgnorableException("Missing altitude value"));
+        } else {
+            stickToZ =  null;
         }
-
         PlaceableStructure repeatedStructure = repeated.create(generation.seed());
         if (repeatedStructure.limits().sizeY() != 1)
             throw new IllegalArgumentException("repeated must have width == 1");
