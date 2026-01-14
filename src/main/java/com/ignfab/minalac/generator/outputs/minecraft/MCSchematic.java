@@ -65,6 +65,8 @@ public class MCSchematic implements Placeable {
                         MCVoxel voxel = palette.get(index);
                         if (voxel == null)
                             throw new IllegalArgumentException("Invalid palette index: " + index);
+                        if (voxel.type.equals("void_air") || voxel.type.equals("minecraft:void_air"))
+                            continue;
                         if (excludeAir && (voxel.type.equals("air") || voxel.type.equals("minecraft:air"))) // TODO Could rely on MCVoxel.DEFAULTVOXEL if equality was more reliable
                             continue;
                         structure.set(x + offsetX, -z - offsetZ, y + offsetY, voxel); // X/Z/-Y => X/Y/Z
