@@ -18,6 +18,7 @@ import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableSt
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.tasks.RenderLinesTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 /**
  * Parameters for a {@link RenderDynamicLinesTaskParams}.
@@ -127,14 +128,11 @@ public class RenderDynamicLinesTaskParams extends TileTaskParams {
                 // Meh! structure.merge(otherStructure, offset)?
                 PlaceableStructure structure = new PlaceableStructure();
                 for (int w = 0; w < width; w++)
-                    for (int x = 0; x < repeatedStructure.limits().sizeX(); x++)
-                        for (int z = 0; z < repeatedStructure.limits().sizeZ(); z++)
-                            structure.set(x, w, z, repeatedStructure.get(x, 0, z));
+                    for (WorldCoords3d coords : repeatedStructure.limits())
+                        structure.set(coords.x(), w + coords.y(), coords.z(), repeatedStructure.get(coords));
                 if (extraStructure != null)
-                    for (int x = 0; x < extraStructure.limits().sizeX(); x++)
-                        for (int y = 0; y < extraStructure.limits().sizeY(); y++)
-                            for (int z = 0; z < extraStructure.limits().sizeZ(); z++)
-                                structure.set(x, width + y, z, extraStructure.get(x, y, z));
+                    for (WorldCoords3d coords : extraStructure.limits())
+                        structure.set(coords.x(), width + coords.y(), coords.z(), extraStructure.get(coords));
                 return structure;
             },
             stickToZ,
