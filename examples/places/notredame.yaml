@@ -1,7 +1,7 @@
 # Notre Dame de Paris
 worldName: Notre Dame de Paris
-verticalScale: 1.0
-horizontalScale: 1.0
+verticalScale: 0.5
+horizontalScale: 0.5
 area:
   center:
     latitude: 48.8533
