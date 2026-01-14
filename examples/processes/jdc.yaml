@@ -48,7 +48,7 @@ forEachTile:
     at: ground
     place:
       structure:
-        - put: default:stone
+        - put: *underground
           at: [0, 0, -20..0]
 
   fetchZoneActivite:
@@ -76,19 +76,12 @@ forEachTile:
     place:
       structure:
         - at: [0, 0, 0]
-          put: default:dirt_with_grass
+          put: *grass
         - at: [0, 0, 1]
           put:
             pattern:
               onlyInsteadOf: air
-              place:
-                - pattern: # TODO: need a "random choose" rather than place over (specially for choosing structures)
-                    chance: 0.04
-                    place: default:grass_1
-                - pattern:
-                    chance: 0.02
-                    place: default:grass_2
-
+              place: *grass-decoration
 
   fetchGrass:
     type: fetchData
@@ -111,18 +104,12 @@ forEachTile:
     place:
       structure:
         - at: [0, 0, 0]
-          put: default:dirt_with_grass
+          put: *grass
         - at: [0, 0, 1]
           put:
             pattern:
               onlyInsteadOf: air
-              place:
-                - pattern: # TODO: need a "random choose" rather than place over (specially for choosing structures)
-                    chance: 0.04
-                    place: default:grass_1
-                - pattern:
-                    chance: 0.02
-                    place: default:grass_2
+              place: *grass-decoration
 
   # Conveniance task telling ground is builtn
   ground:
@@ -196,12 +183,11 @@ forEachTile:
     maximum: ground
     place:
       structure:
-        - put: *voxel-water
+        - put: *water
           at: [ 0, 0, 0 ]
         # This a dirt fix to remove vegetation on water
-        - put: *voxel-air
+        - put: *air
           at: [ 0, 0, 1..12 ]
-
 
   # Buildings 3d
 
@@ -222,7 +208,7 @@ forEachTile:
     models:
       type: building-city
     surfaceType: ground
-    place: *voxel-cobble
+    place: *buildings-ground
 
   renderBati3dWallsOther:
     after: renderBati3dGround
@@ -237,7 +223,7 @@ forEachTile:
             - metadata: usage_1
               in: [ "Résidentiel", "Commercial et services" ]
     surfaceType: wall
-    place: *default-wall
+    place: *buildings-walls-default
 
   renderBati3dWallsReligieux:
     after: renderBati3dGround
@@ -248,7 +234,7 @@ forEachTile:
         metadata: nature
         in: [ "Chapelle", "Eglise" ]
     surfaceType: wall
-    place: darkage:stone_brick
+    place: *buildings-walls-church
 
   renderBati3dWallsResidentiel:
     after: renderBati3dGround
@@ -259,15 +245,7 @@ forEachTile:
         metadata: usage_1
         equals: "Résidentiel"
     surfaceType: wall
-    place:
-      pattern:
-        repeatStructure:
-          - at: [ 0..3, 0..3, 0..6 ]
-            put: *default-wall
-          - at: [ 0..1, 0..1, 3..5 ]
-            put: default:glass
-          - at: [ 2..3, 2..3, 3..5 ]
-            put: default:glass
+    place: *buildings-walls-residential
 
   renderBati3dWallsCommercialServices:
     after: renderBati3dGround
@@ -278,15 +256,7 @@ forEachTile:
         metadata: usage_1
         equals: "Commercial et services"
     surfaceType: wall
-    place:
-      pattern:
-        repeatStructure:
-          - at: [ 0..3, 0..3, 0..6 ]
-            put: darkage:tuff_bricks
-          - at: [ 0..1, 0..1, 3..5 ]
-            put: default:glass
-          - at: [ 2..3, 2..3, 3..5 ]
-            put: default:glass
+    place: *buildings-walls-commercial
 
   bati3dWalls:
     type: noOperation
@@ -312,7 +282,7 @@ forEachTile:
     place:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
-        put: *default-roof
+        put: *buidlings-roof-default
 
   renderBati3dRoofsZinc:
     after: bati3dWalls
@@ -326,7 +296,7 @@ forEachTile:
     place:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
-        put: default:silver_sandstone
+        put: *buidlings-roof-zinc
 
   renderBati3dRoofsZincTile:
     after: bati3dWalls
@@ -340,7 +310,7 @@ forEachTile:
     place:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
-        put: default:silver_sandstone_block
+        put: *buidlings-roof-zinc-tiles
 
   renderBati3dRoofsChapelleEglise:
     after: bati3dWalls
@@ -354,7 +324,7 @@ forEachTile:
     place:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
-        put: darkage:basalt_brick
+        put: *buidlings-roof-church
 
   renderBati3dRoofsSlatesTile:
     after: bati3dWalls
@@ -368,7 +338,7 @@ forEachTile:
     place:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
-        put: darkage:slate_tile
+        put: *buidlings-roof-slates-tiles
 
   renderBati3dRoofsSlates:
     after: bati3dWalls
@@ -382,7 +352,7 @@ forEachTile:
     place:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
-        put: darkage:slate_block
+        put: *buidlings-roof-slates
 
   renderBati3dRoofsConcrete:
     after: bati3dWalls
@@ -396,7 +366,7 @@ forEachTile:
     place:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
-        put: darkage:chalk
+        put: *buidlings-roof-concrete
 
   # Roads & paths
 
@@ -461,7 +431,7 @@ forEachTile:
     structure:
       - put: *path
         at: [ 0, -1..1, 0]
-      - put: *voxel-air
+      - put: *air
         at: [ 0, -1..1, 1..2 ]
 
   renderRoadsSidewalks:
@@ -481,9 +451,9 @@ forEachTile:
       put: nothing
       at: [0, 0, -2..0]
     extra:
-      - put: default:stone_block
+      - put: *sidewalk
         at: [0, 0, 0]
-      - put: default:stonebrick
+      - put: *sidewalk-bed
         at: [0, 0, -2..-1]
     updateHeightmap: ground
 
@@ -499,11 +469,11 @@ forEachTile:
     width:
       round: width
     repeated:
-      - put: air
+      - put: *air
         at: [ 0, 0, 1 ]
-      - put: stairs:slab_cobble
+      - put: *road-tar
         at: [ 0, 0, 0 ]
-      - put: default:cobble
+      - put: *road-bed
         at: [ 0, 0, -2..-1 ]
     updateHeightmap: ground
 
@@ -525,7 +495,7 @@ forEachTile:
       axes: [ x ]
       blueprint: "   ███"
       with:
-        "█": stairs:slab_silver_sandstone
+        "█": *road-paint
 
   renderRoadsCrosswalksWipe:
     after:
@@ -547,8 +517,8 @@ forEachTile:
       with:
         "-":
           pattern:
-            place: stairs:slab_cobble
-            onlyInsteadOf: stairs:slab_silver_sandstone
+            place: *road-tar
+            onlyInsteadOf: *road-paint
 
   renderRoadsCrosswalks:
     after: renderRoadsCrosswalksWipe
@@ -566,8 +536,8 @@ forEachTile:
       with:
         "█":
           pattern:
-            place: stairs:slab_silver_sandstone
-            onlyInsteadOf: stairs:slab_cobble
+            place: *road-paint
+            onlyInsteadOf: *road-tar
 
   # Trees Lidar + OSM
 
@@ -607,15 +577,11 @@ forEachTile:
         at: [0..1, 0..1, 0..1]
         put:
           pattern:
-            onlyInsteadOf: air
+            onlyInsteadOf: *air
             place:
               pattern:
                 chance: 0.4
-                place: &leaves
-                  - default:leaves
-                  - pattern:
-                      chance: 0.5
-                      place: default:jungleleaves
+                place: *tree-leaves
 
   findHighestLeaves:
     after:
@@ -624,7 +590,7 @@ forEachTile:
     type: findVoxels
     models:
       type: trees
-    only: [ default:leaves, default:jungleleaves ]
+    only: *tree-leaves-list
     find:
       average: average-leaves
 
@@ -636,7 +602,7 @@ forEachTile:
     heightmap: ground
     altitudeValue:
       sum: [ average-leaves, -1 ]
-    placeBelow: default:tree
+    placeBelow: *tree-trunk
 
   renderFakeTreeCrown:
     after: renderTrunks
@@ -651,11 +617,11 @@ forEachTile:
         with:
           $:
             pattern:
-              onlyInsteadOf: air
+              onlyInsteadOf: *air
               place:
                 pattern:
                   chance: 0.6
-                  place: *leaves
+                  place: *tree-leaves
         blueprint:
           - - "     "
             - "  $  "
@@ -716,7 +682,7 @@ forEachTile:
     heightmap: ground
     models:
       type: metro
-    place: default:sandstone_block
+    place: *metro-station-steps
 
   # Here, altitude is raised at maximum entrance level so decoration will be placed at that level.
   # It would be better to limit that to entrance walls but we don't have appropriate task yet.
@@ -739,9 +705,9 @@ forEachTile:
       type: metro
     structure:
       - at: [0..1, 0..1, 0]
-        put: default:stone_block
+        put: *metro-station-walls-top
       - at: [0..1, 0..1, -10..-1]
-        put: default:sandstonebrick
+        put: *metro-station-walls
     stickToAltitude: surface-altitude
 
   metroStations:
@@ -774,11 +740,7 @@ forEachTile:
       filter:
         metadata: barrier
         equals: fence
-    structure:
-      - put: default:stone_block
-        at: [0, 0, 1]
-      - put: default:fence_aspen_wood
-        at: [0, 0, 2]
+    structure: *fence-structure
     stickToHeightmap: ground
 
   # Benches
@@ -800,24 +762,8 @@ forEachTile:
     type: renderSurfaces
     models:
       type: benches
-    place:
-      structure:
-        - put:
-            node: stairs:slab_junglewood
-            param2: 23
-          at: [0, -2, 0]
-        - put:
-            node: stairs:slab_junglewood
-            param2: 2
-          at: [0, -1..1, 0]
-        - put:
-            node: stairs:slab_junglewood
-            param2: 23
-          at: [0, 2, 0]
-    heightmap:
-      sum:
-        - ground
-        - 1
+    place: *bench
+    heightmap: ground
 
   fetchBenchesLinear:
     type: fetchData
@@ -836,16 +782,8 @@ forEachTile:
     type: renderLines
     models:
       type: benches_linear
-    structure:
-      axes: [z, y]
-      blueprint:
-        - "O  "
-        - "O  "
-        - "OOO"
-      with:
-        "O": default:wood
-    stickToHeightmap:
-      sum: [ ground, 1 ]
+    structure: *liner-bench-structure
+    stickToHeightmap: ground
 
   # Traffic lights
   # https://www.data.gouv.fr/datasets/signalisation-lumineuse-tricolore/
@@ -868,18 +806,9 @@ forEachTile:
       type: traffic_lights
     heightmap: ground
     place:
-      structure:
-        # TODO: for this case a stack structure would have been nice
-        axes: [ z ]
-        blueprint: "1111123456"
-        with:
-          "1": default:fence_junglewood
-          "2": default:junglewood
-          "3": wool:dark_green
-          "4": wool:orange
-          "5": wool:red
-          "6": stairs:slab_junglewood
-        zOffset: 1
+      pattern:
+        place: *traffic-light
+        neverInsteadOf: *water
 
   # Lights
 
@@ -903,27 +832,9 @@ forEachTile:
       type: lights
     heightmap: ground
     place:
-      structure:
-        - axes: [ z, x, y ]
-          blueprint:
-            - - " S "
-              - "S S"
-              - " S "
-            - - " L "
-              - "L L"
-              - " L "
-            - - " F "
-              - "FFF"
-              - " F "
-          with:
-            "F": default:fence_junglewood
-            "L": default:meselamp
-            "S": stairs:slab_junglewood
-          xOffset: -1
-          yOffset: -1
-          zOffset: 11
-        - at: [ 0, 0, 1..10 ]
-          put: default:fence_junglewood
+      pattern:
+        place: *city-light
+        neverInsteadOf: *water
 
   # Other details
 
@@ -944,16 +855,8 @@ forEachTile:
     type: renderSurfaces
     models:
       type: fire_hydrants
-    place:
-      structure:
-        - put: wool:red
-          at: [0, 0, 0..2]
-        - put: wool:red
-          at: [0, 1, 1]
-    heightmap:
-      sum:
-        - ground
-        - 1
+    heightmap: ground
+    place: *fire-hydrant
 
   fetchTrashCans:
     type: fetchData
@@ -972,10 +875,7 @@ forEachTile:
     type: renderSurfaces
     models:
       type: trash_cans
-    place:
-      structure:
-        - put: xdecor:cauldron_empty
-          at: [0, 0, 1]
+    place: *trash-can
     heightmap: ground
 
   fetchPicNic:
@@ -996,27 +896,4 @@ forEachTile:
     models:
       type: picnic
     heightmap: ground
-    place:
-      structure:
-        axes: [z, x, y]
-        blueprint:
-          - - "     "
-            - "OOOOO"
-            - "OOOOO"
-            - "OOOOO"
-            - "     "
-          - - "OOOOO"
-            - "+   +"
-            - "     "
-            - "+   +"
-            - "OOOOO"
-          - - "+   +"
-            - "+   +"
-            - "=   ="
-            - "+   +"
-            - "+   +"
-        with:
-          "O": stairs:slab_wood
-          "+": default:fence_wood
-          "=": default:fence_rail_wood
-        zOffset: 1
+    place: *pic-nic
