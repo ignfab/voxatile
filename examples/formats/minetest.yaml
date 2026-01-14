@@ -1,36 +1,172 @@
 format: minetest
 references:
-  - &voxel-stone default:stone
-  - &voxel-dirt default:dirt
-  - &voxel-cobble default:cobble
-  - &voxel-empty default:air
-  - &voxel-building-ground default:stonebrick
-  - &voxel-grass default:dirt_with_grass
-  - &voxel-glass default:glass
-  - &voxel-forest-ground default:dirt_with_rainforest_litter
-  - &road-paint wool:white
-  - &road-tar wool:black
+
+  # BASE VOXELS
+
+  - &air air
+  - &water default:water_source
+  - &underground default:stone
+  - &grass default:dirt_with_grass
+  - &grass-decoration
+      - pattern: # TODO: need a "random choose" rather than place over (specially for choosing structures)
+          chance: 0.04
+          place: default:grass_1
+      - pattern:
+          chance: 0.02
+          place: default:grass_2
+
+   # BUILDINGS
+
+  - &buildings-ground default:cobble
+  - &buildings-walls-default default:sandstonebrick
+  - &buildings-walls-church darkage:stone_brick
+  - &buildings-walls-residential
+      # TODO: This was for scale 2:1
+      pattern:
+        repeatStructure:
+          - at: [ 0..3, 0..3, 0..6 ]
+            put: default:sandstonebrick
+          - at: [ 0..1, 0..1, 3..5 ]
+            put: default:glass
+          - at: [ 2..3, 2..3, 3..5 ]
+            put: default:glass
+  - &buildings-walls-commercial
+      # TODO: This was for scale 2:1
+      pattern:
+        repeatStructure:
+          - at: [ 0..3, 0..3, 0..6 ]
+            put: darkage:tuff_bricks
+          - at: [ 0..1, 0..1, 3..5 ]
+            put: default:glass
+          - at: [ 2..3, 2..3, 3..5 ]
+            put: default:glass
+  - &buidlings-roof-default default:stone_block
+  - &buidlings-roof-zinc default:silver_sandstone
+  - &buidlings-roof-zinc-tiles default:silver_sandstone_block
+  - &buidlings-roof-church darkage:basalt_brick
+  - &buidlings-roof-slates-tiles darkage:slate_tile
+  - &buidlings-roof-slates darkage:slate_block
+  - &buidlings-roof-concrete darkage:chalk
+
+  # ROADS
+
   - &path default:dirt_with_coniferous_litter
-  - &default-wall default:sandstonebrick
-  - &default-roof default:stone_block
-  - &forest-grass default:junglegrass
-  - &forest-tree1
+  - &road-paint stairs:slab_silver_sandstone
+  - &road-tar stairs:slab_cobble
+  - &road-bed default:cobble
+  - &sidewalk default:stone_block
+  - &sidewalk-bed default:stonebrick
+
+  # VEGETATION
+
+  - &tree-trunk default:tree
+  - &tree-leaves
+      - default:leaves
+      - pattern:
+          chance: 0.5
+          place: default:jungleleaves
+  # List of possible tree leaves in *tree-leaves
+  - &tree-leaves-list [ default:leaves, default:jungleleaves ]
+
+  # OTHER URBAN STUFF
+
+  - &metro-station-steps default:sandstone_block
+  - &metro-station-walls-top default:stone_block
+  - &metro-station-walls default:sandstone_block
+  - &fence-structure
+      - put: default:stone_block
+        at: [0, 0, 1]
+      - put: default:fence_aspen_wood
+        at: [0, 0, 2]
+  - &liner-bench-structure
+      axes: [z, y]
+      blueprint:
+        - "O  "
+        - "O  "
+        - "OOO"
+      with:
+        "O": default:wood
+      zOffset: 1
+  - &bench
+      structure:
+        - put:
+            node: stairs:slab_junglewood
+            param2: 23
+          at: [0, -2, 1]
+        - put:
+            node: stairs:slab_junglewood
+            param2: 2
+          at: [0, -1..1, 1]
+        - put:
+            node: stairs:slab_junglewood
+            param2: 23
+          at: [0, 2, 1]
+  - &traffic-light
+      structure:
+        axes: [ z ]
+        blueprint: "1111123456"
+        with:
+          "1": default:fence_junglewood
+          "2": default:junglewood
+          "3": wool:dark_green
+          "4": wool:orange
+          "5": wool:red
+          "6": stairs:slab_junglewood
+        zOffset: 1
+  - &city-light
+      structure:
+      - axes: [ z, x, y ]
+        blueprint:
+          - - " S "
+            - "S S"
+            - " S "
+          - - " L "
+            - "L L"
+            - " L "
+          - - " F "
+            - "FFF"
+            - " F "
+        with:
+          "F": default:fence_junglewood
+          "L": default:meselamp
+          "S": stairs:slab_junglewood
+        xOffset: -1
+        yOffset: -1
+        zOffset: 11
+      - at: [ 0, 0, 1..10 ]
+        put: default:fence_junglewood
+  - &fire-hydrant
+      structure:
+      - put: wool:red
+        at: [0, 0, 1..3]
+      - put: wool:red
+        at: [0, 1, 2]
+  - &trash-can
+      structure:
+        - put: xdecor:cauldron_empty
+          at: [0, 0, 1]
+  - &pic-nic
     structure:
-      - put:
-          pattern:
-            place: default:leaves
-            chance: 0.8
-        at: [ -3..3, -3..3, 4..10 ]
-      - put: default:tree
-        at: [ 0, 0, 0..5 ]
-  - &forest-tree2
-    structure:
-      - put:
-          pattern:
-            place: default:aspen_leaves
-            chance: 0.8
-        at: [ -3..3, -3..3, 4..10 ]
-      - put: default:aspen_tree
-        at: [ 0, 0, 0..5 ]
-  - &voxel-water default:water_source
-  - &voxel-air air
+      axes: [z, x, y]
+      blueprint:
+        - - "     "
+          - "OOOOO"
+          - "OOOOO"
+          - "OOOOO"
+          - "     "
+        - - "OOOOO"
+          - "+   +"
+          - "     "
+          - "+   +"
+          - "OOOOO"
+        - - "+   +"
+          - "+   +"
+          - "=   ="
+          - "+   +"
+          - "+   +"
+      with:
+        "O": stairs:slab_wood
+        "+": default:fence_wood
+        "=": default:fence_rail_wood
+      zOffset: 1
+
