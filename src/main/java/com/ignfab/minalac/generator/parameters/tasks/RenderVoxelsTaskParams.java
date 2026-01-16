@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.tasks.RenderVoxelsTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
@@ -14,13 +13,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for a {@link RenderVoxelsTask}.
  */
-public class RenderVoxelsTaskParams extends TileTaskParams {
-    /**
-     * The models to render (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
-
+public class RenderVoxelsTaskParams extends ModelTaskParams {
     /**
      * Placeable to render at each voxel (required).
      */
@@ -30,18 +23,16 @@ public class RenderVoxelsTaskParams extends TileTaskParams {
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
-     * @param models the models to render
      * @param place placeable to render at each voxel
      */
-    @ConstructorProperties({"models", "place"})
-    public RenderVoxelsTaskParams(ModelSelectionParams models, PlaceableParams place) {
-        this.models = models;
+    @ConstructorProperties({"place"})
+    public RenderVoxelsTaskParams(PlaceableParams place) {
         this.place = place;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
-        models.validate();
+        super.validate();
         place.validate();
     }
 

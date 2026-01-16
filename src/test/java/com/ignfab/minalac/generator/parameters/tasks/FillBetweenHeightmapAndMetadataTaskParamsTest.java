@@ -19,51 +19,51 @@ public class FillBetweenHeightmapAndMetadataTaskParamsTest {
         FillBetweenHeightmapAndValueTaskParams params;
 
         params = new FillBetweenHeightmapAndValueTaskParams(
-            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.VALID,
             new MetadataValueParams("altitude")
         );
+        params.models = TestingModelSelectionParams.VALID;
         params.placeAbove = new TestingVoxelParams("above");
         params.placeBelow = new TestingVoxelParams("below");
         assertDoesNotThrow(params::validate);
 
         params = new FillBetweenHeightmapAndValueTaskParams(
-            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.VALID,
             new MetadataValueParams("altitude")
         );
+        params.models = TestingModelSelectionParams.VALID;
         params.placeAbove = new TestingVoxelParams("above");
         assertDoesNotThrow(params::validate);
 
         params = new FillBetweenHeightmapAndValueTaskParams(
-            TestingModelSelectionParams.INVALID,
             TestingHeightmapParams.VALID,
             new MetadataValueParams("altitude")
         );
+        params.models = TestingModelSelectionParams.INVALID;
         params.placeAbove = new TestingVoxelParams("above");
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new FillBetweenHeightmapAndValueTaskParams(
-            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.INVALID,
             new MetadataValueParams("altitude")
         );
+        params.models = TestingModelSelectionParams.VALID;
         params.placeAbove = new TestingVoxelParams("above");
         assertThrows(IllegalArgumentException.class, params::validate);
 
         params = new FillBetweenHeightmapAndValueTaskParams(
-            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.VALID,
             new MetadataValueParams("")
         );
+        params.models = TestingModelSelectionParams.VALID;
         params.placeAbove = new TestingVoxelParams("above");
 
         assertThrows(IllegalArgumentException.class, params::validate);
         params = new FillBetweenHeightmapAndValueTaskParams(
-            TestingModelSelectionParams.VALID,
             TestingHeightmapParams.VALID,
             new MetadataValueParams("altitude")
         );
+        params.models = TestingModelSelectionParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
     }
 

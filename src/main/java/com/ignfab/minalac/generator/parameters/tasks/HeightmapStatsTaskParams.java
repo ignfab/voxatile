@@ -8,22 +8,14 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
-import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.tasks.HeightmapStatsTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
 
 /**
  * Parameters for creating a {@link HeightmapStatsTask}.
  */
-public class HeightmapStatsTaskParams extends TileTaskParams {
-    /**
-     * {@link ModelSelection} to use for computing statistics (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
-
+public class HeightmapStatsTaskParams extends ModelTaskParams {
     /**
      * {@link ReadableHeightmap} used to compute statistics (required).
      */
@@ -59,17 +51,14 @@ public class HeightmapStatsTaskParams extends TileTaskParams {
      * Constructor used to ensure that the required fields are present during
      * deserialization.
      *
-     * @param models {@link ModelSelection} to use for computing statistics
      * @param heightmap {@link ReadableHeightmap} used to compute statistics
      * @param compute specifies which statistics to compute
      */
-    @ConstructorProperties({ "models", "heightmap", "compute" })
+    @ConstructorProperties({ "heightmap", "compute" })
     public HeightmapStatsTaskParams(
-        ModelSelectionParams models,
         ReadableHeightmapParams heightmap,
         ComputeParams compute
     ) {
-        this.models = models;
         this.heightmap = heightmap;
         this.compute = compute;
     }
@@ -78,7 +67,6 @@ public class HeightmapStatsTaskParams extends TileTaskParams {
     public void validate() throws IllegalArgumentException {
         super.validate();
         heightmap.validate();
-        models.validate();
 
         if (compute.minimum == null && compute.maximum == null)
             throw new IllegalArgumentException("The 'compute' field must have at least one optional subfield specified.");

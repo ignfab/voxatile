@@ -1,6 +1,5 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
-import java.beans.ConstructorProperties;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -9,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.tasks.FindVoxelsTask;
@@ -18,13 +16,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for creating a {@link FindVoxelsTask}.
  */
-public class FindVoxelsTaskParams extends TileTaskParams {
-    /**
-     * Models to use (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
-
+public class FindVoxelsTaskParams extends ModelTaskParams {
     /**
      * {@code Placeable}s used to select which voxels to match (optional, default none).
      * When both this field and {@code except} are absent, any voxel (including air) is matched.
@@ -75,17 +67,13 @@ public class FindVoxelsTaskParams extends TileTaskParams {
     /**
      * Constructor used to ensure that the required fields are present during
      * deserialization.
-     *
-     * @param models models to use
      */
-    @ConstructorProperties("models")
-    public FindVoxelsTaskParams(ModelSelectionParams models) {
-        this.models = models;
+    public FindVoxelsTaskParams() {
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
-        models.validate();
+        super.validate();
 
         if (only != null) {
             if (except != null)

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.models.values.ModelValueParams;
 import com.ignfab.minalac.generator.tasks.SetHeightmapTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
@@ -15,13 +14,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for creating a {@link SetHeightmapTask}.
  */
-public class SetHeightmapTaskParams extends TileTaskParams {
-    /**
-     * Models to use as a filter (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
-
+public class SetHeightmapTaskParams extends ModelTaskParams {
     /**
      * Value to set (required).
      */
@@ -37,20 +30,18 @@ public class SetHeightmapTaskParams extends TileTaskParams {
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
-     * @param models models under which set the value
      * @param set value to set
      * @param to the name of the heightmap receiving the value
      */
-    @ConstructorProperties({"models", "set", "to"})
-    public SetHeightmapTaskParams(ModelSelectionParams models, ModelValueParams set, WritableHeightmapParams to) {
-        this.models = models;
+    @ConstructorProperties({"set", "to"})
+    public SetHeightmapTaskParams(ModelValueParams set, WritableHeightmapParams to) {
         this.set = set;
         this.to = to;
     }
 
     @Override
     public void validate() {
-        models.validate();
+        super.validate();
         set.validate();
         to.validate();
     }
