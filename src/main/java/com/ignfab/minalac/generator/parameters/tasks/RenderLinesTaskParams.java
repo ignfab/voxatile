@@ -12,7 +12,6 @@ import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmapSpec;
 import com.ignfab.minalac.generator.models.values.ModelValue;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.models.values.ModelValueParams;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
@@ -22,13 +21,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for a {@link RenderLinesTaskParams}.
  */
-public class RenderLinesTaskParams extends TileTaskParams {
-    /**
-     * Models to render (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
-
+public class RenderLinesTaskParams extends ModelTaskParams {
     /**
      * What to place (required).
      */
@@ -65,18 +58,17 @@ public class RenderLinesTaskParams extends TileTaskParams {
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
-     *e
-     * @param models selection of models to render
+     *
      * @param structure structure to place along lines
      */
-    @ConstructorProperties({"models", "structure"})
-    public RenderLinesTaskParams(ModelSelectionParams models, PlaceableStructureParams structure) {
-        this.models = models;
+    @ConstructorProperties({"structure"})
+    public RenderLinesTaskParams(PlaceableStructureParams structure) {
         this.structure = structure;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
+        super.validate();
         if (stickToHeightmap != null && stickToAltitude != null)
             throw new IllegalArgumentException("Can not use both stickToHeightmap and stickToAltitude fields");
         structure.validate();

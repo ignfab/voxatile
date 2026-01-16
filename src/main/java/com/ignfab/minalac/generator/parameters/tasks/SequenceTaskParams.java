@@ -79,6 +79,12 @@ public class SequenceTaskParams extends ModelTaskParams {
             result.putAll(subtask.createAditionalTaskParams(subname));
         }
 
+        // Merge model selections
+        result.forEach((name, task) -> {
+            if (task instanceof ModelTaskParams modelTask)
+                modelTask.models.narrowDown(models);
+        });
+
         // Sequence task (which is a noop marker) starts after last task
         after = Set.of(prefix + SEPARATOR + index);
 

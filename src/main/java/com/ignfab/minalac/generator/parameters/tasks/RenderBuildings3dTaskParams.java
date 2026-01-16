@@ -8,34 +8,26 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.BuildingSurfaceType;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.tasks.RenderBuildings3dTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
 
-public class RenderBuildings3dTaskParams extends TileTaskParams {
-    /**
-     * Models to render (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
-
+public class RenderBuildings3dTaskParams extends ModelTaskParams {
     @JsonSetter(nulls = Nulls.FAIL)
     public PlaceableParams place;
 
     @JsonSetter(nulls = Nulls.FAIL)
     public Type surfaceType;
 
-    @ConstructorProperties({"models", "place", "surfaceType"})
-    public RenderBuildings3dTaskParams(ModelSelectionParams models, PlaceableParams place, Type surfaceType) {
-        this.models = models;
+    @ConstructorProperties({"place", "surfaceType"})
+    public RenderBuildings3dTaskParams(PlaceableParams place, Type surfaceType) {
         this.place = place;
         this.surfaceType = surfaceType;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
-        models.validate();
+        super.validate();
         place.validate();
     }
 

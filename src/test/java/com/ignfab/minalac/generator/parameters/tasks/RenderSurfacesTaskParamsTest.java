@@ -14,19 +14,23 @@ public class RenderSurfacesTaskParamsTest {
         RenderSurfacesTaskParams params;
 
         // Test required arguments
-        params = new RenderSurfacesTaskParams(TestingModelSelectionParams.INVALID, TestingPlaceableParams.VALID);
+        params = new RenderSurfacesTaskParams(TestingPlaceableParams.VALID);
+        params.models = TestingModelSelectionParams.INVALID;
         params.heightmap = TestingHeightmapParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderSurfacesTaskParams(TestingModelSelectionParams.VALID, TestingPlaceableParams.VALID);
+        params = new RenderSurfacesTaskParams(TestingPlaceableParams.VALID);
+        params.models = TestingModelSelectionParams.VALID;
         params.heightmap = TestingHeightmapParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderSurfacesTaskParams(TestingModelSelectionParams.VALID, TestingPlaceableParams.INVALID);
+        params = new RenderSurfacesTaskParams(TestingPlaceableParams.INVALID);
+        params.models = TestingModelSelectionParams.VALID;
         params.heightmap = TestingHeightmapParams.VALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderSurfacesTaskParams(TestingModelSelectionParams.VALID, TestingPlaceableParams.VALID);
+        params = new RenderSurfacesTaskParams(TestingPlaceableParams.VALID);
+        params.models = TestingModelSelectionParams.VALID;
         params.heightmap = TestingHeightmapParams.VALID;
         assertDoesNotThrow(params::validate);
     }

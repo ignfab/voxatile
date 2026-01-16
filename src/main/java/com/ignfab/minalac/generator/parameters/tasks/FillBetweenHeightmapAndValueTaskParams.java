@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.models.values.ModelValueParams;
 import com.ignfab.minalac.generator.parameters.placeables.NothingParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
@@ -17,13 +16,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for creating a {@link FillBetweenHeightmapAndValueTask}.
  */
-public class FillBetweenHeightmapAndValueTaskParams extends TileTaskParams {
-    /**
-     * {@code ModelSelection} to use (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
-
+public class FillBetweenHeightmapAndValueTaskParams extends ModelTaskParams {
     /**
      * {@code ReadableHeightmap} to use (required).
      */
@@ -50,17 +43,14 @@ public class FillBetweenHeightmapAndValueTaskParams extends TileTaskParams {
      * Constructor used to ensure that the required fields are present during
      * deserialization.
      *
-     * @param models {@code ModelSelection} to use
      * @param heightmap {@code ReadableHeightmap} to use
      * @param altitudeValue model value to use as altitude
      */
-    @ConstructorProperties({ "models", "heightmap", "altitudeValue" })
+    @ConstructorProperties({ "heightmap", "altitudeValue" })
     public FillBetweenHeightmapAndValueTaskParams(
-        ModelSelectionParams models,
         ReadableHeightmapParams heightmap,
         ModelValueParams altitudeValue
     ) {
-        this.models = models;
         this.heightmap = heightmap;
         this.altitudeValue = altitudeValue;
     }
@@ -68,7 +58,6 @@ public class FillBetweenHeightmapAndValueTaskParams extends TileTaskParams {
     @Override
     public void validate() throws IllegalArgumentException {
         super.validate();
-        models.validate();
         heightmap.validate();
         placeAbove.validate();
         placeBelow.validate();

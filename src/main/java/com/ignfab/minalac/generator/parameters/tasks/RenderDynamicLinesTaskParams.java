@@ -12,7 +12,6 @@ import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmapSpec;
 import com.ignfab.minalac.generator.models.values.ModelValue;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.models.values.ModelValueParams;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
@@ -23,13 +22,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 /**
  * Parameters for a {@link RenderDynamicLinesTaskParams}.
  */
-public class RenderDynamicLinesTaskParams extends TileTaskParams {
-    /**
-     * Models to render (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
-
+public class RenderDynamicLinesTaskParams extends ModelTaskParams {
     @JsonSetter(nulls = Nulls.FAIL)
     public ModelValueParams width;
 
@@ -67,9 +60,8 @@ public class RenderDynamicLinesTaskParams extends TileTaskParams {
     @JsonSetter(nulls = Nulls.SKIP)
     public ReadableHeightmapParams renderOnlyWhenAbove;
 
-    @ConstructorProperties({"models", "width", "repeated"})
-    public RenderDynamicLinesTaskParams(ModelSelectionParams models, ModelValueParams width, PlaceableStructureParams repeated) {
-        this.models = models;
+    @ConstructorProperties({"width", "repeated"})
+    public RenderDynamicLinesTaskParams(ModelValueParams width, PlaceableStructureParams repeated) {
         this.width = width;
         this.repeated = repeated;
     }
@@ -78,7 +70,7 @@ public class RenderDynamicLinesTaskParams extends TileTaskParams {
     public void validate() throws IllegalArgumentException {
         if (stickToHeightmap != null && stickToAltitude != null)
             throw new IllegalArgumentException("Can not use both stickToHeightmap and stickToAltitude fields");
-        models.validate();
+        super.validate();
         width.validate();
         repeated.validate();
         if (extra != null)
