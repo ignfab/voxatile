@@ -17,11 +17,10 @@ references:
 
    # BUILDINGS
 
-  - &buildings-ground default:cobble
+  - &buildings-ground default:stonebrick
   - &buildings-walls-default default:sandstonebrick
   - &buildings-walls-church darkage:stone_brick
   - &buildings-walls-residential
-      # TODO: This was for scale 2:1
       pattern:
         repeatStructure:
           - at: [ 0..3, 0..3, 0..6 ]
@@ -31,7 +30,6 @@ references:
           - at: [ 2..3, 2..3, 3..5 ]
             put: default:glass
   - &buildings-walls-commercial
-      # TODO: This was for scale 2:1
       pattern:
         repeatStructure:
           - at: [ 0..3, 0..3, 0..6 ]
@@ -56,20 +54,35 @@ references:
   - &road-bed default:cobble
   - &sidewalk default:stone_block
   - &sidewalk-bed default:stonebrick
+  - &cycle-path default:desert_cobble
+  - &other-path default:stone_block
+  - &stairs default:stone_block
 
   # VEGETATION
 
   - &tree-trunk default:tree
   - &tree-leaves
-      - default:leaves
-      - pattern:
-          chance: 0.5
-          place: default:jungleleaves
+      structure:
+        at: [-1..1, -1..1, -1..1]
+        put:
+          pattern:
+            onlyInsteadOf: air
+            place:
+              pattern:
+                seed: tree-leaves-1
+                chance: 0.4
+                place:
+                  - default:leaves
+                  - pattern:
+                      seed: tree-leaves-2
+                      chance: 0.5
+                      place: default:jungleleaves
   # List of possible tree leaves in *tree-leaves
   - &tree-leaves-list [ default:leaves, default:jungleleaves ]
 
   # OTHER URBAN STUFF
 
+  - &plazza default:stone_block
   - &metro-station-steps default:sandstone_block
   - &metro-station-walls-top default:stone_block
   - &metro-station-walls default:sandstone_block
@@ -77,8 +90,8 @@ references:
       - put: default:stone_block
         at: [0, 0, 1]
       - put: default:fence_aspen_wood
-        at: [0, 0, 2]
-  - &liner-bench-structure
+        at: [0, 0, 2..3]
+  - &linear-bench-structure
       axes: [z, y]
       blueprint:
         - "O  "
@@ -92,15 +105,11 @@ references:
         - put:
             node: stairs:slab_junglewood
             param2: 23
-          at: [0, -2, 1]
+          at: [-2..2, 0, 1]
         - put:
             node: stairs:slab_junglewood
             param2: 2
-          at: [0, -1..1, 1]
-        - put:
-            node: stairs:slab_junglewood
-            param2: 23
-          at: [0, 2, 1]
+          at: [-1..1, 0, 1]
   - &traffic-light
       structure:
         axes: [ z ]
