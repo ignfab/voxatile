@@ -176,6 +176,27 @@
             <artifactId>citygml4j-cityjson</artifactId>
             <version>3.2.5</version>
         </dependency>
+        <!-- BSON encoding used by Hytale -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>bson</artifactId>
+            <version>5.6.2</version>
+        </dependency>
+        <!-- Zstd compression used by Hytale -->
+        <dependency>
+            <groupId>com.github.luben</groupId>
+            <artifactId>zstd-jni</artifactId>
+            <version>1.5.7-6</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Local Hytale JAR for easier source code navigation -->
+        <dependency>
+            <groupId>com.hypixel</groupId>
+            <artifactId>hytale</artifactId>
+            <version>1</version>
+            <scope>system</scope>
+            <systemPath>C:\Users\user\Downloads\HytaleServer.jar</systemPath>
+        </dependency>
 
         <!--
         TEST DEPENDENCIES
