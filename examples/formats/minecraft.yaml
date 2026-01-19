@@ -110,49 +110,52 @@ references:
         "6": minecraft:blackstone_slab
       zOffset: 1
   - &city-light
-    structure:
-      - axes: [ z, x, y ]
-        blueprint:
-          - - " S "
-            - "S S"
-            - " S "
-          - - " L "
-            - "L*L"
-            - " L "
-          - - " v "
-            - ">X<"
-            - " ^ "
-        with:
-          "X": minecraft:nether_brick_fence[east=true,north=true,west=true,south=true]
-          ">": minecraft:nether_brick_fence[north=true]
-          "v": minecraft:nether_brick_fence[west=true]
-          "<": minecraft:nether_brick_fence[south=true]
-          "^": minecraft:nether_brick_fence[east=true]
-          "L": minecraft:redstone_lamp
-          "S":
-            block: minecraft:daylight_detector
-            blockEntity: true
-            properties:
-              inverted: true
-          "*": # This is mainly to demonstrate full block entity support
-            block: minecraft:player_head
-            blockEntity: minecraft:skull
-            dataTags: >-
-              {
-                profile: {
-                  properties: [
-                    {
-                      name: textures,
-                      value: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzI3YmY4NzY0MzVlMDRkZGU5ZGExOTkyNDMxNWFlNTlhOGVmYzI3YWYxZGRiZWY4MTNkODljZmFmZmU5MTY0NyJ9fX0="
-                    }
-                  ]
-                }
-              }
-        xOffset: -1
-        yOffset: -1
-        zOffset: 11
-      - at: [ 0, 0, 1..10 ]
-        put: minecraft:nether_brick_fence
+    schematic:
+      file: examples/formats/minecraft/lamp_post.schem
+      excludeAir: true
+#    structure:
+#      - axes: [ z, x, y ]
+#        blueprint:
+#          - - " S "
+#            - "S S"
+#            - " S "
+#          - - " L "
+#            - "L*L"
+#            - " L "
+#          - - " v "
+#            - ">X<"
+#            - " ^ "
+#        with:
+#          "X": minecraft:nether_brick_fence[east=true,north=true,west=true,south=true]
+#          ">": minecraft:nether_brick_fence[north=true]
+#          "v": minecraft:nether_brick_fence[west=true]
+#          "<": minecraft:nether_brick_fence[south=true]
+#          "^": minecraft:nether_brick_fence[east=true]
+#          "L": minecraft:redstone_lamp
+#          "S":
+#            block: minecraft:daylight_detector
+#            blockEntity: true
+#            properties:
+#              inverted: true
+#          "*": # This is mainly to demonstrate full block entity support
+#            block: minecraft:player_head
+#            blockEntity: minecraft:skull
+#            dataTags: >-
+#              {
+#                profile: {
+#                  properties: [
+#                    {
+#                      name: textures,
+#                      value: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzI3YmY4NzY0MzVlMDRkZGU5ZGExOTkyNDMxNWFlNTlhOGVmYzI3YWYxZGRiZWY4MTNkODljZmFmZmU5MTY0NyJ9fX0="
+#                    }
+#                  ]
+#                }
+#              }
+#        xOffset: -1
+#        yOffset: -1
+#        zOffset: 11
+#      - at: [ 0, 0, 1..10 ]
+#        put: minecraft:nether_brick_fence
   - &fire-hydrant
     structure:
       - put: minecraft:red_wool
