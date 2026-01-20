@@ -66,6 +66,17 @@ public final class ParameterizedURL {
     }
 
     /**
+     * @return string representation of the URL
+     */
+    public String toString() {
+        try {
+            return this.toURL().toString();
+        } catch (MalformedURLException e) {
+            return "Malformed";
+        }
+    }
+
+    /**
      * Builder for ParameterizedURL.
      */
     public static final class Builder {
@@ -132,6 +143,5 @@ public final class ParameterizedURL {
         public URL buildURL() throws MalformedURLException {
             return build().toURL();
         }
-
     }
 }
