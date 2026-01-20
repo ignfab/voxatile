@@ -102,14 +102,15 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
         // First we need to know total feature count
         int count;
         InputStream stream;
-        try {
-            stream = url.builder()
+        ParameterizedURL countUrl = url.builder()
                 .parameter("resultType", "hits")
-                .buildURL().openStream(); // TODO Replace with an HTTP requesting tool to allow unit testing and snapshots
+                .build();
+        try {
+            stream = countUrl.toURL().openStream(); // TODO Replace with an HTTP requesting tool to allow unit testing and snapshots
         } catch (MalformedURLException e) {
             throw new GenerationFailedException("Invalid URL for layer", e);
         } catch (IOException e) {
-            throw new RetryableException("Error opening connection", e);
+            throw new RetryableException("Error opening connection to %s".formatted(countUrl), e);
         }
 
         SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -156,16 +157,16 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
          */
         private void fetchmore() throws RetryableException, GenerationFailedException {
             InputStream stream;
-
-            try {
-                stream = url.builder()
+            ParameterizedURL fetchUrl = url.builder()
                     .parameter("STARTINDEX", total - remaining)
                     .parameter("COUNT", Math.min(remaining, maxFeaturePerQuery))
-                    .buildURL().openStream(); // TODO Replace with an HTTP requesting tool to allow unit testing and snapshots
+                    .build();
+            try {
+                stream = fetchUrl.toURL().openStream(); // TODO Replace with an HTTP requesting tool to allow unit testing and snapshots
             } catch (MalformedURLException e) {
                 throw new GenerationFailedException("Invalid URL for layer", e);
             } catch (IOException e) {
-                throw new RetryableException("Error opening connection", e);
+                throw new RetryableException("Error opening connection to %s".formatted(fetchUrl), e);
             }
 
             // This code is temporary and no attention is given to its (bad) performance
@@ -175,7 +176,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
                 bytes = stream.readAllBytes();
                 stream.close();
             } catch (IOException e) {
-                throw new RetryableException("Error opening connection", e);
+                throw new RetryableException("Error opening connection to %s".formatted(fetchUrl), e);
             }
 
             // Invalidate schema declaration because GML version 3.1 is not used in this schema (version is unspecified, defaulting to 3.2)
@@ -192,7 +193,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
             } catch (IOException e) {
                 throw new RetryableException("Error fetching data", e);
             } catch (ParserConfigurationException | SAXException e) {
-                throw new GenerationFailedException("Unable to decode features", e);
+                throw new GenerationFailedException("Unable to decode features from %s".formatted(fetchUrl), e);
             }
         }
 

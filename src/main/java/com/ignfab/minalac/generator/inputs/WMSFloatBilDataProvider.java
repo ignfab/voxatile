@@ -94,7 +94,7 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
         } catch (MalformedURLException e) {
             throw new GenerationFailedException("Invalid URL for layer", e);
         } catch (IOException e) {
-            throw new RetryableException("Error opening connection", e);
+            throw new RetryableException("Error opening connection to %s".formatted(url), e);
         }
 
         int size = 4 * width * height;
