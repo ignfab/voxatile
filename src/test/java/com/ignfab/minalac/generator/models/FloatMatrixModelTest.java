@@ -1,13 +1,11 @@
 package com.ignfab.minalac.generator.models;
 
-import org.geotools.referencing.operation.transform.IdentityTransform;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.geom.util.AffineTransformation;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.inputs.FloatArrayGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
-import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
+import com.ignfab.minalac.generator.utils.coordinates.TestingConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
@@ -16,19 +14,15 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FloatMatrixModelTest {
     @Test
     public void testBBox() throws TransformException {
-
         FloatGeographicDataMatrix2d data = new FloatArrayGeographicDataMatrix2d(3, 4, 1.0, 2.0, 1.0, 1.0);
 
-        MapToWorldConverter converter = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
-        FloatMatrixModel model = new FloatMatrixModel(data, converter);
+        FloatMatrixModel model = new FloatMatrixModel(data, TestingConverter.IDENTITY);
 
         assertEquals(new WorldBBox2d(1, 2, 3, 4), model.bbox());
     }
 
     @Test
     public void testGet() throws TransformException {
-        // Identity converter
-        MapToWorldConverter converter = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
         // Beware, Y is upside down in this matrix
         float[] values = {
             9.0f, 0.0f, 13.0f,
@@ -39,7 +33,7 @@ public class FloatMatrixModelTest {
 
         FloatGeographicDataMatrix2d data = new FloatArrayGeographicDataMatrix2d(values, 3, 4, 1.0, 2.0, 1.0, 1.0);
 
-        FloatMatrixModel model = new FloatMatrixModel(data, converter);
+        FloatMatrixModel model = new FloatMatrixModel(data, TestingConverter.IDENTITY);
         assertNull(model.get(new WorldCoords2d(0, 2)));
         assertEquals(1, model.get(new WorldCoords2d(1, 2)));
         assertEquals(2, model.get(new WorldCoords2d(2, 2)));
@@ -56,7 +50,6 @@ public class FloatMatrixModelTest {
 
     @Test
     public void testGetInterpolation() throws TransformException {
-        MapToWorldConverter converter = new MapToWorldConverter(IdentityTransform.create(2), new AffineTransformation());
         // Beware, Y is upside down in this matrix
         float[] values = {
             -1.0f, 1.0f,
@@ -64,7 +57,7 @@ public class FloatMatrixModelTest {
         };
         FloatGeographicDataMatrix2d data = new FloatArrayGeographicDataMatrix2d(values, 2, 2, 0.0, 0.0, 10.0, 10.0);
 
-        FloatMatrixModel model = new FloatMatrixModel(data, converter);
+        FloatMatrixModel model = new FloatMatrixModel(data, TestingConverter.IDENTITY);
         // Borders
         assertNull(model.get(new WorldCoords2d(0, 11)));
         assertNull(model.get(new WorldCoords2d(11, 0)));

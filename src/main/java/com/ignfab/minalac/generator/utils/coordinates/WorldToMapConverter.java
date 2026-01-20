@@ -1,46 +1,59 @@
 package com.ignfab.minalac.generator.utils.coordinates;
 
-import org.locationtech.jts.geom.Geometry;
+import org.geotools.api.geometry.Position;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.geometry.Position2D;
+import org.locationtech.jts.geom.Coordinate;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
 /**
- * A world (game) to map (real) coordinates converter.
- *
- * This wraps a {@link Converter} and provide method with adapted types.
+ * Converter capable of converting coordinates expressed in voxels coordinates (game) to map coordinates (real).
+ * It should be constructed using {@link MapToWorldConverter#inverse()}.
  */
 public class WorldToMapConverter {
-    private final Converter converter;
+    private final MathTransform transform;
 
     /**
-     * Creates a new {@code WorldToMapConverter} out of a {@code CoordinatesConverter}.
+     * Constructs a new {@code WorldToMapConverter} by passing a {@code MathTransform}.
      *
-     * @param converter base converter to use
+     * @param transform the transformation object to use.
      */
-    protected WorldToMapConverter(Converter converter) {
-        this.converter = converter;
+    protected WorldToMapConverter(MathTransform transform) {
+        this.transform = transform;
     }
 
     /**
-     * Converts world (game) coordinates into map (real) coordinates.
+     * Convert {@code WorldCoords2d} coordinates.
      *
-     * @param coords Coordinates in map
-     * @return Corresponding coordinates in voxels, in decimal numbers
-     * @throws TransformException if unable to perform transformation.
+     * @param coords the world (game) coordinates.
+     * @return the converted coordinates as a {@code MapCoordinates2d}.
+     * @throws TransformException if conversion can not be performed
      */
-    public MapCoordinates convert(WorldCoords2d coords) throws TransformException {
-        return converter.convert(new MapCoordinates(coords.x(), coords.y()));
+    public MapCoordinates2d convert(WorldCoords2d coords) throws TransformException {
+        Position position = convert(coords.x(), coords.y());
+        return new MapCoordinates2d(position.getOrdinate(0), position.getOrdinate(1));
+
     }
 
     /**
-     * Converts a JTS geometry.
+     * Convert JTS coordinates.
      *
-     * @param geom Geometry to transform.
-     * @return Transformed geometry.
-     * @throws TransformException if unable to perform transformation.
+     * @param coords the world (game) coordinates as a {@code Coordinate} (JTS).
+     * @return the converted coordinates as a JTS coordinates.
+     * @throws TransformException if conversion can not be performed
      */
-    public Geometry convert(Geometry geom) throws TransformException {
-        return converter.convert(geom);
+    public Coordinate convert(Coordinate coords) throws TransformException {
+        Position position = convert(coords.x, coords.y);
+        return new Coordinate(position.getOrdinate(0), position.getOrdinate(1));
+    }
+
+    private Position convert(double x, double y) throws TransformException {
+        try {
+            return transform.transform(new Position2D(x, y), null);
+        } catch (org.geotools.api.referencing.operation.TransformException e) {
+            throw new TransformException("Could not transform coordinates",  e);
+        }
     }
 }

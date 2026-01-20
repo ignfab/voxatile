@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.models;
 
+import com.ignfab.minalac.generator.utils.coordinates.TestingConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Polygon2d;
@@ -18,7 +19,7 @@ public class TestingRectangleShapeVoxelizable2dModel extends ModelImpl implement
      * @param bbox rectangle of this model in world
      */
     public TestingRectangleShapeVoxelizable2dModel(WorldBBox2d bbox) {
-        super();
+        super(TestingConverter.UNUSED);
         this.bbox = bbox;
     }
 

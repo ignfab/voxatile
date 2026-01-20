@@ -63,9 +63,8 @@ public class MetadataParsePostProcessorParams extends PostProcessorParams {
         ValueParser<Object> parser = (ValueParser<Object>) as;
 
         return new MetadataFunctionPostProcessor<>(
-            parser.type(),
             metadata,
-            parser.parser(),
+            (model) -> parser::parse,
             ifMissing.create(),
             ifNotParsable.create()
         );

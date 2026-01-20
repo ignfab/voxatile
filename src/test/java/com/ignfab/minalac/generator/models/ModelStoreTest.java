@@ -2,10 +2,16 @@ package com.ignfab.minalac.generator.models;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.utils.coordinates.TestingConverter;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ModelStoreTest {
     static class TestModel extends ModelImpl {
+        TestModel() {
+            super(TestingConverter.UNUSED);
+        }
+
         @Override
         public String salt() {
             return "";

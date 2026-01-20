@@ -9,6 +9,7 @@ import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 
 /**
  * A {@link TileTask} which computes heightmap statistics over a model surface and adds the results as a metadata.
+ * The heightmap values must be expressed in voxel units in order to have metadata in voxel unit.
  */
 public class HeightmapStatsTask extends ModelTask<Voxelizable2d> {
     private final ReadableHeightmapSpec heightmapSpec;

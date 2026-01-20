@@ -15,6 +15,7 @@ Each post-processor has a field `type` which is used to identify it.
   * [Metadata parse](#metadata-parse)
   * [Metadata remap](#metadata-remap)
   * [Metadata truncate](#metadata-truncate)
+  * [Metadata conversion](#metadata-conversion)
 * [Geometry post-processors](#geometry-post-processors)
   * [Geometry buffer](#geometry-buffer)
 
@@ -223,6 +224,36 @@ Avaliable policies:
 | `removeMetadata` | The metadata is removed (no effect for `ifMissing`). |
 | `ignore`         | Metadata is not modified.                            |
 | `error`          | An error occurs, and the generation stops.           |
+
+### Metadata conversion
+
+Post-processor that converts metadata distances/altitude into voxel units. 
+This does not perform unit conversion. It assumes that the model uses the same unit as the chosen coordinate reference system used for projection.
+
+**Type**: `conversion`
+
+**Extra parameters**
+- `metadata` (required): Name of the metadata to apply conversion.
+- `convertAs` (required): The type of conversion to perform.
+Since it is possible to provide two different scales (a vertical and a horizontal), the conversion of distance may not be the same whether it is a vertical distance (height for example) 
+or a horizontal distance (road width for example). As for the conversion of altitude it differs from a vertical distance as they might be an offset.
+| convertAs            | Explanation                              |
+|:---------------------|:-----------------------------------------|
+| `altitude`           | Converts altitude into voxel.            |
+| `horizontalDistance` | Converts horizontal distance into voxel. |
+| `verticalDistance`   | Converts vertical distance into voxel.   |
+
+- `ifMissing` (optional, default `error`): Policy to apply if metadata is missing (see below).
+- `ifConversionFail` (optional, default `error`): Policy to apply if conversion fails (see below).
+  Available policies:
+
+| Policy           | Explanation                                          |
+|:-----------------|:-----------------------------------------------------|
+| `discardModel`   | The model is discarded.                              |
+| `removeMetadata` | The metadata is removed (no effect for `ifMissing`). |
+| `ignore`         | Metadata is not modified.                            |
+| `error`          | An error occurs, and the generation stops.           |
+
 
 ## Geometry post-processors
 

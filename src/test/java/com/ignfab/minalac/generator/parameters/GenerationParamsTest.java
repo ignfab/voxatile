@@ -135,7 +135,6 @@ public class GenerationParamsTest {
         assertEquals("test", generation.world().getMetadata().getWorldName());
         assertEquals(50, generation.world().limits().sizeX());
         assertEquals(75, generation.world().limits().sizeY());
-        assertEquals(3.0, generation.getVerticalScale(), 0.001);
 
         HeightmapDeclaration ground = assertDoesNotThrow(() -> generation.heightmaps().get("ground"));
         assertEquals(3, ground.create(WorldBBox2d.ORIGIN).get(0, 0));

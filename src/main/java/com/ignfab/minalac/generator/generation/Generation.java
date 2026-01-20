@@ -2,14 +2,11 @@ package com.ignfab.minalac.generator.generation;
 
 import java.util.Collection;
 
-import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.util.AffineTransformation;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationStore;
@@ -33,12 +30,13 @@ public class Generation {
     // Target coordinate reference system (CRS used for voxel world rendering)
     private final CoordinateReferenceSystem crs;
 
-    // Vertical size of voxel in target CRS units
+    private final double centerX;
+    private final double centerY;
+    // Horizontal size of voxel in target CRS units (map unit / voxel)
+    private final double horizontalScale;
+    // Vertical size of voxel in target CRS units (map unit / voxel)
     private final double verticalScale;
-
-    // Transformations from and to target CRS
-    private final AffineTransformation crsToVoxel;
-    private final AffineTransformation voxelToCrs;
+    private final double angle;
 
     private final VoxelWorld world;
     private final HeightmapDeclarationStore heightmaps = new HeightmapDeclarationStore();
@@ -78,8 +76,6 @@ public class Generation {
         double angle,
         int maxTileSize) {
 
-        this.seed = seed;
-
         WorldBBox3d maximumLimits = world.maxLimits();
         world.setLimits(new WorldBBox3d(
             -extentX / 2,
@@ -90,25 +86,16 @@ public class Generation {
             maximumLimits.sizeZ()
         ));
 
+        this.seed = seed;
+        this.crs = crs;
+        this.centerX = centerX;
+        this.centerY = centerY;
+        this.horizontalScale = horizontalScale;
+        this.verticalScale = verticalScale;
+        this.angle = angle;
         this.world = world;
-
         this.maxTileSize = maxTileSize;
         tiles = world.tiles(maxTileSize);
-
-        this.crs = crs;
-        this.verticalScale = verticalScale;
-
-        // CRS to Voxel transformation (basically, translates, rotates and scale)
-        crsToVoxel = new AffineTransformation();
-        crsToVoxel.translate(-centerX, -centerY);
-        crsToVoxel.scale(1.0 / horizontalScale, 1.0 / horizontalScale);
-        crsToVoxel.rotate(-angle);
-
-        // Voxel to CRS transformation (reverse of crsToVoxel transformation)
-        voxelToCrs = new AffineTransformation();
-        voxelToCrs.rotate(angle);
-        voxelToCrs.scale(horizontalScale, horizontalScale);
-        voxelToCrs.translate(centerX, centerY);
     }
 
     /**
@@ -143,7 +130,7 @@ public class Generation {
      * @param bbox Bounding box to get envelope for.
      * @return ReferencedEnvelope covering given bounding box in CRS.
      */
-    public ReferencedEnvelope getEnvelopeForCRS(CoordinateReferenceSystem crs, WorldBBox3d bbox) throws FactoryException, TransformException {
+    public ReferencedEnvelope getEnvelopeForCRS(CoordinateReferenceSystem crs, WorldBBox3d bbox) throws TransformException {
         WorldToMapConverter converter = makeCoordsConverter(crs).inverse();
 
         int minX = bbox.minX();
@@ -151,14 +138,14 @@ public class Generation {
         int maxX = bbox.maxX() + 1;
         int maxY = bbox.maxY() + 1;
         Geometry geom = new GeometryFactory().createLinearRing(new Coordinate[] {
-            new Coordinate(minX, minY),
-            new Coordinate(maxX, minY),
-            new Coordinate(maxX, maxY),
-            new Coordinate(minX, maxY),
-            new Coordinate(minX, minY)
+            converter.convert(new Coordinate(minX, minY)),
+            converter.convert(new Coordinate(maxX, minY)),
+            converter.convert(new Coordinate(maxX, maxY)),
+            converter.convert(new Coordinate(minX, maxY)),
+            converter.convert(new Coordinate(minX, minY))
         });
 
-        return new ReferencedEnvelope(converter.convert(geom).getEnvelopeInternal(), crs);
+        return new ReferencedEnvelope(geom.getEnvelopeInternal(), crs);
     }
 
     /**
@@ -166,18 +153,11 @@ public class Generation {
      *
      * @param sourceCrs CRS from which convert map coordinates.
      * @return A converter to be used to convert any map coordinates into generated world coordinates.
-     * @throws FactoryException If not suitable transformation found for conversion.
      */
-    public MapToWorldConverter makeCoordsConverter(CoordinateReferenceSystem sourceCrs) throws FactoryException {
-        return new MapToWorldConverter(CRS.findMathTransform(sourceCrs, crs), crsToVoxel);
-    }
-
-    /**
-     * {@return the vertical scale}
-     */
-    // To be removed when vertical is used by this class. (Renderers will probably contain that value)
-    public double getVerticalScale() {
-        return verticalScale;
+    public MapToWorldConverter makeCoordsConverter(CoordinateReferenceSystem sourceCrs) {
+        // altitudeOffset will be possibly be used to store offset between different CRS.
+        // If that is the case, the world CRS should be a CRS containing an altitude of reference .
+        return new MapToWorldConverter(sourceCrs, crs, -centerX, -centerY, 1.0 / horizontalScale, 1.0 / verticalScale, -angle, -0.0);
     }
 
     /**

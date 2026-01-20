@@ -2,6 +2,9 @@ package com.ignfab.minalac.generator.models;
 
 import java.util.Map;
 
+import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
+import com.ignfab.minalac.generator.utils.coordinates.TestingConverter;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -10,9 +13,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestingModel extends ModelImpl {
     private final String name;
 
-    public TestingModel(String name, Map<String, Object> metadata) {
+    public TestingModel(String name, Map<String, Object> metadata, MapToWorldConverter converter) {
+        super(converter);
         this.name = name;
         metadata.forEach(this::setMetadata);
+    }
+
+    public TestingModel(String name, Map<String, Object> metadata) {
+        this(name, metadata, TestingConverter.UNUSED);
     }
 
     public TestingModel(Map<String, Object> metadata) {
@@ -21,6 +29,10 @@ public class TestingModel extends ModelImpl {
 
     public TestingModel(String name) {
         this(name, Map.of());
+    }
+
+    public TestingModel(MapToWorldConverter converter) {
+        this(null, Map.of(), converter);
     }
 
     public TestingModel() {

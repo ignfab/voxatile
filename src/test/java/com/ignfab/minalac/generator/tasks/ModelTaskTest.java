@@ -11,6 +11,7 @@ import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.generation.TestingGenerationTile;
 import com.ignfab.minalac.generator.models.ModelImpl;
 import com.ignfab.minalac.generator.models.ModelSelection;
+import com.ignfab.minalac.generator.utils.coordinates.TestingConverter;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,6 +65,7 @@ public class ModelTaskTest {
         private final char type;
 
         ModelImplTester(char type) {
+            super(TestingConverter.UNUSED);
             this.type = type;
         }
 
