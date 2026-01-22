@@ -34,7 +34,7 @@ public class ThickLinearIndexedVoxelizer2d {
      * @return an iterable over voxelized positions and indexes
      */
     public Iterable<IndexedPosition2d> voxelize(Line2d line) {
-        return () -> Iterators.remap(new ThickLine2dIterator(line, thickness), (position) -> new IndexedPosition2d(position.coords(), line.convertLineRelative(position.coords())));
+        return () -> Iterators.remap(new ThickLine2dIterator(line, thickness), (position) -> new IndexedPosition2d(position.coords(), line.convertLineRelative(position.coords()), line));
     }
 
     /**

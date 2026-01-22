@@ -64,8 +64,9 @@ import com.ignfab.minalac.generator.voxelization.shape2d.LineString2d;
             throw new NoSuchElementException();
 
         Positioned2d position = lineIterator.next();
-        Vector2d relative = lineString.get(index).convertLineRelative(position.coords());
+        Line2d line = lineString.get(index);
+        Vector2d relative = line.convertLineRelative(position.coords());
 
-        return new IndexedPosition2d(position.coords(), new Vector2d(xOffset + relative.x(), relative.y()));
+        return new IndexedPosition2d(position.coords(), new Vector2d(xOffset + relative.x(), relative.y()), line);
     }
 }

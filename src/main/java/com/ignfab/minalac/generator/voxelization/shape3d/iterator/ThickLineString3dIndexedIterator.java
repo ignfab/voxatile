@@ -83,6 +83,6 @@ public class ThickLineString3dIndexedIterator implements Iterator<Indexed2dPosit
 
         Positioned3d position = lineIterator.next();
         Vector2d relative = currentLine.convertLineRelative(position.coords().to2d());
-        return new Indexed2dPosition3d(position.coords(), new Vector2d(xOffset + relative.x(), relative.y()));
+        return new Indexed2dPosition3d(position.coords(), new Vector2d(xOffset + relative.x(), relative.y()), currentLine);
     }
 }

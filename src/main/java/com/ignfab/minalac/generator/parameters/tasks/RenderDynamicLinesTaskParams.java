@@ -17,6 +17,7 @@ import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableSt
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.tasks.RenderLinesTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
+import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 /**
@@ -94,12 +95,16 @@ public class RenderDynamicLinesTaskParams extends ModelTaskParams {
         RenderLinesTask.GetZ stickToZ;
         if (stickToHeightmap != null) {
             ReadableHeightmapSpec stickToHeightmapSpec = stickToHeightmap.create(generation.heightmaps());
-            stickToZ = (tile, model, coords) -> tile.heightmaps().get(stickToHeightmapSpec).get(coords);
+//            stickToZ = (tile, model, pos) -> tile.heightmaps().get(stickToHeightmapSpec).get(pos.coords().to2d());
+            stickToZ = (tile, model, pos) -> {
+                WorldCoords2d middle = pos.line().atIndex(pos.line().indexAt(pos.coords().x(), pos.coords().y()));
+                return tile.heightmaps().get(stickToHeightmapSpec).get(middle);
+            };
         } else if (stickToAltitude != null) {
             ModelValue stickToAltitudeValue = stickToAltitude.create(generation);
-            stickToZ = (tile, model, coords) -> stickToAltitudeValue.getAsInt(model).orElseThrow(() -> new IgnorableException("Missing altitude value"));
+            stickToZ = (tile, model, pos) -> stickToAltitudeValue.getAsInt(model).orElseThrow(() -> new IgnorableException("Missing altitude value"));
         } else {
-            stickToZ =  null;
+            stickToZ = (tile, model, pos) -> pos.coords().z();
         }
 
         WritableHeightmapSpec updateHeightmapSpec = null;

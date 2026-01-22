@@ -12,7 +12,6 @@ import com.ignfab.minalac.generator.models.Shape3dConvertibleModel;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.utils.world2d.Vector2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.voxelization.shape3d.iterator.Indexed2dPosition3d;
 import com.ignfab.minalac.generator.voxelization.shape3d.voxelizer.ThickLinearIndexedVoxelizer3d;
@@ -71,7 +70,7 @@ public class RenderLinesTask extends ModelTask<Shape3dConvertibleModel> {
             Vector2d index = pos.index();
             int x = Math.floorMod((int) Math.round(index.x()), limits.sizeX()) + limits.minX();
             int y = (int) Math.round(Math.abs(index.y()));
-            int zOffset = stickToZ == null ? pos.coords().z() : stickToZ.get(tile, model, pos.coords().to2d());
+            int zOffset = stickToZ.get(tile, model, pos);
 
             for (int z = limits.minZ(); z <= limits.maxZ(); z++) {
                 Placeable placeable = structure.get(x, y, z);
@@ -90,6 +89,6 @@ public class RenderLinesTask extends ModelTask<Shape3dConvertibleModel> {
 
     @FunctionalInterface
     public interface GetZ {
-        int get(GenerationTile tile, Model model, WorldCoords2d coords) throws IgnorableException;
+        int get(GenerationTile tile, Model model, Indexed2dPosition3d coords) throws IgnorableException;
     }
 }
