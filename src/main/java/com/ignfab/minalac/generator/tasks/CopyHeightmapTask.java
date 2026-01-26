@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.tasks;
 
+import java.util.function.Function;
+
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
@@ -16,7 +18,7 @@ import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.SurfaceVoxeli
 public class CopyHeightmapTask extends ModelTask<Shape2dConvertibleModel> {
     private final ReadableHeightmapSpec fromSpec;
     private final WritableHeightmapSpec toSpec;
-    private final SurfaceVoxelizer2d voxelizer;
+    private final Function<Shape2dConvertibleModel, Iterable<? extends Positioned2d>> voxelizer; // TODO temporary hack before full #113
     /**
      * Creates a new {@code CopyHeightmapTask}.
      *
@@ -25,10 +27,14 @@ public class CopyHeightmapTask extends ModelTask<Shape2dConvertibleModel> {
      * @param toSpec target writable heightmap spec
      */
     public CopyHeightmapTask(ModelSelection selection, ReadableHeightmapSpec fromSpec, WritableHeightmapSpec toSpec) {
+        this(selection, fromSpec, toSpec, new SurfaceVoxelizer2d()::voxelize);
+    }
+
+    public CopyHeightmapTask(ModelSelection selection, ReadableHeightmapSpec fromSpec, WritableHeightmapSpec toSpec, Function<Shape2dConvertibleModel, Iterable<? extends Positioned2d>> voxelizer) {
         super(Shape2dConvertibleModel.class, selection);
         this.fromSpec = fromSpec;
         this.toSpec = toSpec;
-        voxelizer = new SurfaceVoxelizer2d();
+        this.voxelizer = voxelizer;
     }
 
     @Override
@@ -37,7 +43,7 @@ public class CopyHeightmapTask extends ModelTask<Shape2dConvertibleModel> {
         WritableHeightmap to = tile.heightmaps().get(toSpec);
 
         WritableHeightmap buffered = to.copy();
-        for (Positioned2d voxel : buffered.bbox().clip(voxelizer.voxelize(model)))
+        for (Positioned2d voxel : buffered.bbox().clip(voxelizer.apply(model)))
             buffered.set(voxel.coords(), from.get(voxel.coords()));
 
         to.copyValues(buffered);
