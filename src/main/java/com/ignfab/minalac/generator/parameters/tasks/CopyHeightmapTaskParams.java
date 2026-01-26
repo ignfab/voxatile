@@ -6,10 +6,13 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.models.values.ModelValue;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
+import com.ignfab.minalac.generator.parameters.models.values.ModelValueParams;
 import com.ignfab.minalac.generator.tasks.CopyHeightmapTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
+import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.ThickLinearVoxelizer2d;
 
 /**
  * Parameters for creating a {@link CopyHeightmapTask}.
@@ -26,6 +29,12 @@ public class CopyHeightmapTaskParams extends ModelTaskParams {
      */
     @JsonSetter(nulls = Nulls.FAIL)
     public WritableHeightmapParams to;
+
+    @JsonSetter(nulls = Nulls.SKIP)
+    public boolean linear = false;
+
+    @JsonSetter(nulls = Nulls.SKIP)
+    public ModelValueParams width;
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
@@ -44,10 +53,24 @@ public class CopyHeightmapTaskParams extends ModelTaskParams {
         super.validate();
         from.validate();
         to.validate();
+        if (linear) {
+            if (width == null)
+                throw new IllegalStateException("Model value 'width' has to be set when 'linear' is true");
+            width.validate();
+        }
     }
 
     @Override
     public TileTask create(Generation generation) {
+        if (linear) {
+            ModelValue widthValue = width.create(generation);
+            return new CopyHeightmapTask(
+                models.create(),
+                from.create(generation.heightmaps()),
+                to.create(generation.heightmaps()),
+                model -> new ThickLinearVoxelizer2d(widthValue.applyAsDouble(model)).voxelize(model)
+            );
+        }
         return new CopyHeightmapTask(
             models.create(),
             from.create(generation.heightmaps()),

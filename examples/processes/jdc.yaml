@@ -16,8 +16,8 @@ forEachTile:
     modelType: altitude
     provider:
       type: wmsFloat
-      url: https://data.geopf.fr/wms-r
-      layer: IGNF_LIDAR-HD_MNT_ELEVATION.ELEVATIONGRIDCOVERAGE.LAMB93
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
     processor:
       type: floatMatrix
 
@@ -26,8 +26,8 @@ forEachTile:
     modelType: altitudeLidar
     provider:
       type: wmsFloat
-      url: https://data.geopf.fr/wms-r/wms
-      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+      url: https://data.geopf.fr/wms-r
+      layer: IGNF_LIDAR-HD_MNT_ELEVATION.ELEVATIONGRIDCOVERAGE.LAMB93
     processor:
       type: floatMatrix
 
@@ -45,25 +45,34 @@ forEachTile:
       type: altitudeLidar
     heightmap: groundLidar
 
-  mergeAltitude:
-    after:
-      - setAltitude
-      - setAltitudeLidar
-      - fetchRoads
-    type: copyHeightmap
-    models:
-      type: road
-    from: groundLidar
-    to: ground
+#  mergeAltitude:
+#    after:
+#      - setAltitude
+#      - setAltitudeLidar
+#      - fetchRoads
+#    type: copyHeightmap
+#    models:
+#      type: road
+#      filter:
+#        metadata: position
+#        equals: ground
+#    from: groundLidar
+#    to: ground
+#    linear: true
+#    width:
+#      round:
+#        product: [ width, 2 ]
 
-  # Conveniance task telling altitudes are known
+  # Convenience task telling altitudes are known
   altitude:
     type: noOperation
-    after: mergeAltitude
+    after: #mergeAltitude
+      - setAltitude
+      - setAltitudeLidar
 
   # This should be later, after last ground heightmap update
   setSpawn:
-    after: setAltitude
+    after: altitude
     type: setSpawn
     heightmap:
       sum: [ground, 1]
@@ -156,7 +165,7 @@ forEachTile:
               onlyInsteadOf: air
               place: *grass-decoration
 
-  # Conveniance task telling ground is builtn
+  # Convenience task telling ground is built
   ground:
     type: noOperation
     after:
