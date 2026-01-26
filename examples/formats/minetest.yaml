@@ -38,13 +38,13 @@ references:
             put: default:glass
           - at: [ 2..3, 2..3, 3..5 ]
             put: default:glass
-  - &buidlings-roof-default default:stone_block
-  - &buidlings-roof-zinc default:silver_sandstone
-  - &buidlings-roof-zinc-tiles default:silver_sandstone_block
-  - &buidlings-roof-church darkage:basalt_brick
-  - &buidlings-roof-slates-tiles darkage:slate_tile
-  - &buidlings-roof-slates darkage:slate_block
-  - &buidlings-roof-concrete darkage:chalk
+  - &buildings-roof-default default:stone_block
+  - &buildings-roof-zinc default:silver_sandstone
+  - &buildings-roof-zinc-tiles default:silver_sandstone_block
+  - &buildings-roof-church darkage:basalt_brick
+  - &buildings-roof-slates-tiles darkage:slate_tile
+  - &buildings-roof-slates darkage:slate_block
+  - &buildings-roof-concrete darkage:chalk
 
   # ROADS
 
