@@ -127,7 +127,7 @@ public record Region(int regionX, int regionZ, McaRegionFile file) {
         ListTag<CompoundTag> blockEntities = chunk.getTileEntities();
         if (blockEntities == null)
             return null;
-        for (CompoundTag blockEntity : blockEntities)
+        for (CompoundTag blockEntity : blockEntities) // FIXME A concurrent modification can occur here if a block entity is placed/removed in the chunk at the same time!
             if (MCHelpers.xyzEquals(blockEntity, blockX, blockY, blockZ))
                 return blockEntity;
         return null;

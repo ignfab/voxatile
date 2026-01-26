@@ -134,7 +134,7 @@ forEachTile:
         - at: [0, 0, 1]
           put:
             pattern:
-              onlyInsteadOf: air
+              onlyInsteadOf: *air
               place: *grass-decoration
 
   fetchGrass:
@@ -162,15 +162,15 @@ forEachTile:
         - at: [0, 0, 1]
           put:
             pattern:
-              onlyInsteadOf: air
+              onlyInsteadOf: *air
               place: *grass-decoration
 
   # Convenience task telling ground is built
   ground:
     type: noOperation
     after:
-     - renderSquareGround
-     - renderGrassGround
+      - renderSquareGround
+      - renderGrassGround
 
   # Water
 
@@ -193,7 +193,7 @@ forEachTile:
       type: water
     from:
       localMin: ground
-      range: 9
+      range: 15
     to: ground
 
   populateWaterPresence:
@@ -354,15 +354,15 @@ forEachTile:
       filter:
         not:
           or:
-          - metadata: materiaux_de_la_toiture
-            in: [ "3", "03", "30", "33", "13", "31", "12", "21", "2", "02", "20", "22", "4", "04", "44", "40" ]
-          - metadata: nature
-            in: [ "Chapelle", "Eglise" ]
+            - metadata: materiaux_de_la_toiture
+              in: [ "3", "03", "30", "33", "13", "31", "12", "21", "2", "02", "20", "22", "4", "04", "44", "40" ]
+            - metadata: nature
+              in: [ "Chapelle", "Eglise" ]
     surfaceType: roof
     place:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
-        put: *buidlings-roof-default
+        put: *buildings-roof-default
 
   renderBati3dRoofsZinc:
     after: bati3dWalls
@@ -376,7 +376,7 @@ forEachTile:
     place:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
-        put: *buidlings-roof-zinc
+        put: *buildings-roof-zinc
 
   renderBati3dRoofsZincTile:
     after: bati3dWalls
@@ -390,7 +390,7 @@ forEachTile:
     place:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
-        put: *buidlings-roof-zinc-tiles
+        put: *buildings-roof-zinc-tiles
 
   renderBati3dRoofsChapelleEglise:
     after: bati3dWalls
@@ -404,7 +404,7 @@ forEachTile:
     place:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
-        put: *buidlings-roof-church
+        put: *buildings-roof-church
 
   renderBati3dRoofsSlatesTile:
     after: bati3dWalls
@@ -418,7 +418,7 @@ forEachTile:
     place:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
-        put: *buidlings-roof-slates-tiles
+        put: *buildings-roof-slates-tiles
 
   renderBati3dRoofsSlates:
     after: bati3dWalls
@@ -432,7 +432,7 @@ forEachTile:
     place:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
-        put: *buidlings-roof-slates
+        put: *buildings-roof-slates
 
   renderBati3dRoofsConcrete:
     after: bati3dWalls
@@ -446,7 +446,7 @@ forEachTile:
     place:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
-        put: *buidlings-roof-concrete
+        put: *buildings-roof-concrete
 
   # Roads & paths
 
@@ -798,6 +798,7 @@ forEachTile:
 
       # Wipe road lines
       - type: renderLines
+        after: roads
         stickToHeightmap: *roads-ground
         structure:
           put:
@@ -808,7 +809,6 @@ forEachTile:
 
       # Draw cross walks
       - type: renderLines
-        after: roads
         stickToHeightmap: *roads-ground
         structure:
           axes: [ y, x ]
@@ -998,11 +998,14 @@ forEachTile:
   renderBenches:
     after:
       - fetchBenches
-      - ground
+      - roads
     type: renderSurfaces
     models:
       type: benches
-    place: *bench
+    place:
+      pattern:
+        place: *bench
+        neverInsteadOf: *water
     heightmap: ground
 
   fetchBenchesLinear:
@@ -1115,7 +1118,10 @@ forEachTile:
     type: renderSurfaces
     models:
       type: trash_cans
-    place: *trash-can
+    place:
+      pattern:
+        place: *trash-can
+        neverInsteadOf: *water
     heightmap: ground
 
   fetchPicNic:

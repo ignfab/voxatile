@@ -8,7 +8,7 @@ references:
   - &underground minecraft:stone
   - &grass minecraft:grass_block
   - &grass-decoration
-    - pattern: # TODO: need a "random choose" rather than place over (specially for choosing structures)
+    - pattern:
         chance: 0.04
         place: minecraft:short_grass
     - pattern:
@@ -38,13 +38,13 @@ references:
           put: minecraft:glass
         - at: [ 2..3, 2..3, 3..5 ]
           put: minecraft:glass
-  - &buidlings-roof-default minecraft:polished_andesite
-  - &buidlings-roof-zinc minecraft:smooth_quartz
-  - &buidlings-roof-zinc-tiles minecraft:quartz_block
-  - &buidlings-roof-church minecraft:polished_blackstone_bricks
-  - &buidlings-roof-slates-tiles minecraft:polished_basalt
-  - &buidlings-roof-slates minecraft:basalt
-  - &buidlings-roof-concrete minecraft:clay
+  - &buildings-roof-default minecraft:polished_andesite
+  - &buildings-roof-zinc minecraft:smooth_quartz
+  - &buildings-roof-zinc-tiles minecraft:quartz_block
+  - &buildings-roof-church minecraft:polished_blackstone_bricks
+  - &buildings-roof-slates-tiles minecraft:polished_basalt
+  - &buildings-roof-slates minecraft:basalt
+  - &buildings-roof-concrete minecraft:clay
 
   # ROADS
 
@@ -55,16 +55,28 @@ references:
   - &sidewalk minecraft:smooth_stone
   - &sidewalk-bed minecraft:smooth_stone
   - &cycle-path minecraft:granite
+  - &other-path minecraft:smooth_stone
+  - &stairs minecraft:smooth_stone_slab[type=double]
 
   # VEGETATION
 
   - &tree-trunk minecraft:oak_log
   - &tree-leaves
-    - minecraft:oak_leaves[persistent=true]
-    - pattern:
-        chance: 0.5
-        place: minecraft:birch_leaves[persistent=true]
-        seed: birch
+    structure:
+      at: [ -1..1, -1..1, -1..1 ]
+      put:
+        pattern:
+          onlyInsteadOf: air
+          place:
+            pattern:
+              seed: tree-leaves-1
+              chance: 0.4
+              place:
+                - minecraft:oak_leaves[persistent=true]
+                - pattern:
+                    seed: tree-leaves-2
+                    chance: 0.5
+                    place: minecraft:birch_leaves[persistent=true]
   # List of possible tree leaves in *tree-leaves
   - &tree-leaves-list
     - minecraft:oak_leaves[persistent=true]
@@ -72,6 +84,7 @@ references:
 
   # OTHER URBAN STUFF
 
+  - &plazza minecraft:smooth_stone
   - &metro-station-steps minecraft:smooth_sandstone
   - &metro-station-walls-top minecraft:smooth_stone
   - &metro-station-walls minecraft:cut_sandstone
@@ -79,7 +92,7 @@ references:
     - put: minecraft:smooth_stone
       at: [ 0, 0, 1 ]
     - put: minecraft:oak_fence
-      at: [ 0, 0, 2 ]
+      at: [ 0, 0, 2..3 ]
   - &linear-bench-structure
     axes: [ z, y ]
     blueprint:
@@ -92,11 +105,9 @@ references:
   - &bench
     structure:
       - put: minecraft:dark_oak_slab[type=top]
-        at: [ 0, -2, 1 ]
+        at: [ -2..2, 0, 1 ]
       - put: minecraft:dark_oak_slab
-        at: [ 0, -1..1, 1 ]
-      - put: minecraft:dark_oak_slab[type=top]
-        at: [ 0, 2, 1 ]
+        at: [ -1..1, 0, 1 ]
   - &traffic-light
     structure:
       axes: [ z ]
