@@ -543,7 +543,20 @@ forEachTile:
         repeated:
           put: *air
           at: [0, 0, 1..7]
-        stickToHeightmap: ground
+        stickToHeightmap: &roads-ground
+          convolutionBilateral:
+            max: [ ground, groundLidar ]
+          kernel: # Gaussian 2D with sigma = 3 (scaled x100)
+            - [ 0.299, 0.441, 0.582, 0.688, 0.727, 0.688, 0.582, 0.441, 0.299 ]
+            - [ 0.441, 0.651, 0.859, 1.015, 1.073, 1.015, 0.859, 0.651, 0.441 ]
+            - [ 0.582, 0.859, 1.134, 1.339, 1.416, 1.339, 1.134, 0.859, 0.582 ]
+            - [ 0.688, 1.015, 1.339, 1.582, 1.673, 1.582, 1.339, 1.015, 0.688 ]
+            - [ 0.727, 1.073, 1.416, 1.673, 1.768, 1.673, 1.416, 1.073, 0.727 ]
+            - [ 0.688, 1.015, 1.339, 1.582, 1.673, 1.582, 1.339, 1.015, 0.688 ]
+            - [ 0.582, 0.859, 1.134, 1.339, 1.416, 1.339, 1.134, 0.859, 0.582 ]
+            - [ 0.441, 0.651, 0.859, 1.015, 1.073, 1.015, 0.859, 0.651, 0.441 ]
+            - [ 0.299, 0.441, 0.582, 0.688, 0.727, 0.688, 0.582, 0.441, 0.299 ]
+          range: 2.5
       aerial:
         models:
           filter:
@@ -571,7 +584,7 @@ forEachTile:
           filter:
             metadata: nature
             in: [ "Chemin", "Sentier", "Route empierrée" ]
-        stickToHeightmap: ground
+        stickToHeightmap: *roads-ground
         width:
           round: width
         repeated:
@@ -583,7 +596,7 @@ forEachTile:
           filter:
             metadata: nature_de_la_restriction
             equals: Piste cyclable
-        stickToHeightmap: ground
+        stickToHeightmap: *roads-ground
         width:
           round: width
         repeated:
@@ -595,7 +608,7 @@ forEachTile:
           filter:
             metadata: nature
             equals: "Escalier"
-        stickToHeightmap: ground
+        stickToHeightmap: *roads-ground
         width:
           round: width
         repeated:
@@ -614,7 +627,7 @@ forEachTile:
               - not:
                   metadata: nature_de_la_restriction
                   equals: Piste cyclable
-        stickToHeightmap: ground
+        stickToHeightmap: *roads-ground
         width:
           round: width
         repeated:
@@ -651,7 +664,7 @@ forEachTile:
             at: [0, 0, 0]
           - put: *sidewalk-bed
             at: [0, 0, -2..-1]
-        stickToHeightmap: ground
+        stickToHeightmap: *roads-ground
       # Road surface
       - type: renderDynamicLines
         width:
@@ -661,7 +674,7 @@ forEachTile:
             at: [ 0, 0, 0 ]
           - put: *road-bed
             at: [ 0, 0, -2..-1 ]
-        stickToHeightmap: ground
+        stickToHeightmap: *roads-ground
       # Lines
       - type: renderLines
         models:
@@ -675,7 +688,7 @@ forEachTile:
           blueprint: "   ==="
           with:
             "=": *road-paint
-        stickToHeightmap: ground
+        stickToHeightmap: *roads-ground
       - type: renderLines
         models:
           filter:
@@ -690,7 +703,7 @@ forEachTile:
             - "      "
           with:
             "=": *road-paint
-        stickToHeightmap: ground
+        stickToHeightmap: *roads-ground
 
   renderAerialRoads:
     after:
@@ -785,7 +798,7 @@ forEachTile:
 
       # Wipe road lines
       - type: renderLines
-        stickToHeightmap: ground
+        stickToHeightmap: *roads-ground
         structure:
           put:
             pattern:
@@ -796,7 +809,7 @@ forEachTile:
       # Draw cross walks
       - type: renderLines
         after: roads
-        stickToHeightmap: ground
+        stickToHeightmap: *roads-ground
         structure:
           axes: [ y, x ]
           blueprint:

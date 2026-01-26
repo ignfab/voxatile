@@ -71,4 +71,34 @@ public abstract class MultiOperandsHeightmapParams implements ReadableHeightmapP
             super(product, (a, b) -> a * b);
         }
     }
+
+    /**
+     * Takes the min height from the provided heightmaps.
+     */
+    public static class Min extends MultiOperandsHeightmapParams {
+        /**
+         * The list of heightmaps to min (required).
+         *
+         * @param min list of heightmaps.
+         */
+        @ConstructorProperties("min")
+        public Min(List<ReadableHeightmapParams> min) {
+            super(min, Math::min);
+        }
+    }
+
+    /**
+     * Takes the max height from the provided heightmaps.
+     */
+    public static class Max extends MultiOperandsHeightmapParams {
+        /**
+         * The list of heightmaps to max (required).
+         *
+         * @param max list of heightmaps.
+         */
+        @ConstructorProperties("max")
+        public Max(List<ReadableHeightmapParams> max) {
+            super(max, Math::max);
+        }
+    }
 }

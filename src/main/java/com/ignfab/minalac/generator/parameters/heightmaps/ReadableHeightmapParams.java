@@ -23,7 +23,11 @@ import com.ignfab.minalac.generator.parameters.JsonDelegateDeserialize;
     @JsonSubTypes.Type(ConstantHeightmapParams.class),
     @JsonSubTypes.Type(MultiOperandsHeightmapParams.Sum.class),
     @JsonSubTypes.Type(MultiOperandsHeightmapParams.Product.class),
+    @JsonSubTypes.Type(MultiOperandsHeightmapParams.Min.class),
+    @JsonSubTypes.Type(MultiOperandsHeightmapParams.Max.class),
     @JsonSubTypes.Type(LocalMinimumHeightmapParams.class),
+    @JsonSubTypes.Type(SimpleConvolutionHeightmapParams.class),
+    @JsonSubTypes.Type(BilateralConvolutionHeightmapParams.class),
     @JsonSubTypes.Type(CappedManhattanHeightmapParams.class),
     @JsonSubTypes.Type(RemapHeightmapParams.class),
     @JsonSubTypes.Type(WritableHeightmapParams.class)
