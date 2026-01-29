@@ -1,0 +1,29 @@
+{
+"type": "FeatureCollection",
+"name": "Points",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "Code": "A1", "Fichier": "etoile", "Titre": "Arc de Triomphe / Place de l'Étoile" }, "geometry": { "type": "Point", "coordinates": [ 2.295706654602573, 48.873572738736243 ] } },
+{ "type": "Feature", "properties": { "Code": "A2", "Fichier": "bfm", "Titre": "Bibliothèque François Miterand" }, "geometry": { "type": "Point", "coordinates": [ 2.377153834407163, 48.83262035815607 ] } },
+{ "type": "Feature", "properties": { "Code": "A3", "Fichier": "beaubourg", "Titre": "Centre Pompidou / Beaubourg" }, "geometry": { "type": "Point", "coordinates": [ 2.351429153911986, 48.860489535955665 ] } },
+{ "type": "Feature", "properties": { "Code": "A4", "Fichier": "tour-eiffel", "Titre": "Champ de Mars / Tour Eiffel" }, "geometry": { "type": "Point", "coordinates": [ 2.297628973238546, 48.856259126178806 ] } },
+{ "type": "Feature", "properties": { "Code": "A5", "Fichier": "montparnasse", "Titre": "Gare et tour Montparnasse" }, "geometry": { "type": "Point", "coordinates": [ 2.321210402230079, 48.841589084819773 ] } },
+{ "type": "Feature", "properties": { "Code": "A6", "Fichier": "notre-dame", "Titre": "Notre Dame" }, "geometry": { "type": "Point", "coordinates": [ 2.34860859254101, 48.853384523842834 ] } },
+{ "type": "Feature", "properties": { "Code": "A7", "Fichier": "opera", "Titre": "Opéra Garnier" }, "geometry": { "type": "Point", "coordinates": [ 2.332352703993683, 48.870541096525464 ] } },
+{ "type": "Feature", "properties": { "Code": "A8", "Fichier": "pantheon", "Titre": "Panthéon" }, "geometry": { "type": "Point", "coordinates": [ 2.344911220699264, 48.846456811284497 ] } },
+{ "type": "Feature", "properties": { "Code": "A9", "Fichier": "arts-et-metiers", "Titre": "Musée des arts et métiers" }, "geometry": { "type": "Point", "coordinates": [ 2.355647709538036, 48.865550259064243 ] } },
+{ "type": "Feature", "properties": { "Code": "A10", "Fichier": "montmartre", "Titre": "Sacré Coeur / Montmartre" }, "geometry": { "type": "Point", "coordinates": [ 2.343443853256419, 48.88464846852608 ] } },
+{ "type": "Feature", "properties": { "Code": "B1", "Fichier": "arenes", "Titre": "Arènes de Lutèce" }, "geometry": { "type": "Point", "coordinates": [ 2.352868390988843, 48.845075539048793 ] } },
+{ "type": "Feature", "properties": { "Code": "B2", "Fichier": "invalides", "Titre": "Invalides" }, "geometry": { "type": "Point", "coordinates": [ 2.312470272024945, 48.854375292814325 ] } },
+{ "type": "Feature", "properties": { "Code": "B3", "Fichier": "jardins-du-luxembourg", "Titre": "Jardins du Luxembourg" }, "geometry": { "type": "Point", "coordinates": [ 2.338275781096082, 48.846898309020212 ] } },
+{ "type": "Feature", "properties": { "Code": "B4", "Fichier": "maison-de-la-radio", "Titre": "Maison de la Radio" }, "geometry": { "type": "Point", "coordinates": [ 2.278196281303769, 48.851610623994382 ] } },
+{ "type": "Feature", "properties": { "Code": "B5", "Fichier": "trocadero", "Titre": "Palais de Chaillot / Jardins du Trocadéro" }, "geometry": { "type": "Point", "coordinates": [ 2.288550042473265, 48.862077852802678 ] } },
+{ "type": "Feature", "properties": { "Code": "B6", "Fichier": "buttes-chaumont", "Titre": "Parc des Buttes Chaumont" }, "geometry": { "type": "Point", "coordinates": [ 2.384050265428225, 48.880799504535894 ] } },
+{ "type": "Feature", "properties": { "Code": "B7", "Fichier": "republique", "Titre": "Place de la République" }, "geometry": { "type": "Point", "coordinates": [ 2.364098227745805, 48.867709476149024 ] } },
+{ "type": "Feature", "properties": { "Code": "B8", "Fichier": "vosges", "Titre": "Place des Vosges" }, "geometry": { "type": "Point", "coordinates": [ 2.365391737235144, 48.855204893171098 ] } },
+{ "type": "Feature", "properties": { "Code": "B9", "Fichier": "louvre", "Titre": "Cour carrée du Louvre" }, "geometry": { "type": "Point", "coordinates": [ 2.338338652626709, 48.860420752279197 ] } },
+{ "type": "Feature", "properties": { "Code": "B10", "Fichier": "halles", "Titre": "Les Halles" }, "geometry": { "type": "Point", "coordinates": [ 2.345803707061693, 48.862756700178899 ] } },
+{ "type": "Feature", "properties": { "Code": "C1", "Fichier": "abbesses", "Titre": "Place des Abbesses" }, "geometry": { "type": "Point", "coordinates": [ 2.33840814157398, 48.884547457934318 ] } },
+{ "type": "Feature", "properties": { "Code": "C2", "Fichier": "valmy", "Titre": "Quai de Valmy" }, "geometry": { "type": "Point", "coordinates": [ 2.363023045889838, 48.874871876792369 ] } }
+]
+}

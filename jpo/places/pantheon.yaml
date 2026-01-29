@@ -1,0 +1,9 @@
+worldName: A8
+verticalScale: 0.5
+horizontalScale: 0.5
+area:
+  center:
+    latitude: 48.8464568112845
+    longitude: 2.344911220699264
+  extentX: 1400
+  extentY: 1400

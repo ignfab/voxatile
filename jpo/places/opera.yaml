@@ -1,0 +1,9 @@
+worldName: A7
+verticalScale: 0.5
+horizontalScale: 0.5
+area:
+  center:
+    latitude: 48.870541096525464
+    longitude: 2.332352703993683
+  extentX: 1400
+  extentY: 1400

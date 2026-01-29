@@ -1,0 +1,29 @@
+{
+"type": "FeatureCollection",
+"name": "centres-lambert",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::2154" } },
+"features": [
+{ "type": "Feature", "properties": { "Fichier": "etoile" }, "geometry": { "type": "Point", "coordinates": [ 648340.879772373125888, 6863957.971295702271163 ] } },
+{ "type": "Feature", "properties": { "Fichier": "bfm" }, "geometry": { "type": "Point", "coordinates": [ 654278.88774077873677, 6859354.222970747388899 ] } },
+{ "type": "Feature", "properties": { "Fichier": "beaubourg" }, "geometry": { "type": "Point", "coordinates": [ 652416.01710182626266, 6862468.206874554976821 ] } },
+{ "type": "Feature", "properties": { "Fichier": "tour-eiffel" }, "geometry": { "type": "Point", "coordinates": [ 648464.751504597021267, 6862031.58971647080034 ] } },
+{ "type": "Feature", "properties": { "Fichier": "montparnasse" }, "geometry": { "type": "Point", "coordinates": [ 650180.931934385793284, 6860385.293613076210022 ] } },
+{ "type": "Feature", "properties": { "Fichier": "notre-dame" }, "geometry": { "type": "Point", "coordinates": [ 652202.567133436095901, 6861679.89500670786947 ] } },
+{ "type": "Feature", "properties": { "Fichier": "opera" }, "geometry": { "type": "Point", "coordinates": [ 651025.909930369351059, 6863597.524143199436367 ] } },
+{ "type": "Feature", "properties": { "Fichier": "pantheon" }, "geometry": { "type": "Point", "coordinates": [ 651924.878986325580627, 6860911.843490556813776 ] } },
+{ "type": "Feature", "properties": { "Fichier": "arts-et-metiers" }, "geometry": { "type": "Point", "coordinates": [ 652730.106799484696239, 6863028.384672591462731 ] } },
+{ "type": "Feature", "properties": { "Fichier": "montmartre" }, "geometry": { "type": "Point", "coordinates": [ 651852.505969363613985, 6865159.347297254018486 ] } },
+{ "type": "Feature", "properties": { "Fichier": "arenes" }, "geometry": { "type": "Point", "coordinates": [ 652507.561440065968782, 6860753.444376918487251 ] } },
+{ "type": "Feature", "properties": { "Fichier": "invalides" }, "geometry": { "type": "Point", "coordinates": [ 649551.854225385468453, 6861812.541108328849077 ] } },
+{ "type": "Feature", "properties": { "Fichier": "jardins-du-luxembourg" }, "geometry": { "type": "Point", "coordinates": [ 651438.345496220397763, 6860964.994023703970015 ] } },
+{ "type": "Feature", "properties": { "Fichier": "maison-de-la-radio" }, "geometry": { "type": "Point", "coordinates": [ 647034.225954699679278, 6861527.58057666849345 ] } },
+{ "type": "Feature", "properties": { "Fichier": "trocadero" }, "geometry": { "type": "Point", "coordinates": [ 647804.448222770937718, 6862684.542042749933898 ] } },
+{ "type": "Feature", "properties": { "Fichier": "buttes-chaumont" }, "geometry": { "type": "Point", "coordinates": [ 654826.91125226218719, 6864707.37042449042201 ] } },
+{ "type": "Feature", "properties": { "Fichier": "republique" }, "geometry": { "type": "Point", "coordinates": [ 653351.959594303625636, 6863263.447607331909239 ] } },
+{ "type": "Feature", "properties": { "Fichier": "vosges" }, "geometry": { "type": "Point", "coordinates": [ 653435.671196749783121, 6861872.275768497958779 ] } },
+{ "type": "Feature", "properties": { "Fichier": "louvre" }, "geometry": { "type": "Point", "coordinates": [ 651455.558696410269476, 6862468.5268574077636 ] } },
+{ "type": "Feature", "properties": { "Fichier": "halles" }, "geometry": { "type": "Point", "coordinates": [ 652005.390455237706192, 6862723.701401791535318 ] } },
+{ "type": "Feature", "properties": { "Fichier": "valmy" }, "geometry": { "type": "Point", "coordinates": [ 653279.513488066848367, 6864060.491209282539785 ] } },
+{ "type": "Feature", "properties": { "Fichier": "abbesses" }, "geometry": { "type": "Point", "coordinates": [ 651483.134614362497814, 6865151.197841278277338 ] } }
+]
+}

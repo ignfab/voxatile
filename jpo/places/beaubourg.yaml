@@ -1,0 +1,9 @@
+worldName: A3
+verticalScale: 0.5
+horizontalScale: 0.5
+area:
+  center:
+    latitude: 48.860489535955665
+    longitude: 2.351429153911986
+  extentX: 1400
+  extentY: 1400

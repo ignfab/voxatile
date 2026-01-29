@@ -1,0 +1,9 @@
+worldName: A4
+verticalScale: 0.5
+horizontalScale: 0.5
+area:
+  center:
+    latitude: 48.856259126178806
+    longitude: 2.297628973238546
+  extentX: 1400
+  extentY: 1400

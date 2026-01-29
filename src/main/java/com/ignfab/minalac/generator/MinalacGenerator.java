@@ -186,7 +186,7 @@ public final class MinalacGenerator {
 
                 // Generate tile
                 Instant tileGenerationStart = Instant.now();
-                if (generation.scheduler() != null) generation.scheduler().run(tile, 5, TimeUnit.MINUTES);
+                if (generation.scheduler() != null) generation.scheduler().run(tile, 20, TimeUnit.MINUTES);
                 Duration tileGenerationDuration = Duration.between(tileGenerationStart, Instant.now());
 
                 generatingDuration = generatingDuration.plus(tileGenerationDuration);

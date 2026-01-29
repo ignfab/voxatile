@@ -1,0 +1,9 @@
+worldName: B7
+verticalScale: 0.5
+horizontalScale: 0.5
+area:
+  center:
+    latitude: 48.842603192267674
+    longitude: 2.254429917196338
+  extentX: 1400
+  extentY: 1400

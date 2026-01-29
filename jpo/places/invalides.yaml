@@ -1,0 +1,9 @@
+worldName: B2
+verticalScale: 0.5
+horizontalScale: 0.5
+area:
+  center:
+    latitude: 48.854375292814325
+    longitude: 2.312470272024945
+  extentX: 1400
+  extentY: 1400

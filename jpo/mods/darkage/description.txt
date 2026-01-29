@@ -1,0 +1,2 @@
+DarkAge adds several new nodes and crafts to create a pre industrial landscape. 
+It also extends the stones and provides new construction materials.
