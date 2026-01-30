@@ -276,6 +276,21 @@ forEachTile:
       filePath: data/bati-jdc.city.json
     processor:
       type: cityjsonBuilding
+    postProcessing:
+      type: conditional
+      if:
+        metadata: cleabs
+        in:
+          - BATIMENT0000000305564422
+          - BATIMENT0000000245184819
+          - BATIMENT0000000245184816
+          - BATIMENT0000000305564421
+          - BATIMENT0000000245184818
+          - BATIMENT0000000245184817
+          - BATIMENT0000000245184146
+          - BATIMENT0000000245184452
+      then:
+        type: discard
 
   renderBati3dGround:
     after:
@@ -447,6 +462,12 @@ forEachTile:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
         put: *buildings-roof-concrete
+
+  renderNotreDame:
+    after: ground
+    type: place
+    place: *notre-dame
+    <<: *notre-dame-position
 
   # Roads & paths
 

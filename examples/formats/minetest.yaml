@@ -45,6 +45,11 @@ references:
   - &buildings-roof-slates-tiles darkage:slate_tile
   - &buildings-roof-slates darkage:slate_block
   - &buildings-roof-concrete darkage:chalk
+  - &notre-dame nothing
+  - &notre-dame-position
+    x: 0
+    y: 0
+    z: 0
 
   # ROADS
 
