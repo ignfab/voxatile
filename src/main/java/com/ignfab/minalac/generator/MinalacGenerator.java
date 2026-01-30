@@ -49,6 +49,7 @@ import com.ignfab.minalac.generator.parameters.tasks.FillBetweenHeightmapAndValu
 import com.ignfab.minalac.generator.parameters.tasks.FindVoxelsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.HeightmapStatsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.NoOperationTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.PlaceTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.PopulateHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildings3dTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
@@ -122,6 +123,7 @@ public final class MinalacGenerator {
         parser.registerParams("renderSurfaces", RenderSurfacesTaskParams.class);
         parser.registerParams("renderLines", RenderLinesTaskParams.class);
         parser.registerParams("renderDynamicLines", RenderDynamicLinesTaskParams.class);
+        parser.registerParams("place", PlaceTaskParams.class);
         parser.registerParams("setSpawn", SetSpawnTaskParams.class);
         parser.registerParams("renderVoxels", RenderVoxelsTaskParams.class);
         parser.registerParams("findVoxels", FindVoxelsTaskParams.class);
