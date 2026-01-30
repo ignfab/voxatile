@@ -45,6 +45,16 @@ references:
   - &buildings-roof-slates-tiles minecraft:polished_basalt
   - &buildings-roof-slates minecraft:basalt
   - &buildings-roof-concrete minecraft:clay
+  - &notre-dame
+    schematic:
+      # Credits: creeper2357
+      # https://www.planetminecraft.com/project/notre-dame-de-paris-france-21-replica/
+      file: examples/formats/minecraft/notredame.schem
+      excludeAir: true
+  - &notre-dame-position
+    x: 56
+    y: 71
+    z: 70
 
   # ROADS
 
@@ -66,7 +76,7 @@ references:
       at: [ -1..1, -1..1, -1..1 ]
       put:
         pattern:
-          onlyInsteadOf: air
+          onlyInsteadOf: minecraft:air
           place:
             pattern:
               seed: tree-leaves-1
