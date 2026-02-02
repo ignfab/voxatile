@@ -55,6 +55,8 @@ references:
     x: 56
     y: 71
     z: 70
+  - &notre-dame-ground-highlighted minecraft:gold_block
+  - &notre-dame-ground-outline minecraft:diamond_block
 
   # ROADS
 

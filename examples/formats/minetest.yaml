@@ -50,6 +50,8 @@ references:
     x: 0
     y: 0
     z: 0
+  - &notre-dame-ground-highlighted default:goldblock
+  - &notre-dame-ground-outline default:diamondblock
 
   # ROADS
 

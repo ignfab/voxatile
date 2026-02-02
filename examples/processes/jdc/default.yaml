@@ -1,0 +1,1145 @@
+heightmaps:
+  ground:
+    default: 0
+  water:
+    default: 0
+  groundLidar:
+    default: 0
+
+forEachTile:
+
+  # Altitude
+  # LIDAR and RGE are used here because LIDAR is good on land, but bad on water. RGE is the opposite.
+
+  fetchAltitude:
+    type: fetchData
+    modelType: altitude
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    processor:
+      type: floatMatrix
+
+  fetchAltitudeLidar:
+    type: fetchData
+    modelType: altitudeLidar
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r
+      layer: IGNF_LIDAR-HD_MNT_ELEVATION.ELEVATIONGRIDCOVERAGE.LAMB93
+    processor:
+      type: floatMatrix
+
+  setAltitude:
+    after: fetchAltitude
+    type: populateHeightmap
+    models:
+      type: altitude
+    heightmap: ground
+
+  setAltitudeLidar:
+    after: fetchAltitudeLidar
+    type: populateHeightmap
+    models:
+      type: altitudeLidar
+    heightmap: groundLidar
+
+#  mergeAltitude:
+#    after:
+#      - setAltitude
+#      - setAltitudeLidar
+#      - fetchRoads
+#    type: copyHeightmap
+#    models:
+#      type: road
+#      filter:
+#        metadata: position
+#        equals: ground
+#    from: groundLidar
+#    to: ground
+#    linear: true
+#    width:
+#      round:
+#        product: [ width, 2 ]
+
+  # Convenience task telling altitudes are known
+  altitude:
+    type: noOperation
+    after: #mergeAltitude
+      - setAltitude
+      - setAltitudeLidar
+
+  # This should be later, after last ground heightmap update
+  setSpawn:
+    after: altitude
+    type: setSpawn
+    heightmap:
+      sum: [ground, 1]
+    x: 0
+    y: 0
+
+  # Ground
+
+  renderGround:
+    after:
+      - setAltitude
+      - flattenWater
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - put: *underground
+          at: [0, 0, -20..0]
+
+  fetchZoneActivite:
+    type: fetchData
+    modelType: zoneActivite
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:zone_d_activite_ou_d_interet
+    processor:
+      type: geoToolsVector
+
+  renderPlace:
+    after:
+      - fetchZoneActivite
+      - renderGround
+    type: renderSurfaces
+    models:
+      type: zoneActivite
+      filter:
+        metadata: nature_detaillee
+        equals: Place
+    heightmap: ground
+    place: *plazza
+
+  renderSquareGround:
+    after:
+      - fetchZoneActivite
+      - renderGround
+    type: renderSurfaces
+    models:
+      type: zoneActivite
+      filter:
+        metadata: nature_detaillee
+        # TODO: Maybe a case insensitive equals / in ?
+        equals: Square
+    heightmap: ground
+    place:
+      structure:
+        - at: [0, 0, 0]
+          put: *grass
+        - at: [0, 0, 1]
+          put:
+            pattern:
+              onlyInsteadOf: *air
+              place: *grass-decoration
+
+  fetchGrass:
+    type: fetchData
+    modelType: grass
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: grass
+    processor:
+      type: geoToolsVector
+
+  renderGrassGround:
+    after:
+      - fetchGrass
+      - renderGround
+    type: renderSurfaces
+    models:
+      type: grass
+    heightmap: ground
+    place:
+      structure:
+        - at: [0, 0, 0]
+          put: *grass
+        - at: [0, 0, 1]
+          put:
+            pattern:
+              onlyInsteadOf: *air
+              place: *grass-decoration
+
+  # Convenience task telling ground is built
+  ground:
+    type: noOperation
+    after:
+      - renderSquareGround
+      - renderGrassGround
+
+  # Water
+
+  fetchWater:
+    type: fetchData
+    modelType: water
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:surface_hydrographique
+    processor:
+      type: geoToolsVector
+
+  flattenWater:
+    after:
+      - fetchWater
+      - altitude
+    type: copyHeightmap
+    models:
+      type: water
+    from:
+      localMin: ground
+      range: 15
+    to: ground
+
+  populateWaterPresence:
+    after: fetchWater
+    type: copyHeightmap
+    models:
+      type: water
+    from: 1
+    to: water
+
+  computePoolDepth:
+    after: populateWaterPresence
+    type: copyHeightmap
+    models:
+      type: water
+      filter:
+        metadata: nature
+        in: [ Réservoir-bassin ]
+    from:
+      remap:
+        manhattan: water
+        maximumDistance: 5
+        targetValue: 0
+      mapping:
+        0: 0
+        1: 1
+        2: 2
+        3..4: 3
+        5: 4
+    to: water
+
+  computeWaterDepth:
+    after: populateWaterPresence
+    type: copyHeightmap
+    models:
+      type: water
+      filter:
+        not:
+          metadata: nature
+          in: [ Réservoir-bassin ]
+    from:
+      remap:
+        manhattan: water
+        maximumDistance: 14
+        targetValue: 0
+      mapping:
+        0: 0
+        1: 1
+        2: 3
+        3: 5
+        4: 6
+        5: 7
+        6..7: 8
+        8..10: 9
+        10..13: 10
+        14: 11
+    to: water
+
+  renderWater:
+    after:
+      - ground
+      - computeWaterDepth
+      - computePoolDepth
+    type: renderHeightmap
+    minimum:
+      sum:
+        - ground
+        - 1
+        - product: [ -1, water ]
+    maximum: ground
+    place: *water
+
+  # Buildings 3d
+
+  fetchBatiCity:
+    type: fetchData
+    modelType: building-city
+    provider:
+      type: cityjson
+      filePath: data/bati-jdc.city.json
+    processor:
+      type: cityjsonBuilding
+
+  renderBati3dGround:
+    after:
+      - fetchBatiCity
+      - ground
+    type: renderBuildings3d
+    models:
+      type: building-city
+    surfaceType: ground
+    place:
+      structure:
+        put: *buildings-ground
+        at: [0, 0, -10..0]
+
+  renderBati3dWallsOther:
+    after: renderBati3dGround
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        not:
+          or:
+            - metadata: nature
+              in: [ "Chapelle", "Eglise" ]
+            - metadata: usage_1
+              in: [ "Résidentiel", "Commercial et services" ]
+    surfaceType: wall
+    place: *buildings-walls-default
+
+  renderBati3dWallsReligieux:
+    after: renderBati3dGround
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: nature
+        in: [ "Chapelle", "Eglise" ]
+    surfaceType: wall
+    place: *buildings-walls-church
+
+  renderBati3dWallsResidentiel:
+    after: renderBati3dGround
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: usage_1
+        equals: "Résidentiel"
+    surfaceType: wall
+    place: *buildings-walls-residential
+
+  renderBati3dWallsCommercialServices:
+    after: renderBati3dGround
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: usage_1
+        equals: "Commercial et services"
+    surfaceType: wall
+    place: *buildings-walls-commercial
+
+  bati3dWalls:
+    type: noOperation
+    after:
+      - renderBati3dWallsOther
+      - renderBati3dWallsReligieux
+      - renderBati3dWallsResidentiel
+      - renderBati3dWallsCommercialServices
+
+  renderBati3dRoofsOther:
+    after: bati3dWalls
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        not:
+          or:
+            - metadata: materiaux_de_la_toiture
+              in: [ "3", "03", "30", "33", "13", "31", "12", "21", "2", "02", "20", "22", "4", "04", "44", "40" ]
+            - metadata: nature
+              in: [ "Chapelle", "Eglise" ]
+    surfaceType: roof
+    place:
+      structure:
+        at: [0, 0, 0..1] # 2 block to wipe overstepping walls
+        put: *buildings-roof-default
+
+  renderBati3dRoofsZinc:
+    after: bati3dWalls
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: materiaux_de_la_toiture
+        in: [ "3", "03", "30", "33" ]
+    surfaceType: roof
+    place:
+      structure:
+        at: [0, 0, 0..1] # 2 block to wipe overstepping walls
+        put: *buildings-roof-zinc
+
+  renderBati3dRoofsZincTile:
+    after: bati3dWalls
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: materiaux_de_la_toiture
+        in: [ "13", "31" ]
+    surfaceType: roof
+    place:
+      structure:
+        at: [0, 0, 0..1] # 2 block to wipe overstepping walls
+        put: *buildings-roof-zinc-tiles
+
+  renderBati3dRoofsChapelleEglise:
+    after: bati3dWalls
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: nature
+        in: [ "Chapelle", "Eglise" ]
+    surfaceType: roof
+    place:
+      structure:
+        at: [0, 0, 0..1] # 2 block to wipe overstepping walls
+        put: *buildings-roof-church
+
+  renderBati3dRoofsSlatesTile:
+    after: bati3dWalls
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: materiaux_de_la_toiture
+        in: [ "12", "21" ]
+    surfaceType: roof
+    place:
+      structure:
+        at: [0, 0, 0..1] # 2 block to wipe overstepping walls
+        put: *buildings-roof-slates-tiles
+
+  renderBati3dRoofsSlates:
+    after: bati3dWalls
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: materiaux_de_la_toiture
+        in: [ "2", "02", "20", "22" ]
+    surfaceType: roof
+    place:
+      structure:
+        at: [0, 0, 0..1] # 2 block to wipe overstepping walls
+        put: *buildings-roof-slates
+
+  renderBati3dRoofsConcrete:
+    after: bati3dWalls
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: materiaux_de_la_toiture
+        in: [ "4", "04", "40", "44" ]
+    surfaceType: roof
+    place:
+      structure:
+        at: [0, 0, 0..1] # 2 block to wipe overstepping walls
+        put: *buildings-roof-concrete
+
+  # Roads & paths
+
+  fetchRoads:
+    type: fetchData
+    modelType: road
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:troncon_de_route
+    processor:
+      type: geoToolsVector
+    postProcessing:
+      # Discard fictive features (should be done on all BDTOPO features)
+      - type: conditional
+        if:
+          metadata: fictif
+          equals: true
+        then:
+          type: discard
+      # Discard underground roads (only for JDC demo)
+      - type: conditional
+        if:
+          metadata: position_par_rapport_au_sol
+          lowerThan: 0
+        then:
+          type: discard
+      # Position metadata
+      - type: conditional
+        if:
+          metadata: position_par_rapport_au_sol
+          greaterThan: 0
+        then:
+          type: default
+          metadata: position
+          value: aerial
+          as: text
+        else:
+          type: default
+          metadata: position
+          value: ground
+          as: text
+      # Width computing
+      - type: parse
+        metadata: largeur_de_chaussee
+        as: decimal
+        ifMissing: ignore
+        ifNotParsable: removeMetadata
+      - type: conditional
+        if:
+          metadata: largeur_de_chaussee
+          greaterThan: 0
+        then:
+          type: copy
+          metadata: largeur_de_chaussee
+          to: width
+        else:
+          type: conditional
+          if:
+            and:
+              - metadata: nature
+                in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
+              - not:
+                  metadata: acces_vehicule_leger
+                  equals: Physiquement impossible
+          then:
+            type: default
+            metadata: width
+            value: 5
+            as: integer
+          else:
+            type: default
+            metadata: width
+            value: 2
+            as: integer
+
+  cleanRoads:
+    after:
+      - fetchRoads
+      - vegetation
+      - ground
+    type: schedule
+    models:
+      type: road
+    do:
+      ground:
+        models:
+          filter:
+            metadata: position
+            equals: ground
+        type: renderDynamicLines
+        width:
+          round: width
+        repeated:
+          put: *air
+          at: [0, 0, 1..7]
+        stickToHeightmap: &roads-ground
+          convolutionBilateral:
+            max: [ ground, groundLidar ]
+          kernel: # Gaussian 2D with sigma = 3 (scaled x100)
+            - [ 0.299, 0.441, 0.582, 0.688, 0.727, 0.688, 0.582, 0.441, 0.299 ]
+            - [ 0.441, 0.651, 0.859, 1.015, 1.073, 1.015, 0.859, 0.651, 0.441 ]
+            - [ 0.582, 0.859, 1.134, 1.339, 1.416, 1.339, 1.134, 0.859, 0.582 ]
+            - [ 0.688, 1.015, 1.339, 1.582, 1.673, 1.582, 1.339, 1.015, 0.688 ]
+            - [ 0.727, 1.073, 1.416, 1.673, 1.768, 1.673, 1.416, 1.073, 0.727 ]
+            - [ 0.688, 1.015, 1.339, 1.582, 1.673, 1.582, 1.339, 1.015, 0.688 ]
+            - [ 0.582, 0.859, 1.134, 1.339, 1.416, 1.339, 1.134, 0.859, 0.582 ]
+            - [ 0.441, 0.651, 0.859, 1.015, 1.073, 1.015, 0.859, 0.651, 0.441 ]
+            - [ 0.299, 0.441, 0.582, 0.688, 0.727, 0.688, 0.582, 0.441, 0.299 ]
+          range: 2.5
+      aerial:
+        models:
+          filter:
+            metadata: position
+            equals: aerial
+        type: renderDynamicLines
+        width:
+          round: width
+        repeated:
+          put: *air
+          at: [0, 0, 1..7]
+
+  path:
+    type: schedule
+    after:
+      - fetchRoads
+      - renderWater
+      - ground
+    models:
+      type: road
+    do:
+      foot:
+        type: renderDynamicLines
+        models:
+          filter:
+            metadata: nature
+            in: [ "Chemin", "Sentier", "Route empierrée" ]
+        stickToHeightmap: *roads-ground
+        width:
+          round: width
+        repeated:
+          put: *path
+          at: [0, 0, 0]
+      cycle:
+        type: renderDynamicLines
+        models:
+          filter:
+            metadata: nature_de_la_restriction
+            equals: Piste cyclable
+        stickToHeightmap: *roads-ground
+        width:
+          round: width
+        repeated:
+          put: *cycle-path
+          at: [0, 0, 0]
+      stairs:
+        type: renderDynamicLines
+        models:
+          filter:
+            metadata: nature
+            equals: "Escalier"
+        stickToHeightmap: *roads-ground
+        width:
+          round: width
+        repeated:
+          put: *stairs
+          at: [0, 0, 0]
+      other:
+        type: renderDynamicLines
+        models:
+          filter:
+            and:
+              - not:
+                  metadata: nature
+                  in: [ "Escalier", "Chemin", "Sentier", "Route empierrée" ]
+              - metadata: acces_vehicule_leger
+                equals: Physiquement impossible
+              - not:
+                  metadata: nature_de_la_restriction
+                  equals: Piste cyclable
+        stickToHeightmap: *roads-ground
+        width:
+          round: width
+        repeated:
+          put: *other-path
+          at: [0, 0, 0]
+
+  renderGroundRoads:
+    after:
+      - fetchRoads
+      - path
+      - ground
+    models:
+      type: road
+      filter:
+        and:
+          - metadata: position
+            equals: ground
+          - not:
+              metadata: acces_vehicule_leger
+              equals: Physiquement impossible
+          - metadata: nature
+            in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
+    type: sequence
+    do:
+      # Sidewalks
+      - type: renderDynamicLines
+        width:
+          round: width
+        repeated:
+          put: nothing
+          at: [0, 0, -2..0]
+        extra:
+          - put: *sidewalk
+            at: [0, 0, 0]
+          - put: *sidewalk-bed
+            at: [0, 0, -2..-1]
+        stickToHeightmap: *roads-ground
+      # Road surface
+      - type: renderDynamicLines
+        width:
+          round: width
+        repeated:
+          - put: *road-tar
+            at: [ 0, 0, 0 ]
+          - put: *road-bed
+            at: [ 0, 0, -2..-1 ]
+        stickToHeightmap: *roads-ground
+      # Lines
+      - type: renderLines
+        models:
+          type: road
+          filter:
+            metadata: nombre_de_voies
+            equals: 2
+            as: text
+        structure:
+          axes: [ x ]
+          blueprint: "   ==="
+          with:
+            "=": *road-paint
+        stickToHeightmap: *roads-ground
+      - type: renderLines
+        models:
+          filter:
+            metadata: nombre_de_voies
+            greaterThan: 2
+        structure:
+          axes: [ y, x ]
+          blueprint:
+            - "   ==="
+            - "      "
+            - "      "
+            - "      "
+          with:
+            "=": *road-paint
+        stickToHeightmap: *roads-ground
+
+  renderAerialRoads:
+    after:
+      - cleanRoads
+      - path
+      - renderGroundRoads # We update ground so we should go after it
+    models:
+      type: road
+      filter:
+        and:
+          - metadata: position
+            equals: aerial
+          - not:
+              metadata: acces_vehicule_leger
+              equals: Physiquement impossible
+          - metadata: nature
+            in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
+    type: sequence
+    do:
+      # Sidewalks
+      - type: renderDynamicLines
+        width:
+          round: width
+        repeated:
+          put: nothing
+          at: [0, 0, -2..0]
+        extra:
+          - put: *sidewalk
+            at: [0, 0, 0]
+          - put: *sidewalk-bed
+            at: [0, 0, -2..-1]
+        updateHeightmap: ground
+      # Road surface
+      - type: renderDynamicLines
+        width:
+          round: width
+        repeated:
+          - put: *road-tar
+            at: [ 0, 0, 0 ]
+          - put: *road-bed
+            at: [ 0, 0, -2..-1 ]
+        updateHeightmap: ground
+      # Lines
+      - type: renderLines
+        models:
+          filter:
+            metadata: nombre_de_voies
+            equals: 2
+            as: text
+        structure:
+          axes: [ x ]
+          blueprint: "   ==="
+          with:
+            "=": *road-paint
+      - type: renderLines
+        models:
+          filter:
+            metadata: nombre_de_voies
+            greaterThan: 2
+        structure:
+          axes: [ y, x ]
+          blueprint:
+            - "   ==="
+            - "      "
+            - "      "
+            - "      "
+          with:
+            "=": *road-paint
+
+  roads:
+    type: noOperation
+    after:
+      - renderAerialRoads
+      - renderGroundRoads
+
+  crosswalks:
+    # (may behave strangly on stacked roads)
+    models:
+      type: crosswalks
+    type: sequence
+    using: roads
+    do:
+      # Fetch data
+      - type: fetchData
+        modelType: crosswalks
+        provider:
+          type: gpkg
+          filePath: data/osm_extract.gpkg
+          typeName: crosswalks
+        processor:
+          type: geoToolsVector
+
+      # Wipe road lines
+      - type: renderLines
+        after: roads
+        stickToHeightmap: *roads-ground
+        structure:
+          put:
+            pattern:
+              place: *road-tar
+              onlyInsteadOf: *road-paint
+          at: [ 0..3, 0..5, 0 ]
+
+      # Draw cross walks
+      - type: renderLines
+        stickToHeightmap: *roads-ground
+        structure:
+          axes: [ y, x ]
+          blueprint:
+            - "  =="
+            - "  =="
+            - "  =="
+            - "  =="
+          with:
+            "=":
+              pattern:
+                place: *road-paint
+                onlyInsteadOf: *road-tar
+
+  # Trees Lidar + OSM
+
+  fetchTrees:
+    type: fetchData
+    modelType: trees
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: trees
+    processor:
+      type: geoToolsVector
+
+  fetchLidar:
+    type: fetchData
+    modelType: lidarhd
+    provider:
+      type: lasTiled
+      tilesPath: data/lidar
+      tilesFilenameTemplate: LHD_FXX_%04d_%04d_PTS_LAMB93_IGN69.copc.laz
+      tileSize: 1000
+      tileOffsetY: 1000
+    processor:
+      type: lasMerged
+
+  renderVegetation:
+    after: fetchLidar
+    type: renderVoxels
+    models:
+      type: lidarhd
+      filter:
+        metadata: classification
+        in: [ 3, 4, 5 ]
+        as: integer
+    place: *tree-leaves
+
+  findHighestLeaves:
+    after:
+      - fetchTrees
+      - renderVegetation
+    type: findVoxels
+    models:
+      type: trees
+    only: *tree-leaves-list
+    find:
+      average: average-leaves
+
+  renderTrunks:
+    after: findHighestLeaves
+    type: fillBetweenHeightmapAndValue
+    models:
+      type: trees
+    heightmap: ground
+    altitudeValue:
+      sum: [ average-leaves, -1 ]
+    placeBelow: *tree-trunk
+
+  renderFakeTreeCrown:
+    after: renderTrunks
+    type: renderSurfaces
+    models:
+      type: trees
+    altitude:
+      sum: [ average-leaves, -1 ]
+    place:
+      structure:
+        axes: [ x, z, y ]
+        with:
+          $: *tree-leaves
+        blueprint:
+          - [ "       ", "       ", "  $$$  ", "  $$$  ", "  $$$  ", "       ", "       " ]
+          - [ "       ", "  $$$  ", " $$$$$ ", " $$$$$ ", " $$$$$ ", "  $$$  ", "       " ]
+          - [ "  $$$  ", " $$$$$ ", "$$$$$$$", "$$$$$$$", "$$$$$$$", " $$$$$ ", "  $$$  " ]
+          - [ "  $$$  ", " $$$$$ ", "$$$$$$$", "$$$ $$$", "$$$ $$$", " $$ $$ ", "  $ $  " ]
+          - [ "  $$$  ", " $$$$$ ", "$$$$$$$", "$$$$$$$", "$$$$$$$", " $$$$$ ", "  $$$  " ]
+          - [ "       ", "  $$$  ", " $$$$$ ", " $$$$$ ", " $$$$$ ", "  $$$  ", "       " ]
+          - [ "       ", "       ", "  $$$  ", "  $$$  ", "  $$$  ", "       ", "       " ]
+        xOffset: -3
+        yOffset: -3
+        zOffset: -3
+
+  vegetation:
+    type: noOperation
+    after:
+      - renderFakeTreeCrown
+      - renderVegetation
+
+  # Metro stations
+  metroStations:
+    type: sequence
+    using: ground
+    do:
+      - type: fetchData
+        modelType: metro
+        provider:
+          type: gpkg
+          filePath: data/metro.gpkg
+          typeName: metro-parkings
+        processor:
+          type: geoToolsVector
+
+      - type: schedule
+        after: ground
+        models:
+          type: metro
+        do:
+          computeAltitude:
+            type: computeHeightmapStats
+            heightmap: ground
+            compute:
+              maximum: surface-altitude
+
+          renderSteps:
+            type: renderSurfaces
+            heightmap: ground
+            place: *metro-station-steps
+
+          # Here, altitude is raised at maximum entrance level so decoration will be placed at that level.
+          # It would be better to limit that to entrance walls but we don't have appropriate task yet.
+          updateGround:
+            after: [ renderSteps, computeAltitude ]
+            type: setHeightmap
+            set: surface-altitude
+            to: ground
+
+          renderWalls:
+            after: updateGround
+            type: renderLines
+            structure:
+              - at: [0..1, 0..1, 0]
+                put: *metro-station-walls-top
+              - at: [0..1, 0..1, -10..-1]
+                put: *metro-station-walls
+            stickToAltitude: surface-altitude
+
+  # Fences
+
+  fetchFences:
+    type: fetchData
+    modelType: fences
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: fences
+    processor:
+      type: geoToolsVector
+
+  renderFences:
+    after:
+      - fetchFences
+      - ground
+      - metroStations
+    type: renderLines
+    models:
+      type: fences
+      filter:
+        metadata: barrier
+        equals: fence
+    structure: *fence-structure
+    stickToHeightmap: ground
+
+  # Benches
+
+  fetchBenches:
+    type: fetchData
+    modelType: benches
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: benches
+    processor:
+      type: geoToolsVector
+
+  renderBenches:
+    after:
+      - fetchBenches
+      - roads
+    type: renderSurfaces
+    models:
+      type: benches
+    place:
+      pattern:
+        place: *bench
+        neverInsteadOf: *water
+    heightmap: ground
+
+  fetchBenchesLinear:
+    type: fetchData
+    modelType: benches_linear
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: benches_linear
+    processor:
+      type: geoToolsVector
+
+  renderBenchesLinear:
+    after:
+      - fetchBenchesLinear
+      - ground
+    type: renderLines
+    models:
+      type: benches_linear
+    structure: *linear-bench-structure
+    stickToHeightmap: ground
+
+  # Traffic lights
+  # https://www.data.gouv.fr/datasets/signalisation-lumineuse-tricolore/
+
+  fetchTrafficLights:
+    type: fetchData
+    modelType: traffic_lights
+    provider:
+      type: shapefile
+      filePath: data/signalisation-tricolore.shp
+    processor:
+      type: geoToolsVector
+
+  renderTrafficLights:
+    after:
+      - fetchTrafficLights
+      - roads
+    type: renderSurfaces
+    models:
+      type: traffic_lights
+    heightmap: ground
+    place:
+      pattern:
+        place: *traffic-light
+        neverInsteadOf: *water
+
+  # Lights
+
+  # https://opendata.paris.fr/explore/dataset/eclairage-public/export/?disjunctive.lib_domain&disjunctive.lib_ouvrag&disjunctive.nature_voi&disjunctive.lib_voiedo&disjunctive.materiau_s&disjunctive.modele_lum&disjunctive.lib_lumi_1&disjunctive.lib_lampef&disjunctive.lib_regime&disjunctive.type_suppo&refine.lib_ouvrag=Cand%C3%A9labre&refine.lib_regi_1=STV+Centre&basemap=jawg.dark&location=16,48.86511,2.36013
+
+  fetchLights:
+    type: fetchData
+    modelType: lights
+    provider:
+      type: shapefile
+      filePath: data/eclairage-public.shp
+    processor:
+      type: geoToolsVector
+
+  renderLights:
+    after:
+      - fetchLights
+      - roads
+    type: renderSurfaces
+    models:
+      type: lights
+    heightmap: ground
+    place:
+      pattern:
+        place: *city-light
+        neverInsteadOf: *water
+
+  # Other details
+
+  fetchFireHydrants:
+    type: fetchData
+    modelType: fire_hydrants
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: fire_hydrants
+    processor:
+      type: geoToolsVector
+
+  renderFireHydrants:
+    after:
+      - fetchFireHydrants
+      - roads
+    type: renderSurfaces
+    models:
+      type: fire_hydrants
+    heightmap: ground
+    place: *fire-hydrant
+
+  fetchTrashCans:
+    type: fetchData
+    modelType: trash_cans
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: trash_cans
+    processor:
+      type: geoToolsVector
+
+  renderTrashCans:
+    after:
+      - fetchTrashCans
+      - roads
+    type: renderSurfaces
+    models:
+      type: trash_cans
+    place:
+      pattern:
+        place: *trash-can
+        neverInsteadOf: *water
+    heightmap: ground
+
+  fetchPicNic:
+    type: fetchData
+    modelType: picnic
+    provider:
+      type: gpkg
+      filePath: data/osm_extract.gpkg
+      typeName: picnic
+    processor:
+      type: geoToolsVector
+
+  renderPicNic:
+    after:
+      - fetchPicNic
+      - altitude
+    type: renderSurfaces
+    models:
+      type: picnic
+    heightmap: ground
+    place: *pic-nic
