@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.placeables;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ignfab.minalac.generator.placeables.work_in_progress.Structure;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.VoxelTile;
@@ -11,7 +12,7 @@ import com.ignfab.minalac.generator.world.VoxelTile;
  * {@code PlaceableStructure} is a {@link Placeable} consisting of placeables at given coordinate offsets.
  * The structure itself is immutable, but can be defined by using the {@link #builder()}.
  */
-public final class PlaceableStructure implements Placeable {
+public final class PlaceableStructure implements Structure {
     private final Map<WorldCoords3d, Placeable> placeables;
     private final WorldBBox3d limits;
 
