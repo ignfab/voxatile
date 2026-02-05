@@ -31,4 +31,9 @@ public final class Nothing implements Pattern {
     public Placeable get(int x, int y, int z) {
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "∅";
+    }
 }
