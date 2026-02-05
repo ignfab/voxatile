@@ -3,6 +3,9 @@ package com.ignfab.minalac.generator.placeables;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ignfab.minalac.generator.placeables.resized.builders.ConstantIndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.resized.ResizedStructureBuilder;
+import com.ignfab.minalac.generator.placeables.resized.IndexMapperBuilder;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.VoxelTile;
@@ -11,7 +14,7 @@ import com.ignfab.minalac.generator.world.VoxelTile;
  * {@code PlaceableStructure} is a {@link Placeable} consisting of placeables at given coordinate offsets.
  * The structure itself is immutable, but can be defined by using the {@link #builder()}.
  */
-public final class PlaceableStructure implements Placeable {
+public final class PlaceableStructure implements Structure {
     private final Map<WorldCoords3d, Placeable> placeables;
     private final WorldBBox3d limits;
 
@@ -93,6 +96,10 @@ public final class PlaceableStructure implements Placeable {
      */
     public static Builder builder() {
         return new Builder();
+    }
+
+    public ResizedStructureBuilder toFixedResizedBuilder() {
+        return new FixedSB(this);
     }
 
     /**
@@ -219,6 +226,49 @@ public final class PlaceableStructure implements Placeable {
          */
         public PlaceableStructure build() {
             return placeables.isEmpty() ? EMPTY : new PlaceableStructure(placeables);
+        }
+    }
+
+    private static class FixedSB implements ResizedStructureBuilder {
+        PlaceableStructure structure;
+        IndexMapperBuilder axisXBuilder;
+        IndexMapperBuilder axisYBuilder;
+        IndexMapperBuilder axisZBuilder;
+
+
+        public FixedSB(PlaceableStructure structure) {
+            this.structure = structure;
+            this.axisXBuilder = new ConstantIndexMapperBuilder(structure.limits.sizeX());
+            this.axisYBuilder = new ConstantIndexMapperBuilder(structure.limits.sizeY());
+            this.axisZBuilder = new ConstantIndexMapperBuilder(structure.limits.sizeZ());
+        }
+
+        @Override
+        public Structure build(int sizeX, int sizeY, int sizeZ) {
+            // checkResizability(sizeX, sizeY, sizeZ);
+            // TODO: Apply translation
+            return structure;
+        }
+
+        @Override
+        public IndexMapperBuilder axisX() {
+            return axisXBuilder;
+        }
+
+        @Override
+        public IndexMapperBuilder axisY() {
+            return axisYBuilder;
+        }
+
+        @Override
+        public IndexMapperBuilder axisZ() {
+            return axisZBuilder;
+        }
+
+        @Override
+        public void checkResizability(int sizeX, int sizeY, int sizeZ) {
+            System.out.println(sizeX + ", " + sizeX + ", " + sizeZ);
+            //throw new UnsupportedOperationException("Not implemented yet");
         }
     }
 }
