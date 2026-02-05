@@ -117,17 +117,197 @@ forEachTile:
     placeAbove: *voxel-empty
     placeBelow: *voxel-building-ground
 
-  renderBuildings:
+  renderResidentialBuildings:
     after: flattenGroundBuildings
-    type: renderBuildings
+    type: renderFacade
     models:
       type: buildings
       filter:
-        value: height
-        greaterThan: 0
-    roof: *voxel-cobble
-    wall: *voxel-stone
-    window: *voxel-glass
+        metadata: usage_1
+        equals: Résidentiel
+    height: height
+    altitude: ground-floor-altitude
+    references:
+      - &corner-material default:desert_sandstone_block
+      - &base-material default:sandstone
+      - &other-material default:desert_stone
+      - &borders-material default:desert_sandstone_block
+      - &cornice-material default:desert_sandstone_block
+      - &lintel-material default:sandstonebrick
+      - &materials
+          "-": *base-material
+          "+": *other-material
+          "O": *borders-material
+          "*": default:glass
+          "=": *lintel-material
+          "|": default:fence_junglewood
+    build:
+      - along: x
+        concatenate:
+          # Left corner
+          - &corner
+            at: [ 0, 0, 0 ]
+            put: *corner-material
+            stretchX:
+              at: 0
+            stretchZ:
+              at: 0
+            priority: -1
+          # TODO
+          - along: z
+            concatenate:
+              # Ground floor
+              - priority: 1
+                along: x
+                concatenate:
+                  - atLeast: 0
+                    along: x
+                    repeat:
+                      axes: [ z, x ]
+                      blueprint: [ "-O==O", "-O**O", "-O**O", "-O**O", "-O==O", "-O--O" ]
+                      with : *materials
+                      stretchZ:
+                        at: 0
+                  # Door
+                  - axes: [ z, x ]
+                    blueprint: [ "-O==O-", "-O  O-", "-O  O-", "-O  O-", "-O  O-", "-O  O-" ]
+                    with : *materials
+                    stretchZ:
+                      at: 0
+                  # Right ground windows
+                  - along: x
+                    atLeast: 0
+                    repeat:
+                      axes: [ z, x ]
+                      blueprint: [ "O==O-", "O**O-", "O**O-", "O**O-", "O==O-", "O--O-" ]
+                      with: *materials
+                      stretchZ:
+                        at: 0
+              # Cornice
+              - at: [ 0, 0, 0 ]
+                put: *cornice-material
+                stretchX:
+                  at: 0
+              # Upper floors
+              - priority: 2
+                along: z
+                atLeast: 0
+                repeat:
+                  along: x
+                  concatenate:
+                    - at: [ 0, 0, 0..5 ]
+                      put: *other-material
+                    - along: x
+                      repeat:
+                        axes: [ y, z, x ]
+                        blueprint:
+                          - [ "O==O+", "O**O+", "O**O+", "O**O+", "O==O+", "O--O+" ]
+                          - [ "     ", "     ", "     ", "|||| ", "==== ", "O  O " ]
+                        with : *materials
+                        # TODO: En inversant la profondeur, on peut s'éviter beaucoup d'offset (a priori, les façade vont être plus souvent saillantes)
+                        yOffset: -1
+              # Upper cornice
+              - at: [ 0, 0, 0 ]
+                put: *cornice-material
+                stretchX:
+                  at: 0
+                stretchZ:
+                  at: 0
+          # Right corner
+          - *corner
+      - at: [ 0, 0, 0 ]
+        put: *base-material
+        stretchX:
+          at: 0
+        stretchZ:
+          at: 0
+
+  renderOfficeBuildings:
+    after: flattenGroundBuildings
+    type: renderFacade
+    models:
+      type: buildings
+      filter:
+        not:
+          metadata: usage_1
+          equals: Résidentiel
+    height: height
+    altitude: ground-floor-altitude
+    references:
+      - &modern-wall default:clay
+      - &modern-glass default:obsidian_glass
+      - &modern-materials
+          "O": *modern-wall
+          "*": *modern-glass
+    build:
+      - along: x
+        concatenate:
+          # Left corner
+          - put: *modern-wall
+            at: [0, 0, 0]
+            stretchX:
+              at: 0
+            stretchZ:
+              at: 0
+          # Facade
+          - priority: 1
+            along: z
+            concatenate:
+              # Ground floor
+              - along: x
+                concatenate:
+                  # Left
+                  - along: x
+                    repeat:
+                      with: *modern-materials
+                      axes: [z, x]
+                      blueprint: [ "O**", "O**", "O**", "OOO", "OOO"]
+                  # Door
+                  - with: *modern-materials
+                    axes: [z, x]
+                    blueprint: [ "OOOO", "O  O", "O  O", "O  O", "O  O" ]
+                  # Right
+                  - along: x
+                    repeat:
+                      with: *modern-materials
+                      axes: [z, x]
+                      blueprint: [ "**O", "**O", "**O", "OOO", "OOO" ]
+              # Upper floors
+              - priority: 1
+                along: x
+                concatenate:
+                  - put: *modern-wall
+                    at: [0, 0, 0 ]
+                    stretchZ:
+                      at: 0
+                  - along: x
+                    repeat:
+                      with: *modern-materials
+                      axes: x
+                      blueprint: "**O"
+                      stretchZ:
+                        at: 0
+              # Top
+              - put: *modern-wall
+                at: [0, 0, 0 ]
+                stretchX:
+                  at: 0
+                stretchZ:
+                  at: 0
+          # Left corner
+          - put: *modern-wall
+            at: [0, 0, 0]
+            stretchX:
+              at: 0
+            stretchZ:
+              at: 0
+      # Default
+      - at: [ 0, 0, 0 ]
+        put: *modern-wall
+        stretchX:
+          at: 0
+        stretchZ:
+          at: 0
 
   forest:
     type: sequence
@@ -171,15 +351,34 @@ forEachTile:
               chance: 0.003
               place: *forest-tree2
 
-  renderRoof:
-    after: renderBuildings
+  renderRoofHipped:
+    after:
+    - renderResidentialBuildings
     type: renderRoof
     roofType: hipped
     models:
       type: buildings
+      filter:
+        metadata: usage_1
+        equals: Résidentiel
     height: height
     altitude: ground-floor-altitude
-    place: default:stone
+    place: default:desert_stone
+
+  renderRoofFlat:
+    after:
+    - renderOfficeBuildings
+    type: renderRoof
+    roofType: flat
+    models:
+      type: buildings
+      filter:
+        not:
+          metadata: usage_1
+          equals: Résidentiel
+    height: height
+    altitude: ground-floor-altitude
+    place: default:clay
 
   populateWaterPresence:
     after: fetchWater

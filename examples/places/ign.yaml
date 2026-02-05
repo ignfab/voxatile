@@ -1,10 +1,10 @@
 # I love Saint-Mandé
 worldName: Saint-Mandé - IGN
-verticalScale: 1.0
-horizontalScale: 1.0
+verticalScale: 0.5
+horizontalScale: 0.5
 area:
   center:
     latitude: 48.845
     longitude: 2.425
-  extentX: 1000
-  extentY: 1000
+  extentX: 500
+  extentY: 500

@@ -1,0 +1,189 @@
+#
+# This is a tool for working out facades
+#
+# It will work only on Minetest/Luanti for now but may be easily adapted to other games.
+#
+# Put your facade params to test in `&facade` anchor and launch generation.
+#
+# Samples of your facade, with various sizes, will be placed in resulting world.
+#
+
+# TODO:
+# - move that outside of processes and add area information to make it stand alone.
+
+references:
+  - &corner-material default:desert_sandstone_block
+  - &base-material default:sandstone
+  - &other-material default:desert_stone
+  - &borders-material default:desert_sandstone_block
+  - &cornice-material default:desert_sandstone_block
+  - &lintel-material default:sandstonebrick
+  - &materials
+      "-": *base-material
+      "+": *other-material
+      "O": *borders-material
+      "*": default:glass
+      "=": *lintel-material
+      "|": default:fence_junglewood
+  - &facade
+    - along: x
+      concatenate:
+        # Left corner
+        - &corner
+          at: [ 0, -1..0, 0 ]
+          put: *corner-material
+          stretchX:
+            at: 0
+          stretchZ:
+            at: 0
+          priority: -1
+        # TODO
+        - along: z
+          concatenate:
+            # Ground floor
+            - priority: 1
+              along: x
+              concatenate:
+                - atLeast: 0
+                  along: x
+                  repeat:
+                    axes: [ z, x ]
+                    blueprint: [ "-O==O", "-O**O", "-O**O", "-O**O", "-O==O", "-O--O" ]
+                    with : *materials
+                    stretchZ:
+                      at: 0
+                # Door
+                - axes: [ z, x ]
+                  blueprint: [ "-O==O-", "-O  O-", "-O  O-", "-O  O-", "-O  O-", "-O  O-" ]
+                  with : *materials
+                  stretchZ:
+                    at: 0
+                # Right ground windows
+                - along: x
+                  atLeast: 0
+                  repeat:
+                    axes: [ z, x ]
+                    blueprint: [ "O==O-", "O**O-", "O**O-", "O**O-", "O==O-", "O--O-" ]
+                    with: *materials
+                    stretchZ:
+                      at: 0
+            # Cornice
+            - at: [ 0, 0, 0 ]
+              put: *cornice-material
+              stretchX:
+                at: 0
+            # Upper floors
+            - priority: 2
+              along: z
+              atLeast: 0
+              repeat:
+                along: x
+                concatenate:
+                  - at: [ 0, 0, 0..5 ]
+                    put: *other-material
+                  - along: x
+                    repeat:
+                      axes: [ y, z, x ]
+                      blueprint:
+                        - [ "O==O+", "O**O+", "O**O+", "O**O+", "O==O+", "O--O+" ]
+                        - [ "     ", "     ", "     ", "|||| ", "==== ", "O  O " ]
+                      with : *materials
+                      # TODO: En inversant la profondeur, on peut s'éviter beaucoup d'offset (a priori, les façade vont être plus souvent saillantes)
+                      yOffset: -1
+            # Upper cornice
+            - at: [ 0, 0, 0 ]
+              put: *cornice-material
+              stretchX:
+                at: 0
+              stretchZ:
+                at: 0
+        # Right corner
+        - *corner
+    - at: [ 0, 0, 0 ]
+      put: *base-material
+      stretchX:
+        at: 0
+      stretchZ:
+        at: 0
+
+forEachTile:
+
+  renderGround:
+    type: renderHeightmap
+    at: 0
+    place: default:stone
+
+  renderBackground:
+    type: debugLayout
+    build:
+      - along: x
+        repeat:
+          along: z
+          repeat:
+            with:
+              O: wool:dark_grey
+              X: wool:grey
+            axes: [x, z]
+            blueprint: ["OX", "XO"]
+    at:
+      x: -100
+      y: 60
+      z: 1
+    size:
+      x: 250
+      z: 100
+
+  renderFacadeTiny:
+    type: debugLayout
+    build: *facade
+    at:
+      x: -50
+      y: 50
+      z: 1
+    size:
+      x: 8
+      z: 4
+
+  renderFacadeSmall:
+    type: debugLayout
+    build: *facade
+    at:
+      x: -40
+      y: 50
+      z: 1
+    size:
+      x: 11
+      z: 9
+
+  renderFacadeMedium:
+    type: debugLayout
+    build: *facade
+    at:
+      x: -25
+      y: 50
+      z: 1
+    size:
+      x: 20
+      z: 22
+
+  renderFacadeLarge:
+    type: debugLayout
+    build: *facade
+    at:
+      x: 0
+      y: 50
+      z: 1
+    size:
+      x: 32
+      z: 30
+
+  renderFacadeHuge:
+    type: debugLayout
+    build: *facade
+    at:
+      x: 40
+      y: 50
+      z: 1
+    size:
+      x: 52
+      z: 45
