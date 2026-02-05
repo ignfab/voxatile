@@ -9,8 +9,8 @@ public class RepeatStructureBuilder implements StructureBuilder {
     public RepeatStructureBuilder(StructureBuilder structureBuilder) {
         this.structureBuilder = structureBuilder;
         axisXBuilder = new IndexMapperBuilder.LastAll();
-        axisYBuilder = new IndexMapperBuilder.Identity();
-        axisZBuilder = new IndexMapperBuilder.Identity();
+        axisYBuilder = new IndexMapperBuilder.Identity(structureBuilder.axisY().ask(0));
+        axisZBuilder = new IndexMapperBuilder.Identity(structureBuilder.axisZ().ask(0));
     }
 
     @Override
@@ -19,7 +19,10 @@ public class RepeatStructureBuilder implements StructureBuilder {
         ax = axisXBuilder.build(sizeX);
         aY = axisYBuilder.build(sizeX);
         aZ = axisZBuilder.build(sizeZ);
-        Structure[][][] tab = new Structure[ax.tmp_number()][aY.tmp_number()][aZ.tmp_number()];
+        Structure[][][] tab = new Structure
+            [ax.structureIndex__toBeChanged().size()]
+            [aY.structureIndex__toBeChanged().size()]
+            [aZ.structureIndex__toBeChanged().size()];
         for (IndexMapper.StructureIndex iX : ax.structureIndex__toBeChanged()) {
             for (IndexMapper.StructureIndex iY : aY.structureIndex__toBeChanged()) {
                 for (IndexMapper.StructureIndex iZ : aZ.structureIndex__toBeChanged()) {
@@ -39,7 +42,7 @@ public class RepeatStructureBuilder implements StructureBuilder {
 
     @Override
     public IndexMapperBuilder axisY() {
-        throw new RuntimeException("Not implemented");
+        return axisYBuilder;
     }
 
     @Override

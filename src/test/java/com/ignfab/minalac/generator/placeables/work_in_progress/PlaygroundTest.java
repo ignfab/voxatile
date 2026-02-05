@@ -15,15 +15,17 @@ public class PlaygroundTest {
             .set(0, 1, 0, new TestingVoxel("4"))
             .set(1, 1, 0, new TestingVoxel("5"))
             .set(2, 1, 0, new TestingVoxel("6"))
+            .set(2, 2, 0, new TestingVoxel("?"))
             .build();
 
         RepeatStructureBuilder rb = new RepeatStructureBuilder(new IdentityStructureBuilder(base));
 
         Structure resized = rb.build(6, 2, 1);
+        System.out.println(rb.axisY().ask(0));
 
         Structure display = resized;
 
-        for (int y = 2 - 1; y >= 0; y--) {
+        for (int y = 3 - 1; y >= 0; y--) {
             for (int x = 0; x < 6; x++) {
                 System.out.print(display.get(x, y, 0));
             }

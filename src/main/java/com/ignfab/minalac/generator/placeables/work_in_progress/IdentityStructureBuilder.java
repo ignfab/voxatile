@@ -12,9 +12,9 @@ public class IdentityStructureBuilder implements StructureBuilder {
     public IdentityStructureBuilder(PlaceableStructure structure) {
         this.structure = structure;
         WorldSize3d size = structure.limits().size();
-        axisXBuilder = new IndexMapperBuilder.Identity();
-        axisYBuilder = new IndexMapperBuilder.Identity();
-        axisZBuilder = new IndexMapperBuilder.Identity();
+        axisXBuilder = new IndexMapperBuilder.Identity(size.x());
+        axisYBuilder = new IndexMapperBuilder.Identity(size.y());
+        axisZBuilder = new IndexMapperBuilder.Identity(size.z());
     }
 
     @Override
@@ -24,8 +24,10 @@ public class IdentityStructureBuilder implements StructureBuilder {
         if (sizeX != axisXBuilder.ask(sizeX) &&
             sizeY != axisYBuilder.ask(sizeY) &&
             sizeZ != axisZBuilder.ask(sizeZ) )
-            throw new RuntimeException("NOt buildable");*/
+            throw new RuntimeException("NOt buildable");
 
+
+         */
         Structure[][][] tab = new Structure[1][1][1];
         tab[0][0][0] = structure;
 

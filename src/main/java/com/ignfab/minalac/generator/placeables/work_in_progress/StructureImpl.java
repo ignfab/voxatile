@@ -2,6 +2,8 @@ package com.ignfab.minalac.generator.placeables.work_in_progress;
 
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldSize3d;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
 public class StructureImpl implements Structure {
@@ -16,6 +18,16 @@ public class StructureImpl implements Structure {
         this.axisX = axisX;
         this.axisY = axisY;
         this.axisZ = axisZ;
+        this.limits = new WorldBBox3d(structures[0][0][0].limits().min(), new WorldSize3d(axisX.tmp_length(), axisY.tmp_length(), axisZ.tmp_length()));
+        // TODO : ou alors c'est tacite que 0,0,0 contient le point d'origine
+    }
+
+    public StructureImpl(Structure[][][] structures, IndexMapper axisX, IndexMapper axisY, IndexMapper axisZ, WorldCoords3d origin) {
+        this.structures = structures;
+        this.axisX = axisX;
+        this.axisY = axisY;
+        this.axisZ = axisZ;
+        this.limits =  new WorldBBox3d(origin, new WorldSize3d(axisX.tmp_length(), axisY.tmp_length(), axisZ.tmp_length()));
     }
 
     @Override
@@ -33,7 +45,7 @@ public class StructureImpl implements Structure {
 
     @Override
     public WorldBBox3d limits() {
-        throw new RuntimeException("Not implemented");
+        return limits;
     }
 
     @Override

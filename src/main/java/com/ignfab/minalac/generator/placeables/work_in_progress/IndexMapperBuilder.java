@@ -5,6 +5,12 @@ public interface IndexMapperBuilder {
     int ask(int size);
 
     class Identity implements IndexMapperBuilder {
+        int allowedSize;
+
+        public Identity(int allowedSize) {
+            this.allowedSize = allowedSize;
+        }
+
         @Override
         public IndexMapper build(int size) {
             return new IndexMapper.Identity(size);
@@ -12,7 +18,8 @@ public interface IndexMapperBuilder {
 
         @Override
         public int ask(int size) {
-            throw new RuntimeException("Not implemented");
+            return allowedSize;
+            // throw new RuntimeException("Not implemented");
         }
     }
 
