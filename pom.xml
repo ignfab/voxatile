@@ -13,7 +13,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>17</java.version>
+        <java.version>25</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <geotools.version>31.0</geotools.version>
@@ -195,7 +195,7 @@
             <artifactId>hytale</artifactId>
             <version>1</version>
             <scope>system</scope>
-            <systemPath>C:\Users\user\Downloads\HytaleServer.jar</systemPath>
+            <systemPath>C:\Users\user\AppData\Roaming\Hytale\install\release\package\game\latest\Server\HytaleServer.jar</systemPath>
         </dependency>
 
         <!--

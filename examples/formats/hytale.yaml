@@ -1,0 +1,149 @@
+format: hytale
+references:
+
+  # BASE VOXELS
+
+  - &air Empty
+  - &water Fluid_Water
+  - &underground Rock_Stone
+  - &grass Soil_Grass
+  - &grass-decoration
+    - pattern:
+        chance: 0.04
+        place: Plant_Grass_Sharp
+    - pattern:
+        chance: 0.02
+        place: Plant_Grass_Jungle
+
+  # BUILDINGS
+
+  - &buildings-ground Rock_Stone_Cobble
+  - &buildings-walls-default Rock_Sandstone
+  - &buildings-walls-church Rock_Stone_Brick
+  - &buildings-walls-residential
+    pattern:
+      repeatStructure:
+        - at: [ 0..3, 0..3, 0..6 ]
+          put: Rock_Sandstone
+        - at: [ 0..1, 0..1, 3..5 ]
+          put: Rock_Crystal_Cyan_Block
+        - at: [ 2..3, 2..3, 3..5 ]
+          put: Rock_Crystal_Cyan_Block
+  - &buildings-walls-commercial
+    pattern:
+      repeatStructure:
+        - at: [ 0..3, 0..3, 0..6 ]
+          put: Rock_Ledge_Cobble
+        - at: [ 0..1, 0..1, 3..5 ]
+          put: Rock_Crystal_Cyan_Block
+        - at: [ 2..3, 2..3, 3..5 ]
+          put: Rock_Crystal_Cyan_Block
+  - &buildings-roof-default Rock_Ledge_Brick_Smooth
+  - &buildings-roof-zinc Rock_Marble_Brick_Smooth
+  - &buildings-roof-zinc-tiles Rock_Marble_Brick
+  - &buildings-roof-church Rock_Magma_Cooled
+  - &buildings-roof-slates-tiles Rock_Slate_Cobble
+  - &buildings-roof-slates Rock_Slate
+  - &buildings-roof-concrete Rock_Calcite
+
+  # ROADS
+
+  - &path Soil_Pathway
+  - &road-paint Rock_Chalk_Brick_Half
+  - &road-tar Rock_Slate_Cobble_Half
+  - &road-bed Rock_Slate_Cobble
+  - &sidewalk Rock_Calcite_Brick_Smooth
+  - &sidewalk-bed Rock_Calcite_Brick_Smooth
+  - &cycle-path Rock_Lime_Cobble
+  - &other-path Rock_Calcite_Brick_Smooth
+  - &stairs Rock_Calcite_Brick_Smooth
+
+  # VEGETATION
+
+  - &tree-trunk Wood_Oak_Trunk
+  - &tree-leaves
+    structure:
+      at: [ -1..1, -1..1, -1..1 ]
+      put:
+        pattern:
+          onlyInsteadOf: Empty
+          place:
+            pattern:
+              seed: tree-leaves-1
+              chance: 0.4
+              place:
+                - Plant_Leaves_Oak
+                - pattern:
+                    seed: tree-leaves-2
+                    chance: 0.5
+                    place: Plant_Leaves_Beech
+  # List of possible tree leaves in *tree-leaves
+  - &tree-leaves-list [ Plant_Leaves_Oak, Plant_Leaves_Beech ]
+
+  # OTHER URBAN STUFF
+
+  - &plazza Rock_Calcite_Brick_Smooth
+  - &metro-station-steps Rock_Sandstone_Brick
+  - &metro-station-walls-top Rock_Calcite_Brick_Smooth
+  - &metro-station-walls Rock_Sandstone_Brick_Decorative
+  - &fence-structure
+    - put: Rock_Calcite_Brick_Smooth
+      at: [ 0, 0, 1 ]
+    - put: Wood_Softwood_Fence
+      at: [ 0, 0, 2..3 ]
+  - &linear-bench-structure
+    axes: [ z, y ]
+    blueprint:
+      - "O  "
+      - "O  "
+      - "OOO"
+    with:
+      "O": Wood_Deadwood_Planks
+    zOffset: 1
+  - &bench
+    structure:
+      - put: Wood_Deadwood_Planks
+        at: [ -2..2, 0, 1 ]
+      - put: Wood_Deadwood_Planks_Half
+        at: [ -1..1, 0, 1 ]
+  - &traffic-light
+    structure:
+      axes: [ z ]
+      blueprint: "1111123456"
+      with:
+        "1": Rock_Slate_Cobble_Beam
+        "2": Rock_Slate_Cobble
+        "3": Cloth_Block_Wool_Green
+        "4": Cloth_Block_Wool_Orange
+        "5": Cloth_Block_Wool_Red
+        "6": Rock_Slate_Cobble_Half
+      zOffset: 1
+  - &city-light
+    structure:
+      - axes: [ z, x, y ]
+        blueprint:
+          - - " S "
+            - "SSS"
+            - " S "
+          - - " L "
+            - "L L"
+            - " L "
+        with:
+          "L": Deco_Lantern_Ceiling
+          "S": Wood_Blackwood_Planks_Half
+        xOffset: -1
+        yOffset: -1
+        zOffset: 10
+      - at: [ 0, 0, 1..10 ]
+        put: Wood_Blackwood_Beam
+  - &fire-hydrant
+    structure:
+      - put: Cloth_Block_Wool_Red
+        at: [ 0, 0, 1..3 ]
+      - put: Cloth_Block_Wool_Red
+        at: [ 0, 1, 2 ]
+  - &trash-can
+    structure:
+      - put: Alchemy_Cauldron
+        at: [ 0, 0, 1 ]
+  - &pic-nic nothing

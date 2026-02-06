@@ -1,0 +1,20 @@
+{
+  "Group": "com.ignfab",
+  "Name": "MinalacGenerator",
+  "Version": "0.0.0",
+  "Description": "Hytale connector mod for Minalac Generator",
+  "Authors": [
+    {
+      "Name": "indyteo",
+      "Email": "theo.szanto@ign.fr",
+      "Url": "https//minecraft.ign.fr"
+    }
+  ],
+  "Website": "https//minecraft.ign.fr",
+  "DisabledByDefault": false,
+  "IncludesAssetPack": false,
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "ServerVersion": "*",
+  "Main": "com.ignfab.minalac.generator.HytaleMod"
+}
