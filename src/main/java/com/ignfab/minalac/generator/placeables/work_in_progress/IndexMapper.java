@@ -103,7 +103,7 @@ public interface IndexMapper {
                 }
                 sum = sum + length[j];
             }
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Equalizer Mapper speaking");
         }
 
         @Override
@@ -151,6 +151,45 @@ public interface IndexMapper {
                 @Override
                 public Iterator<StructureIndex> iterator() {
                     return IntStream.range(0, 2).mapToObj(i -> new StructureIndex(i, breakpoint + i * (length - 2 * breakpoint))).toList().iterator();
+                }
+            };
+        }
+    }
+
+    class Stretcher implements IndexMapper {
+        int stretchableCoord;
+        int minimumLength;
+        int length;
+
+        public Stretcher(int stretchableCoord, int minimumLength, int length) {
+            this.stretchableCoord = stretchableCoord;
+            this.minimumLength = minimumLength;
+            this.length = length;
+        }
+
+        @Override
+        public PlaceableIndex placeable(int coordinateValue) {
+            int r = Math.max(length - (minimumLength + 1), -1);
+            if (coordinateValue < stretchableCoord) {
+                return new PlaceableIndex(0, coordinateValue);
+            } else if (coordinateValue <= stretchableCoord + r) {
+                return new PlaceableIndex(0, stretchableCoord);
+            } else {
+                return new PlaceableIndex(0, coordinateValue - r);
+            }
+        }
+
+        @Override
+        public SizedIterable<StructureIndex> structure() {
+            return new SizedIterable<>() {
+                @Override
+                public int size() {
+                    return 1;
+                }
+
+                @Override
+                public Iterator<StructureIndex> iterator() {
+                    return IntStream.range(0, 1).mapToObj(i -> new StructureIndex(0, length)).toList().iterator();
                 }
             };
         }

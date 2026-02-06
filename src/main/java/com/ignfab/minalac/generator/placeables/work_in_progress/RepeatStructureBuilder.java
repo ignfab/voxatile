@@ -1,52 +1,44 @@
 package com.ignfab.minalac.generator.placeables.work_in_progress;
 
-public class RepeatStructureBuilder implements ResizedStructureBuilder {
-    ResizedStructureBuilder structureBuilder;
-    IndexMapperBuilder axisXBuilder;
-    IndexMapperBuilder axisYBuilder;
-    IndexMapperBuilder axisZBuilder;
-
-    public RepeatStructureBuilder(ResizedStructureBuilder structureBuilder) {
-        this.structureBuilder = structureBuilder;
-        axisXBuilder = new IndexMapperBuilder.LastAll();
-        axisYBuilder = new IndexMapperBuilder.Identity(structureBuilder.axisY().ask(0));
-        axisZBuilder = new IndexMapperBuilder.Identity(structureBuilder.axisZ().ask(0));
+public class RepeatStructureBuilder extends ResizedStructureBuilderImpl {
+    private RepeatStructureBuilder(ResizedStructureBuilder structureBuilder, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
+        super(structureBuilder, axisXBuilder, axisYBuilder, axisZBuilder);
     }
 
-    @Override
-    public Structure build(int sizeX, int sizeY, int sizeZ) {
-        IndexMapper ax, aY, aZ;
-        ax = axisXBuilder.build(sizeX);
-        aY = axisYBuilder.build(sizeX);
-        aZ = axisZBuilder.build(sizeZ);
-        Structure[][][] tab = new Structure
-            [ax.structure().size()]
-            [aY.structure().size()]
-            [aZ.structure().size()];
-        for (IndexMapper.StructureIndex iX : ax.structure()) {
-            for (IndexMapper.StructureIndex iY : aY.structure()) {
-                for (IndexMapper.StructureIndex iZ : aZ.structure()) {
-                    tab[iX.index()][iY.index()][iZ.index()] = structureBuilder.build(iX.length(), iY.length(), iZ.length());
-                }
-            }
-        }
-
-        return (new StructureImpl(tab, ax, aY, aZ));
-        // throw new RuntimeException("Not implemented");
+    public static ResizedStructureBuilder X(ResizedStructureBuilder builder) {
+        return new RepeatStructureBuilder(
+            builder,
+            new IndexMapperBuilder.Equalizer(builder.axisX().ask(0)),
+            new IndexMapperBuilder.Identity(builder.axisY().ask(0)),
+            new IndexMapperBuilder.Identity(builder.axisZ().ask(0))
+        );
     }
 
-    @Override
-    public IndexMapperBuilder axisX() {
-        throw new RuntimeException("Not implemented");
+    public static ResizedStructureBuilder Y(ResizedStructureBuilder builder) {
+        return new RepeatStructureBuilder(
+            builder,
+            new IndexMapperBuilder.Identity(builder.axisX().ask(0)),
+            new IndexMapperBuilder.Equalizer(builder.axisY().ask(0)),
+            new IndexMapperBuilder.Identity(builder.axisZ().ask(0))
+        );
     }
 
-    @Override
-    public IndexMapperBuilder axisY() {
-        return axisYBuilder;
+    public static ResizedStructureBuilder Z(ResizedStructureBuilder builder) {
+        return new RepeatStructureBuilder(
+            builder,
+            new IndexMapperBuilder.Identity(builder.axisX().ask(0)),
+            new IndexMapperBuilder.Identity(builder.axisY().ask(0)),
+            new IndexMapperBuilder.Equalizer(builder.axisZ().ask(0))
+        );
     }
 
-    @Override
-    public IndexMapperBuilder axisZ() {
-        throw new RuntimeException("Not implemented");
+    public static ResizedStructureBuilder XY(ResizedStructureBuilder builder) {
+        return new RepeatStructureBuilder(
+            builder,
+            new IndexMapperBuilder.Equalizer(builder.axisX().ask(0)),
+            new IndexMapperBuilder.Equalizer(builder.axisY().ask(0)),
+            new IndexMapperBuilder.Identity(builder.axisZ().ask(0))
+
+        );
     }
 }

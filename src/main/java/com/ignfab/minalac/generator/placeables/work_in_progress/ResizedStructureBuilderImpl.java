@@ -1,22 +1,16 @@
 package com.ignfab.minalac.generator.placeables.work_in_progress;
 
-public class StretchedStructureBuilder implements ResizedStructureBuilder {
-    ResizedStructureBuilder structureBuilder;
-    IndexMapperBuilder axisXBuilder;
-    IndexMapperBuilder axisYBuilder;
-    IndexMapperBuilder axisZBuilder;
+public abstract class ResizedStructureBuilderImpl implements ResizedStructureBuilder {
+    protected ResizedStructureBuilder structureBuilder;
+    protected IndexMapperBuilder axisXBuilder;
+    protected IndexMapperBuilder axisYBuilder;
+    protected IndexMapperBuilder axisZBuilder;
 
-    public StretchedStructureBuilder(ResizedStructureBuilder structureBuilder, Integer elasticAtX) {
+    protected ResizedStructureBuilderImpl(ResizedStructureBuilder structureBuilder, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
         this.structureBuilder = structureBuilder;
-
-        if (elasticAtX == null)
-            axisXBuilder = new IndexMapperBuilder.Identity(structureBuilder.axisX().ask(0));
-        else
-            axisXBuilder = new IndexMapperBuilder.Stretcher(elasticAtX, structureBuilder.axisX().ask(0) - 1);
-
-
-        axisYBuilder = new IndexMapperBuilder.Identity(structureBuilder.axisY().ask(0));
-        axisZBuilder = new IndexMapperBuilder.Identity(structureBuilder.axisZ().ask(0));
+        this.axisXBuilder = axisXBuilder;
+        this.axisYBuilder = axisYBuilder;
+        this.axisZBuilder = axisZBuilder;
     }
 
     @Override
