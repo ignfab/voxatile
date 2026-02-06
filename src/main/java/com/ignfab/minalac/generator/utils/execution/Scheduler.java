@@ -14,7 +14,7 @@ import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 
 /**
  * A scheduler is a service managing execution of tasks.
- * It can perform parallel operations and ensure execution order between some tasks.
+ * It can perform parallel operations and ensure execution index between some tasks.
  * A context object of generic type T is passed to executed tasks.
  *
  * @param <T> tasks execution context type

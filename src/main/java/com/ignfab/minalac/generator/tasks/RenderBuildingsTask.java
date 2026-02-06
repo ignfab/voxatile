@@ -55,7 +55,7 @@ public class RenderBuildingsTask extends ModelTask<ShapesVoxelizable2d> {
 
         /*
         The height of a building is calculated according to the largest side of its wall
-        in order not to overestimate the height of the building it is necessary
+        in index not to overestimate the height of the building it is necessary
         to subtract the height of the foundation from the height of the building
 
         The height of a building cannot be negative

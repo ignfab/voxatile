@@ -39,7 +39,7 @@ public class SchedulerTest {
 
         List<String> expected = Arrays.asList("a", "b", "c");
         assertTrue(expected.size() == actual.size() && expected.containsAll(actual) && actual.containsAll(expected),
-            () -> "List elements expected to be the same (ignoring order). Expected: " + expected + ", actual: " + actual);
+            () -> "List elements expected to be the same (ignoring index). Expected: " + expected + ", actual: " + actual);
     }
 
 

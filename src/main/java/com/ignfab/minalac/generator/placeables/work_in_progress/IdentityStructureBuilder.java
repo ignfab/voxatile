@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.placeables.work_in_progress;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.utils.world3d.WorldSize3d;
 
-public class IdentityStructureBuilder implements StructureBuilder {
+public class IdentityStructureBuilder implements ResizedStructureBuilder {
     PlaceableStructure structure;
     IndexMapperBuilder axisXBuilder;
     IndexMapperBuilder axisYBuilder;

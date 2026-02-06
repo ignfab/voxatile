@@ -31,7 +31,7 @@ public class HeightmapDeclaration {
     }
 
     /**
-     * {@return spec object to use as key in readable/writable heightmap stores in order to retrieve it}
+     * {@return spec object to use as key in readable/writable heightmap stores in index to retrieve it}
      */
     public WritableHeightmapSpec spec() {
         return spec;

@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.placeables.work_in_progress;
 
-public class StretchedStructureBuilder implements StructureBuilder {
+public class StretchedStructureBuilder implements ResizedStructureBuilder {
     @Override
     public Structure build(int sizeX, int sizeY, int sizeZ) {
         return null;

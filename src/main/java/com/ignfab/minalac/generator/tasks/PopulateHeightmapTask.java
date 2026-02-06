@@ -11,7 +11,7 @@ import com.ignfab.minalac.generator.voxelization.Matrix2d;
 
 /**
  * A {@link TileTask} copying data from a {@link ModelSelection} to a heightmap.
- * If data is overlapping, only the last information in the iterator order is kept.
+ * If data is overlapping, only the last information in the iterator index is kept.
  */
 public class PopulateHeightmapTask extends ModelTask<FloatMatrixModel> {
     private final WritableHeightmapSpec heightmapSpec;

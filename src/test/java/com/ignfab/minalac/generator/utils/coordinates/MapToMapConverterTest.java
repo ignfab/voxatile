@@ -95,7 +95,7 @@ public class MapToMapConverterTest {
 
         coords = result.getCoordinates();
 
-        // We assume that coords order has not changed but this is not sure at all.
+        // We assume that coords index has not changed but this is not sure at all.
         assertEquals(2.0, coords[0].getX(), 0.0001);
         assertEquals(-2.0, coords[0].getY(), 0.0001);
         assertEquals(-2.0, coords[1].getX(), 0.0001);

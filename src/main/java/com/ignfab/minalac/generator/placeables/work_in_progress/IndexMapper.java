@@ -4,14 +4,11 @@ import java.util.Iterator;
 import java.util.stream.IntStream;
 
 public interface IndexMapper {
-    int tmp_localCoordinate_getStructImpl(int i);
-    int tmp_order_index_getStructImpl(int i);
-    int tmp_length();
-    int tmp_number();
+    PlaceableIndex placeable(int coordinateValue);
+    SizedIterable<StructureIndex> structure();
 
-    SizedIterable<StructureIndex> structureIndex__toBeChanged();
-
-    record StructureIndex(int order, int length){};
+    record PlaceableIndex(int index, int coordinateValue){};
+    record StructureIndex(int index, int length){};
 
     class Identity implements IndexMapper {
         int length;
@@ -21,30 +18,13 @@ public interface IndexMapper {
         }
 
         @Override
-        public int tmp_localCoordinate_getStructImpl(int i) {
-            return i;
+        public PlaceableIndex placeable(int coordinateValue) {
+            return new PlaceableIndex(0, coordinateValue);
         }
 
         @Override
-        public int tmp_order_index_getStructImpl(int i) {
-            return 0;
-        }
-
-        @Override
-        public int tmp_length() {
-            if (true)
-                throw new RuntimeException("Not tested");
-            return length;
-        }
-
-        @Override
-        public int tmp_number() {
-            return 1;
-        }
-
-        @Override
-        public SizedIterable<StructureIndex> structureIndex__toBeChanged() {
-            return new SizedIterable<StructureIndex>() {
+        public SizedIterable<StructureIndex> structure() {
+            return new SizedIterable<>() {
                 @Override
                 public int size() {
                     return 1;
@@ -68,31 +48,101 @@ public interface IndexMapper {
         }
 
         @Override
-        public int tmp_localCoordinate_getStructImpl(int i) {
-            if (i < breakpoint)
-                return i;
-            return i - breakpoint;
+        public PlaceableIndex placeable(int coordinateValue) {
+            if (coordinateValue < breakpoint)
+                return new PlaceableIndex(0, coordinateValue);
+            return new PlaceableIndex(1, coordinateValue - breakpoint);
+        }
+
+        public SizedIterable<StructureIndex> structure() {
+            return new SizedIterable<>() {
+                @Override
+                public int size() {
+                    return 2;
+                }
+
+                @Override
+                public Iterator<StructureIndex> iterator() {
+                    return IntStream.range(0, 2).mapToObj(i -> new StructureIndex(i, breakpoint + i * (length - 2 * breakpoint))).toList().iterator();
+                }
+            };
+        }
+    }
+
+    class Equalizer implements IndexMapper {
+        int[] length;
+
+        public Equalizer(int totalLength) {
+            this(totalLength, totalLength);
+        }
+        public Equalizer(int size, int totalLength) {
+            int r = totalLength % size;
+            int n = totalLength / size;
+            int p = (r % n == 0) ? r / n : (r / n) + 1; // Arrondi sup if reste
+            int[] tab = new int[n];
+            // TODO: POC naif
+            for (int i = 0; i < n; i++) {
+                tab[i] = size + p;
+                r = r - p;
+                if (r <= 0)
+                    p = 0;
+                else if (r < p)
+                    p = r;
+            }
+
+            this.length = tab;
         }
 
         @Override
-        public int tmp_order_index_getStructImpl(int i) {
-            if (i < breakpoint)
-                return 0;
-            return 1;
+        public PlaceableIndex placeable(int coordinateValue) {
+            // TODO: POC naif
+            int sum = 0;
+            for (int j = 0; j < length.length; j++) {
+                if (sum <= coordinateValue && coordinateValue < sum + length[j]) {
+                    return new PlaceableIndex(j, (coordinateValue - sum) % length[j]);
+                }
+                sum = sum + length[j];
+            }
+            throw new IndexOutOfBoundsException();
         }
 
         @Override
-        public int tmp_length() {
-            throw new RuntimeException("Not implemented");
-        }
-
-        @Override
-        public int tmp_number() {
-            return 2;
-        }
-
-        public SizedIterable<StructureIndex> structureIndex__toBeChanged() {
+        public SizedIterable<StructureIndex> structure() {
             return new SizedIterable<StructureIndex>() {
+                @Override
+                public int size() {
+                    return length.length;
+                }
+
+                @Override
+                public Iterator<StructureIndex> iterator() {
+                    return IntStream.range(0, length.length)
+                        .mapToObj(i -> new StructureIndex(i, length[i]))
+                        .toList().iterator();
+                }
+            };
+        }
+    }
+
+    class Divider implements IndexMapper {
+        int breakpoint;
+        int length;
+
+        public Divider(int length) {
+            this.length = length;
+            breakpoint = length / 2;
+        }
+
+        @Override
+        public PlaceableIndex placeable(int coordinateValue) {
+            if (coordinateValue < breakpoint)
+                return new PlaceableIndex(0, coordinateValue);
+            return new PlaceableIndex(1, coordinateValue - breakpoint);
+        }
+
+        @Override
+        public SizedIterable<StructureIndex> structure() {
+            return new SizedIterable<>() {
                 @Override
                 public int size() {
                     return 2;

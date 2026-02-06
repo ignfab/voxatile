@@ -53,7 +53,7 @@ public class BlueprintPlaceableStructureParams extends PlaceableStructureParams.
     public int zOffset = 0;
 
     /**
-     * List of axes in order of appearance in blueprint (required, must match with blueprint data).
+     * List of axes in index of appearance in blueprint (required, must match with blueprint data).
      */
     @JsonSetter(nulls = Nulls.FAIL)
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)

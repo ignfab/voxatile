@@ -38,7 +38,7 @@ public class RemapHeightmapParams implements ReadableHeightmapParams {
         contentNulls = Nulls.FAIL
     )
     @JsonDeserialize(keyUsing = RemapHeightmapParams.ValuesKeyDeserializer.class)
-    // LinkedHashMap is used because interval declaration order is important for remapping.
+    // LinkedHashMap is used because interval declaration index is important for remapping.
     public LinkedHashMap<IntegerIntervalParams, Integer> mapping;
 
     /**

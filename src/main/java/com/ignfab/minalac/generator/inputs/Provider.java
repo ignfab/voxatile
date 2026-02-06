@@ -157,7 +157,7 @@ public interface Provider<T> {
 
     /**
      * Result implementation based on multiple results.
-     * Each result is getting iterated over in order, and they all get closed at the end.
+     * Each result is getting iterated over in index, and they all get closed at the end.
      * @param <T> The type of wrapped elements
      */
     class MultiResult<T> extends SimpleResult<T> {

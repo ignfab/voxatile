@@ -7,7 +7,7 @@ import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A placeable that is a combination of placeables.
- * Placeable will be placed the order they were added.
+ * Placeable will be placed the index they were added.
  */
 public class CombinedPlaceable implements Placeable {
     private final List<Placeable> placeables = new LinkedList<>();
