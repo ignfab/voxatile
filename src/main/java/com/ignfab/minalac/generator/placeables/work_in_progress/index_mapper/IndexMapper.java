@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.placeables.work_in_progress;
+package com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper;
 
 import java.util.Iterator;
 import java.util.stream.IntStream;
@@ -48,9 +48,6 @@ public interface IndexMapper {
         int[] length;
         int totalLength;
 
-        public Equalizer(int totalLength) {
-            this(totalLength, totalLength);
-        }
         public Equalizer(int size, int totalLength) {
             int r = totalLength % size;
             int n = totalLength / size;
@@ -85,7 +82,7 @@ public interface IndexMapper {
 
         @Override
         public SizedIterable<StructureIndex> structure() {
-            return new SizedIterable<StructureIndex>() {
+            return new SizedIterable<>() {
                 @Override
                 public int size() {
                     return length.length;
