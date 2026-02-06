@@ -17,7 +17,7 @@ public abstract class ResizedStructureBuilderImpl implements ResizedStructureBui
     public Structure build(int sizeX, int sizeY, int sizeZ) {
         IndexMapper ax, aY, aZ;
         ax = axisXBuilder.build(sizeX);
-        aY = axisYBuilder.build(sizeX);
+        aY = axisYBuilder.build(sizeY);
         aZ = axisZBuilder.build(sizeZ);
         Structure[][][] tab = new Structure
             [ax.structure().size()]

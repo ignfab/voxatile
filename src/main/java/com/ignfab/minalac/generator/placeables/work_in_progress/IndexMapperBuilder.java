@@ -5,6 +5,7 @@ public interface IndexMapperBuilder {
     default int ask(int size) {
         throw new RuntimeException("NOT IMPLEMENTED");
     }
+    int minimalLength();
 
     class Identity implements IndexMapperBuilder {
         int allowedSize;
@@ -19,20 +20,8 @@ public interface IndexMapperBuilder {
         }
 
         @Override
-        public int ask(int size) {
+        public int minimalLength() {
             return allowedSize;
-        }
-    }
-
-    class LastAll implements IndexMapperBuilder {
-        @Override
-        public IndexMapper build(int size) {
-            return new IndexMapper.LastAll(size);
-        }
-
-        @Override
-        public int ask(int size) {
-            return size;
         }
     }
 
@@ -49,6 +38,12 @@ public interface IndexMapperBuilder {
         public IndexMapper build(int size) {
             return new IndexMapper.Stretcher(stretchableCoord, minLength, size);
         }
+
+        @Override
+        public int minimalLength() {
+            // TODO: Il y a un soucis ici sur la définition
+            return minLength + 1;
+        }
     }
 
     class Equalizer implements IndexMapperBuilder {
@@ -61,6 +56,11 @@ public interface IndexMapperBuilder {
         @Override
         public IndexMapper build(int size) {
             return new IndexMapper.Equalizer(preferredSubLength, size);
+        }
+
+        @Override
+        public int minimalLength() {
+            throw new RuntimeException("DUNNO");
         }
     }
 }

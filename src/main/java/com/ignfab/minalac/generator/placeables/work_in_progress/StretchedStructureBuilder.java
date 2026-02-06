@@ -1,22 +1,29 @@
 package com.ignfab.minalac.generator.placeables.work_in_progress;
 
-public class StretchedStructureBuilder implements ResizedStructureBuilder {
-    ResizedStructureBuilder structureBuilder;
-    IndexMapperBuilder axisXBuilder;
-    IndexMapperBuilder axisYBuilder;
-    IndexMapperBuilder axisZBuilder;
+public class StretchedStructureBuilder extends ResizedStructureBuilderImpl {
+    private StretchedStructureBuilder(ResizedStructureBuilder structureBuilder, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
+        super(structureBuilder, axisXBuilder, axisYBuilder, axisZBuilder);
+    }
+
+    public static ResizedStructureBuilder STRETCHED(ResizedStructureBuilder builder, Integer elasticAtX, Integer elasticAtY, Integer elasticAtZ) {
+        IndexMapperBuilder axisXBuilder = (elasticAtX == null) ? new IndexMapperBuilder.Identity(builder.axisX().minimalLength()) : new IndexMapperBuilder.Stretcher(elasticAtX, builder.axisX().minimalLength() - 1);
+        IndexMapperBuilder axisYBuilder = (elasticAtY == null) ? new IndexMapperBuilder.Identity(builder.axisY().minimalLength()) : new IndexMapperBuilder.Stretcher(elasticAtY, builder.axisY().minimalLength() - 1);
+        IndexMapperBuilder axisZBuilder = (elasticAtZ == null) ? new IndexMapperBuilder.Identity(builder.axisZ().minimalLength()) : new IndexMapperBuilder.Stretcher(elasticAtZ, builder.axisZ().minimalLength() - 1);
+        return new StretchedStructureBuilder(builder, axisXBuilder, axisYBuilder, axisZBuilder);
+    }
+    /*
 
     public StretchedStructureBuilder(ResizedStructureBuilder structureBuilder, Integer elasticAtX) {
         this.structureBuilder = structureBuilder;
 
         if (elasticAtX == null)
-            axisXBuilder = new IndexMapperBuilder.Identity(structureBuilder.axisX().ask(0));
+            axisXBuilder = new IndexMapperBuilder.Identity(structureBuilder.axisX().minimalLength());
         else
-            axisXBuilder = new IndexMapperBuilder.Stretcher(elasticAtX, structureBuilder.axisX().ask(0) - 1);
+            axisXBuilder = new IndexMapperBuilder.Stretcher(elasticAtX, structureBuilder.axisX().minimalLength() - 1);
 
 
-        axisYBuilder = new IndexMapperBuilder.Identity(structureBuilder.axisY().ask(0));
-        axisZBuilder = new IndexMapperBuilder.Identity(structureBuilder.axisZ().ask(0));
+        axisYBuilder = new IndexMapperBuilder.Identity(structureBuilder.axisY().minimalLength());
+        axisZBuilder = new IndexMapperBuilder.Identity(structureBuilder.axisZ().minimalLength());
     }
 
     @Override
@@ -53,5 +60,5 @@ public class StretchedStructureBuilder implements ResizedStructureBuilder {
     @Override
     public IndexMapperBuilder axisZ() {
         return axisZBuilder;
-    }
+    }*/
 }

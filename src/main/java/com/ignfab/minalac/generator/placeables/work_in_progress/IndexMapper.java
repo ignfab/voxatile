@@ -6,6 +6,7 @@ import java.util.stream.IntStream;
 public interface IndexMapper {
     PlaceableIndex placeable(int coordinateValue);
     SizedIterable<StructureIndex> structure();
+    int length__maybeWrong();
 
     record PlaceableIndex(int index, int coordinateValue){};
     record StructureIndex(int index, int length){};
@@ -36,41 +37,16 @@ public interface IndexMapper {
                 }
             };
         }
-    }
-
-    class LastAll implements IndexMapper {
-        int length;
-        int breakpoint;
-
-        public LastAll(int length) {
-            this.length = length;
-            this.breakpoint = length / 2;
-        }
 
         @Override
-        public PlaceableIndex placeable(int coordinateValue) {
-            if (coordinateValue < breakpoint)
-                return new PlaceableIndex(0, coordinateValue);
-            return new PlaceableIndex(1, coordinateValue - breakpoint);
-        }
-
-        public SizedIterable<StructureIndex> structure() {
-            return new SizedIterable<>() {
-                @Override
-                public int size() {
-                    return 2;
-                }
-
-                @Override
-                public Iterator<StructureIndex> iterator() {
-                    return IntStream.range(0, 2).mapToObj(i -> new StructureIndex(i, breakpoint + i * (length - 2 * breakpoint))).toList().iterator();
-                }
-            };
+        public int length__maybeWrong() {
+            return length;
         }
     }
 
     class Equalizer implements IndexMapper {
         int[] length;
+        int totalLength;
 
         public Equalizer(int totalLength) {
             this(totalLength, totalLength);
@@ -91,6 +67,7 @@ public interface IndexMapper {
             }
 
             this.length = tab;
+            this.totalLength = totalLength;
         }
 
         @Override
@@ -122,37 +99,10 @@ public interface IndexMapper {
                 }
             };
         }
-    }
-
-    class Divider implements IndexMapper {
-        int breakpoint;
-        int length;
-
-        public Divider(int length) {
-            this.length = length;
-            breakpoint = length / 2;
-        }
 
         @Override
-        public PlaceableIndex placeable(int coordinateValue) {
-            if (coordinateValue < breakpoint)
-                return new PlaceableIndex(0, coordinateValue);
-            return new PlaceableIndex(1, coordinateValue - breakpoint);
-        }
-
-        @Override
-        public SizedIterable<StructureIndex> structure() {
-            return new SizedIterable<>() {
-                @Override
-                public int size() {
-                    return 2;
-                }
-
-                @Override
-                public Iterator<StructureIndex> iterator() {
-                    return IntStream.range(0, 2).mapToObj(i -> new StructureIndex(i, breakpoint + i * (length - 2 * breakpoint))).toList().iterator();
-                }
-            };
+        public int length__maybeWrong() {
+            return totalLength;
         }
     }
 
@@ -192,6 +142,11 @@ public interface IndexMapper {
                     return IntStream.range(0, 1).mapToObj(i -> new StructureIndex(0, length)).toList().iterator();
                 }
             };
+        }
+
+        @Override
+        public int length__maybeWrong() {
+            return length;
         }
     }
 }

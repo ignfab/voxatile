@@ -8,36 +8,36 @@ public class RepeatStructureBuilder extends ResizedStructureBuilderImpl {
     public static ResizedStructureBuilder X(ResizedStructureBuilder builder) {
         return new RepeatStructureBuilder(
             builder,
-            new IndexMapperBuilder.Equalizer(builder.axisX().ask(0)),
-            new IndexMapperBuilder.Identity(builder.axisY().ask(0)),
-            new IndexMapperBuilder.Identity(builder.axisZ().ask(0))
+            new IndexMapperBuilder.Equalizer(builder.axisX().minimalLength()),
+            new IndexMapperBuilder.Identity(builder.axisY().minimalLength()),
+            new IndexMapperBuilder.Identity(builder.axisZ().minimalLength())
         );
     }
 
     public static ResizedStructureBuilder Y(ResizedStructureBuilder builder) {
         return new RepeatStructureBuilder(
             builder,
-            new IndexMapperBuilder.Identity(builder.axisX().ask(0)),
-            new IndexMapperBuilder.Equalizer(builder.axisY().ask(0)),
-            new IndexMapperBuilder.Identity(builder.axisZ().ask(0))
+            new IndexMapperBuilder.Identity(builder.axisX().minimalLength()),
+            new IndexMapperBuilder.Equalizer(builder.axisY().minimalLength()),
+            new IndexMapperBuilder.Identity(builder.axisZ().minimalLength())
         );
     }
 
     public static ResizedStructureBuilder Z(ResizedStructureBuilder builder) {
         return new RepeatStructureBuilder(
             builder,
-            new IndexMapperBuilder.Identity(builder.axisX().ask(0)),
-            new IndexMapperBuilder.Identity(builder.axisY().ask(0)),
-            new IndexMapperBuilder.Equalizer(builder.axisZ().ask(0))
+            new IndexMapperBuilder.Identity(builder.axisX().minimalLength()),
+            new IndexMapperBuilder.Identity(builder.axisY().minimalLength()),
+            new IndexMapperBuilder.Equalizer(builder.axisZ().minimalLength())
         );
     }
 
     public static ResizedStructureBuilder XY(ResizedStructureBuilder builder) {
         return new RepeatStructureBuilder(
             builder,
-            new IndexMapperBuilder.Equalizer(builder.axisX().ask(0)),
-            new IndexMapperBuilder.Equalizer(builder.axisY().ask(0)),
-            new IndexMapperBuilder.Identity(builder.axisZ().ask(0))
+            new IndexMapperBuilder.Equalizer(builder.axisX().minimalLength()),
+            new IndexMapperBuilder.Equalizer(builder.axisY().minimalLength()),
+            new IndexMapperBuilder.Identity(builder.axisZ().minimalLength())
 
         );
     }

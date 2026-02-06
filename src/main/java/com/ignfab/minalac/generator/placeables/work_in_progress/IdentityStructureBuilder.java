@@ -4,12 +4,12 @@ import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.utils.world3d.WorldSize3d;
 
 public class IdentityStructureBuilder implements ResizedStructureBuilder {
-    PlaceableStructure structure;
+    Structure structure;
     IndexMapperBuilder axisXBuilder;
     IndexMapperBuilder axisYBuilder;
     IndexMapperBuilder axisZBuilder;
 
-    public IdentityStructureBuilder(PlaceableStructure structure) {
+    public IdentityStructureBuilder(Structure structure) {
         this.structure = structure;
         WorldSize3d size = structure.limits().size();
         axisXBuilder = new IndexMapperBuilder.Identity(size.x());

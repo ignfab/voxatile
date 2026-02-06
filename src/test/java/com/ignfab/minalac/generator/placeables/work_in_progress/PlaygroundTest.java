@@ -20,14 +20,20 @@ public class PlaygroundTest {
 
         ResizedStructureBuilder rb = RepeatStructureBuilder.XY(new IdentityStructureBuilder(base));
         // rb = new StretchedStructureBuilder(new IdentityStructureBuilder(base), 1);
+        rb = StretchedStructureBuilder.STRETCHED(new IdentityStructureBuilder(base), 1, null, null);
+        rb = RepeatStructureBuilder.X(rb);
+        Structure resized = rb.build(7, 2, 1);
+        rb = StretchedStructureBuilder.STRETCHED(new IdentityStructureBuilder(resized), 3, null, null);
+       resized = rb.build(14, 2, 1);
 
-        Structure resized = rb.build(9, 4, 1);
+       // Structure resized = rb.build(7, 2, 1);
        // System.out.println(rb.axisY().ask(0));
 
         Structure display = resized;
 
-        for (int y = 3 - 1; y >= 0; y--) {
-            for (int x = 0; x < 9; x++) {
+        System.out.println(display.limits());
+        for (int y = display.limits().maxY(); y >= display.limits().minY(); y--) {
+            for (int x = display.limits().minX(); x <= display.limits().maxX(); x++) {
                 System.out.print(display.get(x, y, 0));
             }
             System.out.println();

@@ -17,10 +17,11 @@ public class StructureImpl implements Structure {
         this.axisX = axisX;
         this.axisY = axisY;
         this.axisZ = axisZ;
+        System.out.println(axisY +", " + axisY.length__maybeWrong());
         this.limits = new WorldBBox3d(structures[0][0][0].limits().min(), new WorldSize3d(
-            axisX.structure().size(),
-            axisY.structure().size(),
-            axisZ.structure().size()
+            axisX.length__maybeWrong(),
+            axisY.length__maybeWrong(),
+            axisZ.length__maybeWrong()
         ));
         // TODO : ou alors c'est tacite que 0,0,0 contient le point d'origine
     }
@@ -28,8 +29,8 @@ public class StructureImpl implements Structure {
     @Override
     public Placeable get(int x, int y, int z) {
         IndexMapper.PlaceableIndex aX = axisX.placeable(x);
-        IndexMapper.PlaceableIndex aY = axisX.placeable(y);
-        IndexMapper.PlaceableIndex aZ = axisX.placeable(z);
+        IndexMapper.PlaceableIndex aY = axisY.placeable(y);
+        IndexMapper.PlaceableIndex aZ = axisZ.placeable(z);
         return structures
             [aX.index()]
             [aY.index()]
