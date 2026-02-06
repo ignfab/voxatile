@@ -19,6 +19,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
 
     @Override
     public Structure build(int sizeX, int sizeY, int sizeZ) {
+        checkResizability(sizeX, sizeY, sizeZ);
         IndexMapper ax, aY, aZ;
         ax = axisXBuilder.build(sizeX);
         aY = axisYBuilder.build(sizeY);

@@ -236,15 +236,8 @@ public final class PlaceableStructure implements Structure {
 
         @Override
         public Structure build(int sizeX, int sizeY, int sizeZ) {
-            // TODO: revoir ça
-         /*
-        if (sizeX != axisXBuilder.ask(sizeX) &&
-            sizeY != axisYBuilder.ask(sizeY) &&
-            sizeZ != axisZBuilder.ask(sizeZ) )
-            throw new RuntimeException("NOt buildable");
-
-
-         */
+            // TODO: La vérification ne semble pas nessaire ici mais vérifier
+            // checkResizability(sizeX, sizeY, sizeZ);
             Structure[][][] tab = new Structure[1][1][1];
             tab[0][0][0] = structure;
 

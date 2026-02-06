@@ -23,6 +23,11 @@ public interface IndexMapperBuilder {
         public int minimalLength() {
             return allowedSize;
         }
+
+        @Override
+        public int ask(int size) {
+            return allowedSize;
+        }
     }
 
     class Stretcher implements IndexMapperBuilder {
@@ -44,6 +49,11 @@ public interface IndexMapperBuilder {
             // TODO: Il y a un soucis ici sur la définition
             return minLength + 1;
         }
+
+        @Override
+        public int ask(int size) {
+            return Math.max(minLength + 1, size);
+        }
     }
 
     class Equalizer implements IndexMapperBuilder {
@@ -60,7 +70,13 @@ public interface IndexMapperBuilder {
 
         @Override
         public int minimalLength() {
-            throw new RuntimeException("DUNNO");
+            return preferredSubLength;
+            // TODO: Not tested
+        }
+
+        @Override
+        public int ask(int size) {
+            return Math.max(size, preferredSubLength);
         }
     }
 }

@@ -53,9 +53,10 @@ public class PlaygroundTest {
             .build()
             .toIdentityResizedBuilder();
 
-        ResizedStructureBuilder rb = DefaultResizedStructureBuilder.STRETCHED(base, 0, 0, null);
+        ResizedStructureBuilder rb = DefaultResizedStructureBuilder.STRETCHED(base, 0, null, null);
+        //rb = DefaultResizedStructureBuilder.REPEAT_XY(rb);
 
-        Structure resized = rb.build(8, 2, 1);
+        Structure resized = rb.build(5, 2, 1);
 
         Structure display = resized;
 
