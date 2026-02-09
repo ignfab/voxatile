@@ -107,7 +107,7 @@ public class PlaygroundTest {
         builders.add(builderB);
         System.out.println(builders.get(1).axisX());
 
-        ResizedStructureBuilder concat = new NewConcatPOC(builders);
+        ResizedStructureBuilder concat = CImpl.hi(builderAC, builderB);//new NewConcatPOC(builders);
 
         Structure resized = concat.build(21, 8, 1);
         // Structure resized = AC.build(2, 8, 1);
