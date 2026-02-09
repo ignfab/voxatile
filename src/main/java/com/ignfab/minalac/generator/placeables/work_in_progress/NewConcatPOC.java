@@ -7,7 +7,6 @@ import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.Ind
 
 public class NewConcatPOC implements ResizedStructureBuilder {
     List<ResizedStructureBuilder> builders;
-    ResizedStructureBuilder[][][] structureBuilders;
     IndexMapperBuilder axisX;
     IndexMapperBuilder axisY;
     IndexMapperBuilder axisZ;
@@ -16,9 +15,12 @@ public class NewConcatPOC implements ResizedStructureBuilder {
         this.builders = builders;
         ResizedStructureBuilder builderAC = builders.get(0);
         ResizedStructureBuilder builderB = builders.get(1);
+        int minY = Math.max(builderAC.axisY().minimalLength(), builderB.axisY().minimalLength());
+        int minZ = Math.max(builderAC.axisZ().minimalLength(), builderB.axisZ().minimalLength());
+
         axisX = new IndexMapperBuilder.MiddleTakesAll(builderAC.axisX().minimalLength());
-        axisY = new IndexMapperBuilder.Identity(builderB.axisY().minimalLength());
-        axisZ = new IndexMapperBuilder.Identity(builderB.axisZ().minimalLength());
+        axisY = new IndexMapperBuilder.Identity(minY);
+        axisZ = new IndexMapperBuilder.Identity(minZ);
     }
 
     @Override
@@ -27,7 +29,7 @@ public class NewConcatPOC implements ResizedStructureBuilder {
         IndexMapper aX = axisX.build(sizeX);
         IndexMapper aY = axisY.build(sizeY);
         IndexMapper aZ = axisZ.build(sizeZ);
-        structureBuilders = new ResizedStructureBuilder[aX.structure().size()][aY.structure().size()][aZ.structure().size()];
+        ResizedStructureBuilder[][][]structureBuilders = new ResizedStructureBuilder[aX.structure().size()][aY.structure().size()][aZ.structure().size()];
         for (IndexMapper.StructureIndex aXi : aX.structure()) {
             for (IndexMapper.StructureIndex aYi : aY.structure()) {
                 for (IndexMapper.StructureIndex aZi : aZ.structure()) {
@@ -35,7 +37,7 @@ public class NewConcatPOC implements ResizedStructureBuilder {
                 }
             }
         }
-        return new VirtualStructureBuilders(structureBuilders, aX, aY, aZ);
+        return new VirtualStructure(structureBuilders, aX, aY, aZ);
     }
 
     private static int indexesBuilderToIndexList(int iX, int iY, int iZ) {

@@ -10,7 +10,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
     private final IndexMapperBuilder axisYBuilder;
     private final IndexMapperBuilder axisZBuilder;
 
-    protected DefaultResizedStructureBuilder(ResizedStructureBuilder builder, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
+    private DefaultResizedStructureBuilder(ResizedStructureBuilder builder, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
         this.builder = builder;
         this.axisXBuilder = axisXBuilder;
         this.axisYBuilder = axisYBuilder;
@@ -91,10 +91,11 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
         );
     }
 
-    public static ResizedStructureBuilder STRETCHED(ResizedStructureBuilder builder, Integer elasticAtX, Integer elasticAtY, Integer elasticAtZ) {
-        IndexMapperBuilder axisXBuilder = (elasticAtX == null) ? new IndexMapperBuilder.Identity(builder.axisX().minimalLength()) : new IndexMapperBuilder.Stretcher(elasticAtX, builder.axisX().minimalLength() - 1);
-        IndexMapperBuilder axisYBuilder = (elasticAtY == null) ? new IndexMapperBuilder.Identity(builder.axisY().minimalLength()) : new IndexMapperBuilder.Stretcher(elasticAtY, builder.axisY().minimalLength() - 1);
-        IndexMapperBuilder axisZBuilder = (elasticAtZ == null) ? new IndexMapperBuilder.Identity(builder.axisZ().minimalLength()) : new IndexMapperBuilder.Stretcher(elasticAtZ, builder.axisZ().minimalLength() - 1);
+    // TODO: A garder pour repro "bug"
+    private static ResizedStructureBuilder STRETCHED(ResizedStructureBuilder builder, Integer elasticAtX, Integer elasticAtY, Integer elasticAtZ) {
+        IndexMapperBuilder axisXBuilder = (elasticAtX == null) ? new IndexMapperBuilder.Identity(builder.axisX().minimalLength()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtX, builder.axisX().minimalLength());
+        IndexMapperBuilder axisYBuilder = (elasticAtY == null) ? new IndexMapperBuilder.Identity(builder.axisY().minimalLength()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtY, builder.axisY().minimalLength());
+        IndexMapperBuilder axisZBuilder = (elasticAtZ == null) ? new IndexMapperBuilder.Identity(builder.axisZ().minimalLength()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtZ, builder.axisZ().minimalLength());
         return new DefaultResizedStructureBuilder(builder, axisXBuilder, axisYBuilder, axisZBuilder);
     }
 }

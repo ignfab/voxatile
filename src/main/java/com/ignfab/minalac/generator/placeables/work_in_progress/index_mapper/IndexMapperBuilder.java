@@ -30,29 +30,54 @@ public interface IndexMapperBuilder {
         }
     }
 
-    class Stretcher implements IndexMapperBuilder {
+    // TODO: je met adaptatif car ça peut reduire
+    class AdaptativeStretcher implements IndexMapperBuilder {
         int stretchableCoord;
-        int minLength;
+        int lengthAtRest;
 
-        public Stretcher(int stretchableCoord, int minLength) {
+        public AdaptativeStretcher(int stretchableCoord, int lengthAtRest) {
             this.stretchableCoord = stretchableCoord;
-            this.minLength = minLength;
+            this.lengthAtRest = lengthAtRest;
         }
 
         @Override
         public IndexMapper build(int size) {
-            return new IndexMapper.Stretcher(stretchableCoord, minLength, size);
+            return new IndexMapper.Stretcher(stretchableCoord, lengthAtRest, size);
         }
 
         @Override
         public int minimalLength() {
             // TODO: Il y a un soucis ici sur la définition
-            return minLength + 1;
+            return lengthAtRest - 1;
         }
 
         @Override
         public int ask(int size) {
-            return Math.max(minLength + 1, size);
+            return Math.max(lengthAtRest - 1, size);
+        }
+    }
+
+    // TODO : a voir si utile
+    class Delegater implements IndexMapperBuilder {
+        IndexMapperBuilder delegatee;
+
+        public Delegater(IndexMapperBuilder delegatee) {
+            this.delegatee = delegatee;
+        }
+
+        @Override
+        public IndexMapper build(int size) {
+            return delegatee.build(size);
+        }
+
+        @Override
+        public int minimalLength() {
+            return delegatee.minimalLength();
+        }
+
+        @Override
+        public int ask(int size) {
+            return delegatee.ask(size);
         }
     }
 

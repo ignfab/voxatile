@@ -105,18 +105,22 @@ public interface IndexMapper {
 
     class Stretcher implements IndexMapper {
         int stretchableCoord;
-        int minimumLength;
+        int lengthAtRest;
         int length;
 
-        public Stretcher(int stretchableCoord, int minimumLength, int length) {
+        // lengthAtRest is the "original size"
+        // 3 cas : taille demande = taille de la struct;
+        // taille demandé = taille struct - 1 (la colonne disparait)
+        // taille demandé > taille struct (la colonne est repete)
+        public Stretcher(int stretchableCoord, int lengthAtRest, int length) {
             this.stretchableCoord = stretchableCoord;
-            this.minimumLength = minimumLength;
+            this.lengthAtRest = lengthAtRest;
             this.length = length;
         }
 
         @Override
         public PlaceableIndex placeable(int coordinateValue) {
-            int r = Math.max(length - (minimumLength + 1), -1);
+            int r = length - lengthAtRest;
             if (coordinateValue < stretchableCoord) {
                 return new PlaceableIndex(0, coordinateValue);
             } else if (coordinateValue <= stretchableCoord + r) {
@@ -195,8 +199,9 @@ public interface IndexMapper {
     }
 
     public static void main(String[] args) {
-        int total = 9;
-        IndexMapper map = new MiddleTakesAll(total, 2);
+        int total = 2;
+        // IndexMapper map = new MiddleTakesAll(total, 2);
+        IndexMapper map = new Stretcher(0, 3, total);
         for (int c = 0; c < total; c++) {
             map.placeable(c);
             System.out.printf("%d -> %s %n", c, map.placeable(c));

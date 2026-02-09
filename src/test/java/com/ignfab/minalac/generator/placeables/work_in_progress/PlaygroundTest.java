@@ -10,40 +10,6 @@ import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.Concat;
 
 public class PlaygroundTest {
-    @Test
-    public void foo() {
-        /*
-        PlaceableStructure base = PlaceableStructure.builder()
-            .set(0, 0, 0, new TestingVoxel("1"))
-            .set(1, 0, 0, new TestingVoxel("2"))
-            .set(2, 0, 0, new TestingVoxel("3"))
-            .set(0, 1, 0, new TestingVoxel("4"))
-            .set(1, 1, 0, new TestingVoxel("5"))
-            .set(2, 1, 0, new TestingVoxel("6"))
-            //.set(2, 2, 0, new TestingVoxel("?"))
-            .build();
-
-        ResizedStructureBuilder rb = DefaultResizedStructureBuilder.REPEAT_XY(new IdentityOldStructureBuilder(base));
-        // rb = new StretchedStructureBuilder(new IdentityStructureBuilder(base), 1);
-        rb = DefaultResizedStructureBuilder.STRETCHED(new IdentityOldStructureBuilder(base), 1, null, null);
-        rb = DefaultResizedStructureBuilder.REPEAT_X(rb);
-        Structure resized = rb.build(7, 2, 1);
-        rb = DefaultResizedStructureBuilder.STRETCHED(new IdentityOldStructureBuilder(resized), 3, null, null);
-        resized = rb.build(14, 2, 1);
-
-        // Structure resized = rb.build(7, 2, 1);
-        // System.out.println(rb.axisY().ask(0));
-
-        Structure display = resized;
-
-        System.out.println(display.limits());
-        for (int y = display.limits().maxY(); y >= display.limits().minY(); y--) {
-            for (int x = display.limits().minX(); x <= display.limits().maxX(); x++) {
-                System.out.print(display.get(x, y, 0));
-            }
-            System.out.println();
-        }*/
-    }
 
     @Test
     public void foo2() {
@@ -55,16 +21,16 @@ public class PlaygroundTest {
             .set(1, 1, 0, new TestingVoxel("5"))
             .set(2, 1, 0, new TestingVoxel("6"))
             .build()
-            .toIdentityResizedBuilder();
+            .toStretchedXBuilder(0);
 
-        ResizedStructureBuilder rb = DefaultResizedStructureBuilder.STRETCHED(base, 0, null, null);
-        //rb = DefaultResizedStructureBuilder.REPEAT_XY(rb);
+        // TODO : Il y a un problème dans la manière dont on chaine
+        // CF  DefaultResizedStructureBuilder.STRETCHED
+        // ResizedStructureBuilder rb = DefaultResizedStructureBuilder.STRETCHED(base, 0, null, null);
+        // Structure bug = rb.build(4, 2, 1); // 1111
 
-        Structure resized = rb.build(5, 2, 1);
-
+        Structure resized = base.build(4, 2, 1); // 1123
         Structure display = resized;
 
-        // System.out.println(display.limits());
         for (int y = display.limits().maxY(); y >= display.limits().minY(); y--) {
             for (int x = display.limits().minX(); x <= display.limits().maxX(); x++) {
                 System.out.print(display.get(x, y, 0));
@@ -83,7 +49,7 @@ public class PlaygroundTest {
             .set(1, 1, 0, new TestingVoxel("5"))
             .set(2, 1, 0, new TestingVoxel("6"))
             .build()
-            .toIdentityResizedBuilder();
+            .toStretchedXYBuilder(0, 0);
 
         ResizedStructureBuilder baseTop = PlaceableStructure.builder()
             .set(0, 0, 0, new TestingVoxel("a"))
@@ -93,10 +59,10 @@ public class PlaygroundTest {
             .set(1, 1, 0, new TestingVoxel("e"))
             .set(2, 1, 0, new TestingVoxel("f"))
             .build()
-            .toIdentityResizedBuilder();
+            .toStretchedXYBuilder(0, 1);
 
-        ResizedStructureBuilder bottom = DefaultResizedStructureBuilder.STRETCHED(baseBottom, 0, 0, null);
-        ResizedStructureBuilder top = DefaultResizedStructureBuilder.REPEAT_XY(DefaultResizedStructureBuilder.STRETCHED(baseTop, 0, 1, null));
+        ResizedStructureBuilder bottom = baseBottom;
+        ResizedStructureBuilder top = DefaultResizedStructureBuilder.REPEAT_XY(baseTop);
 
         ResizedStructureBuilder concat = new Concat(top, bottom);
 
@@ -122,7 +88,7 @@ public class PlaygroundTest {
             .set(1, 1, 0, new TestingVoxel("5"))
             .set(2, 1, 0, new TestingVoxel("6"))
             .build()
-            .toIdentityResizedBuilder();
+            .toStretchedXYBuilder(1, 1);
 
         ResizedStructureBuilder B = PlaceableStructure.builder()
             .set(0, 0, 0, new TestingVoxel("a"))
@@ -132,17 +98,19 @@ public class PlaygroundTest {
             .set(1, 1, 0, new TestingVoxel("e"))
             .set(2, 1, 0, new TestingVoxel("f"))
             .build()
-            .toIdentityResizedBuilder();
+            .toStretchedXBuilder(0);
 
-        ResizedStructureBuilder builderAC = DefaultResizedStructureBuilder.STRETCHED(AC, 0, 0, null);
-        ResizedStructureBuilder builderB = DefaultResizedStructureBuilder.REPEAT_XY(DefaultResizedStructureBuilder.STRETCHED(B, 0, 1, null));
+        ResizedStructureBuilder builderAC = AC;
+        ResizedStructureBuilder builderB = DefaultResizedStructureBuilder.REPEAT_XY(B);
         List<ResizedStructureBuilder> builders = new ArrayList<>();
         builders.add(builderAC);
         builders.add(builderB);
+        System.out.println(builders.get(1).axisX());
 
         ResizedStructureBuilder concat = new NewConcatPOC(builders);
 
-        Structure resized = concat.build(20, 7, 1);
+        Structure resized = concat.build(21, 8, 1);
+        // Structure resized = AC.build(2, 8, 1);
 
         Structure display = resized;
 
@@ -153,4 +121,14 @@ public class PlaygroundTest {
             System.out.println();
         }
     }
+
+    public static void printo(Structure display) {
+        for (int y = display.limits().maxY(); y >= display.limits().minY(); y--) {
+            for (int x = display.limits().minX(); x <= display.limits().maxX(); x++) {
+                System.out.print(display.get(x, y, 0));
+            }
+            System.out.println();
+        }
+    }
 }
+

@@ -9,7 +9,6 @@ import com.ignfab.minalac.generator.placeables.work_in_progress.VirtualStructure
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapperBuilder;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.utils.world3d.WorldSize3d;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
@@ -90,7 +89,49 @@ public final class PlaceableStructure implements Structure {
     }
 
     public ResizedStructureBuilder toIdentityResizedBuilder() {
-        return new IdentityStructureBuilder(this);
+        return stretched(null, null, null);
+    }
+
+    public ResizedStructureBuilder toStretchedXBuilder(int x) {
+        return stretched(x, null, null);
+    }
+
+    public ResizedStructureBuilder toStretchedYBuilder(int y) {
+        return stretched(null, y, null);
+    }
+
+    public ResizedStructureBuilder toStretchedZBuilder(int z) {
+        return stretched(null, null, z);
+    }
+
+    public ResizedStructureBuilder toStretchedXYBuilder(int x, int y) {
+        return stretched(x, y, null);
+    }
+
+    public ResizedStructureBuilder toStretchedYZBuilder(int y, int z) {
+        return stretched(null, y, z);
+    }
+
+    public ResizedStructureBuilder toStretchedXZBuilder(int x, int z) {
+        return stretched(x, null, z);
+    }
+
+    public ResizedStructureBuilder toStretchedXYZBuilder(int x, int y, int z) {
+        return stretched(x, y, z);
+    }
+
+    private ResizedStructureBuilder stretched(Integer elasticAtX, Integer elasticAtY, Integer elasticAtZ) {
+        if (elasticAtX != null && (elasticAtX < limits.minX() || limits.maxX() < elasticAtX))
+            throw new RuntimeException("x not within");
+        if (elasticAtY != null && (elasticAtY < limits.minY() || limits.maxY() < elasticAtY))
+            throw new RuntimeException("y not within");
+        if (elasticAtZ != null && (elasticAtZ < limits.minZ() || limits.maxZ() < elasticAtZ))
+            throw new RuntimeException("z not within");
+
+        IndexMapperBuilder axisXBuilder = (elasticAtX == null) ? new IndexMapperBuilder.Identity(limits.sizeX()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtX, limits.sizeX());
+        IndexMapperBuilder axisYBuilder = (elasticAtY == null) ? new IndexMapperBuilder.Identity(limits.sizeY()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtY, limits.sizeY());
+        IndexMapperBuilder axisZBuilder = (elasticAtZ == null) ? new IndexMapperBuilder.Identity(limits.sizeZ()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtZ, limits.sizeZ());
+        return new ResizedPlaceableStructureBuilder(this, axisXBuilder, axisYBuilder, axisZBuilder);
     }
 
     /**
@@ -220,24 +261,22 @@ public final class PlaceableStructure implements Structure {
         }
     }
 
-    private static class IdentityStructureBuilder implements ResizedStructureBuilder {
+    private static class ResizedPlaceableStructureBuilder implements ResizedStructureBuilder {
         PlaceableStructure structure;
         IndexMapperBuilder axisXBuilder;
         IndexMapperBuilder axisYBuilder;
         IndexMapperBuilder axisZBuilder;
 
-        public IdentityStructureBuilder(PlaceableStructure structure) {
+        public ResizedPlaceableStructureBuilder(PlaceableStructure structure, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
             this.structure = structure;
-            WorldSize3d size = structure.limits().size();
-            axisXBuilder = new IndexMapperBuilder.Identity(size.x());
-            axisYBuilder = new IndexMapperBuilder.Identity(size.y());
-            axisZBuilder = new IndexMapperBuilder.Identity(size.z());
+            this.axisXBuilder = axisXBuilder;
+            this.axisYBuilder = axisYBuilder;
+            this.axisZBuilder = axisZBuilder;
         }
 
         @Override
         public Structure build(int sizeX, int sizeY, int sizeZ) {
-            // TODO: La vérification ne semble pas nessaire ici mais vérifier
-            // checkResizability(sizeX, sizeY, sizeZ);
+            checkResizability(sizeX, sizeY, sizeZ);
             Structure[][][] tab = new Structure[1][1][1];
             tab[0][0][0] = structure;
 
