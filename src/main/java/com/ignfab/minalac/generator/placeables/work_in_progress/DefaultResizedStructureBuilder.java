@@ -10,7 +10,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
     private final IndexMapperBuilder axisYBuilder;
     private final IndexMapperBuilder axisZBuilder;
 
-    private DefaultResizedStructureBuilder(ResizedStructureBuilder builder, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
+    protected DefaultResizedStructureBuilder(ResizedStructureBuilder builder, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
         this.builder = builder;
         this.axisXBuilder = axisXBuilder;
         this.axisYBuilder = axisYBuilder;

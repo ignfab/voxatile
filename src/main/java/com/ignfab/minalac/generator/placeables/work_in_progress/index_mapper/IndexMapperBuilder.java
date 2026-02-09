@@ -83,6 +83,10 @@ public interface IndexMapperBuilder {
     class MiddleTakesAll implements IndexMapperBuilder {
         int edgeLength;
 
+        public MiddleTakesAll(int edgeLength) {
+            this.edgeLength = edgeLength;
+        }
+
         @Override
         public IndexMapper build(int size) {
             return new IndexMapper.MiddleTakesAll(size, edgeLength);

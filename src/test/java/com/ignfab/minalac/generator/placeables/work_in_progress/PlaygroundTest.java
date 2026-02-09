@@ -1,5 +1,8 @@
 package com.ignfab.minalac.generator.placeables.work_in_progress;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
@@ -98,6 +101,48 @@ public class PlaygroundTest {
         ResizedStructureBuilder concat = new Concat(top, bottom);
 
         Structure resized = concat.build(11, 7, 1);
+
+        Structure display = resized;
+
+        for (int y = display.limits().maxY(); y >= display.limits().minY(); y--) {
+            for (int x = display.limits().minX(); x <= display.limits().maxX(); x++) {
+                System.out.print(display.get(x, y, 0));
+            }
+            System.out.println();
+        }
+    }
+
+    @Test
+    public void foo4() {
+        ResizedStructureBuilder AC = PlaceableStructure.builder()
+            .set(0, 0, 0, new TestingVoxel("1"))
+            .set(1, 0, 0, new TestingVoxel("2"))
+            .set(2, 0, 0, new TestingVoxel("3"))
+            .set(0, 1, 0, new TestingVoxel("4"))
+            .set(1, 1, 0, new TestingVoxel("5"))
+            .set(2, 1, 0, new TestingVoxel("6"))
+            .build()
+            .toIdentityResizedBuilder();
+
+        ResizedStructureBuilder B = PlaceableStructure.builder()
+            .set(0, 0, 0, new TestingVoxel("a"))
+            .set(1, 0, 0, new TestingVoxel("b"))
+            .set(2, 0, 0, new TestingVoxel("c"))
+            .set(0, 1, 0, new TestingVoxel("d"))
+            .set(1, 1, 0, new TestingVoxel("e"))
+            .set(2, 1, 0, new TestingVoxel("f"))
+            .build()
+            .toIdentityResizedBuilder();
+
+        ResizedStructureBuilder builderAC = DefaultResizedStructureBuilder.STRETCHED(AC, 0, 0, null);
+        ResizedStructureBuilder builderB = DefaultResizedStructureBuilder.REPEAT_XY(DefaultResizedStructureBuilder.STRETCHED(B, 0, 1, null));
+        List<ResizedStructureBuilder> builders = new ArrayList<>();
+        builders.add(builderAC);
+        builders.add(builderB);
+
+        ResizedStructureBuilder concat = new NewConcatPOC(builders);
+
+        Structure resized = concat.build(20, 7, 1);
 
         Structure display = resized;
 
