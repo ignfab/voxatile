@@ -146,4 +146,64 @@ public interface IndexMapper {
             return length;
         }
     }
+
+    class MiddleTakesAll implements IndexMapper {
+        int totalLength;
+        int breakPointLeft;
+        int breakPointRight;
+        int[] tempTab;
+
+        public MiddleTakesAll(int totalLength, int edgeLength) {
+            this.totalLength = totalLength;
+            this.breakPointLeft = edgeLength;
+            this.breakPointRight = totalLength - edgeLength;
+            tempTab = new int[3];
+            tempTab[0] = edgeLength;
+            tempTab[2] = edgeLength;
+            tempTab[1] = totalLength - 2 * edgeLength;
+        }
+
+        @Override
+        public PlaceableIndex placeable(int coordinateValue) {
+            if (coordinateValue < breakPointLeft)
+                return new PlaceableIndex(0, coordinateValue);
+            else if (coordinateValue < breakPointRight)
+                return new PlaceableIndex(1, coordinateValue - breakPointLeft);
+            else
+                return new PlaceableIndex(2, coordinateValue - breakPointRight);
+        }
+
+        @Override
+        public SizedIterable<StructureIndex> structure() {
+            return new SizedIterable<>() {
+                @Override
+                public int size() {
+                    return 3;
+                }
+
+                @Override
+                public Iterator<StructureIndex> iterator() {
+                    return IntStream.range(0, 3).mapToObj( i -> new StructureIndex(i, tempTab[i])).toList().iterator();
+                }
+            };
+        }
+
+        @Override
+        public int length__maybeWrong() {
+            return totalLength;
+        }
+    }
+
+    public static void main(String[] args) {
+        int total = 9;
+        IndexMapper map = new MiddleTakesAll(total, 2);
+        for (int c = 0; c < total; c++) {
+            map.placeable(c);
+            System.out.printf("%d -> %s %n", c, map.placeable(c));
+        }
+
+        for(StructureIndex s : map.structure()){
+            System.out.println(s);
+        }
+    }
 }

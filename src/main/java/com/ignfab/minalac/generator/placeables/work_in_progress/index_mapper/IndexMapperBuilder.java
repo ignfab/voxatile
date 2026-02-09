@@ -79,4 +79,25 @@ public interface IndexMapperBuilder {
             return Math.max(size, preferredSubLength);
         }
     }
+
+    class MiddleTakesAll implements IndexMapperBuilder {
+        int edgeLength;
+
+        @Override
+        public IndexMapper build(int size) {
+            return new IndexMapper.MiddleTakesAll(size, edgeLength);
+        }
+
+        @Override
+        public int ask(int size) {
+            if (size - 2 * edgeLength > 0)
+                return size;
+            return 2 * edgeLength + 1;
+        }
+
+        @Override
+        public int minimalLength() {
+            return 2 * edgeLength + 1;
+        }
+    }
 }
