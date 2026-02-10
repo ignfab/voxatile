@@ -84,6 +84,7 @@ public interface IndexMapperBuilder {
 
     class Equalizer implements IndexMapperBuilder {
         int preferredSubLength;
+        IndexMapperBuilder childBuilder;
 
         public Equalizer(int preferredSubLength) {
             this.preferredSubLength = preferredSubLength;
@@ -102,7 +103,19 @@ public interface IndexMapperBuilder {
 
         @Override
         public int ask(int size) {
-            return Math.max(size, preferredSubLength);
+            int minSize = childBuilder.minimalLength();
+            if (size == 0 || size < minSize)
+                return 0;
+            int r = size % minSize;
+            for (int i = 0; i <= r; i ++) {
+                if (childBuilder.ask(minSize + i) == minSize + i)
+                    return size;
+            }
+            return 0;
+            // sinon pas possible
+
+
+            // return Math.max(size, preferredSubLength);
         }
     }
 

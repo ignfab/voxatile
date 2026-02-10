@@ -6,17 +6,17 @@ import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.Ind
 // TODO: Might be merged with ResizedStructureBuilder
 public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
     // private final ResizedStructureBuilder builder;
-    protected IndexesToResizedStructureBuilder builder;
+    protected IndexesToResizedStructureBuilder provider;
     private final IndexMapperBuilder axisXBuilder;
     private final IndexMapperBuilder axisYBuilder;
     private final IndexMapperBuilder axisZBuilder;
 
-    private DefaultResizedStructureBuilder(ResizedStructureBuilder builder, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
-        this((i, j, k) -> builder, axisXBuilder, axisYBuilder, axisZBuilder);
+    private DefaultResizedStructureBuilder(ResizedStructureBuilder provider, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
+        this((i, j, k) -> provider, axisXBuilder, axisYBuilder, axisZBuilder);
     }
 
-    public DefaultResizedStructureBuilder(IndexesToResizedStructureBuilder builder, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
-        this.builder = builder;
+    public DefaultResizedStructureBuilder(IndexesToResizedStructureBuilder provider, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
+        this.provider = provider;
         this.axisXBuilder = axisXBuilder;
         this.axisYBuilder = axisYBuilder;
         this.axisZBuilder = axisZBuilder;
@@ -24,7 +24,20 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
 
     @Override
     public Structure build(int sizeX, int sizeY, int sizeZ) {
-        checkResizability(sizeX, sizeY, sizeZ);
+        // checkResizability(sizeX, sizeY, sizeZ);
+        // RepeatX -> Equalizer
+        if ( axisXBuilder.minimalLength() <= sizeX) {
+            // On est bon, mais ça depend du builder enfant
+            IndexMapperBuilder childX = provider.whichOne(0, 0, 0).axisX();
+            int r = sizeX % childX.minimalLength();
+            if (r == 0) {
+                // On est bon aussi, autres cas c'est celui du streched
+                // Autrement dit si il peut faire childX.ask(taille-sous-segment) == taille-sous-segment
+            }
+
+        }
+
+
         IndexMapper ax, aY, aZ;
         ax = axisXBuilder.build(sizeX);
         aY = axisYBuilder.build(sizeY);
@@ -36,7 +49,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
         for (IndexMapper.StructureIndex iX : ax.structure()) {
             for (IndexMapper.StructureIndex iY : aY.structure()) {
                 for (IndexMapper.StructureIndex iZ : aZ.structure()) {
-                    tab[iX.index()][iY.index()][iZ.index()] = builder.whichOne(iX.index(), iY.index(), iZ.index()).build(iX.length(), iY.length(), iZ.length());
+                    tab[iX.index()][iY.index()][iZ.index()] = provider.whichOne(iX.index(), iY.index(), iZ.index()).build(iX.length(), iY.length(), iZ.length());
                 }
             }
         }
@@ -55,8 +68,6 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
         if (axisX().ask(sizeX) != sizeX)
             throw new RuntimeException(String.format("Asked sizeX (%d) do not match the allowed (%d)", sizeX, axisX().ask(sizeX)));
         if (axisY().ask(sizeY) != sizeY) {
-            System.out.println(this);
-            System.out.println(this.axisYBuilder);
             throw new RuntimeException(String.format("Asked sizeY (%d) do not match the allowed (%d)", sizeY, axisY().ask(sizeY)));
         }if (axisZ().ask(sizeZ) != sizeZ)
             throw new RuntimeException(String.format("Asked sizeZ (%d) do not match the allowed (%d)", sizeZ, axisZ().ask(sizeZ)));
@@ -105,6 +116,19 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
     }
 
     public static ResizedStructureBuilder REPEAT_XY(ResizedStructureBuilder builder) {
+        builder.axisX().ask(8);
+        /*
+        if ( axisXBuilder.minimalLength() <= sizeX) {
+            // On est bon, mais ça depend du builder enfant
+            IndexMapperBuilder childX = provider.whichOne(0, 0, 0).axisX();
+            int r = sizeX % childX.minimalLength();
+            if (r == 0) {
+                // On est bon aussi, autres cas c'est celui du streched
+                // Autrement dit si il peut faire childX.ask(taille-sous-segment) == taille-sous-segment
+            }
+
+        }
+        */
         return new DefaultResizedStructureBuilder(
             builder,
             new IndexMapperBuilder.Equalizer(builder.axisX().minimalLength()),
@@ -129,7 +153,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
         return new DefaultResizedStructureBuilder(
             (i, j, k) -> (i == 1) ? middle : edges,
             new IndexMapperBuilder.MiddleTakesAll(edges.axisX().minimalLength()),
-            new IndexMapperBuilder.Identity(minY),
+            new IndexMapperBuilder.Delegater(edges.axisY()),
             new IndexMapperBuilder.Identity(minZ)
         );
     }
