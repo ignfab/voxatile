@@ -7,6 +7,8 @@ public interface ResizedStructureBuilder {
     IndexMapperBuilder axisX();
     IndexMapperBuilder axisY();
     IndexMapperBuilder axisZ();
+
+
     default void checkResizability(int sizeX, int sizeY, int sizeZ) {
         if (sizeX <= 0)
             throw new RuntimeException(String.format("sizeX must be strictly positive (Asked : %d)", sizeX));

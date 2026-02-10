@@ -9,6 +9,7 @@ public interface IndexMapper {
     int length__maybeWrong();
 
     record PlaceableIndex(int index, int coordinateValue){};
+    // TODO: length -> size
     record StructureIndex(int index, int length){};
 
     class Identity implements IndexMapper {

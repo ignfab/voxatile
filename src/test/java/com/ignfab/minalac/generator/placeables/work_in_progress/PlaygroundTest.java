@@ -51,6 +51,7 @@ public class PlaygroundTest {
             .build()
             .toStretchedXYBuilder(0, 0);
 
+
         ResizedStructureBuilder baseTop = PlaceableStructure.builder()
             .set(0, 0, 0, new TestingVoxel("a"))
             .set(1, 0, 0, new TestingVoxel("b"))
