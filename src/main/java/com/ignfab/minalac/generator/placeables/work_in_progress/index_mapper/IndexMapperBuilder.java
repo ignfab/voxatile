@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper;
 
 public interface IndexMapperBuilder {
     IndexMapper build(int size);
+    // TODO: PE maxSizeunder(
     default int ask(int size) {
         throw new RuntimeException("NOT IMPLEMENTED");
     }
