@@ -6,7 +6,11 @@ import java.util.stream.IntStream;
 public interface IndexMapper {
     PlaceableIndex placeable(int coordinateValue);
     SizedIterable<StructureIndex> structure();
-    int length__maybeWrong();
+
+    /**
+     * {Returns the total size of this index axis mapper.}
+     */
+    int size();
 
     record PlaceableIndex(int index, int coordinateValue){};
     // TODO: length -> size
@@ -40,7 +44,7 @@ public interface IndexMapper {
         }
 
         @Override
-        public int length__maybeWrong() {
+        public int size() {
             return length;
         }
     }
@@ -99,7 +103,7 @@ public interface IndexMapper {
         }
 
         @Override
-        public int length__maybeWrong() {
+        public int size() {
             return totalLength;
         }
     }
@@ -147,7 +151,7 @@ public interface IndexMapper {
         }
 
         @Override
-        public int length__maybeWrong() {
+        public int size() {
             return length;
         }
     }
@@ -194,7 +198,7 @@ public interface IndexMapper {
         }
 
         @Override
-        public int length__maybeWrong() {
+        public int size() {
             return totalLength;
         }
     }

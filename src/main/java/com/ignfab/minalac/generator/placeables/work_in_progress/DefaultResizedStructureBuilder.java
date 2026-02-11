@@ -26,10 +26,10 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
     public Structure build(int sizeX, int sizeY, int sizeZ) {
         // checkResizability(sizeX, sizeY, sizeZ);
         // RepeatX -> Equalizer
-        if ( axisXBuilder.minimalLength() <= sizeX) {
+        if ( axisXBuilder.minimalSize() <= sizeX) {
             // On est bon, mais ça depend du builder enfant
             IndexMapperBuilder childX = provider.whichOne(0, 0, 0).axisX();
-            int r = sizeX % childX.minimalLength();
+            int r = sizeX % childX.minimalSize();
             if (r == 0) {
                 // On est bon aussi, autres cas c'est celui du streched
                 // Autrement dit si il peut faire childX.ask(taille-sous-segment) == taille-sous-segment
@@ -91,27 +91,27 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
     public static ResizedStructureBuilder REPEAT_X(ResizedStructureBuilder builder) {
         return new DefaultResizedStructureBuilder(
             builder,
-            new IndexMapperBuilder.Equalizer(builder.axisX().minimalLength()),
-            new IndexMapperBuilder.Identity(builder.axisY().minimalLength()),
-            new IndexMapperBuilder.Identity(builder.axisZ().minimalLength())
+            new IndexMapperBuilder.Equalizer(builder.axisX().minimalSize()),
+            new IndexMapperBuilder.Identity(builder.axisY().minimalSize()),
+            new IndexMapperBuilder.Identity(builder.axisZ().minimalSize())
         );
     }
 
     public static ResizedStructureBuilder REPEAT_Y(ResizedStructureBuilder builder) {
         return new DefaultResizedStructureBuilder(
             builder,
-            new IndexMapperBuilder.Identity(builder.axisX().minimalLength()),
-            new IndexMapperBuilder.Equalizer(builder.axisY().minimalLength()),
-            new IndexMapperBuilder.Identity(builder.axisZ().minimalLength())
+            new IndexMapperBuilder.Identity(builder.axisX().minimalSize()),
+            new IndexMapperBuilder.Equalizer(builder.axisY().minimalSize()),
+            new IndexMapperBuilder.Identity(builder.axisZ().minimalSize())
         );
     }
 
     public static ResizedStructureBuilder REPEAT_Z(ResizedStructureBuilder builder) {
         return new DefaultResizedStructureBuilder(
             builder,
-            new IndexMapperBuilder.Identity(builder.axisX().minimalLength()),
-            new IndexMapperBuilder.Identity(builder.axisY().minimalLength()),
-            new IndexMapperBuilder.Equalizer(builder.axisZ().minimalLength())
+            new IndexMapperBuilder.Identity(builder.axisX().minimalSize()),
+            new IndexMapperBuilder.Identity(builder.axisY().minimalSize()),
+            new IndexMapperBuilder.Equalizer(builder.axisZ().minimalSize())
         );
     }
 
@@ -131,28 +131,28 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
         */
         return new DefaultResizedStructureBuilder(
             builder,
-            new IndexMapperBuilder.Equalizer(builder.axisX().minimalLength()),
-            new IndexMapperBuilder.Equalizer(builder.axisY().minimalLength()),
-            new IndexMapperBuilder.Identity(builder.axisZ().minimalLength())
+            new IndexMapperBuilder.Equalizer(builder.axisX().minimalSize()),
+            new IndexMapperBuilder.Equalizer(builder.axisY().minimalSize()),
+            new IndexMapperBuilder.Identity(builder.axisZ().minimalSize())
 
         );
     }
 
     // TODO: A garder pour repro "bug"
     private static ResizedStructureBuilder STRETCHED(ResizedStructureBuilder builder, Integer elasticAtX, Integer elasticAtY, Integer elasticAtZ) {
-        IndexMapperBuilder axisXBuilder = (elasticAtX == null) ? new IndexMapperBuilder.Identity(builder.axisX().minimalLength()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtX, builder.axisX().minimalLength());
-        IndexMapperBuilder axisYBuilder = (elasticAtY == null) ? new IndexMapperBuilder.Identity(builder.axisY().minimalLength()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtY, builder.axisY().minimalLength());
-        IndexMapperBuilder axisZBuilder = (elasticAtZ == null) ? new IndexMapperBuilder.Identity(builder.axisZ().minimalLength()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtZ, builder.axisZ().minimalLength());
+        IndexMapperBuilder axisXBuilder = (elasticAtX == null) ? new IndexMapperBuilder.Identity(builder.axisX().minimalSize()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtX, builder.axisX().minimalSize());
+        IndexMapperBuilder axisYBuilder = (elasticAtY == null) ? new IndexMapperBuilder.Identity(builder.axisY().minimalSize()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtY, builder.axisY().minimalSize());
+        IndexMapperBuilder axisZBuilder = (elasticAtZ == null) ? new IndexMapperBuilder.Identity(builder.axisZ().minimalSize()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtZ, builder.axisZ().minimalSize());
         return new DefaultResizedStructureBuilder(builder, axisXBuilder, axisYBuilder, axisZBuilder);
     }
 
     public static DefaultResizedStructureBuilder testFacade(ResizedStructureBuilder edges, ResizedStructureBuilder middle) {
-        int minY = Math.max(edges.axisY().minimalLength(), middle.axisY().minimalLength());
-        int minZ = Math.max(edges.axisZ().minimalLength(), middle.axisZ().minimalLength());
+        int minY = Math.max(edges.axisY().minimalSize(), middle.axisY().minimalSize());
+        int minZ = Math.max(edges.axisZ().minimalSize(), middle.axisZ().minimalSize());
 
         return new DefaultResizedStructureBuilder(
             (i, j, k) -> (i == 1) ? middle : edges,
-            new IndexMapperBuilder.MiddleTakesAll(edges.axisX().minimalLength()),
+            new IndexMapperBuilder.MiddleTakesAll(edges.axisX().minimalSize()),
             new IndexMapperBuilder.Delegater(edges.axisY()),
             new IndexMapperBuilder.Identity(minZ)
         );

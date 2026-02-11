@@ -3,10 +3,8 @@ package com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper;
 public interface IndexMapperBuilder {
     IndexMapper build(int size);
     // TODO: PE maxSizeunder(
-    default int ask(int size) {
-        throw new RuntimeException("NOT IMPLEMENTED");
-    }
-    int minimalLength();
+    int ask(int size);
+    int minimalSize();
 
     class Identity implements IndexMapperBuilder {
         int allowedSize;
@@ -21,7 +19,7 @@ public interface IndexMapperBuilder {
         }
 
         @Override
-        public int minimalLength() {
+        public int minimalSize() {
             return allowedSize;
         }
 
@@ -47,7 +45,7 @@ public interface IndexMapperBuilder {
         }
 
         @Override
-        public int minimalLength() {
+        public int minimalSize() {
             // TODO: Il y a un soucis ici sur la définition
             return lengthAtRest - 1;
         }
@@ -72,8 +70,8 @@ public interface IndexMapperBuilder {
         }
 
         @Override
-        public int minimalLength() {
-            return delegatee.minimalLength();
+        public int minimalSize() {
+            return delegatee.minimalSize();
         }
 
         @Override
@@ -96,14 +94,14 @@ public interface IndexMapperBuilder {
         }
 
         @Override
-        public int minimalLength() {
+        public int minimalSize() {
             return preferredSubLength;
             // TODO: Not tested
         }
 
         @Override
         public int ask(int size) {
-            int minSize = childBuilder.minimalLength();
+            int minSize = childBuilder.minimalSize();
             if (size == 0 || size < minSize)
                 return 0;
             int r = size % minSize;
@@ -139,7 +137,7 @@ public interface IndexMapperBuilder {
         }
 
         @Override
-        public int minimalLength() {
+        public int minimalSize() {
             return 2 * edgeLength + 1;
         }
     }

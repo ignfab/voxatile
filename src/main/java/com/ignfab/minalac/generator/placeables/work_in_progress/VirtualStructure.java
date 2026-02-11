@@ -19,9 +19,9 @@ public class VirtualStructure implements Structure {
         this.axisY = axisY;
         this.axisZ = axisZ;
         this.limits = new WorldBBox3d(structures[0][0][0].limits().min(), new WorldSize3d(
-            axisX.length__maybeWrong(),
-            axisY.length__maybeWrong(),
-            axisZ.length__maybeWrong()
+            axisX.size(),
+            axisY.size(),
+            axisZ.size()
         ));
         // TODO : ou alors c'est tacite que 0,0,0 contient le point d'origine
     }
