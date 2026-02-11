@@ -14,12 +14,13 @@ public class PriorityIndexMapperBuilder implements IndexMapperBuilder {
 
     public PriorityIndexMapperBuilder(IndexMapperBuilder[] charpentos, int[] priority) {
         this.charpentos = charpentos;
-        for (int i = 0; i < priority.length; i ++) {
+        for (int i = 0; i < priority.length; i++) {
             priorityQueue.add(new Dunno(i, priority[i]));
         }
     }
 
-    record Dunno(int index, int priority){};
+    record Dunno(int index, int priority) {
+    }
 
     @Override
     public IndexMapper build(int size) {
@@ -54,6 +55,7 @@ public class PriorityIndexMapperBuilder implements IndexMapperBuilder {
         }
         if (r != 0)
             throw new RuntimeException("Yeah. It wasn't possible. Sorry not sorry.");
+        // TODO : filtrer les longueurs vides?
         return new LengthIndexMapper(lengths);
     }
 
@@ -87,11 +89,11 @@ public class PriorityIndexMapperBuilder implements IndexMapperBuilder {
         IndexMapperBuilder dummy1 = new DummyIndexMapperBuilder(2, 4);
         IndexMapperBuilder dummy2 = new DummyIndexMapperBuilder(0, 2);
         IndexMapperBuilder dummy3 = new DummyIndexMapperBuilder(3, 4);
-        IndexMapperBuilder[] builders = new IndexMapperBuilder[] {dummy1, dummy2, dummy3};
-        int[] priority = new int[] {0, 2, 0};
+        IndexMapperBuilder[] builders = new IndexMapperBuilder[]{dummy1, dummy2, dummy3};
+        int[] priority = new int[]{0, 2, 0};
 
         IndexMapperBuilder prio = new PriorityIndexMapperBuilder(builders, priority);
-        IndexMapper im = prio.build(9);
+        IndexMapper im = prio.build(11);
 
         System.out.println(im.structure());
 
