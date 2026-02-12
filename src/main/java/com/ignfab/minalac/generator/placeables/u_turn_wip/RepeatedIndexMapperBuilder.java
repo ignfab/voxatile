@@ -14,7 +14,7 @@ public class RepeatedIndexMapperBuilder implements IndexMapperBuilder {
 
     public RepeatedIndexMapperBuilder(IndexMapperBuilder base, int minOccur) {
         this.base = base;
-        this.minSize = base.minimalSize() * minOccur;
+        this.minSize = base.minimumSize() * minOccur;
         this.maxSize = Integer.MAX_VALUE;
     }
 
@@ -79,7 +79,7 @@ public class RepeatedIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     @Override
-    public int minimalSize() {
+    public int minimumSize() {
         return minSize;
     }
 

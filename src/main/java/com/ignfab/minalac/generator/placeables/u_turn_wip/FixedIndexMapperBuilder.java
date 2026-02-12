@@ -25,7 +25,7 @@ public class FixedIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     @Override
-    public int minimalSize() {
+    public int minimumSize() {
         return theOnlyAllowedLength;
     }
 }

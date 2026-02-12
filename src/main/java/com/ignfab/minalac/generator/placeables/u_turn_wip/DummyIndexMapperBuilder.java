@@ -33,7 +33,7 @@ public class DummyIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     @Override
-    public int minimalSize() {
+    public int minimumSize() {
         return min;
     }
 }

@@ -27,8 +27,8 @@ public class PriorityIndexMapperBuilder implements IndexMapperBuilder {
         int r = size;
         int[] lengths = new int[charpentos.length];
         for (int i = 0; i < charpentos.length; i++) {
-            lengths[i] = charpentos[i].minimalSize();
-            r = r - charpentos[i].minimalSize();
+            lengths[i] = charpentos[i].minimumSize();
+            r = r - charpentos[i].minimumSize();
         }
         if (r < 0)
             throw new RuntimeException("You are asking for the impossible. Bye.");
@@ -65,7 +65,7 @@ public class PriorityIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     @Override
-    public int minimalSize() {
+    public int minimumSize() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 

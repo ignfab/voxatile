@@ -6,7 +6,6 @@ import java.util.Map;
 import com.ignfab.minalac.generator.placeables.u_turn_wip.FixedIndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.ResizedStructureBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.Structure;
-import com.ignfab.minalac.generator.placeables.work_in_progress.VirtualStructure;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapperBuilder;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
@@ -91,48 +90,6 @@ public final class PlaceableStructure implements Structure {
 
     public ResizedStructureBuilder toFixedResizedBuilder() {
         return new FixedSB(this);
-    }
-
-    public ResizedStructureBuilder toStretchedXBuilder(int x) {
-        return stretched(x, null, null);
-    }
-
-    public ResizedStructureBuilder toStretchedYBuilder(int y) {
-        return stretched(null, y, null);
-    }
-
-    public ResizedStructureBuilder toStretchedZBuilder(int z) {
-        return stretched(null, null, z);
-    }
-
-    public ResizedStructureBuilder toStretchedXYBuilder(int x, int y) {
-        return stretched(x, y, null);
-    }
-
-    public ResizedStructureBuilder toStretchedYZBuilder(int y, int z) {
-        return stretched(null, y, z);
-    }
-
-    public ResizedStructureBuilder toStretchedXZBuilder(int x, int z) {
-        return stretched(x, null, z);
-    }
-
-    public ResizedStructureBuilder toStretchedXYZBuilder(int x, int y, int z) {
-        return stretched(x, y, z);
-    }
-
-    private ResizedStructureBuilder stretched(Integer elasticAtX, Integer elasticAtY, Integer elasticAtZ) {
-        if (elasticAtX != null && (elasticAtX < limits.minX() || limits.maxX() < elasticAtX))
-            throw new RuntimeException("x not within");
-        if (elasticAtY != null && (elasticAtY < limits.minY() || limits.maxY() < elasticAtY))
-            throw new RuntimeException("y not within");
-        if (elasticAtZ != null && (elasticAtZ < limits.minZ() || limits.maxZ() < elasticAtZ))
-            throw new RuntimeException("z not within");
-
-        IndexMapperBuilder axisXBuilder = (elasticAtX == null) ? new IndexMapperBuilder.Identity(limits.sizeX()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtX, limits.sizeX());
-        IndexMapperBuilder axisYBuilder = (elasticAtY == null) ? new IndexMapperBuilder.Identity(limits.sizeY()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtY, limits.sizeY());
-        IndexMapperBuilder axisZBuilder = (elasticAtZ == null) ? new IndexMapperBuilder.Identity(limits.sizeZ()) : new IndexMapperBuilder.AdaptativeStretcher(elasticAtZ, limits.sizeZ());
-        return new ResizedPlaceableStructureBuilder(this, axisXBuilder, axisYBuilder, axisZBuilder);
     }
 
     /**
@@ -278,6 +235,7 @@ public final class PlaceableStructure implements Structure {
 
         @Override
         public Structure build(int sizeX, int sizeY, int sizeZ) {
+            // checkResizability(sizeX, sizeY, sizeZ);
             // TODO: Apply translation
             return structure;
         }
@@ -296,47 +254,11 @@ public final class PlaceableStructure implements Structure {
         public IndexMapperBuilder axisZ() {
             return axisZBuilder;
         }
-    }
-    private static class ResizedPlaceableStructureBuilder implements ResizedStructureBuilder {
-        PlaceableStructure structure;
-        IndexMapperBuilder axisXBuilder;
-        IndexMapperBuilder axisYBuilder;
-        IndexMapperBuilder axisZBuilder;
-
-        public ResizedPlaceableStructureBuilder(PlaceableStructure structure, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
-            this.structure = structure;
-            this.axisXBuilder = axisXBuilder;
-            this.axisYBuilder = axisYBuilder;
-            this.axisZBuilder = axisZBuilder;
-        }
 
         @Override
-        public Structure build(int sizeX, int sizeY, int sizeZ) {
-            checkResizability(sizeX, sizeY, sizeZ);
-            Structure[][][] tab = new Structure[1][1][1];
-            tab[0][0][0] = structure;
-
-            return new VirtualStructure(
-                tab,
-                axisXBuilder.build(sizeX),
-                axisYBuilder.build(sizeY),
-                axisZBuilder.build(sizeZ)
-            );
-        }
-
-        @Override
-        public IndexMapperBuilder axisX() {
-            return axisXBuilder;
-        }
-
-        @Override
-        public IndexMapperBuilder axisY() {
-            return axisYBuilder;
-        }
-
-        @Override
-        public IndexMapperBuilder axisZ() {
-            return axisZBuilder;
+        public void checkResizability(int sizeX, int sizeY, int sizeZ) {
+            System.out.println(sizeX + ", " + sizeX + ", " + sizeZ);
+            //throw new UnsupportedOperationException("Not implemented yet");
         }
     }
 }

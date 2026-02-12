@@ -35,7 +35,7 @@ public class LengthIndexMapper implements IndexMapper {
     public SizedIterable<StructureIndex> structure() {
         return new SizedIterable<>() {
             @Override
-            public int size() {
+            public int length() {
                 return lengths.length;
             }
 

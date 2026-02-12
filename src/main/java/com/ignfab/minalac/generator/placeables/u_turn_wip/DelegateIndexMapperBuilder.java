@@ -21,7 +21,7 @@ public class DelegateIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     @Override
-    public int minimalSize() {
-        return delegatee.minimalSize();
+    public int minimumSize() {
+        return delegatee.minimumSize();
     }
 }

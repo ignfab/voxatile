@@ -37,7 +37,7 @@ public class W_StretchIndexMapper implements IndexMapper {
     public SizedIterable<StructureIndex> structure() {
         return new SizedIterable<>() {
             @Override
-            public int size() {
+            public int length() {
                 return 1;
             }
 

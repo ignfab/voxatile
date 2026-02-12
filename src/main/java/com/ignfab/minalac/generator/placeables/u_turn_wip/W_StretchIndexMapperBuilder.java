@@ -12,22 +12,22 @@ public class W_StretchIndexMapperBuilder implements IndexMapperBuilder {
     public W_StretchIndexMapperBuilder(IndexMapperBuilder base, int stretchableCoord, int minRepetition) {
         this.base = base;
         this.stretchableCoord = stretchableCoord;
-        minSize = base.minimalSize() + minRepetition - 1;
+        minSize = base.minimumSize() + minRepetition - 1;
         maxSize = Integer.MAX_VALUE;
     }
 
     public W_StretchIndexMapperBuilder(IndexMapperBuilder base, int stretchableCoord, int minRepetition, int maxRepetition) {
         this.base = base;
         this.stretchableCoord = stretchableCoord;
-        this.minSize = base.minimalSize() + minRepetition - 1;
-        this.maxSize = base.minimalSize() + maxRepetition - 1;
+        this.minSize = base.minimumSize() + minRepetition - 1;
+        this.maxSize = base.minimumSize() + maxRepetition - 1;
     }
 
     @Override
     public IndexMapper build(int size) {
         if (ask(size) != size)
             throw new RuntimeException("Not possible");
-        return new W_StretchIndexMapper(stretchableCoord, base.minimalSize(), size);
+        return new W_StretchIndexMapper(stretchableCoord, base.minimumSize(), size);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class W_StretchIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     @Override
-    public int minimalSize() {
+    public int minimumSize() {
         return minSize;
     }
 
