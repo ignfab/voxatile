@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.placeables.u_turn_wip;
 
-import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapper;
-import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.SizedIterable;
+import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapper;
+import com.ignfab.minalac.generator.placeables.work_in_progress.SizedIterable;
 
 public class DummyIndexMapper implements IndexMapper {
 

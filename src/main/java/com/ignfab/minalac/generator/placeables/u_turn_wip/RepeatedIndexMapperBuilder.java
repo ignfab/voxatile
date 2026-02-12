@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapper;
-import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapper;
+import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.LengthIndexMapper;
 
 public class RepeatedIndexMapperBuilder implements IndexMapperBuilder {
     IndexMapperBuilder base;

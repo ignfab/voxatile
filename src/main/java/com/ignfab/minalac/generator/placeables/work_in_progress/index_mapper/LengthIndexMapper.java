@@ -1,17 +1,18 @@
-package com.ignfab.minalac.generator.placeables.u_turn_wip;
+package com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.IntStream;
 
-import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapper;
-import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.SizedIterable;
+import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapper;
+import com.ignfab.minalac.generator.placeables.work_in_progress.SizedIterable;
 
 public class LengthIndexMapper implements IndexMapper {
     int[] breakpointPositions;
     int[] lengths;
 
     public LengthIndexMapper(int... lengths) {
+        // TODO: ignorer les zeros?
         this.lengths = lengths;
         breakpointPositions = new int[lengths.length];
         breakpointPositions[0] = lengths[0];

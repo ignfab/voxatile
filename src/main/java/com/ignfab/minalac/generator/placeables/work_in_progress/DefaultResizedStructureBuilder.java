@@ -1,9 +1,7 @@
 package com.ignfab.minalac.generator.placeables.work_in_progress;
 
-import com.ignfab.minalac.generator.placeables.u_turn_wip.DelegateIndexMapperBuilder;
-import com.ignfab.minalac.generator.placeables.u_turn_wip.StretcherIndexMapperBuilder;
-import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapper;
-import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.work_in_progress.builder.DelegateIndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.work_in_progress.builder.StretcherIndexMapperBuilder;
 
 // TODO: Might be merged with ResizedStructureBuilder
 public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
