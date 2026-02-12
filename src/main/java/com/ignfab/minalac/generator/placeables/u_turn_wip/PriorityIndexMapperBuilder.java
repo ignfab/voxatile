@@ -62,6 +62,17 @@ public class PriorityIndexMapperBuilder implements IndexMapperBuilder {
 
     @Override
     public int ask(int size) {
+        int remaining = size;
+        // int[] lengths = new int[charpentos.length];
+        for (int i = 0; i < charpentos.length; i++) {
+            // lengths[i] = charpentos[i].minimumSize();
+            remaining = remaining - charpentos[i].minimumSize();
+        }
+        if (remaining < 0)
+            return 0;
+        if (remaining == 0)
+            return size;
+
         throw new UnsupportedOperationException("Not implemented yet");
     }
 

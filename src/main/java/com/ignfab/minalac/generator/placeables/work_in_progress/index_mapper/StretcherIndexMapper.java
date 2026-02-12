@@ -43,7 +43,7 @@ public class StretcherIndexMapper implements IndexMapper {
 
             @Override
             public Iterator<StructureIndex> iterator() {
-                return IntStream.range(0, 1).mapToObj(i -> new StructureIndex(0, length)).toList().iterator();
+                return IntStream.range(0, 1).mapToObj(i -> new StructureIndex(0, lengthAtRest)).toList().iterator();
             }
         };
     }

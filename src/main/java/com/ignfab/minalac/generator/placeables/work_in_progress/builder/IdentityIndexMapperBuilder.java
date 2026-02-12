@@ -14,8 +14,8 @@ public class IdentityIndexMapperBuilder implements IndexMapperBuilder {
     @Override
     public IndexMapper build(int size) {
         // TODO Probleme avec ce test
-        // if (size != theOnlyAllowedLength)
-        //    throw new RuntimeException("Identity : Not possible");
+        if (size != theOnlyAllowedLength)
+            throw new RuntimeException("Identity : Not possible");
         return new IdentityIndexMapper(size);
     }
 
