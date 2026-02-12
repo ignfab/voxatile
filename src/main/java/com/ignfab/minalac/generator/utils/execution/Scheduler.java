@@ -60,6 +60,13 @@ public class Scheduler<T> {
         getTask(idTask).addDependency(getTask(idDependency));
     }
 
+    public void dump() {
+        System.out.println("Scheduler tasks:");
+        tasks.forEach((name, task) -> {
+            System.out.printf(" - %s%n", task);
+        });
+    }
+
     /**
      * Starts this scheduler and waits for the completion of all tasks.
      * This method can be used multiple times meaning the same set of tasks can be re-executed.
@@ -80,6 +87,8 @@ public class Scheduler<T> {
         try {
             future.get(timeout, unit);
         } catch (ExecutionException e) {
+            dump();
+
             if (e.getCause() instanceof RuntimeException re)
                 throw re;
             if (e.getCause() instanceof TaskFailedException tfe)

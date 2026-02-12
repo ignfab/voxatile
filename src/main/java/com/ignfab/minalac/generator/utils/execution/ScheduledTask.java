@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * A task registered in the {@link Scheduler}.
@@ -124,4 +125,8 @@ public class ScheduledTask<T> {
         return error;
     }
 
+    public String toString() {
+        String deps = dependencies.isEmpty()? "":"(depends on %s)".formatted(dependencies.stream().map(ScheduledTask::id).collect(Collectors.joining(", ")));
+        return "%s: %s %s".formatted(id, state, deps);
+    }
 }

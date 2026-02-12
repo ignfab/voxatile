@@ -28,5 +28,15 @@ public enum ScheduledTaskState {
     /**
      * The task execution failed.
      */
-    FAILED
+    FAILED;
+
+    public String toString() {
+        return switch(this){
+            case WAITING   -> "Waiting";
+            case LAUNCHING -> "Launching";
+            case RUNNING   -> "Running";
+            case FINISHED  -> "Finished";
+            case FAILED    -> "Failed";
+        };
+    }
 }

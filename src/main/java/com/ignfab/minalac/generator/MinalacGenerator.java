@@ -80,7 +80,7 @@ public final class MinalacGenerator {
      * @param args command line arguments
      * @throws JsonProcessingException
      */
-    public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException, JsonProcessingException, TimeoutException, GenerationFailedException {
+    public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException, JsonProcessingException, GenerationFailedException {
         // Execution duration start
         Instant start = Instant.now();
         HttpTrustAllSSL.applyGlobally();
@@ -186,7 +186,14 @@ public final class MinalacGenerator {
 
                 // Generate tile
                 Instant tileGenerationStart = Instant.now();
-                if (generation.scheduler() != null) generation.scheduler().run(tile, 20, TimeUnit.MINUTES);
+                if (generation.scheduler() != null)
+                    try {
+                        generation.scheduler().run(tile, 20, TimeUnit.MINUTES);
+                    } catch (TimeoutException e) {
+                        System.out.println("Schedule timed out");
+                        generation.scheduler().dump();
+                        throw new GenerationFailedException(e);
+                    }
                 Duration tileGenerationDuration = Duration.between(tileGenerationStart, Instant.now());
 
                 generatingDuration = generatingDuration.plus(tileGenerationDuration);
