@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.placeables.work_in_progress;
 
+import com.ignfab.minalac.generator.placeables.u_turn_wip.DelegateIndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.u_turn_wip.W_StretchIndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapper;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapperBuilder;
 
@@ -24,19 +26,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
 
     @Override
     public Structure build(int sizeX, int sizeY, int sizeZ) {
-        // checkResizability(sizeX, sizeY, sizeZ);
-        // RepeatX -> Equalizer
-        if ( axisXBuilder.minimalSize() <= sizeX) {
-            // On est bon, mais ça depend du builder enfant
-            IndexMapperBuilder childX = provider.whichOne(0, 0, 0).axisX();
-            int r = sizeX % childX.minimalSize();
-            if (r == 0) {
-                // On est bon aussi, autres cas c'est celui du streched
-                // Autrement dit si il peut faire childX.ask(taille-sous-segment) == taille-sous-segment
-            }
-
-        }
-
+        checkResizability(sizeX, sizeY, sizeZ);
 
         IndexMapper ax, aY, aZ;
         ax = axisXBuilder.build(sizeX);
@@ -135,6 +125,16 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
             new IndexMapperBuilder.Equalizer(builder.axisY().minimalSize()),
             new IndexMapperBuilder.Identity(builder.axisZ().minimalSize())
 
+        );
+    }
+
+    public static ResizedStructureBuilder stretchoX(ResizedStructureBuilder builder, int x) {
+        return new DefaultResizedStructureBuilder(
+            builder,
+            new W_StretchIndexMapperBuilder(builder.axisX(), x, 1),
+            new DelegateIndexMapperBuilder(builder.axisY()),
+            new DelegateIndexMapperBuilder(builder.axisZ()
+            )
         );
     }
 

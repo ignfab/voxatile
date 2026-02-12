@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.placeables;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ignfab.minalac.generator.placeables.u_turn_wip.FixedIndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.ResizedStructureBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.Structure;
 import com.ignfab.minalac.generator.placeables.work_in_progress.VirtualStructure;
@@ -88,8 +89,8 @@ public final class PlaceableStructure implements Structure {
         return new Builder();
     }
 
-    public ResizedStructureBuilder toIdentityResizedBuilder() {
-        return stretched(null, null, null);
+    public ResizedStructureBuilder toFixedResizedBuilder() {
+        return new FixedSB(this);
     }
 
     public ResizedStructureBuilder toStretchedXBuilder(int x) {
@@ -261,6 +262,41 @@ public final class PlaceableStructure implements Structure {
         }
     }
 
+    private static class FixedSB implements ResizedStructureBuilder {
+        PlaceableStructure structure;
+        IndexMapperBuilder axisXBuilder;
+        IndexMapperBuilder axisYBuilder;
+        IndexMapperBuilder axisZBuilder;
+
+
+        public FixedSB(PlaceableStructure structure) {
+            this.structure = structure;
+            this.axisXBuilder = new FixedIndexMapperBuilder(structure.limits.sizeX());
+            this.axisYBuilder = new FixedIndexMapperBuilder(structure.limits.sizeY());
+            this.axisZBuilder = new FixedIndexMapperBuilder(structure.limits.sizeZ());
+        }
+
+        @Override
+        public Structure build(int sizeX, int sizeY, int sizeZ) {
+            // TODO: Apply translation
+            return structure;
+        }
+
+        @Override
+        public IndexMapperBuilder axisX() {
+            return axisXBuilder;
+        }
+
+        @Override
+        public IndexMapperBuilder axisY() {
+            return axisYBuilder;
+        }
+
+        @Override
+        public IndexMapperBuilder axisZ() {
+            return axisZBuilder;
+        }
+    }
     private static class ResizedPlaceableStructureBuilder implements ResizedStructureBuilder {
         PlaceableStructure structure;
         IndexMapperBuilder axisXBuilder;
