@@ -3,20 +3,20 @@ package com.ignfab.minalac.generator.placeables.u_turn_wip;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapper;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapperBuilder;
 
-public class W_StretchIndexMapperBuilder implements IndexMapperBuilder {
+public class StretcherIndexMapperBuilder implements IndexMapperBuilder {
     IndexMapperBuilder base;
     int stretchableCoord;
     int minSize;
     int maxSize;
 
-    public W_StretchIndexMapperBuilder(IndexMapperBuilder base, int stretchableCoord, int minRepetition) {
+    public StretcherIndexMapperBuilder(IndexMapperBuilder base, int stretchableCoord, int minRepetition) {
         this.base = base;
         this.stretchableCoord = stretchableCoord;
         minSize = base.minimumSize() + minRepetition - 1;
         maxSize = Integer.MAX_VALUE;
     }
 
-    public W_StretchIndexMapperBuilder(IndexMapperBuilder base, int stretchableCoord, int minRepetition, int maxRepetition) {
+    public StretcherIndexMapperBuilder(IndexMapperBuilder base, int stretchableCoord, int minRepetition, int maxRepetition) {
         this.base = base;
         this.stretchableCoord = stretchableCoord;
         this.minSize = base.minimumSize() + minRepetition - 1;
@@ -27,7 +27,7 @@ public class W_StretchIndexMapperBuilder implements IndexMapperBuilder {
     public IndexMapper build(int size) {
         if (ask(size) != size)
             throw new RuntimeException("Not possible");
-        return new W_StretchIndexMapper(stretchableCoord, base.minimumSize(), size);
+        return new StretcherIndexMapper(stretchableCoord, base.minimumSize(), size);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class W_StretchIndexMapperBuilder implements IndexMapperBuilder {
 
     public static void main(String[] args) {
         IndexMapperBuilder dummy = new DummyIndexMapperBuilder(3, 3);
-        IndexMapperBuilder stretcher = new W_StretchIndexMapperBuilder(dummy, 1, 1, 2);
+        IndexMapperBuilder stretcher = new StretcherIndexMapperBuilder(dummy, 1, 1, 2);
         IndexMapper im = stretcher.build(4);
 
         System.out.println(im.structure());

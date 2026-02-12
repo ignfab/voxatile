@@ -19,9 +19,13 @@ public class PlaygroundTest {
             .build()
             .toFixedResizedBuilder();
 
-        ResizedStructureBuilder strX = DefaultResizedStructureBuilder.stretchoX(AC, 1);
+        ResizedStructureBuilder strX = DefaultResizedStructureBuilder.stretchX(AC, 1, 1);
+        ResizedStructureBuilder strXY = DefaultResizedStructureBuilder.stretchY(strX, 1, 1);
 
-        Structure result = strX.build(3, 2, 1);
+        // strX.build(4, 3, 1);
+
+        System.out.println(strXY.axisY().ask(6));
+        Structure result = strXY.build(4, 5, 1);
         printo(result);
     }
 

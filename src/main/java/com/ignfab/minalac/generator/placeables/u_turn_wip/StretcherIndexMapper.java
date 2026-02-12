@@ -6,16 +6,31 @@ import java.util.stream.IntStream;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapper;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.SizedIterable;
 
-public class SameSameIndexMapper implements IndexMapper {
+public class StretcherIndexMapper implements IndexMapper {
+    int stretchableCoordinate;
+    int lengthAtRest;
     int length;
 
-    public SameSameIndexMapper(int length) {
+    // lengthAtRest is the "original size"
+    // 3 cas : taille demande = taille de la struct;
+    // taille demandé = taille struct - 1 (la colonne disparait)
+    // taille demandé > taille struct (la colonne est repete)
+    public StretcherIndexMapper(int stretchableCoordinate, int lengthAtRest, int length) {
+        this.stretchableCoordinate = stretchableCoordinate;
+        this.lengthAtRest = lengthAtRest;
         this.length = length;
     }
 
     @Override
     public PlaceableIndex placeable(int coordinateValue) {
-        return new IndexMapper.PlaceableIndex(0, coordinateValue);
+        int r = length - lengthAtRest;
+        if (coordinateValue < stretchableCoordinate) {
+            return new PlaceableIndex(0, coordinateValue);
+        } else if (coordinateValue <= stretchableCoordinate + r) {
+            return new PlaceableIndex(0, stretchableCoordinate);
+        } else {
+            return new PlaceableIndex(0, coordinateValue - r);
+        }
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.placeables.work_in_progress;
 
 import com.ignfab.minalac.generator.placeables.u_turn_wip.DelegateIndexMapperBuilder;
-import com.ignfab.minalac.generator.placeables.u_turn_wip.W_StretchIndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.u_turn_wip.StretcherIndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapper;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IndexMapperBuilder;
 
@@ -39,7 +39,8 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
             for (IndexMapper.StructureIndex iY : aY.structure()) {
                 for (IndexMapper.StructureIndex iZ : aZ.structure()) {
                     // TODO il faudra revoir ça (Techniquement on passe une taille pas possible a FixedSB)
-                    tab[iX.index()][iY.index()][iZ.index()] = provider.whichOne(iX.index(), iY.index(), iZ.index()).build(iX.size(), iY.size(), iZ.size());
+                    ResizedStructureBuilder b = provider.whichOne(iX.index(), iY.index(), iZ.index());
+                    tab[iX.index()][iY.index()][iZ.index()] = b.build(iX.size(), iY.size(), iZ.size());
                 }
             }
         }
@@ -49,6 +50,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
 
     @Override
     public void checkResizability(int sizeX, int sizeY, int sizeZ) {
+        /*
         if (sizeX <= 0)
             throw new RuntimeException(String.format("sizeX must be strictly positive (Asked : %d)", sizeX));
         if (sizeY <= 0) {
@@ -60,7 +62,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
         if (axisY().ask(sizeY) != sizeY) {
             throw new RuntimeException(String.format("Asked sizeY (%d) do not match the allowed (%d)", sizeY, axisY().ask(sizeY)));
         }if (axisZ().ask(sizeZ) != sizeZ)
-            throw new RuntimeException(String.format("Asked sizeZ (%d) do not match the allowed (%d)", sizeZ, axisZ().ask(sizeZ)));
+            throw new RuntimeException(String.format("Asked sizeZ (%d) do not match the allowed (%d)", sizeZ, axisZ().ask(sizeZ)));*/
     }
 
     @Override
@@ -81,10 +83,63 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
     public static ResizedStructureBuilder stretchoX(ResizedStructureBuilder builder, int x) {
         return new DefaultResizedStructureBuilder(
             builder,
-            new W_StretchIndexMapperBuilder(builder.axisX(), x, 0),
+            new StretcherIndexMapperBuilder(builder.axisX(), x, 0),
             new DelegateIndexMapperBuilder(builder.axisY()),
-            new DelegateIndexMapperBuilder(builder.axisZ()
-            )
+            new DelegateIndexMapperBuilder(builder.axisZ())
+        );
+    }
+
+    public static ResizedStructureBuilder stretchX(ResizedStructureBuilder builder, int x, int minRepetition) {
+        return new DefaultResizedStructureBuilder(
+            builder,
+            new StretcherIndexMapperBuilder(builder.axisX(), x, minRepetition),
+            new DelegateIndexMapperBuilder(builder.axisY()),
+            new DelegateIndexMapperBuilder(builder.axisZ())
+        );
+    }
+
+    public static ResizedStructureBuilder stretchX(ResizedStructureBuilder builder, int x, int minRepetition, int maxRepetition) {
+        return new DefaultResizedStructureBuilder(
+            builder,
+            new StretcherIndexMapperBuilder(builder.axisX(), x, minRepetition, maxRepetition),
+            new DelegateIndexMapperBuilder(builder.axisY()),
+            new DelegateIndexMapperBuilder(builder.axisZ())
+        );
+    }
+
+    public static ResizedStructureBuilder stretchY(ResizedStructureBuilder builder, int y, int minRepetition) {
+        return new DefaultResizedStructureBuilder(
+            builder,
+            new DelegateIndexMapperBuilder(builder.axisX()),
+            new StretcherIndexMapperBuilder(builder.axisY(), y, minRepetition),
+            new DelegateIndexMapperBuilder(builder.axisZ())
+        );
+    }
+
+    public static ResizedStructureBuilder stretchY(ResizedStructureBuilder builder, int y, int minRepetition, int maxRepetition) {
+        return new DefaultResizedStructureBuilder(
+            builder,
+            new DelegateIndexMapperBuilder(builder.axisX()),
+            new StretcherIndexMapperBuilder(builder.axisY(), y, minRepetition, maxRepetition),
+            new DelegateIndexMapperBuilder(builder.axisZ())
+        );
+    }
+
+    public static ResizedStructureBuilder stretchZ(ResizedStructureBuilder builder, int z, int minRepetition) {
+        return new DefaultResizedStructureBuilder(
+            builder,
+            new DelegateIndexMapperBuilder(builder.axisX()),
+            new DelegateIndexMapperBuilder(builder.axisY()),
+            new StretcherIndexMapperBuilder(builder.axisZ(), z, minRepetition)
+        );
+    }
+
+    public static ResizedStructureBuilder stretchZ(ResizedStructureBuilder builder, int z, int minRepetition, int maxRepetition) {
+        return new DefaultResizedStructureBuilder(
+            builder,
+            new DelegateIndexMapperBuilder(builder.axisX()),
+            new DelegateIndexMapperBuilder(builder.axisY()),
+            new StretcherIndexMapperBuilder(builder.axisZ(), z, minRepetition, maxRepetition)
         );
     }
 }
