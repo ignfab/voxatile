@@ -48,7 +48,7 @@ public class PlaygroundTest {
         builder = DefaultResizedStructureBuilder.repeatX(builder, 1);*/
 
         A = DefaultResizedStructureBuilder.stretchX(A, 1, 0);
-        A = DefaultResizedStructureBuilder.stretchY(A, 0, 1);
+        A = DefaultResizedStructureBuilder.stretchY(A, 1, 1);
         B = DefaultResizedStructureBuilder.repeatX(B, 2);
        // B = DefaultResizedStructureBuilder.stretchY(B, 1, 1);
         C = DefaultResizedStructureBuilder.stretchX(C, 1, 0);

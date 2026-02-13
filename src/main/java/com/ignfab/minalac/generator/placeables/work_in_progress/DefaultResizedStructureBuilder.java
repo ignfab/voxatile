@@ -2,7 +2,6 @@ package com.ignfab.minalac.generator.placeables.work_in_progress;
 
 import java.util.Arrays;
 
-import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.placeables.work_in_progress.builder.DelegateIndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.builder.EqualizerIndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.builder.PriorityRepartitionIndexMapperBuilder;
@@ -15,7 +14,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
     private final IndexMapperBuilder axisYBuilder;
     private final IndexMapperBuilder axisZBuilder;
 
-    private DefaultResizedStructureBuilder(ResizedStructureBuilder provider, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
+    public DefaultResizedStructureBuilder(ResizedStructureBuilder provider, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
         this((i, j, k) -> provider, axisXBuilder, axisYBuilder, axisZBuilder);
     }
 
@@ -184,5 +183,42 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
             new DelegateIndexMapperBuilder(builders[0].axisY()),
             new DelegateIndexMapperBuilder(builders[0].axisZ())
         );
+    }
+
+    class tmp implements ResizedStructureBuilder {
+        private IndexMapperBuilder axisXBuilder;
+        private IndexMapperBuilder axisYBuilder;
+        private IndexMapperBuilder axisZBuilder;
+
+        public tmp(ResizedStructureBuilder builder) {
+            this.axisXBuilder = builder.axisX();
+            this.axisYBuilder = builder.axisY();
+            this.axisZBuilder = builder.axisZ();
+        }
+
+        @Override
+        public Structure build(int sizeX, int sizeY, int sizeZ) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
+
+        @Override
+        public IndexMapperBuilder axisX() {
+            return axisXBuilder;
+        }
+
+        @Override
+        public IndexMapperBuilder axisY() {
+            return axisYBuilder;
+        }
+
+        @Override
+        public IndexMapperBuilder axisZ() {
+            return axisZBuilder;
+        }
+
+        @Override
+        public void checkResizability(int sizeX, int sizeY, int sizeZ) {
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
     }
 }
