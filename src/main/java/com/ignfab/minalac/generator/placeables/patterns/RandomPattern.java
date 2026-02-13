@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.placeables.patterns;
 
+import java.util.Set;
+
 import com.ignfab.minalac.generator.placeables.Nothing;
 import com.ignfab.minalac.generator.placeables.Pattern;
 import com.ignfab.minalac.generator.placeables.Placeable;
@@ -33,5 +35,10 @@ public class RandomPattern implements Pattern {
         if (random.nextDouble() < chance)
             return placeable;
         return Nothing.INSTANCE;
+    }
+
+    @Override
+    public Set<Placeable> palette() {
+        return placeable.palette();
     }
 }

@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.placeables.patterns;
 
+import java.util.Set;
+
 import com.ignfab.minalac.generator.placeables.Pattern;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
@@ -57,5 +59,10 @@ public class RepeatPattern implements Pattern {
             min.y() + Math.floorMod(y - min.y() - xd.y() * nx - zd.y() * nz, size.y()),
             min.z() + Math.floorMod(z - min.z() - xd.z() * nx - yd.z() * ny, size.z())
         );
+    }
+
+    @Override
+    public Set<Placeable> palette() {
+        return structure.palette();
     }
 }

@@ -1,7 +1,9 @@
 package com.ignfab.minalac.generator.placeables;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
@@ -39,6 +41,18 @@ public final class PlaceableStructure implements Placeable {
             WorldCoords3d c = entry.getKey();
             entry.getValue().place(tile, c.x() + x, c.y() + y, c.z() + z);
         }
+    }
+
+    @Override
+    public Set<Placeable> palette() {
+        if (placeables.isEmpty())
+            return Set.of();
+        if (placeables.size() == 1)
+            return placeables.values().iterator().next().palette();
+        Set<Placeable> palette = new HashSet<>();
+        for (Placeable placeable : placeables.values())
+            palette.addAll(placeable.palette());
+        return palette;
     }
 
     /**

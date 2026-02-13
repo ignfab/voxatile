@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.outputs.minetest;
 
 import java.util.Objects;
+import java.util.Set;
 
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.world.VoxelTile;
@@ -54,6 +55,11 @@ public class MTVoxel implements Placeable {
         } else {
             throw new IllegalArgumentException("Voxel does not match voxel tile output format");
         }
+    }
+
+    @Override
+    public Set<Placeable> palette() {
+        return Set.of(this);
     }
 
     /**

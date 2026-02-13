@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.placeables;
 
+import java.util.Set;
+
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
@@ -27,4 +29,9 @@ public interface Placeable {
     default void place(VoxelTile tile, WorldCoords3d position) {
         place(tile, position.x(), position.y(), position.z());
     }
+
+    /**
+     * {@return all unique voxels that can be placed by this placeable}
+     */
+    Set<Placeable> palette();
 }

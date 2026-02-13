@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.placeables;
 
+import java.util.Set;
+
 import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
@@ -26,6 +28,11 @@ public final class Nothing implements Pattern {
      */
     @Override
     public void place(VoxelTile tile, int x, int y, int z) {}
+
+    @Override
+    public Set<Placeable> palette() {
+        return Set.of();
+    }
 
     @Override
     public Placeable get(int x, int y, int z) {

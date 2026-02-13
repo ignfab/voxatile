@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.outputs.minecraft;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import net.querz.nbt.tag.CompoundTag;
 import net.querz.nbt.tag.StringTag;
@@ -83,6 +84,11 @@ public class MCVoxel implements Placeable {
         } else {
             throw new IllegalArgumentException("Voxel does not match voxel tile output format");
         }
+    }
+
+    @Override
+    public Set<Placeable> palette() {
+        return Set.of(this);
     }
 
     /**

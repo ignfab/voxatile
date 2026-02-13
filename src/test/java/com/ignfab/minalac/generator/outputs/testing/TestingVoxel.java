@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.outputs.testing;
 
 import java.util.Objects;
+import java.util.Set;
 
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.world.VoxelTile;
@@ -13,7 +14,7 @@ public class TestingVoxel implements Placeable {
     /**
      * Name of the voxel.
      */
-    protected String name;
+    protected final String name;
 
     /**
      * Creates a new {@code TestingVoxel}.
@@ -24,16 +25,14 @@ public class TestingVoxel implements Placeable {
         this.name = name;
     }
 
-    /**
-     * Places voxel in a {@link VoxelTile}.
-     *
-     * @param x x-coordinate where to place voxel
-     * @param y y-coordinate where to place voxel
-     * @param z z-coordinate where to place voxel
-     */
     @Override
     public void place(VoxelTile tile, int x, int y, int z) {
         ((TestingVoxelTile) tile).set(x, y, z, this);
+    }
+
+    @Override
+    public Set<Placeable> palette() {
+        return Set.of(this);
     }
 
     /**
