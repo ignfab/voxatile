@@ -1,6 +1,11 @@
 package com.ignfab.minalac.generator.placeables.work_in_progress;
 
+import java.util.Arrays;
+
+import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.placeables.work_in_progress.builder.DelegateIndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.work_in_progress.builder.EqualizerIndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.work_in_progress.builder.PriorityRepartitionIndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.builder.StretcherIndexMapperBuilder;
 
 // TODO: Might be merged with ResizedStructureBuilder
@@ -138,6 +143,46 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
             new DelegateIndexMapperBuilder(builder.axisX()),
             new DelegateIndexMapperBuilder(builder.axisY()),
             new StretcherIndexMapperBuilder(builder.axisZ(), z, minRepetition, maxRepetition)
+        );
+    }
+
+    public static ResizedStructureBuilder repeatX(ResizedStructureBuilder builder, int minOccur) {
+        return new DefaultResizedStructureBuilder(
+            builder,
+            new EqualizerIndexMapperBuilder(builder.axisX(), minOccur),
+            new DelegateIndexMapperBuilder(builder.axisY()),
+            new DelegateIndexMapperBuilder(builder.axisZ())
+        );
+    }
+
+    public static ResizedStructureBuilder repeatY(ResizedStructureBuilder builder, int minOccur) {
+        return new DefaultResizedStructureBuilder(
+            builder,
+            new DelegateIndexMapperBuilder(builder.axisX()),
+            new EqualizerIndexMapperBuilder(builder.axisY(), minOccur),
+            new DelegateIndexMapperBuilder(builder.axisZ())
+        );
+    }
+
+    public static ResizedStructureBuilder repeatZ(ResizedStructureBuilder builder, int minOccur) {
+        return new DefaultResizedStructureBuilder(
+            builder,
+            new DelegateIndexMapperBuilder(builder.axisX()),
+            new DelegateIndexMapperBuilder(builder.axisY()),
+            new EqualizerIndexMapperBuilder(builder.axisZ(), minOccur)
+        );
+    }
+
+    public static ResizedStructureBuilder priorityX(ResizedStructureBuilder[] builders, int[] priority){
+        if (builders.length == 0 || builders.length != priority.length)
+            throw new RuntimeException("tab length do not match");
+        IndexesToResizedStructureBuilder provider = (i, j, k) -> {return builders[i];};
+        IndexMapperBuilder[] tab = Arrays.stream(builders).map(ResizedStructureBuilder::axisX).toArray(IndexMapperBuilder[]::new);
+        return new DefaultResizedStructureBuilder(
+            provider,
+            new PriorityRepartitionIndexMapperBuilder(tab, priority),
+            new DelegateIndexMapperBuilder(builders[0].axisY()),
+            new DelegateIndexMapperBuilder(builders[0].axisZ())
         );
     }
 }
