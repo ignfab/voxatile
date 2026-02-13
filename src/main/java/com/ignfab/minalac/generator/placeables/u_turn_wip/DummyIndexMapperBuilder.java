@@ -36,4 +36,13 @@ public class DummyIndexMapperBuilder implements IndexMapperBuilder {
     public int minimumSize() {
         return min;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("DummyIndexMapperBuilder{");
+        sb.append("min=").append(min);
+        sb.append(", max=").append(max);
+        sb.append('}');
+        return sb.toString();
+    }
 }
