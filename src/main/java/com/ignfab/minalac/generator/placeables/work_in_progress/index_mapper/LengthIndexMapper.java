@@ -13,6 +13,7 @@ public class LengthIndexMapper implements IndexMapper {
 
     public LengthIndexMapper(int... lengths) {
         // TODO: ignorer les zeros?
+        // Arrays.stream(lengths).filter( l -> l >=0).toArray();
         this.lengths = lengths;
         breakpointPositions = new int[lengths.length];
         breakpointPositions[0] = lengths[0];
