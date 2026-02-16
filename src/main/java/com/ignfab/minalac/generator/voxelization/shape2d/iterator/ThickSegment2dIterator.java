@@ -57,6 +57,8 @@ import com.ignfab.minalac.generator.voxelization.shape2d.Segment2d;
      * <p>
      * These four parameters describes the four side of the surface to draw: two borders parallel to the segment and two bevels intersecting them.
      * <p>
+     * Bevels direction must not be same as segment.
+     * <p>
      * Start and end bevel direction must be in opposite direction.
      *
      * @param segment the segment to iterator over.
@@ -109,7 +111,7 @@ import com.ignfab.minalac.generator.voxelization.shape2d.Segment2d;
 
         // Test if bevels intersection is in segment thickness
         if (Math.abs(bevelIntersectionPosition) <= thickness) {
-            Vector2d thickPoint = bevelIntersectionPosition > 0 ? thickPoint1 : thickPoint2;
+            Vector2d thickPoint = bevelIntersectionPosition < 0 ? thickPoint1 : thickPoint2;
             bbox = new WorldBBox2d(
                 bevelIntersection.round(),
                 intersection(start, startBevelDirection, thickPoint, direction).round(),
