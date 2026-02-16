@@ -249,6 +249,41 @@ public class WorldBBox3dTest {
     }
 
     @Test
+    @DisplayName("Test enlarged() method")
+    public void testEnlarged() {
+        assertEquals(new WorldBBox3d(0, 0, 0, 5, 7, 9),
+            new WorldBBox3d(1, 2, 3, 4, 5, 6).enlarged(new WorldBBox3d(-1, -2, -3, 1, 1, 1)));
+        assertEquals(new WorldBBox3d(1, 2, 3, 5, 7, 9),
+            new WorldBBox3d(1, 2, 3, 4, 5, 6).enlarged(new WorldBBox3d(1, 2, 3, 1, 1, 1)));
+    }
+
+    @Test
+    @DisplayName("Test symetric() method")
+    public void testSymetric() {
+        assertEquals(
+            new WorldBBox3d(
+                new WorldCoords3d(-4, -5, -6),
+                new WorldCoords3d(3, 2, 1)
+            ),
+            new WorldBBox3d(
+                new WorldCoords3d(4, 5, 6),
+                new WorldCoords3d(-3, -2, -1)
+            ).symetric());
+    }
+
+    @Test
+    @DisplayName("Test shift() method")
+    public void testShift() {
+        WorldBBox3d shifted;
+        WorldBBox3d box = new WorldBBox3d(1, 2, 3, 4, 5, 6);
+
+        shifted = box.shift(new WorldCoords3d(-2, -4, -6));
+
+        assertEquals(box.size(), shifted.size());
+        assertEquals(new WorldCoords3d(-1, -2, -3), shifted.min());
+    }
+
+    @Test
     public void testCenter() {
         // Odd sizes
         assertEquals(new WorldCoords3d(-2, 0, 2), new WorldBBox3d(-3, -2, -1, 3, 5, 7).center());

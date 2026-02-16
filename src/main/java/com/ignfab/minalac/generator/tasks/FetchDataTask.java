@@ -57,7 +57,7 @@ public class FetchDataTask implements TileTask {
      * @param tile tile for which data is fetched (it gives the wanted area)
      */
     public void run(GenerationTile tile) {
-        try (Provider.Result<?> result = provider.provide(tile.limits())) {
+        try (Provider.Result<?> result = provider.provide(tile.modelTypeVolume(modelType).get())) {
             processor.initialize(result.crs());
             while (result.hasNext()) {
                 Object data = result.next();

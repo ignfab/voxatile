@@ -34,4 +34,11 @@ public class ModelSelection {
         List<Model> models = tile.models().getByType(type);
         return filter == null ? models : Iterables.filter(models, filter);
     }
+
+    /**
+     * {@return model type name for this selection}
+     */
+    public String type() {
+        return type;
+    }
 }

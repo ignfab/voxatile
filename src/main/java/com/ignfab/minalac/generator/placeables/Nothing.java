@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.placeables;
 
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
@@ -30,5 +31,10 @@ public final class Nothing implements Pattern {
     @Override
     public Placeable get(int x, int y, int z) {
         return this;
+    }
+
+    @Override
+    public WorldBBox3d bbox() {
+        return WorldBBox3d.EMPTY;
     }
 }

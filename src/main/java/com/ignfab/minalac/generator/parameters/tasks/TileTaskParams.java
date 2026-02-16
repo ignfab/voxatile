@@ -23,6 +23,13 @@ public abstract class TileTaskParams extends PolymorphicParams {
     public List<String> after = new ArrayList<>();
 
     /**
+     * Model types to apply margin on (optional).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    public List<String> addMarginsTo = new ArrayList<>();
+
+    /**
      * Creates the corresponding {@code TileTask}.
      *
      * @param generation the generation context.

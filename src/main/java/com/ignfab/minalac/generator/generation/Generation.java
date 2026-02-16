@@ -1,6 +1,8 @@
 package com.ignfab.minalac.generator.generation;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
@@ -44,6 +46,8 @@ public class Generation {
     private final HeightmapDeclarationStore heightmaps = new HeightmapDeclarationStore();
 
     private final Scheduler<GenerationTile> scheduler = new Scheduler<>();
+
+    private final Map<String, WorldBBox3d> modelTypeMargins = new HashMap<>();
 
     private final int maxTileSize;
     private final Collection<WorldBBox2d> tiles;
@@ -215,5 +219,36 @@ public class Generation {
         return Iterables.remap(tiles,
             bbox -> new GenerationTile(this, bbox.to3d(world.limits().minZ(), world.limits().sizeZ()))
         );
+    }
+
+    /**
+     * Get margins for a model type as a bbox.
+     * <p>
+     * Returned bounding boxes represent the margin around future fetched areas.
+     * (0, 0, 0) is the point belonging to the base fetched area.
+     * Actual fetched area will include every bbox placed around each base area point.
+     *
+     * @return a map associating model type names to model types margins
+     */
+    public Map<String, WorldBBox3d> modelTypeMargins() {
+        return modelTypeMargins;
+    }
+
+    /**
+     * Ensures given margins will be included for the given model type.
+     * <p>
+     * Margins are represented by a bounding box. Negative part of bounding box
+     * will be added to min* and positive to max* limits of model type bounding box.
+     *
+     * @param modelType model type
+     * @param margins margins to include
+     */
+    public void includeModelTypeMargins(String modelType, WorldBBox3d margins) {
+        WorldBBox3d actual = modelTypeMargins.get(modelType);
+        if (actual == null)
+            // At least we include tile bbox points
+            actual = WorldBBox3d.ORIGIN;
+
+        modelTypeMargins.put(modelType, WorldBBox3d.surrounding(actual, margins));
     }
 }

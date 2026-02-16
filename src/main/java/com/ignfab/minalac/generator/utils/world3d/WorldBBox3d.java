@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.utils.world3d;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 import com.ignfab.minalac.generator.utils.iterator.Iterators;
@@ -143,6 +144,16 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
         }
 
         return new WorldBBox3d(minX, minY, minZ, maxX - minX + 1, maxY - minY + 1, maxZ - minZ + 1);
+    }
+
+    /**
+     * Creates a new {@link WorldBBox2d} containing all bounded items.
+     *
+     * @param items a list of bounded items to contain
+     * @return a bounding box containing all items
+     */
+    public static WorldBBox3d surrounding(Bounded3d... items) {
+        return surrounding(Arrays.asList(items));
     }
 
     /**
@@ -320,6 +331,49 @@ public class WorldBBox3d implements Bounded3d, Iterable<WorldCoords3d> {
      */
     public int maxZ() {
         return max.z();
+    }
+
+    /**
+     * Creates a new bounding box enlarged by given bounding box.
+     *
+     * This operation consist in placing a {@code by} bounding box at each point
+     * of current bounding box (centered at (0, 0, 0)) and taking the union of all these bounding boxes.
+     *
+     * @param by volume which enlarge bounding box by
+     * @return enlarged bounding box
+     */
+    public WorldBBox3d enlarged(WorldBBox3d by) {
+        return new WorldBBox3d(
+            new WorldCoords3d(
+                Math.min(min.x(), min.x() + by.min.x()),
+                Math.min(min.y(), min.y() + by.min.y()),
+                Math.min(min.z(), min.z() + by.min.z())
+            ),
+            new WorldCoords3d(
+                Math.max(max.x(), max.x() + by.max.x()),
+                Math.max(max.y(), max.y() + by.max.y()),
+                Math.max(max.z(), max.z() + by.max.z())
+            )
+        );
+    }
+
+    /**
+     * Creates a new bounding box which is symetric of this one around given point.
+     *
+     * @return symetric bounding box
+     */
+    public WorldBBox3d symetric() {
+        return new WorldBBox3d(-maxX(), -maxY(), -maxZ(), sizeX(), sizeY(), sizeZ());
+    }
+
+    /**
+     * Returns the bounding box shifted by given coordinates.
+     *
+     * @param by coordinate to shift the bounding box by
+     * @return shifted bounding box
+     */
+    public WorldBBox3d shift(WorldCoords3d by) {
+        return new WorldBBox3d(min().add(by), size());
     }
 
     /**
