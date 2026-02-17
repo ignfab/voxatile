@@ -30,17 +30,17 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
 
     @Override
     public Structure build(int sizeX, int sizeY, int sizeZ) {
-        checkResizability(sizeX, sizeY, sizeZ);
+        // checkResizability(sizeX, sizeY, sizeZ);
 
-        IndexMapper ax, aY, aZ;
-        ax = axisXBuilder.build(sizeX);
+        IndexMapper aX, aY, aZ;
+        aX = axisXBuilder.build(sizeX);
         aY = axisYBuilder.build(sizeY);
         aZ = axisZBuilder.build(sizeZ);
         Structure[][][] tab = new Structure
-            [ax.structures().size()]
+            [aX.structures().size()]
             [aY.structures().size()]
             [aZ.structures().size()];
-        for (IndexMapper.StructureIndex iX : ax.structures()) { // 3
+        for (IndexMapper.StructureIndex iX : aX.structures()) { // 3
             for (IndexMapper.StructureIndex iY : aY.structures()) { // 1
                 for (IndexMapper.StructureIndex iZ : aZ.structures()) { // 1
                     // TODO il faudra revoir ça (Techniquement on passe une taille pas possible a FixedSB)
@@ -50,7 +50,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
             }
         }
 
-        return new VirtualStructure(tab, ax, aY, aZ);
+        return new VirtualStructure(tab, aX, aY, aZ);
     }
 
     @Override
