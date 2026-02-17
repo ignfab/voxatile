@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.placeables;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ignfab.minalac.generator.placeables.work_in_progress.builder.IdentityIndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.work_in_progress.builder.ConstantIndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.ResizedStructureBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.Structure;
 import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapperBuilder;
@@ -228,9 +228,9 @@ public final class PlaceableStructure implements Structure {
 
         public FixedSB(PlaceableStructure structure) {
             this.structure = structure;
-            this.axisXBuilder = new IdentityIndexMapperBuilder(structure.limits.sizeX());
-            this.axisYBuilder = new IdentityIndexMapperBuilder(structure.limits.sizeY());
-            this.axisZBuilder = new IdentityIndexMapperBuilder(structure.limits.sizeZ());
+            this.axisXBuilder = new ConstantIndexMapperBuilder(structure.limits.sizeX());
+            this.axisYBuilder = new ConstantIndexMapperBuilder(structure.limits.sizeY());
+            this.axisZBuilder = new ConstantIndexMapperBuilder(structure.limits.sizeZ());
         }
 
         @Override

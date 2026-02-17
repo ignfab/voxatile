@@ -4,10 +4,10 @@ import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapper;
 import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IdentityIndexMapper;
 
-public class IdentityIndexMapperBuilder implements IndexMapperBuilder {
+public class ConstantIndexMapperBuilder implements IndexMapperBuilder {
     int theOnlyAllowedLength;
 
-    public IdentityIndexMapperBuilder(int theOnlyAllowedLength) {
+    public ConstantIndexMapperBuilder(int theOnlyAllowedLength) {
         this.theOnlyAllowedLength = theOnlyAllowedLength;
     }
 

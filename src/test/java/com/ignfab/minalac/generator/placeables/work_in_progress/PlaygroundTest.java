@@ -50,17 +50,40 @@ public class PlaygroundTest {
         A = DefaultResizedStructureBuilder.stretchX(A, 1, 0);
         A = DefaultResizedStructureBuilder.stretchY(A, 1, 1);
         B = DefaultResizedStructureBuilder.repeatX(B, 2);
-       // B = DefaultResizedStructureBuilder.stretchY(B, 1, 1);
+        B = DefaultResizedStructureBuilder.repeatY(B, 2);
+        //B = DefaultResizedStructureBuilder.stretchY(B, 1, 1);
         C = DefaultResizedStructureBuilder.stretchX(C, 1, 0);
-        C = DefaultResizedStructureBuilder.stretchY(C, 1, 1);
+        C = DefaultResizedStructureBuilder.stretchY(C, 0, 1);
 
         ResizedStructureBuilder[] builders = {A, B, C};
         int[] priorityX = {0, 1, 0};
 
         ResizedStructureBuilder builder = DefaultResizedStructureBuilder.priorityX(builders, priorityX);
+        builder = DefaultResizedStructureBuilder.repeatX(builder, 2);
 
-        Structure result = builder.build(11, 3, 1);
+        Structure result = builder.build(21, 4, 1);
         printo(result);
+    }
+    @Test
+    public void machin(){
+        ResizedStructureBuilder A = PlaceableStructure.builder()
+            .set(0, 0, 0, new TestingVoxel("1"))
+            .set(1, 0, 0, new TestingVoxel("2"))
+            .set(2, 0, 0, new TestingVoxel("3"))
+            .set(0, 1, 0, new TestingVoxel("4"))
+            .set(1, 1, 0, new TestingVoxel("5"))
+            .set(2, 1, 0, new TestingVoxel("6"))
+            .build()
+            .toFixedResizedBuilder();
+
+        ResizedStructureBuilder n = DefaultResizedStructureBuilder.stretchX(A, 0, 1);
+        n = DefaultResizedStructureBuilder.stretchY(n, 0, 1);
+
+
+        VirtualStructure r = (VirtualStructure) n.build(10, 10, 1);
+        System.out.println(r.axisX);
+        System.out.println(r.axisY);
+        printo(r);
     }
 
     public static void printo(Structure display) {

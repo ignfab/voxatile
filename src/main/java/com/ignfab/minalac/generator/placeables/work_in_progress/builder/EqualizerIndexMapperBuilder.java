@@ -21,8 +21,9 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
     // TODO: Copié coller de PriorityRepartitionIndexMapperBuilder à revoir
     @Override
     public IndexMapper build(int size) {
+        /*
         if (size < minSize)
-            throw new RuntimeException("Requested size is not enough");
+            throw new RuntimeException("Requested size is not enough");*/
 
         int n = size / underlying.minimumSize();
         int remainder = size % underlying.minimumSize();

@@ -6,6 +6,7 @@ import com.ignfab.minalac.generator.placeables.work_in_progress.builder.Delegate
 import com.ignfab.minalac.generator.placeables.work_in_progress.builder.EqualizerIndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.builder.PriorityRepartitionIndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.builder.StretcherIndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.work_in_progress.builder.SuperDelegate;
 
 // TODO: Might be merged with ResizedStructureBuilder
 public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
@@ -37,11 +38,11 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
             [ax.structure().length()]
             [aY.structure().length()]
             [aZ.structure().length()];
-        for (IndexMapper.StructureIndex iX : ax.structure()) {
-            for (IndexMapper.StructureIndex iY : aY.structure()) {
-                for (IndexMapper.StructureIndex iZ : aZ.structure()) {
+        for (IndexMapper.StructureIndex iX : ax.structure()) { // 3
+            for (IndexMapper.StructureIndex iY : aY.structure()) { // 1
+                for (IndexMapper.StructureIndex iZ : aZ.structure()) { // 1
                     // TODO il faudra revoir ça (Techniquement on passe une taille pas possible a FixedSB)
-                    ResizedStructureBuilder b = provider.whichOne(iX.index(), iY.index(), iZ.index());
+                    ResizedStructureBuilder b = provider.whichOne(iX.index(), iY.index(), iZ.index()); // Si 0 -> A, 1 -> B, 2 -> C
                     tab[iX.index()][iY.index()][iZ.index()] = b.build(iX.size(), iY.size(), iZ.size());
                 }
             }
@@ -52,7 +53,6 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
 
     @Override
     public void checkResizability(int sizeX, int sizeY, int sizeZ) {
-        /*
         if (sizeX <= 0)
             throw new RuntimeException(String.format("sizeX must be strictly positive (Asked : %d)", sizeX));
         if (sizeY <= 0) {
@@ -64,7 +64,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
         if (axisY().ask(sizeY) != sizeY) {
             throw new RuntimeException(String.format("Asked sizeY (%d) do not match the allowed (%d)", sizeY, axisY().ask(sizeY)));
         }if (axisZ().ask(sizeZ) != sizeZ)
-            throw new RuntimeException(String.format("Asked sizeZ (%d) do not match the allowed (%d)", sizeZ, axisZ().ask(sizeZ)));*/
+            throw new RuntimeException(String.format("Asked sizeZ (%d) do not match the allowed (%d)", sizeZ, axisZ().ask(sizeZ)));
     }
 
     @Override
@@ -176,49 +176,14 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
         if (builders.length == 0 || builders.length != priority.length)
             throw new RuntimeException("tab length do not match");
         IndexesToResizedStructureBuilder provider = (i, j, k) -> {return builders[i];};
-        IndexMapperBuilder[] tab = Arrays.stream(builders).map(ResizedStructureBuilder::axisX).toArray(IndexMapperBuilder[]::new);
+        IndexMapperBuilder[] tabX = Arrays.stream(builders).map(ResizedStructureBuilder::axisX).toArray(IndexMapperBuilder[]::new);
+        IndexMapperBuilder[] tabY = Arrays.stream(builders).map(ResizedStructureBuilder::axisY).toArray(IndexMapperBuilder[]::new);
+        IndexMapperBuilder[] tabZ = Arrays.stream(builders).map(ResizedStructureBuilder::axisZ).toArray(IndexMapperBuilder[]::new);
         return new DefaultResizedStructureBuilder(
             provider,
-            new PriorityRepartitionIndexMapperBuilder(tab, priority),
-            new DelegateIndexMapperBuilder(builders[0].axisY()),
-            new DelegateIndexMapperBuilder(builders[0].axisZ())
+            new PriorityRepartitionIndexMapperBuilder(tabX, priority),
+            new SuperDelegate(tabY),
+            new SuperDelegate(tabZ)
         );
-    }
-
-    class tmp implements ResizedStructureBuilder {
-        private IndexMapperBuilder axisXBuilder;
-        private IndexMapperBuilder axisYBuilder;
-        private IndexMapperBuilder axisZBuilder;
-
-        public tmp(ResizedStructureBuilder builder) {
-            this.axisXBuilder = builder.axisX();
-            this.axisYBuilder = builder.axisY();
-            this.axisZBuilder = builder.axisZ();
-        }
-
-        @Override
-        public Structure build(int sizeX, int sizeY, int sizeZ) {
-            throw new UnsupportedOperationException("Not implemented yet");
-        }
-
-        @Override
-        public IndexMapperBuilder axisX() {
-            return axisXBuilder;
-        }
-
-        @Override
-        public IndexMapperBuilder axisY() {
-            return axisYBuilder;
-        }
-
-        @Override
-        public IndexMapperBuilder axisZ() {
-            return axisZBuilder;
-        }
-
-        @Override
-        public void checkResizability(int sizeX, int sizeY, int sizeZ) {
-            throw new UnsupportedOperationException("Not implemented yet");
-        }
     }
 }
