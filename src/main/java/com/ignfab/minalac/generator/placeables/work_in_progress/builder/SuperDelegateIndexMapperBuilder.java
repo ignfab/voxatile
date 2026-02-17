@@ -4,10 +4,10 @@ import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapper;
 import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IdentityIndexMapper;
 
-public class SuperDelegate implements IndexMapperBuilder {
+public class SuperDelegateIndexMapperBuilder implements IndexMapperBuilder {
     IndexMapperBuilder[] tab;
 
-    public SuperDelegate(IndexMapperBuilder[] tab) {
+    public SuperDelegateIndexMapperBuilder(IndexMapperBuilder[] tab) {
         this.tab = tab;
     }
 

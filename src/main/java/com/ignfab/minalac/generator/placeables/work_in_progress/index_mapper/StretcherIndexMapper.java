@@ -1,10 +1,9 @@
 package com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper;
 
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.stream.IntStream;
 
 import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapper;
-import com.ignfab.minalac.generator.placeables.work_in_progress.SizedIterable;
 
 public class StretcherIndexMapper implements IndexMapper {
     int stretchableCoordinate;
@@ -34,7 +33,9 @@ public class StretcherIndexMapper implements IndexMapper {
     }
 
     @Override
-    public SizedIterable<StructureIndex> structure() {
+    public Collection<StructureIndex> structures() {
+        return IntStream.range(0, 1).mapToObj(i -> new StructureIndex(0, lengthAtRest)).toList();
+        /*
         return new SizedIterable<>() {
             @Override
             public int length() {
@@ -45,7 +46,7 @@ public class StretcherIndexMapper implements IndexMapper {
             public Iterator<StructureIndex> iterator() {
                 return IntStream.range(0, 1).mapToObj(i -> new StructureIndex(0, lengthAtRest)).toList().iterator();
             }
-        };
+        };*/
     }
 
     @Override

@@ -6,20 +6,21 @@ import com.ignfab.minalac.generator.placeables.work_in_progress.builder.Delegate
 import com.ignfab.minalac.generator.placeables.work_in_progress.builder.EqualizerIndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.builder.PriorityRepartitionIndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.builder.StretcherIndexMapperBuilder;
-import com.ignfab.minalac.generator.placeables.work_in_progress.builder.SuperDelegate;
+import com.ignfab.minalac.generator.placeables.work_in_progress.builder.SuperDelegateIndexMapperBuilder;
 
 // TODO: Might be merged with ResizedStructureBuilder
 public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
-    protected IndexesToResizedStructureBuilder provider;
+    // protected IndexesToResizedStructureBuilder provider;
+    private final ResizedStructureBuilderProvider provider;
     private final IndexMapperBuilder axisXBuilder;
     private final IndexMapperBuilder axisYBuilder;
     private final IndexMapperBuilder axisZBuilder;
 
-    public DefaultResizedStructureBuilder(ResizedStructureBuilder provider, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
-        this((i, j, k) -> provider, axisXBuilder, axisYBuilder, axisZBuilder);
+    public DefaultResizedStructureBuilder(ResizedStructureBuilder builder, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
+        this((i, j, k) -> builder, axisXBuilder, axisYBuilder, axisZBuilder);
     }
 
-    public DefaultResizedStructureBuilder(IndexesToResizedStructureBuilder provider, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
+    private DefaultResizedStructureBuilder(ResizedStructureBuilderProvider provider, IndexMapperBuilder axisXBuilder, IndexMapperBuilder axisYBuilder, IndexMapperBuilder axisZBuilder) {
         this.provider = provider;
         this.axisXBuilder = axisXBuilder;
         this.axisYBuilder = axisYBuilder;
@@ -35,14 +36,14 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
         aY = axisYBuilder.build(sizeY);
         aZ = axisZBuilder.build(sizeZ);
         Structure[][][] tab = new Structure
-            [ax.structure().length()]
-            [aY.structure().length()]
-            [aZ.structure().length()];
-        for (IndexMapper.StructureIndex iX : ax.structure()) { // 3
-            for (IndexMapper.StructureIndex iY : aY.structure()) { // 1
-                for (IndexMapper.StructureIndex iZ : aZ.structure()) { // 1
+            [ax.structures().size()]
+            [aY.structures().size()]
+            [aZ.structures().size()];
+        for (IndexMapper.StructureIndex iX : ax.structures()) { // 3
+            for (IndexMapper.StructureIndex iY : aY.structures()) { // 1
+                for (IndexMapper.StructureIndex iZ : aZ.structures()) { // 1
                     // TODO il faudra revoir ça (Techniquement on passe une taille pas possible a FixedSB)
-                    ResizedStructureBuilder b = provider.whichOne(iX.index(), iY.index(), iZ.index()); // Si 0 -> A, 1 -> B, 2 -> C
+                    ResizedStructureBuilder b = provider.get(iX.index(), iY.index(), iZ.index()); // Si 0 -> A, 1 -> B, 2 -> C
                     tab[iX.index()][iY.index()][iZ.index()] = b.build(iX.size(), iY.size(), iZ.size());
                 }
             }
@@ -175,15 +176,20 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
     public static ResizedStructureBuilder priorityX(ResizedStructureBuilder[] builders, int[] priority){
         if (builders.length == 0 || builders.length != priority.length)
             throw new RuntimeException("tab length do not match");
-        IndexesToResizedStructureBuilder provider = (i, j, k) -> {return builders[i];};
+        ResizedStructureBuilderProvider provider = (i, j, k) -> {return builders[i];};
         IndexMapperBuilder[] tabX = Arrays.stream(builders).map(ResizedStructureBuilder::axisX).toArray(IndexMapperBuilder[]::new);
         IndexMapperBuilder[] tabY = Arrays.stream(builders).map(ResizedStructureBuilder::axisY).toArray(IndexMapperBuilder[]::new);
         IndexMapperBuilder[] tabZ = Arrays.stream(builders).map(ResizedStructureBuilder::axisZ).toArray(IndexMapperBuilder[]::new);
         return new DefaultResizedStructureBuilder(
             provider,
             new PriorityRepartitionIndexMapperBuilder(tabX, priority),
-            new SuperDelegate(tabY),
-            new SuperDelegate(tabZ)
+            new SuperDelegateIndexMapperBuilder(tabY),
+            new SuperDelegateIndexMapperBuilder(tabZ)
         );
+    }
+
+    @FunctionalInterface
+    private interface ResizedStructureBuilderProvider {
+        ResizedStructureBuilder get(int i, int j, int k);
     }
 }

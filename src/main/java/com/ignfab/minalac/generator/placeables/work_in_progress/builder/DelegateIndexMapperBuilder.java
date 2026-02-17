@@ -2,7 +2,6 @@ package com.ignfab.minalac.generator.placeables.work_in_progress.builder;
 
 import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapper;
 import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapperBuilder;
-import com.ignfab.minalac.generator.placeables.work_in_progress.IndexesToResizedStructureBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.IdentityIndexMapper;
 
 public class DelegateIndexMapperBuilder implements IndexMapperBuilder {

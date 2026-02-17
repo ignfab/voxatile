@@ -1,11 +1,9 @@
 package com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper;
 
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.stream.IntStream;
 
 import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapper;
-import com.ignfab.minalac.generator.placeables.work_in_progress.SizedIterable;
 
 public class LengthIndexMapper implements IndexMapper {
     int[] breakpointPositions;
@@ -34,7 +32,11 @@ public class LengthIndexMapper implements IndexMapper {
     }
 
     @Override
-    public SizedIterable<StructureIndex> structure() {
+    public Collection<StructureIndex> structures() {
+        return IntStream.range(0, lengths.length)
+            .mapToObj(i -> new StructureIndex(i, lengths[i]))
+            .toList();
+        /*
         return new SizedIterable<>() {
             @Override
             public int length() {
@@ -52,7 +54,7 @@ public class LengthIndexMapper implements IndexMapper {
             public String toString() {
                 return Arrays.toString(lengths);
             }
-        };
+        };*/
 
 
     }
@@ -70,7 +72,7 @@ public class LengthIndexMapper implements IndexMapper {
         for (int c = 0; c < 10; c++) {
             System.out.println(c + "->" + map.placeable(c));
         }
-        for (StructureIndex s : map.structure())
+        for (StructureIndex s : map.structures())
             System.out.println(s);
     }
 }

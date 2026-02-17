@@ -2,8 +2,6 @@ package com.ignfab.minalac.generator.placeables.work_in_progress.builder;
 
 import java.util.Arrays;
 
-import com.ignfab.minalac.generator.placeables.u_turn_wip.DummyIndexMapperBuilder;
-import com.ignfab.minalac.generator.placeables.u_turn_wip.RepeatedIndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapper;
 import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.LengthIndexMapper;
@@ -83,7 +81,7 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
         IndexMapperBuilder a = new EqualizerIndexMapperBuilder(dummy1, 0);
         IndexMapper im = a.build(1);
 
-        System.out.println(im.structure());
+        System.out.println(im.structures());
 
         for (int c = 0; c < im.size(); c++) {
             System.out.println(c + " -> " + im.placeable(c));

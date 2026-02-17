@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 
-import com.ignfab.minalac.generator.placeables.u_turn_wip.DummyIndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapper;
 import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.LengthIndexMapper;
@@ -115,7 +114,7 @@ public class PriorityRepartitionIndexMapperBuilder implements IndexMapperBuilder
 
         IndexMapper im = prio.build(6);
 
-        System.out.println(im.structure());
+        System.out.println(im.structures());
 
         for (int c = 0; c < im.size(); c++) {
             System.out.println(c + " -> " + im.placeable(c));
