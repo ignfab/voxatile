@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.placeables.work_in_progress;
+package com.ignfab.minalac.generator.placeables.resized;
 
 public interface IndexMapperBuilder {
     IndexMapper build(int size);

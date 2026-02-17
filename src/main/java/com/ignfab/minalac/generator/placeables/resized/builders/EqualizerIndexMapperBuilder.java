@@ -1,10 +1,10 @@
-package com.ignfab.minalac.generator.placeables.work_in_progress.builder;
+package com.ignfab.minalac.generator.placeables.resized.builders;
 
 import java.util.Arrays;
 
-import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapper;
-import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapperBuilder;
-import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.LengthIndexMapper;
+import com.ignfab.minalac.generator.placeables.resized.IndexMapper;
+import com.ignfab.minalac.generator.placeables.resized.IndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.resized.mappers.LengthIndexMapper;
 
 public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
     IndexMapperBuilder underlying;

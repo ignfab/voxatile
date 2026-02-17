@@ -1,4 +1,6 @@
-package com.ignfab.minalac.generator.placeables.work_in_progress;
+package com.ignfab.minalac.generator.placeables.resized;
+
+import com.ignfab.minalac.generator.placeables.Structure;
 
 public interface ResizedStructureBuilder {
     Structure build(int sizeX, int sizeY, int sizeZ);

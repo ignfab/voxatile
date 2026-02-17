@@ -1,13 +1,13 @@
-package com.ignfab.minalac.generator.placeables.work_in_progress.builder;
+package com.ignfab.minalac.generator.placeables.resized.builders;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
 
-import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapper;
-import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapperBuilder;
-import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.LengthIndexMapper;
+import com.ignfab.minalac.generator.placeables.resized.IndexMapper;
+import com.ignfab.minalac.generator.placeables.resized.IndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.resized.mappers.LengthIndexMapper;
 
 public class PriorityRepartitionIndexMapperBuilder implements IndexMapperBuilder {
     IndexMapperBuilder[] builders;

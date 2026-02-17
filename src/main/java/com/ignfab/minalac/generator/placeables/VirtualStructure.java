@@ -1,6 +1,6 @@
-package com.ignfab.minalac.generator.placeables.work_in_progress;
+package com.ignfab.minalac.generator.placeables;
 
-import com.ignfab.minalac.generator.placeables.Placeable;
+import com.ignfab.minalac.generator.placeables.resized.IndexMapper;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldSize3d;
 import com.ignfab.minalac.generator.world.VoxelTile;

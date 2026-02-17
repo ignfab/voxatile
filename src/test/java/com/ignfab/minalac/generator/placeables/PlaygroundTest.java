@@ -1,9 +1,10 @@
-package com.ignfab.minalac.generator.placeables.work_in_progress;
+package com.ignfab.minalac.generator.placeables;
 
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
-import com.ignfab.minalac.generator.placeables.PlaceableStructure;
+import com.ignfab.minalac.generator.placeables.resized.DefaultResizedStructureBuilder;
+import com.ignfab.minalac.generator.placeables.resized.ResizedStructureBuilder;
 
 public class PlaygroundTest {
 
@@ -51,7 +52,6 @@ public class PlaygroundTest {
         A = DefaultResizedStructureBuilder.stretchY(A, 1, 1);
         B = DefaultResizedStructureBuilder.repeatX(B, 2);
         B = DefaultResizedStructureBuilder.repeatY(B, 2);
-        //B = DefaultResizedStructureBuilder.stretchY(B, 1, 1);
         C = DefaultResizedStructureBuilder.stretchX(C, 1, 0);
         C = DefaultResizedStructureBuilder.stretchY(C, 0, 1);
 

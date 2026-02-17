@@ -1,16 +1,17 @@
-package com.ignfab.minalac.generator.placeables.work_in_progress;
+package com.ignfab.minalac.generator.placeables.resized;
 
 import java.util.Arrays;
 
-import com.ignfab.minalac.generator.placeables.work_in_progress.builder.DelegateIndexMapperBuilder;
-import com.ignfab.minalac.generator.placeables.work_in_progress.builder.EqualizerIndexMapperBuilder;
-import com.ignfab.minalac.generator.placeables.work_in_progress.builder.PriorityRepartitionIndexMapperBuilder;
-import com.ignfab.minalac.generator.placeables.work_in_progress.builder.StretcherIndexMapperBuilder;
-import com.ignfab.minalac.generator.placeables.work_in_progress.builder.SuperDelegateIndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.resized.builders.DelegateIndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.resized.builders.EqualizerIndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.resized.builders.PriorityRepartitionIndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.resized.builders.StretcherIndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.resized.builders.SuperDelegateIndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.Structure;
+import com.ignfab.minalac.generator.placeables.VirtualStructure;
 
 // TODO: Might be merged with ResizedStructureBuilder
 public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
-    // protected IndexesToResizedStructureBuilder provider;
     private final ResizedStructureBuilderProvider provider;
     private final IndexMapperBuilder axisXBuilder;
     private final IndexMapperBuilder axisYBuilder;
@@ -81,15 +82,6 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
     @Override
     public IndexMapperBuilder axisZ() {
         return axisZBuilder;
-    }
-
-    public static ResizedStructureBuilder stretchoX(ResizedStructureBuilder builder, int x) {
-        return new DefaultResizedStructureBuilder(
-            builder,
-            new StretcherIndexMapperBuilder(builder.axisX(), x, 0),
-            new DelegateIndexMapperBuilder(builder.axisY()),
-            new DelegateIndexMapperBuilder(builder.axisZ())
-        );
     }
 
     public static ResizedStructureBuilder stretchX(ResizedStructureBuilder builder, int x, int minRepetition) {

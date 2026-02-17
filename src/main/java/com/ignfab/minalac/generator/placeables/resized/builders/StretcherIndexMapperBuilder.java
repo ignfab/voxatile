@@ -1,8 +1,8 @@
-package com.ignfab.minalac.generator.placeables.work_in_progress.builder;
+package com.ignfab.minalac.generator.placeables.resized.builders;
 
-import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapper;
-import com.ignfab.minalac.generator.placeables.work_in_progress.IndexMapperBuilder;
-import com.ignfab.minalac.generator.placeables.work_in_progress.index_mapper.StretcherIndexMapper;
+import com.ignfab.minalac.generator.placeables.resized.IndexMapper;
+import com.ignfab.minalac.generator.placeables.resized.IndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.resized.mappers.StretcherIndexMapper;
 
 public class StretcherIndexMapperBuilder implements IndexMapperBuilder {
     IndexMapperBuilder base;
