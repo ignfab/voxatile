@@ -29,9 +29,7 @@ public class TestingIndexMapperBuilder implements IndexMapperBuilder {
     public int maxSizeUnder(int size) {
         if (size < min)
             return -1;
-        if (size < max)
-            return min;
-        return max;
+        return Math.min(size, max);
     }
 
     @Override

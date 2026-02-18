@@ -26,8 +26,17 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
             throw new UnresizableStructureException("Requested size is not enough");
 
         int underlyingMin = underlying.minimumSize();
-        if (underlyingMin == 0)
-            return new LengthIndexMapper(0);
+        // TODO-12 : Initialement j'avais mis que si la talle minimale de underlying était de 0 alors le build était de 0.
+        // C'est pas juste, enfin ça depend du choix. Admettons qu'on a un IMB de 0..3, on demande 5
+        // Possibilité 1: -> 0 (Mais c'est bizarre de dire ça l'IMB sous jacent peut prendre une taille
+        // Possibilité 2: -> 3 / 2 (Mais encore une fois bizarre car peut y avoir IMB avec taille infinie
+        // Possibilité 3: -> 1 / 1 / 1 / 1 / 1 ou variante, mais encore une fois c'est bizarre
+        // Possibilité 4: Cette classe refuse un IMB de minSize de 0
+        // Possibilité 5: Revoir algo de repartition et fare un truc similaire à Priority
+        if (underlyingMin == 0) {
+            underlyingMin = computeNonZeroMinimalSize(size);
+            if (underlyingMin == 0) return new LengthIndexMapper(0);
+        }
 
         DistributionResult result = compute(size, underlyingMin);
         int remainder = result.remainder;
@@ -44,8 +53,11 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
             return -1;
 
         int underlyingMin = underlying.minimumSize();
-        if (underlyingMin == 0)
-            return 0;
+        // Voir TODO-12
+        if (underlyingMin == 0) {
+            underlyingMin = computeNonZeroMinimalSize(size);
+            if (underlyingMin == 0) return 0;
+        }
 
         DistributionResult result = compute(size, underlyingMin);
         return size - result.remainder;
@@ -55,6 +67,14 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
     @Override
     public int minimumSize() {
         return minSize;
+    }
+
+    private int computeNonZeroMinimalSize(int size) {
+        for (int i = 0; i < size; i++) {
+            if (underlying.maxSizeUnder(i) > 0)
+                return i;
+        }
+        return 0;
     }
 
     // underlyingMin should be strictly positive
@@ -82,8 +102,6 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
 
     private record DistributionResult(int[] lengths, int remainder) {
     }
-
-    ;
 
     public static void main(String[] args) throws UnresizableStructureException {
         IndexMapperBuilder dummy1 = new DummyIndexMapperBuilder(2, 4);

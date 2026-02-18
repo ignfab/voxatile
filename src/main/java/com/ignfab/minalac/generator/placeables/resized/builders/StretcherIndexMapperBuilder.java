@@ -19,6 +19,7 @@ public class StretcherIndexMapperBuilder implements IndexMapperBuilder {
         this.underlying = underlying;
         this.stretchableCoord = stretchableCoord;
         int underlyingMin = underlying.minimumSize();
+        // Voir TODO-12 : le questionnement semble similaire
         if (underlyingMin == 0) {
             minSize = 0;
             maxSize = 0;
