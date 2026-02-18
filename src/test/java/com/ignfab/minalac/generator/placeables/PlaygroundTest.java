@@ -5,11 +5,12 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
 import com.ignfab.minalac.generator.placeables.resized.DefaultResizedStructureBuilder;
 import com.ignfab.minalac.generator.placeables.resized.ResizedStructureBuilder;
+import com.ignfab.minalac.generator.placeables.resized.UnresizableStructureException;
 
 public class PlaygroundTest {
 
     @Test
-    public void jesaisaps() {
+    public void jesaisaps() throws UnresizableStructureException {
         ResizedStructureBuilder A = PlaceableStructure.builder()
             .set(0, 0, 0, new TestingVoxel("1"))
             .set(1, 0, 0, new TestingVoxel("2"))
@@ -65,7 +66,7 @@ public class PlaygroundTest {
         printo(result);
     }
     @Test
-    public void machin(){
+    public void machin() throws UnresizableStructureException {
         ResizedStructureBuilder A = PlaceableStructure.builder()
             .set(0, 0, 0, new TestingVoxel("1"))
             .set(1, 0, 0, new TestingVoxel("2"))

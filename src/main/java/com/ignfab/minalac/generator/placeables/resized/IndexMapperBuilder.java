@@ -2,7 +2,7 @@ package com.ignfab.minalac.generator.placeables.resized;
 
 public interface IndexMapperBuilder {
     // TODO-10 : Doit lever une exception UnresizableStructureException ?
-    IndexMapper build(int size);
+    IndexMapper build(int size) throws UnresizableStructureException;
     /**
      * Returns -1 if not possible
      * @param size

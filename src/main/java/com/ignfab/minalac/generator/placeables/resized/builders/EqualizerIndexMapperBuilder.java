@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import com.ignfab.minalac.generator.placeables.resized.IndexMapper;
 import com.ignfab.minalac.generator.placeables.resized.IndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.resized.UnresizableStructureException;
 import com.ignfab.minalac.generator.placeables.resized.mappers.LengthIndexMapper;
 
 public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
@@ -84,7 +85,7 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
 
     ;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnresizableStructureException {
         IndexMapperBuilder dummy1 = new DummyIndexMapperBuilder(2, 4);
         IndexMapperBuilder a = new EqualizerIndexMapperBuilder(dummy1, 0);
         IndexMapper im = a.build(10);

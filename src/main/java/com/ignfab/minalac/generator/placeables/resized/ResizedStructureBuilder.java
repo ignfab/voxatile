@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.placeables.resized;
 import com.ignfab.minalac.generator.placeables.Structure;
 
 public interface ResizedStructureBuilder {
-    Structure build(int sizeX, int sizeY, int sizeZ);
+    Structure build(int sizeX, int sizeY, int sizeZ) throws UnresizableStructureException;
     IndexMapperBuilder axisX();
     IndexMapperBuilder axisY();
     IndexMapperBuilder axisZ();

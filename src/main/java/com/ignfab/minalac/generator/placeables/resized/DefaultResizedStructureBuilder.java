@@ -29,7 +29,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
     }
 
     @Override
-    public Structure build(int sizeX, int sizeY, int sizeZ) {
+    public Structure build(int sizeX, int sizeY, int sizeZ) throws UnresizableStructureException {
         // checkResizability(sizeX, sizeY, sizeZ);
 
         IndexMapper aX, aY, aZ;
