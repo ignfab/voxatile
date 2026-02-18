@@ -2,13 +2,16 @@ package com.ignfab.minalac.generator.placeables.resized.builders;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.ignfab.minalac.generator.placeables.resized.UnresizableStructureException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EqualizerIndexMapperBuilderTest {
     @Test
     public void testBuild() {
-        assertEquals(0, 0);
-        // throw new RuntimeException("Not implemented");
+        assertThrows(UnresizableStructureException.class, () -> new EqualizerIndexMapperBuilder(new TestingIndexMapperBuilder(3), 1).build(5));
+        assertThrows(UnresizableStructureException.class, () -> new EqualizerIndexMapperBuilder(new TestingIndexMapperBuilder(3), 1).build(7));
+        throw new RuntimeException("Not finished");
     }
 
     @Test

@@ -2,12 +2,18 @@ package com.ignfab.minalac.generator.placeables.resized.builders;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.placeables.resized.UnresizableStructureException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class StretcherIndexMapperBuilderTest {
     @Test
     public void testBuild() {
-        throw new RuntimeException("Not implemented");
+        // Not enough space
+        assertThrows(UnresizableStructureException.class, () -> new StretcherIndexMapperBuilder(new TestingIndexMapperBuilder(3), 0, 1, 2).build(2));
+        // requested size too much
+        assertThrows(UnresizableStructureException.class, () -> new StretcherIndexMapperBuilder(new TestingIndexMapperBuilder(3), 0, 1, 2).build(5));
+        throw new RuntimeException("Not finished");
     }
 
     @Test

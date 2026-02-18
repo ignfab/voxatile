@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.placeables.resized.builders;
 
 import com.ignfab.minalac.generator.placeables.resized.IndexMapper;
 import com.ignfab.minalac.generator.placeables.resized.IndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.resized.UnresizableStructureException;
 import com.ignfab.minalac.generator.placeables.resized.mappers.StretcherIndexMapper;
 
 public class StretcherIndexMapperBuilder implements IndexMapperBuilder {
@@ -28,9 +29,11 @@ public class StretcherIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     @Override
-    public IndexMapper build(int size) {
-        if (maxSizeUnder(size) != size)
-            throw new RuntimeException("Not possible");
+    public IndexMapper build(int size) throws UnresizableStructureException {
+        if (size < minSize)
+            throw new UnresizableStructureException("Not enough space");
+        if (size > maxSize)
+            throw new UnresizableStructureException("Requested size is too large");
         return new StretcherIndexMapper(stretchableCoord, underlying.minimumSize(), size);
     }
 

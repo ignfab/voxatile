@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.placeables.resized.builders;
 
 import com.ignfab.minalac.generator.placeables.resized.IndexMapper;
 import com.ignfab.minalac.generator.placeables.resized.IndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.resized.UnresizableStructureException;
 import com.ignfab.minalac.generator.placeables.resized.mappers.IdentityIndexMapper;
 
 public class ConstantIndexMapperBuilder implements IndexMapperBuilder {
@@ -12,10 +13,9 @@ public class ConstantIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     @Override
-    public IndexMapper build(int size) {
-        // TODO Probleme avec ce test
+    public IndexMapper build(int size) throws UnresizableStructureException {
         if (size != theOnlyAllowedLength)
-            throw new RuntimeException("Identity : Not possible");
+            throw new UnresizableStructureException("Requested size isn't equal to the intrinsic size");
         return new IdentityIndexMapper(size);
     }
 

@@ -2,12 +2,17 @@ package com.ignfab.minalac.generator.placeables.resized.builders;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.placeables.resized.UnresizableStructureException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ConstantIndexMapperBuilderTest {
     @Test
     public void testBuild() {
-        throw new RuntimeException("Not implemented");
+        assertThrows(UnresizableStructureException.class, () -> new ConstantIndexMapperBuilder(7). build(8));
+        assertThrows(UnresizableStructureException.class, () -> new ConstantIndexMapperBuilder(6). build(8));
+
+        throw new RuntimeException("Not finished");
     }
 
     @Test

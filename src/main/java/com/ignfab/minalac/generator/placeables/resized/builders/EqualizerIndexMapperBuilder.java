@@ -21,9 +21,9 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     @Override
-    public IndexMapper build(int size) {
+    public IndexMapper build(int size) throws UnresizableStructureException {
         if (size < minSize)
-            throw new RuntimeException("Not enough space");
+            throw new UnresizableStructureException("Requested size is not enough");
 
         int underlyingMin = underlying.minimumSize();
         if (underlyingMin == 0)
@@ -33,7 +33,7 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
         int remainder = result.remainder;
 
         if (remainder != 0)
-            throw new RuntimeException("Requested size is not enough, failed to equality distribute it " + remainder);
+            throw new UnresizableStructureException("Requested size iis either not enough or too large. Failed to distribute remainder");
 
         return new LengthIndexMapper(result.lengths);
     }
@@ -58,7 +58,7 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     // underlyingMin should be strictly positive
-    // TODO-12 : Revoir cette partie : elle n'est pas testée
+    // TODO-12 : Revoir cette partie : elle est testée à la louche
     private DistributionResult compute(int size, int underlyingMin) {
         int n = size / underlyingMin;
         int remainder = size % underlyingMin;
