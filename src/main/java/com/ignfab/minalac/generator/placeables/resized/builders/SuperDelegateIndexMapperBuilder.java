@@ -21,9 +21,9 @@ public class SuperDelegateIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     @Override
-    public int ask(int size) {
+    public int maxSizeUnder(int size) {
         for (IndexMapperBuilder builder : tab) {
-            if (builder.ask(size) != size)
+            if (builder.maxSizeUnder(size) != size)
                 return -1;
         }
         return size;

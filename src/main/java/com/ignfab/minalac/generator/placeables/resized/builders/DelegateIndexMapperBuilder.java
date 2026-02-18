@@ -18,8 +18,8 @@ public class DelegateIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     @Override
-    public int ask(int size) {
-        return delegatee.ask(size);
+    public int maxSizeUnder(int size) {
+        return delegatee.maxSizeUnder(size);
     }
 
     @Override

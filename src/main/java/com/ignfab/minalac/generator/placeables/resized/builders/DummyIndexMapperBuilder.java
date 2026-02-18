@@ -18,7 +18,7 @@ public class DummyIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     @Override
-    public int ask(int size) {
+    public int maxSizeUnder(int size) {
         if (max <= size)
             return max;
         if (min <= size)
@@ -29,7 +29,7 @@ public class DummyIndexMapperBuilder implements IndexMapperBuilder {
     public static void main(String[] args) {
         IndexMapperBuilder b = new DummyIndexMapperBuilder(4, 6);
         for(int i = 0; i < 9; i ++)
-            System.out.println(i + " -> "+ b.ask(i));
+            System.out.println(i + " -> "+ b.maxSizeUnder(i));
     }
 
     @Override

@@ -61,12 +61,12 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
             throw new RuntimeException(String.format("sizeY must be strictly positive (Asked : %d)", sizeY));
         }if (sizeZ <= 0)
             throw new RuntimeException(String.format("sizeZ must be strictly positive (Asked : %d)", sizeZ));
-        if (axisX().ask(sizeX) != sizeX)
-            throw new RuntimeException(String.format("Asked sizeX (%d) do not match the allowed (%d)", sizeX, axisX().ask(sizeX)));
-        if (axisY().ask(sizeY) != sizeY) {
-            throw new RuntimeException(String.format("Asked sizeY (%d) do not match the allowed (%d)", sizeY, axisY().ask(sizeY)));
-        }if (axisZ().ask(sizeZ) != sizeZ)
-            throw new RuntimeException(String.format("Asked sizeZ (%d) do not match the allowed (%d)", sizeZ, axisZ().ask(sizeZ)));
+        if (axisX().maxSizeUnder(sizeX) != sizeX)
+            throw new RuntimeException(String.format("Asked sizeX (%d) do not match the allowed (%d)", sizeX, axisX().maxSizeUnder(sizeX)));
+        if (axisY().maxSizeUnder(sizeY) != sizeY) {
+            throw new RuntimeException(String.format("Asked sizeY (%d) do not match the allowed (%d)", sizeY, axisY().maxSizeUnder(sizeY)));
+        }if (axisZ().maxSizeUnder(sizeZ) != sizeZ)
+            throw new RuntimeException(String.format("Asked sizeZ (%d) do not match the allowed (%d)", sizeZ, axisZ().maxSizeUnder(sizeZ)));
     }
 
     @Override
@@ -96,7 +96,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
     public static ResizedStructureBuilder stretchX(ResizedStructureBuilder builder, int x, int minRepetition, int maxRepetition) {
         return new DefaultResizedStructureBuilder(
             builder,
-            new StretcherIndexMapperBuilder(builder.axisX(), x, minRepetition, maxRepetition),
+            new StretcherIndexMapperBuilder(builder.axisX(), x, minRepetition),
             new DelegateIndexMapperBuilder(builder.axisY()),
             new DelegateIndexMapperBuilder(builder.axisZ())
         );
@@ -115,7 +115,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
         return new DefaultResizedStructureBuilder(
             builder,
             new DelegateIndexMapperBuilder(builder.axisX()),
-            new StretcherIndexMapperBuilder(builder.axisY(), y, minRepetition, maxRepetition),
+            new StretcherIndexMapperBuilder(builder.axisY(), y, minRepetition),
             new DelegateIndexMapperBuilder(builder.axisZ())
         );
     }
@@ -134,7 +134,7 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
             builder,
             new DelegateIndexMapperBuilder(builder.axisX()),
             new DelegateIndexMapperBuilder(builder.axisY()),
-            new StretcherIndexMapperBuilder(builder.axisZ(), z, minRepetition, maxRepetition)
+            new StretcherIndexMapperBuilder(builder.axisZ(), z, minRepetition)
         );
     }
 

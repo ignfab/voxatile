@@ -42,7 +42,7 @@ public class PriorityRepartitionIndexMapperBuilder implements IndexMapperBuilder
                     // Ca amrche bien quand ce qui est retranché est le subremainer (sauf que ici c'est le added qui est retranché
                     // Donc à verifier si il y a un probleme ou pas
                     int subRemainder = (remainder % n == 0) ? remainder / n : (remainder / n) + 1;
-                    int maxPossibleSize = builders[index].ask(lengths[index] + subRemainder);
+                    int maxPossibleSize = builders[index].maxSizeUnder(lengths[index] + subRemainder);
                     // maxPossibleSize peut être 0 ou négatif, en revanche lengths est au minium 0
                     if (lengths[index] < maxPossibleSize) {
                         int added = maxPossibleSize - lengths[index];
@@ -61,7 +61,7 @@ public class PriorityRepartitionIndexMapperBuilder implements IndexMapperBuilder
     }
 
     @Override
-    public int ask(int size) {
+    public int maxSizeUnder(int size) {
         // TODO: refactoriser ou faire un systeme de "cache";
         int remainder = size;
         int[] lengths = new int[builders.length];
@@ -79,7 +79,7 @@ public class PriorityRepartitionIndexMapperBuilder implements IndexMapperBuilder
                 int n = priorityBuilderIndexes.size();
                 for (Integer index : priorityBuilderIndexes) {
                     int subRemainder = (remainder % n == 0) ? remainder / n : (remainder / n) + 1;
-                    int maxPossibleSize = builders[index].ask(lengths[index] + subRemainder);
+                    int maxPossibleSize = builders[index].maxSizeUnder(lengths[index] + subRemainder);
                     if (lengths[index] < maxPossibleSize) {
                         int added = maxPossibleSize - lengths[index];
                         lengths[index] = maxPossibleSize;

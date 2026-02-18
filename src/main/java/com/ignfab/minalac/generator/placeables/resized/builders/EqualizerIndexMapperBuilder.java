@@ -21,7 +21,8 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
     public IndexMapper build(int size) {
         /*
         if (size < minSize)
-            throw new RuntimeException("Requested size is not enough");*/
+            throw new RuntimeException("Requested size is not enough");
+            */
 
         int n = size / underlying.minimumSize();
         int remainder = size % underlying.minimumSize();
@@ -31,7 +32,7 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
 
         for (int i = 0; i < n; i ++) {
             int subRemainder = (remainder % n == 0) ? remainder / n : (remainder / n) + 1;
-            int maxPossibleSize = underlying.ask(underlying.minimumSize() + subRemainder);
+            int maxPossibleSize = underlying.maxSizeUnder(underlying.minimumSize() + subRemainder);
             if (lengths[i] < maxPossibleSize) {
                 int added = maxPossibleSize - lengths[i];
                 lengths[i] = maxPossibleSize;
@@ -47,7 +48,7 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     @Override
-    public int ask(int size) {
+    public int maxSizeUnder(int size) {
         if (size < minSize)
             return 0;
 
@@ -59,7 +60,7 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
 
         for (int i = 0; i < n; i ++) {
             int subRemainder = (remainder % n == 0) ? remainder / n : (remainder / n) + 1;
-            int maxPossibleSize = underlying.ask(underlying.minimumSize() + subRemainder);
+            int maxPossibleSize = underlying.maxSizeUnder(underlying.minimumSize() + subRemainder);
             if (lengths[i] < maxPossibleSize) {
                 int added = maxPossibleSize - lengths[i];
                 lengths[i] = maxPossibleSize;

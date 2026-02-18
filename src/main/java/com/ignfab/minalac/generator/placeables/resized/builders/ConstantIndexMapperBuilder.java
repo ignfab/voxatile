@@ -5,7 +5,7 @@ import com.ignfab.minalac.generator.placeables.resized.IndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.resized.mappers.IdentityIndexMapper;
 
 public class ConstantIndexMapperBuilder implements IndexMapperBuilder {
-    int theOnlyAllowedLength;
+    private final int theOnlyAllowedLength;
 
     public ConstantIndexMapperBuilder(int theOnlyAllowedLength) {
         this.theOnlyAllowedLength = theOnlyAllowedLength;
@@ -20,9 +20,9 @@ public class ConstantIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     @Override
-    public int ask(int size) {
+    public int maxSizeUnder(int size) {
         if (size < theOnlyAllowedLength)
-            return 0;
+            return -1;
         return theOnlyAllowedLength;
     }
 
