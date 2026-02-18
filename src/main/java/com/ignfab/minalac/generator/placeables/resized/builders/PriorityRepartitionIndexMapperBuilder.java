@@ -10,13 +10,18 @@ import com.ignfab.minalac.generator.placeables.resized.IndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.resized.mappers.LengthIndexMapper;
 
 public class PriorityRepartitionIndexMapperBuilder implements IndexMapperBuilder {
-    IndexMapperBuilder[] builders;
-    TreeMap<Integer, List<Integer>> map = new TreeMap<>(Collections.reverseOrder());
+    private final IndexMapperBuilder[] builders;
+    private final TreeMap<Integer, List<Integer>> map = new TreeMap<>(Collections.reverseOrder());
+    private final int minimalSize;
 
     public PriorityRepartitionIndexMapperBuilder(IndexMapperBuilder[] builders, int[] priorities) {
         this.builders = builders;
-        for (int i = 0; i < priorities.length; i++)
+        int sum = 0;
+        for (int i = 0; i < priorities.length; i++) {
             map.computeIfAbsent(priorities[i], k -> new ArrayList<>()).add(i);
+            sum = sum + builders[i].minimumSize();
+        }
+        minimalSize = sum;
     }
 
     @Override
@@ -95,12 +100,7 @@ public class PriorityRepartitionIndexMapperBuilder implements IndexMapperBuilder
 
     @Override
     public int minimumSize() {
-        // TODO: Revenir dessus quand interface et different objets fixées
-        // It could be calculated at the construction, for now let us assume that IBM.minimumSize() are not final
-        int sum = 0;
-        for (IndexMapperBuilder builder : builders)
-            sum = sum + builder.minimumSize();
-        return sum;
+        return minimalSize;
     }
 
     public static void main(String[] args) {
