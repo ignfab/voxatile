@@ -9,5 +9,8 @@ public interface IndexMapperBuilder {
      * @return
      */
     int maxSizeUnder(int size);
+
+    // TODO-11 : Really ? Always positive or zero?
+    // Should always be postive or equals to zero?
     int minimumSize();
 }

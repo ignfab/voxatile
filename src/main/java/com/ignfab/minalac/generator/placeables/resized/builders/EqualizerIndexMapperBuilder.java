@@ -7,80 +7,87 @@ import com.ignfab.minalac.generator.placeables.resized.IndexMapperBuilder;
 import com.ignfab.minalac.generator.placeables.resized.mappers.LengthIndexMapper;
 
 public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
-    IndexMapperBuilder underlying;
-    int minSize;
+    private final IndexMapperBuilder underlying;
+    private final int minSize;
 
     public EqualizerIndexMapperBuilder(IndexMapperBuilder underlying, int minOccur) {
         this.underlying = underlying;
-        // TODO: pas sur de ça
-        this.minSize = Math.max(underlying.minimumSize() * minOccur, underlying.minimumSize());
+        int underlyingSize = underlying.minimumSize();
+        if (underlyingSize == 0)
+            minSize = 0;
+        else
+            minSize = underlyingSize * minOccur;
     }
 
-    // TODO: Copié coller de PriorityRepartitionIndexMapperBuilder à revoir
     @Override
     public IndexMapper build(int size) {
-        /*
         if (size < minSize)
-            throw new RuntimeException("Requested size is not enough");
-            */
+            throw new RuntimeException("Not enough space");
 
-        int n = size / underlying.minimumSize();
-        int remainder = size % underlying.minimumSize();
+        int underlyingMin = underlying.minimumSize();
+        if (underlyingMin == 0)
+            return new LengthIndexMapper(0);
 
-        int[] lengths = new int[n];
-        Arrays.fill(lengths, underlying.minimumSize());
-
-        for (int i = 0; i < n; i ++) {
-            int subRemainder = (remainder % n == 0) ? remainder / n : (remainder / n) + 1;
-            int maxPossibleSize = underlying.maxSizeUnder(underlying.minimumSize() + subRemainder);
-            if (lengths[i] < maxPossibleSize) {
-                int added = maxPossibleSize - lengths[i];
-                lengths[i] = maxPossibleSize;
-                remainder = remainder - added;
-            }
-            n--;
-        }
+        DistributionResult result = compute(size, underlyingMin);
+        int remainder = result.remainder;
 
         if (remainder != 0)
             throw new RuntimeException("Requested size is not enough, failed to equality distribute it " + remainder);
 
-        return new LengthIndexMapper(lengths);
+        return new LengthIndexMapper(result.lengths);
     }
 
     @Override
     public int maxSizeUnder(int size) {
         if (size < minSize)
+            return -1;
+
+        int underlyingMin = underlying.minimumSize();
+        if (underlyingMin == 0)
             return 0;
 
-        int n = size / underlying.minimumSize();
-        int remainder = size % underlying.minimumSize();
-
-        int[] lengths = new int[n];
-        Arrays.fill(lengths, underlying.minimumSize());
-
-        for (int i = 0; i < n; i ++) {
-            int subRemainder = (remainder % n == 0) ? remainder / n : (remainder / n) + 1;
-            int maxPossibleSize = underlying.maxSizeUnder(underlying.minimumSize() + subRemainder);
-            if (lengths[i] < maxPossibleSize) {
-                int added = maxPossibleSize - lengths[i];
-                lengths[i] = maxPossibleSize;
-                remainder = remainder - added;
-            }
-            n--;
-        }
-
-        return size - remainder;
+        DistributionResult result = compute(size, underlyingMin);
+        return size - result.remainder;
     }
+
 
     @Override
     public int minimumSize() {
         return minSize;
     }
 
+    // underlyingMin should be strictly positive
+    // TODO-12 : Revoir cette partie : elle n'est pas testée
+    private DistributionResult compute(int size, int underlyingMin) {
+        int n = size / underlyingMin;
+        int remainder = size % underlyingMin;
+
+        int[] lengths = new int[n];
+        Arrays.fill(lengths, underlyingMin);
+
+        for (int i = 0; i < n; i++) {
+            int subRemainder = (remainder % n == 0) ? remainder / n : (remainder / n) + 1;
+            int maxPossibleSize = underlying.maxSizeUnder(underlyingMin + subRemainder);
+            if (lengths[i] < maxPossibleSize) {
+                int added = maxPossibleSize - lengths[i];
+                lengths[i] = maxPossibleSize;
+                remainder = remainder - added;
+            }
+            n--;
+        }
+
+        return new DistributionResult(lengths, remainder);
+    }
+
+    private record DistributionResult(int[] lengths, int remainder) {
+    }
+
+    ;
+
     public static void main(String[] args) {
         IndexMapperBuilder dummy1 = new DummyIndexMapperBuilder(2, 4);
         IndexMapperBuilder a = new EqualizerIndexMapperBuilder(dummy1, 0);
-        IndexMapper im = a.build(1);
+        IndexMapper im = a.build(10);
 
         System.out.println(im.structures());
 
