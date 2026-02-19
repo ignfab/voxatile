@@ -4,13 +4,14 @@ import java.util.Arrays;
 
 import com.ignfab.minalac.generator.placeables.resized.IndexMapper;
 import com.ignfab.minalac.generator.placeables.resized.IndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.resized.UnresizableStructureException;
 import com.ignfab.minalac.generator.placeables.resized.mappers.IdentityIndexMapper;
 
 public class SuperDelegateIndexMapperBuilder implements IndexMapperBuilder {
     private final IndexMapperBuilder[] builders;
     private final int minSize;
 
-    public SuperDelegateIndexMapperBuilder(IndexMapperBuilder[] builders) {
+    public SuperDelegateIndexMapperBuilder(IndexMapperBuilder... builders) {
         this.builders = builders;
         // TODO-14 : Il y a d'autre comptabilité mais c'est le plus bourrin
         int maxMin = 0;
@@ -18,18 +19,20 @@ public class SuperDelegateIndexMapperBuilder implements IndexMapperBuilder {
             maxMin = Math.max(maxMin, builder.minimumSize());
 
         for (IndexMapperBuilder builder : builders) {
-            if (builder.maxSizeUnder(maxMin) != maxMin)
-                throw new RuntimeException("Incompatible builders");
+            if (builder.maxSizeUnder(maxMin) != maxMin) {
+                // They may be where builders can be compatible
+                // Possible size A : 1, 3, 5 B : 2, 4, 6 -> Incompatible
+                //  A : 1, 3, 6 B 2, 4, 6 -> Compatible but we would need minOver() and a maximum to limit the search as a param
+                throw new UnsupportedOperationException("Incompatible builders");
+            }
         }
         this.minSize = maxMin;
     }
 
     @Override
-    public IndexMapper build(int size) {
-        /*IndexMapper[] mapper = new IndexMapper[tab.length];
-        for (int i = 0 ; i < mapper.length; i++)
-            mapper[i] = tab[i].build(size);
-            */
+    public IndexMapper build(int size) throws UnresizableStructureException {
+        if (size != maxSizeUnder(size))
+            throw new UnresizableStructureException("Not possible");
         return new IdentityIndexMapper(size);
     }
 
@@ -50,6 +53,7 @@ public class SuperDelegateIndexMapperBuilder implements IndexMapperBuilder {
 
     // TODO-15 : Ca me semble OK mais vérifier
     private int compute(int size) {
+        // TODO-16 : can be optimized since there is a min
         if (size < 0)
             return size;
         boolean disagree = false;

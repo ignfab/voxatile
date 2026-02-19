@@ -33,10 +33,13 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
         // Possibilité 3: -> 1 / 1 / 1 / 1 / 1 ou variante, mais encore une fois c'est bizarre
         // Possibilité 4: Cette classe refuse un IMB de minSize de 0
         // Possibilité 5: Revoir algo de repartition et fare un truc similaire à Priority
+        /*
         if (underlyingMin == 0) {
             underlyingMin = computeNonZeroMinimalSize(size);
             if (underlyingMin == 0) return new LengthIndexMapper(0);
-        }
+        }*/
+        // For now let us assume has min size different of zero (Need minSizeOver(0)
+        if (underlyingMin == 0) return new LengthIndexMapper(0);
 
         DistributionResult result = compute(size, underlyingMin);
         int remainder = result.remainder;
@@ -54,10 +57,13 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
 
         int underlyingMin = underlying.minimumSize();
         // Voir TODO-12
+        /*
         if (underlyingMin == 0) {
             underlyingMin = computeNonZeroMinimalSize(size);
             if (underlyingMin == 0) return 0;
-        }
+        }*/
+        // For now let us assume has min size different of zero (Need minSizeOver(0)
+        if (underlyingMin == 0) return 0;
 
         DistributionResult result = compute(size, underlyingMin);
         return size - result.remainder;
@@ -101,17 +107,5 @@ public class EqualizerIndexMapperBuilder implements IndexMapperBuilder {
     }
 
     private record DistributionResult(int[] lengths, int remainder) {
-    }
-
-    public static void main(String[] args) throws UnresizableStructureException {
-        IndexMapperBuilder dummy1 = new DummyIndexMapperBuilder(2, 4);
-        IndexMapperBuilder a = new EqualizerIndexMapperBuilder(dummy1, 0);
-        IndexMapper im = a.build(10);
-
-        System.out.println(im.structures());
-
-        for (int c = 0; c < im.size(); c++) {
-            System.out.println(c + " -> " + im.placeable(c));
-        }
     }
 }

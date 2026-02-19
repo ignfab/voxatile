@@ -21,6 +21,8 @@ public class StretcherIndexMapperBuilder implements IndexMapperBuilder {
         int underlyingMin = underlying.minimumSize();
         // Voir TODO-12 : le questionnement semble similaire
         if (underlyingMin == 0) {
+            // Baldy implemented -> underlying can have a min of 0 and not being "empty"
+            // Could be corrected with minSizeOver(0)
             minSize = 0;
             maxSize = 0;
         } else {

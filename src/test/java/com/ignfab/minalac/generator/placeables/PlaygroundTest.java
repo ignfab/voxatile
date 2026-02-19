@@ -60,9 +60,9 @@ public class PlaygroundTest {
         int[] priorityX = {0, 1, 0};
 
         ResizedStructureBuilder builder = DefaultResizedStructureBuilder.priorityX(builders, priorityX);
-        builder = DefaultResizedStructureBuilder.repeatX(builder, 2);
+        // builder = DefaultResizedStructureBuilder.repeatX(builder, 2);
 
-        Structure result = builder.build(14, 4, 1);
+        Structure result = builder.build(12, 4, 1);
         printo(result);
     }
     @Test

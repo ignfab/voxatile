@@ -92,22 +92,4 @@ public class PriorityRepartitionIndexMapperBuilder implements IndexMapperBuilder
 
     private record DistributionResult(int[] lengths, int remainder) {
     }
-
-    public static void main(String[] args) throws UnresizableStructureException {
-        IndexMapperBuilder dummy1 = new DummyIndexMapperBuilder(0, 100);
-        IndexMapperBuilder dummy2 = new DummyIndexMapperBuilder(1, 2);
-        IndexMapperBuilder dummy3 = new DummyIndexMapperBuilder(3, 3);
-        IndexMapperBuilder[] builders = new IndexMapperBuilder[]{dummy1, dummy2, dummy3};
-        int[] priority = new int[]{0, 1, 2};
-
-        PriorityRepartitionIndexMapperBuilder prio = new PriorityRepartitionIndexMapperBuilder(builders, priority);
-
-        IndexMapper im = prio.build(6);
-
-        System.out.println(im.structures());
-
-        for (int c = 0; c < im.size(); c++) {
-            System.out.println(c + " -> " + im.placeable(c));
-        }
-    }
 }
