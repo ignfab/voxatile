@@ -1,0 +1,41 @@
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+
+  setSpawn:
+    type: setSpawn
+    heightmap:
+      sum: [ ground, 1 ]
+    x: 0
+    y: 0
+
+  renderGround:
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - put: *voxel-grass
+          at: [ 0, 0, 0 ]
+        - put: *voxel-dirt
+          at: [ 0, 0, -3..-1 ]
+        - put: *voxel-stone
+          at: [ 0, 0, -20..-4 ]
+
+  testResize:
+    after: renderGround
+    type: testResize
+    minimum: ground
+    resizable:
+      base:
+        - put: *voxel-stone
+          at: [ 0..2, 0, 0..2 ]
+        - put: *voxel-glass
+          at: [ 1, 0, 1 ]
+      elasticAt: 1
+      minRepetition: 1
+    fallback: *forest-tree1
+#    sizeX: 10
+#    sizeY: 10
+#    sizeZ: 10

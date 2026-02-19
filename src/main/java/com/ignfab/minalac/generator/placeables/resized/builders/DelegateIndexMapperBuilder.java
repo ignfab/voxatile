@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.placeables.resized.builders;
 
 import com.ignfab.minalac.generator.placeables.resized.IndexMapper;
 import com.ignfab.minalac.generator.placeables.resized.IndexMapperBuilder;
+import com.ignfab.minalac.generator.placeables.resized.UnresizableStructureException;
 import com.ignfab.minalac.generator.placeables.resized.mappers.IdentityIndexMapper;
 
 public class DelegateIndexMapperBuilder implements IndexMapperBuilder {
@@ -11,8 +12,11 @@ public class DelegateIndexMapperBuilder implements IndexMapperBuilder {
         this.delegatee = delegatee;
     }
 
+    // TODO-17 : Le throws!
     @Override
-    public IndexMapper build(int size) {
+    public IndexMapper build(int size) throws UnresizableStructureException {
+        if (delegatee.maxSizeUnder(size) != size)
+            throw new UnresizableStructureException("?");
         return new IdentityIndexMapper(size);
         //return delegatee.build(size);
     }

@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.placeables;
 
 import com.ignfab.minalac.generator.placeables.resized.IndexMapper;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldSize3d;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
@@ -48,6 +49,7 @@ public class VirtualStructure implements Structure {
 
     @Override
     public void place(VoxelTile tile, int x, int y, int z) {
-        throw new RuntimeException("Not implemented");
+        for (WorldCoords3d c : limits.bbox())
+            get(c.x(), c.y(), c.z()).place(tile, c.x() + x, c.y() + y, c.z() + z);
     }
 }

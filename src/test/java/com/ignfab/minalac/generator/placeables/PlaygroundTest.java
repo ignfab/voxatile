@@ -87,6 +87,30 @@ public class PlaygroundTest {
         printo(r);
     }
 
+    @Test
+    public void illegal() throws UnresizableStructureException {
+        ResizedStructureBuilder base = PlaceableStructure.builder()
+            .set(0, 0, 0, new TestingVoxel("1"))
+            .set(1, 0, 0, new TestingVoxel("2"))
+            .set(2, 0, 0, new TestingVoxel("3"))
+            .set(0, 1, 0, new TestingVoxel("4"))
+            .set(1, 1, 0, new TestingVoxel("5"))
+            .set(2, 1, 0, new TestingVoxel("6"))
+            .set(0, 2, 0, new TestingVoxel("7"))
+            .set(1, 2, 0, new TestingVoxel("8"))
+            .set(2, 2, 0, new TestingVoxel("9"))
+            .build()
+            .toFixedResizedBuilder();
+
+        ResizedStructureBuilder n = DefaultResizedStructureBuilder.stretchX(base, 1, 1);
+        System.out.println(n.axisZ().maxSizeUnder(1));
+        int sizeZ = n.axisZ().maxSizeUnder(1);
+        System.out.println(sizeZ);
+        VirtualStructure r = (VirtualStructure) n.build(10, 3, sizeZ);
+
+        printo(r);
+    }
+
     public static void printo(Structure display) {
         for (int y = display.limits().maxY(); y >= display.limits().minY(); y--) {
             for (int x = display.limits().minX(); x <= display.limits().maxX(); x++) {
