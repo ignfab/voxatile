@@ -1,0 +1,139 @@
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+
+  setSpawn:
+    type: setSpawn
+    heightmap:
+      sum: [ ground, 1 ]
+    x: 0
+    y: 0
+
+  renderGround:
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - put: *voxel-grass
+          at: [ 0, 0, 0 ]
+        - put: *voxel-dirt
+          at: [ 0, 0, -3..-1 ]
+        - put: *voxel-stone
+          at: [ 0, 0, -20..-4 ]
+
+  testResize3:
+    after: renderGround
+    type: testResize
+    minimum: ground
+    resizable:
+      repeated:
+        fixed: *windows-two
+      axis: [ x, z ]
+      minRepetition: [ 1, 1 ]
+    fallback: *forest-tree1
+    placeDebug:
+      at:
+        x: -50
+        y: 50
+        z: 5
+      size:
+        x: 10
+        y: 1
+        z: 7
+
+  testResize2:
+    after: renderGround
+    type: testResize
+    minimum: ground
+    resizable:
+      repeated:
+        stretched:
+          - put: wool:pink
+            at: [ 0, 0, 0..2 ]
+          - put: *voxel-stone
+            at: [ 1..2, 0, 0..2 ]
+          - put: *voxel-glass
+            at: [ 1, 0, 1 ]
+        elasticAt:
+          x: [0, 1]
+          z: [0, 1]
+      axis: [x, z]
+      minRepetition: [1, 1]
+    fallback: *forest-tree1
+    placeDebug:
+      at:
+        x: 50
+        y: 50
+        z: 5
+      size:
+        x: 10
+        y: 1
+        z: 7
+
+  testResize:
+    after: renderGround
+    type: testResize
+    minimum: ground
+    resizable:
+      distributedByPriority:
+        - resized:
+            distributedByPriority:
+              - resized:
+                  repeated:
+                    stretched: *windows-one
+                    elasticAt:
+                      z: [ 3, 1 ]
+                  axis: [ x ]
+                  minRepetition: [ 1 ]
+                priority: 1
+              - resized:
+                  stretched: *door
+                  elasticAt:
+                    x: [ 2, 1 ]
+                    z: [ 3, 1 ]
+                priority: 0
+              - resized:
+                  repeated:
+                    stretched: *windows-one
+                    elasticAt:
+                      z: [ 3, 1 ]
+                  axis: [ x ]
+                  minRepetition: [ 1 ]
+                priority: 1
+            axis: x
+          priority: 0
+        - resized:
+            distributedByPriority:
+              - resized:
+                  stretched: *left
+                  elasticAt:
+                    x: [ 1, 0 ]
+                    z: [ 0, 1 ]
+                priority: 0
+              - resized:
+                  repeated:
+                    fixed: *windows-two
+                  axis: [ x, z ]
+                  minRepetition: [ 1, 1 ]
+                priority: 1
+              - resized:
+                  stretched: *right
+                  elasticAt:
+                    x: [ 0, 0 ]
+                    z: [ 0, 1 ]
+                priority: 0
+            axis: x
+          priority: 1
+      axis: z
+    fallback: *forest-tree1
+    placeDebug:
+      at:
+        x: 10
+        y: 10
+        z: 5
+      size:
+        x: 15
+        y: 1
+        z: 21

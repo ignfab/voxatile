@@ -32,3 +32,103 @@ references:
         at: [ 0, 0, 0..5 ]
   - &voxel-water default:water_source
   - &voxel-air air
+  - &windows-one
+    with:
+      'b': default:silver_sandstone_brick
+      'g': default:obsidian_glass
+      'o': default:stonebrick
+    axes: [ z, x ]
+    blueprint:
+      - "bbb"
+      - "bgb"
+      - "bbb"
+      - "ooo"
+  - &door
+    with:
+      'b': default:silver_sandstone_brick
+      'g': doors:door_wood_a
+      'o': default:stonebrick
+    axes: [ z, x ]
+    blueprint:
+      - "bbb"
+      - "b b"
+      - "bgb"
+      - "ooo"
+  - &windows-two
+    with:
+      'b': default:sandstonebrick
+      'g': default:glass
+    axes: [ z, x ]
+    blueprint:
+      - "bbb"
+      - "bgb"
+      - "bgb"
+      - "bbb"
+  - &left
+    with:
+      'b': default:sandstonebrick
+      's': default:silver_sand
+    axes: [ z, x ]
+    blueprint:
+      - "sb"
+  - &right
+    with:
+      'b': default:sandstonebrick
+      's': default:silver_sand
+    axes: [ z, x ]
+    blueprint:
+      - "bs"
+  - &rdc
+      - put: default:stone
+        at: [ 0, 0, 0 ]
+  - &facade-one
+    distributedByPriority:
+      - resized:
+          distributedByPriority:
+            - resized:
+                repeated:
+                  stretched: *windows-one
+                  elasticAt:
+                    z: [ 3, 1 ]
+                axis: [ x ]
+                minRepetition: [ 1 ]
+              priority: 1
+            - resized:
+                stretched: *door
+                elasticAt:
+                  x: [ 2, 1 ]
+                  z: [ 3, 1 ]
+              priority: 0
+            - resized:
+                repeated:
+                  stretched: *windows-one
+                  elasticAt:
+                    z: [ 3, 1 ]
+                axis: [ x ]
+                minRepetition: [ 1 ]
+              priority: 1
+          axis: x
+        priority: 0
+      - resized:
+          distributedByPriority:
+            - resized:
+                stretched: *left
+                elasticAt:
+                  x: [ 1, 0 ]
+                  z: [ 0, 1 ]
+              priority: 0
+            - resized:
+                repeated:
+                  fixed: *windows-two
+                axis: [ x, z ]
+                minRepetition: [ 1, 1 ]
+              priority: 1
+            - resized:
+                stretched: *right
+                elasticAt:
+                  x: [ 0, 0 ]
+                  z: [ 0, 1 ]
+              priority: 0
+          axis: x
+        priority: 1
+    axis: z
