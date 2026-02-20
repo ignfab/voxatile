@@ -180,6 +180,37 @@ public class DefaultResizedStructureBuilder implements ResizedStructureBuilder {
         );
     }
 
+    // TODO-18 : Refactoriser (copié collé pour le params)
+    public static ResizedStructureBuilder priorityY(ResizedStructureBuilder[] builders, int[] priority){
+        if (builders.length == 0 || builders.length != priority.length)
+            throw new RuntimeException("tab length do not match");
+        ResizedStructureBuilderProvider provider = (i, j, k) -> {return builders[j];};
+        IndexMapperBuilder[] tabX = Arrays.stream(builders).map(ResizedStructureBuilder::axisX).toArray(IndexMapperBuilder[]::new);
+        IndexMapperBuilder[] tabY = Arrays.stream(builders).map(ResizedStructureBuilder::axisY).toArray(IndexMapperBuilder[]::new);
+        IndexMapperBuilder[] tabZ = Arrays.stream(builders).map(ResizedStructureBuilder::axisZ).toArray(IndexMapperBuilder[]::new);
+        return new DefaultResizedStructureBuilder(
+            provider,
+            new SuperDelegateIndexMapperBuilder(tabX),
+            new PriorityRepartitionIndexMapperBuilder(tabY, priority),
+            new SuperDelegateIndexMapperBuilder(tabZ)
+        );
+    }
+
+    public static ResizedStructureBuilder priorityZ(ResizedStructureBuilder[] builders, int[] priority){
+        if (builders.length == 0 || builders.length != priority.length)
+            throw new RuntimeException("tab length do not match");
+        ResizedStructureBuilderProvider provider = (i, j, k) -> {return builders[k];};
+        IndexMapperBuilder[] tabX = Arrays.stream(builders).map(ResizedStructureBuilder::axisX).toArray(IndexMapperBuilder[]::new);
+        IndexMapperBuilder[] tabY = Arrays.stream(builders).map(ResizedStructureBuilder::axisY).toArray(IndexMapperBuilder[]::new);
+        IndexMapperBuilder[] tabZ = Arrays.stream(builders).map(ResizedStructureBuilder::axisZ).toArray(IndexMapperBuilder[]::new);
+        return new DefaultResizedStructureBuilder(
+            provider,
+            new SuperDelegateIndexMapperBuilder(tabX),
+            new SuperDelegateIndexMapperBuilder(tabY),
+            new PriorityRepartitionIndexMapperBuilder(tabZ, priority)
+        );
+    }
+
     @FunctionalInterface
     private interface ResizedStructureBuilderProvider {
         ResizedStructureBuilder get(int i, int j, int k);

@@ -19,7 +19,6 @@ import com.ignfab.minalac.generator.outputs.minetest.MTVoxelWorld;
 import com.ignfab.minalac.generator.parameters.OutputFormat;
 import com.ignfab.minalac.generator.parameters.ParamsParser;
 import com.ignfab.minalac.generator.parameters.ParseException;
-import com.ignfab.minalac.generator.parameters.placeables.resized.ResizedStructureBuilderParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.MCVoxelParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.MTVoxelParams;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
@@ -47,7 +46,7 @@ import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderVectorsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.SetSpawnTaskParams;
-import com.ignfab.minalac.generator.parameters.tasks.TestingStructureBuilderTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.PocStructureBuilderTaskParams;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
@@ -132,8 +131,7 @@ public final class MinalacGenerator {
         parser.registerParams("geometryBuffer", JTSGeometryBufferPostProcessorParams.class);
         parser.registerParams("remap", MetadataValueMappingPostProcessorParams.class);
 
-        parser.registerParams("testResize", TestingStructureBuilderTaskParams.class);
-        // parser.registerParams("resizable", ResizedStructureBuilderParams.class);
+        parser.registerParams("testResize", PocStructureBuilderTaskParams.class);
 
         Generation generation = parser.parse(parameters).create(maxTileSize);
 
