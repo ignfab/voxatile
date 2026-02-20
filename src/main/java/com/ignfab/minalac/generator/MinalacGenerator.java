@@ -46,6 +46,7 @@ import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderLinesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderSurfacesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.SetSpawnTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.PocStructureBuilderTaskParams;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
@@ -129,6 +130,8 @@ public final class MinalacGenerator {
         parser.registerParams("truncate", MetadataTruncatePostProcessorParams.class);
         parser.registerParams("geometryBuffer", JTSGeometryBufferPostProcessorParams.class);
         parser.registerParams("remap", MetadataValueMappingPostProcessorParams.class);
+
+        parser.registerParams("testResize", PocStructureBuilderTaskParams.class);
 
         Generation generation = parser.parse(parameters).create(maxTileSize);
 
