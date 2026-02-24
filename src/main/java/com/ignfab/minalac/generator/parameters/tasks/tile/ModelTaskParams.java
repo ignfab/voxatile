@@ -1,15 +1,17 @@
-package com.ignfab.minalac.generator.parameters.tasks;
+package com.ignfab.minalac.generator.parameters.tasks.tile;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
+import com.ignfab.minalac.generator.parameters.tasks.HasModelSelection;
+import com.ignfab.minalac.generator.parameters.tasks.generic.ScheduleTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.generic.SequenceTaskParams;
 
 /**
  * Abstract class for {@link TileTaskParams} having a model selection
  * modifiable by {@link SequenceTaskParams} and {@link ScheduleTaskParams}.
  */
-public abstract class ModelTaskParams extends TileTaskParams {
+public abstract class ModelTaskParams extends TileTaskParams implements HasModelSelection {
     /**
      * The type of models to get data from (optional).
      *
@@ -18,6 +20,11 @@ public abstract class ModelTaskParams extends TileTaskParams {
      */
     @JsonSetter(nulls = Nulls.SKIP)
     public ModelSelectionParams models = new ModelSelectionParams();
+
+    @Override
+    public ModelSelectionParams models() {
+        return models;
+    }
 
     @Override
     public void validate() {

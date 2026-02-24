@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
+import com.ignfab.minalac.generator.parameters.tasks.tile.HeightmapStatsTaskParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -9,6 +9,7 @@ import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.TestingModel;
+import com.ignfab.minalac.generator.parameters.tasks.tile.ModelTaskParams;
 import com.ignfab.minalac.generator.tasks.ModelTask;
 
 /**

@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.parameters.tasks;
+package com.ignfab.minalac.generator.parameters.tasks.generic;
 
 import java.beans.ConstructorProperties;
 import java.util.HashMap;
@@ -12,10 +12,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.parameters.tasks.HasModelSelection;
 import com.ignfab.minalac.generator.tasks.NoOperationTask;
-import com.ignfab.minalac.generator.tasks.TileTask;
+import com.ignfab.minalac.generator.utils.execution.Task;
 
 /**
  * Parameters for a task running other tasks, parallelized, with dependencies between them (like in a schedule).
@@ -23,14 +23,14 @@ import com.ignfab.minalac.generator.tasks.TileTask;
  * This params class only instanciates a {@link NoOperationTask} but it
  * {@link #createAdditionalTaskParams creates additional task params} for its subtasks.
  */
-public class ScheduleTaskParams extends ModelTaskParams {
+public class ScheduleTaskParams<T> extends TaskParams<T> {
 
     /**
-     * List of subtasks indexed by their names.
+     * Subtasks as a schedule.
      */
     @JsonSetter(nulls = Nulls.FAIL, contentNulls = Nulls.FAIL)
     @JsonProperty("do")
-    public Map<String, TileTaskParams> tasks;
+    public NamedTaskListParams<T> tasks;
 
     /**
      * List of imported dependencies (names of external tasks that could be used as a dependencies for subtasks).
@@ -45,37 +45,37 @@ public class ScheduleTaskParams extends ModelTaskParams {
      * @param tasks Subtasks indexed names.
      */
     @ConstructorProperties("tasks")
-    public ScheduleTaskParams(Map<String, TileTaskParams> tasks) {
+    public ScheduleTaskParams(NamedTaskListParams<T> tasks) {
         this.tasks = tasks;
     }
 
     @Override
     public void validate() {
         super.validate();
+        tasks.validate();
 
-        using.forEach(TileTaskParams::validateTaskName);
+        using.forEach(TaskParams::validateName);
 
-        tasks.forEach((name, subtask) -> {
-            validateTaskName(name);
+        // Check task names dont conflict with "using" declaration
+        tasks.tasks.forEach((name, subtask) -> {
             if (using.contains(name))
                 throw new IllegalArgumentException(
                     "Cannot use \"%s\" as task name as it is already in using list"
                     .formatted(name)
                 );
-            subtask.validate();
         });
     }
 
     @Override
-    public Map<String, TileTaskParams> createAdditionalTaskParams(String prefix) {
+    public NamedTaskListParams<T> createAdditionalTaskParams(String prefix) {
         // Resulting task params indexed by name
-        Map<String, TileTaskParams> result = new HashMap<>();
+        NamedTaskListParams<T> result = new HashMap<>();
 
         // Set of tasks known to be followed by another task
         Set<String> followed = new HashSet<>();
 
         // Flatten internal schedule
-        tasks.forEach((name, task) -> {
+        tasks.tasks.forEach((name, task) -> {
             task.createAdditionalTaskParams(name).forEach((addname, addtask) -> {
                  result.put(prefix + SEPARATOR + addname, addtask);
             });
@@ -83,9 +83,10 @@ public class ScheduleTaskParams extends ModelTaskParams {
         });
 
         // Merge model selections
-        for (TileTaskParams task : result.values())
-            if (task instanceof ModelTaskParams modelTask)
-                modelTask.models.narrowDown(models);
+        if (this instanceof HasModelSelection modelThis)
+            for (TaskParams<T> task : result.values())
+                if (task instanceof HasModelSelection modelTask)
+                    modelTask.models().narrowDown(modelThis.models());
 
         // Translate dependencies
         result.forEach((subname, subtask) -> {
@@ -120,7 +121,7 @@ public class ScheduleTaskParams extends ModelTaskParams {
         // Replace main task dependencies with all non followed subtasks.
         // Main task is a noop task that will start after all subtasks have ended
         // so it can be safely used as "after" for "after all subtasks ended".
-        after = tasks.keySet().stream()
+        after = tasks.tasks.keySet().stream()
             .filter(Predicate.not(followed::contains))
             .map(name -> prefix + SEPARATOR + name)
             .collect(Collectors.toSet());
@@ -129,7 +130,7 @@ public class ScheduleTaskParams extends ModelTaskParams {
     }
 
     @Override
-    public TileTask create(Generation generation) {
-        return NoOperationTask.INSTANCE;
+    public Task<T> create(Generation generation) {
+        return NoOperationTask.instance();
     }
 }

@@ -12,9 +12,9 @@ import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.TestingProviderParams;
-import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
-import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.TestingTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.tile.FetchDataTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.tile.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 import static org.junit.jupiter.api.Assertions.*;

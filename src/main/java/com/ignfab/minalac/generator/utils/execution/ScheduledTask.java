@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.function.Consumer;
 
 /**
  * A task registered in the {@link Scheduler}.
@@ -13,7 +12,7 @@ import java.util.function.Consumer;
  */
 public class ScheduledTask<T> {
     private final String id;
-    private final Consumer<T> task;
+    private final Task<T> task;
     private final Set<ScheduledTask<T>> dependencies;
     private ScheduledTaskState state;
     private TaskFailedException error;
@@ -25,7 +24,7 @@ public class ScheduledTask<T> {
      * @param id the ID of the task
      * @param task the runnable to execute
      */
-    public ScheduledTask(String id, Consumer<T> task) {
+    public ScheduledTask(String id, Task<T> task) {
         this.id = id;
         this.task = task;
         this.dependencies = new HashSet<>();
@@ -65,7 +64,7 @@ public class ScheduledTask<T> {
                 Thread.currentThread().setName(id);
                 System.out.printf("Starting task %s%n", id);
                 state = ScheduledTaskState.RUNNING;
-                task.accept(context);
+                task.run(context);
                 state = ScheduledTaskState.FINISHED;
                 System.out.printf("Task %s finished%n", id);
             } catch (RuntimeException e) {

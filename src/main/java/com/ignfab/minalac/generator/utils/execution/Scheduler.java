@@ -8,7 +8,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 
@@ -34,7 +33,7 @@ public class Scheduler<T> {
      * @param id the ID of the task
      * @param task the task to be scheduled
      */
-    public void schedule(String id, Consumer<T> task) {
+    public void schedule(String id, Task<T> task) {
         schedule(new ScheduledTask<T>(id, task));
     }
 

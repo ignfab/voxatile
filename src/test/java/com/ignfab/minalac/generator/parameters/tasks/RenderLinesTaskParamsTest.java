@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
+import com.ignfab.minalac.generator.parameters.tasks.tile.RenderLinesTaskParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.parameters.tasks;
+package com.ignfab.minalac.generator.parameters.tasks.tile;
 
 import java.beans.ConstructorProperties;
 

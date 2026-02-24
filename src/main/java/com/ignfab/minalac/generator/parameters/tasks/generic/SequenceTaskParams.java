@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.parameters.tasks;
+package com.ignfab.minalac.generator.parameters.tasks.generic;
 
 import java.beans.ConstructorProperties;
 import java.util.HashMap;
@@ -11,10 +11,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.parameters.tasks.HasModelSelection;
 import com.ignfab.minalac.generator.tasks.NoOperationTask;
-import com.ignfab.minalac.generator.tasks.TileTask;
+import com.ignfab.minalac.generator.utils.execution.Task;
 
 /**
  * Parameters for a task running other tasks one by one in sequence.
@@ -22,14 +22,13 @@ import com.ignfab.minalac.generator.tasks.TileTask;
  * This params class only instantiates a {@link NoOperationTask} but it
  * {@link #createAdditionalTaskParams creates additional task params} for its subtasks
  */
-public class SequenceTaskParams extends ModelTaskParams {
-
+public class SequenceTaskParams<T> extends TaskParams<T> {
     /**
      * List of subtasks in run order.
      */
     @JsonSetter(nulls = Nulls.FAIL, contentNulls = Nulls.FAIL)
     @JsonProperty("do")
-    public List<TileTaskParams> subtasks;
+    public List<TaskParams<T>> tasks;
 
     /**
      * List of imported dependencies (names of external tasks that could be used as dependencies for subtasks).
@@ -41,49 +40,50 @@ public class SequenceTaskParams extends ModelTaskParams {
     /**
      * Creates a new {@code SequenceTaskParams} with required fields.
      *
-     * @param subtasks list of subtasks in run order
+     * @param tasks list of subtasks in run order
      */
-    @ConstructorProperties("subtasks")
-    public SequenceTaskParams(List<TileTaskParams> subtasks) {
-        this.subtasks = subtasks;
+    @ConstructorProperties("tasks")
+    public SequenceTaskParams(List<TaskParams<T>> tasks) {
+        this.tasks = tasks;
     }
 
     @Override
     public void validate() {
         super.validate();
 
-        using.forEach(TileTaskParams::validateTaskName);
-        subtasks.forEach(TileTaskParams::validate);
+        using.forEach(TaskParams::validateName);
+        tasks.forEach(TaskParams::validate);
     }
 
     @Override
-    public Map<String, TileTaskParams> createAdditionalTaskParams(String prefix) {
-        Map<String, TileTaskParams> result = new HashMap<>();
+    public Map<String, TaskParams<T>> createAdditionalTaskParams(String prefix) {
+        Map<String, TaskParams<T>> result = new HashMap<>();
 
         int index = 0;
-        for (TileTaskParams subtask : subtasks) {
+        for (TaskParams<T> task : tasks) {
             if (index == 0)
                 // First task starts after sequence afters
-                subtask.after.addAll(after);
+                task.after.addAll(after);
             else
                 // Other tasks start after their previous task
-                subtask.after.add(prefix + SEPARATOR + index);
+                task.after.add(prefix + SEPARATOR + index);
 
             index++;
 
-            String subname = prefix + SEPARATOR + index;
+            String name = prefix + SEPARATOR + index;
 
-            result.put(subname, subtask);
+            result.put(name, task);
 
-            // getAditionalTaskParams is supposed to prefix all its results with subname
+            // createAdditionalTaskParams is supposed to prefix all its results with name
             // so we can presume no result will be overwritten.
-            result.putAll(subtask.createAdditionalTaskParams(subname));
+            result.putAll(task.createAdditionalTaskParams(name));
         }
 
         // Merge model selections
-        for (TileTaskParams task : result.values())
-            if (task instanceof ModelTaskParams modelTask)
-                modelTask.models.narrowDown(models);
+        if (this instanceof HasModelSelection modelThis)
+            for (TaskParams<T> task : result.values())
+                if (task instanceof HasModelSelection modelTask)
+                    modelTask.models().narrowDown(modelThis.models());
 
         // Sequence task (which is a noop marker) starts after last task
         after = Set.of(prefix + SEPARATOR + index);
@@ -92,8 +92,8 @@ public class SequenceTaskParams extends ModelTaskParams {
     }
 
     @Override
-    public TileTask create(Generation generation) {
-        return NoOperationTask.INSTANCE;
+    public Task<T> create(Generation generation) {
+        return NoOperationTask.instance();
     }
-
 }
+

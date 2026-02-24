@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
+import com.ignfab.minalac.generator.parameters.tasks.generic.ScheduleTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.tile.TileTaskParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 
