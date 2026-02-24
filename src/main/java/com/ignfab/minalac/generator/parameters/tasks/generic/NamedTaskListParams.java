@@ -36,7 +36,6 @@ public class NamedTaskListParams<T> {
             throw new IllegalArgumentException("Duplicate task name \"%s\".".formatted(name));
 
         tasks.put(name, task);
-        tasks.putAll(task.createAdditionalTaskParams(name));
     }
 
     public void validate() {

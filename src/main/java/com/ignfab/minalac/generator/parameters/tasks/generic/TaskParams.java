@@ -41,6 +41,9 @@ public abstract class TaskParams<T> extends PolymorphicParams {
     public abstract Task<T> create(Generation generation);
 
     /**
+     * TODO:
+     *
+     *
      * Create additional {@link TaskParams} if task needs to.
      * This is the case of {@link ScheduleTaskParams} and {@link SequenceTaskParams}.
      * <p>
@@ -48,10 +51,18 @@ public abstract class TaskParams<T> extends PolymorphicParams {
      * schedule creation from params.
      *
      * @param prefix prefix added to eventual subtask names
-     * @return additional tasks indexed by their name
+     * @return additional tasks indexed by their name TODO:
      */
-    public Map<String, ? extends TaskParams<T>> createAdditionalTaskParams(String prefix) {
-        return Map.of();
+
+/*
+Applati une tache en lui donnant un nom.
+
+Ne contient pas forcément la tache this mais doit contenir tout ce qu'il faut pour que le schedule final fonctionne.
+
+*/
+
+    public Map<String, ? extends TaskParams<T>> flatten(String name) {
+        return Map.of(name, this);
     }
 
     public static void validateName(String name) {

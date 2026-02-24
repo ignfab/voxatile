@@ -56,7 +56,7 @@ public class SequenceTaskParams<T> extends TaskParams<T> {
     }
 
     @Override
-    public Map<String, TaskParams<T>> createAdditionalTaskParams(String prefix) {
+    public Map<String, TaskParams<T>> flatten(String name) {
         Map<String, TaskParams<T>> result = new HashMap<>();
 
         int index = 0;
@@ -66,33 +66,33 @@ public class SequenceTaskParams<T> extends TaskParams<T> {
                 task.after.addAll(after);
             else
                 // Other tasks start after their previous task
-                task.after.add(prefix + SEPARATOR + index);
+                task.after.add(name + SEPARATOR + index);
 
             index++;
 
-            String name = prefix + SEPARATOR + index;
+            String taskName = name + SEPARATOR + index;
 
-            result.put(name, task);
-
-            // createAdditionalTaskParams is supposed to prefix all its results with name
-            // so we can presume no result will be overwritten.
-            result.putAll(task.createAdditionalTaskParams(name));
+            result.putAll(task.flatten(taskName));
         }
-
+/* TODO LATER
         // Merge model selections
         if (this instanceof HasModelSelection modelThis)
             for (TaskParams<T> task : result.values())
                 if (task instanceof HasModelSelection modelTask)
                     modelTask.models().narrowDown(modelThis.models());
-
+*/
         // Sequence task (which is a noop marker) starts after last task
-        after = Set.of(prefix + SEPARATOR + index);
+        TaskParams<T> endTask = new NoOperationTaskParams<>();
+        endTask.after = Set.of(name + SEPARATOR + index);
+        result.put(name, endTask);
 
         return result;
     }
 
     @Override
     public Task<T> create(Generation generation) {
+                //TODO: Should throw exception
+
         return NoOperationTask.instance();
     }
 }

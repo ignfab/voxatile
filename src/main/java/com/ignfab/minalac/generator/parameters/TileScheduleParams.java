@@ -1,9 +1,13 @@
 package com.ignfab.minalac.generator.parameters;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.parameters.tasks.generic.NamedTaskListParams;
+import com.ignfab.minalac.generator.parameters.tasks.generic.TaskParams;
 import com.ignfab.minalac.generator.utils.execution.Scheduler;
 
 /**
@@ -20,11 +24,21 @@ public class TileScheduleParams extends NamedTaskListParams<GenerationTile> {
     public Scheduler<GenerationTile> create(Generation generation) {
         Scheduler<GenerationTile> scheduler = new Scheduler<>();
 
-        // Create tasks
-        tasks.forEach((name, task) -> scheduler.schedule(name, task.create(generation)));
+        Map<String, TaskParams<GenerationTile>> flatTasks = new HashMap<>();
+        tasks.forEach((name, task) -> { flatTasks.putAll(task.flatten(name)); });
 
+            System.out.println();
+        // Create tasks
+        flatTasks.forEach((name, task) -> {
+            System.out.println("Scheduling "+name);
+            scheduler.schedule(name, task.create(generation));
+        });
+            System.out.println();
+
+            System.out.println("Resulting schedule:");
         // Once all tasks created, we can add dependencies
-        tasks.forEach((name, task) -> {
+        flatTasks.forEach((name, task) -> {
+            System.out.println("Task "+name+ " after "+task.after);
             for (String after : task.after)
                 scheduler.addDependency(name, after);
         });

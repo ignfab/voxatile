@@ -67,45 +67,37 @@ public class ScheduleTaskParams<T> extends TaskParams<T> {
     }
 
     @Override
-    public NamedTaskListParams<T> createAdditionalTaskParams(String prefix) {
+    public Map<String, TaskParams<T>> flatten(String mainName) {
         // Resulting task params indexed by name
-        NamedTaskListParams<T> result = new HashMap<>();
+        Map<String, TaskParams<T>> result = new HashMap<>();
 
         // Set of tasks known to be followed by another task
         Set<String> followed = new HashSet<>();
 
+        System.out.println("Flatten "+mainName);
+        tasks.tasks.forEach((name, task) -> {
+            System.out.println("  Task "+name);
+            System.out.println("    after: "+task.after);
+        });
         // Flatten internal schedule
         tasks.tasks.forEach((name, task) -> {
-            task.createAdditionalTaskParams(name).forEach((addname, addtask) -> {
-                 result.put(prefix + SEPARATOR + addname, addtask);
-            });
-            result.put(prefix + SEPARATOR + name, task);
-        });
-
-        // Merge model selections
-        if (this instanceof HasModelSelection modelThis)
-            for (TaskParams<T> task : result.values())
-                if (task instanceof HasModelSelection modelTask)
-                    modelTask.models().narrowDown(modelThis.models());
-
-        // Translate dependencies
-        result.forEach((subname, subtask) -> {
+            // Translate dependencies
             Set<String> external = new HashSet<>();
             Set<String> internal = new HashSet<>();
 
             // Process subtask afters: may be internal or external dependencies
-            for (String after : subtask.after) {
+            for (String after : task.after) {
                 if (using.contains(after))
                     // Do not translate external dependencies
                     external.add(after);
                 else {
                     // Internal dependencies are translated and checked
-                    if (!result.containsKey(prefix + SEPARATOR + after))
+                    if (!tasks.tasks.containsKey(after))
                         throw new IllegalArgumentException(
                             "Subtask \"%s\" depends on non existent \"%s\" subtask (may be missing in \"using\")"
-                            .formatted(subname, after)
+                            .formatted(name, after)
                         );
-                    internal.add(prefix + SEPARATOR + after);
+                    internal.add(mainName + SEPARATOR + after);
                     // Mark followed task
                     followed.add(after);
                 }
@@ -114,23 +106,50 @@ public class ScheduleTaskParams<T> extends TaskParams<T> {
             // We could add main task dependencies to each subtask but it is useless
             // if subtask already depends on another subtask (i.e. has internal dependencies).
             // We do not know about eventual possible external dependencies simplification.
-            subtask.after = new HashSet<>(external);
-            subtask.after.addAll(internal.isEmpty() ? after : internal);
+            task.after = new HashSet<>(external);
+            task.after.addAll(internal.isEmpty() ? after : internal);
+
+            // Flatten subtask
+            task.flatten(name).forEach((flatName, flatTask) -> {
+                 result.put(mainName + SEPARATOR + flatName, flatTask);
+            });
+
+
+            // Avant d'applatir les sous taches, il faut mettre à jour les dépendances du schedule
+
+            // Peut être d'abord applatir le schedule puis maj les dépendances et enfin applatir les sous taches.
+
+            // Il ne faut garder dans result que le résultat de l'applatissement des sous taches + la tache de fin
+
+
         });
+/* TODO LATER
+        // Merge model selections
+        if (this instanceof HasModelSelection modelThis)
+            for (TaskParams<T> task : result.values())
+                if (task instanceof HasModelSelection modelTask)
+                    modelTask.models().narrowDown(modelThis.models());
+*/
 
         // Replace main task dependencies with all non followed subtasks.
         // Main task is a noop task that will start after all subtasks have ended
         // so it can be safely used as "after" for "after all subtasks ended".
-        after = tasks.tasks.keySet().stream()
+
+
+        TaskParams<T> endTask = new NoOperationTaskParams<>();
+        endTask.after = tasks.tasks.keySet().stream()
             .filter(Predicate.not(followed::contains))
-            .map(name -> prefix + SEPARATOR + name)
+            .map(name -> mainName + SEPARATOR + name)
             .collect(Collectors.toSet());
+
+        result.put(mainName, endTask);
 
         return result;
     }
 
     @Override
     public Task<T> create(Generation generation) {
+        //TODO: Should throw exception
         return NoOperationTask.instance();
     }
 }
