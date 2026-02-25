@@ -1,17 +1,20 @@
-package com.ignfab.minalac.generator.parameters.tasks.generic;
+package com.ignfab.minalac.generator.parameters.tasks.tile;
 
 import java.beans.ConstructorProperties;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.tasks.HasModelSelection;
+import com.ignfab.minalac.generator.parameters.tasks.generic.SequenceTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.generic.TaskParams;
 
-public class ModelSequenceTaskParams<T> extends SequenceTaskParams<T> implements HasModelSelection {
+public class TileSequenceTaskParams extends SequenceTaskParams<GenerationTile> implements HasModelSelection {
 
     @ConstructorProperties("tasks")
-    public ModelSequenceTaskParams(List<TaskParams<T>> tasks) {
+    public TileSequenceTaskParams(List<TaskParams<GenerationTile>> tasks) {
         super(tasks);
     }
 

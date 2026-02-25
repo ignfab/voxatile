@@ -56,7 +56,7 @@ public class SequenceTaskParams<T> extends TaskParams<T> {
     }
 
     @Override
-    public Map<String, TaskParams<T>> flatten(String name) {
+    public Map<String, TaskParams<T>> flatten(String mainName) {
         Map<String, TaskParams<T>> result = new HashMap<>();
 
         int index = 0;
@@ -66,11 +66,11 @@ public class SequenceTaskParams<T> extends TaskParams<T> {
                 task.after.addAll(after);
             else
                 // Other tasks start after their previous task
-                task.after.add(name + SEPARATOR + index);
+                task.after.add(mainName + SEPARATOR + index);
 
             index++;
 
-            String taskName = name + SEPARATOR + index;
+            String taskName = mainName + SEPARATOR + index;
 
             result.putAll(task.flatten(taskName));
         }
@@ -83,17 +83,16 @@ public class SequenceTaskParams<T> extends TaskParams<T> {
 */
         // Sequence task (which is a noop marker) starts after last task
         TaskParams<T> endTask = new NoOperationTaskParams<>();
-        endTask.after = Set.of(name + SEPARATOR + index);
-        result.put(name, endTask);
+        endTask.after = Set.of(mainName + SEPARATOR + index);
+        result.put(mainName, endTask);
 
         return result;
     }
 
     @Override
     public Task<T> create(Generation generation) {
-                //TODO: Should throw exception
-
-        return NoOperationTask.instance();
+        // Once flattened, SequenceTaskParams is replaced by its subtasks params plus a NoOperationParams.
+        throw new IllegalStateException("A sequence task is not expected to be directly created");
     }
 }
 

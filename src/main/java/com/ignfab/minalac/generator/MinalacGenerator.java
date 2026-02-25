@@ -38,12 +38,12 @@ import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.generic.NoOperationTaskParams;
-import com.ignfab.minalac.generator.parameters.tasks.generic.ModelScheduleTaskParams;
-import com.ignfab.minalac.generator.parameters.tasks.generic.ModelSequenceTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.CopyHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.FetchDataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.FillBetweenHeightmapAndMetadataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.HeightmapStatsTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.tile.TileScheduleTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.tile.TileSequenceTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.PopulateHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.RenderHeightmapTaskParams;
@@ -106,8 +106,8 @@ public final class MinalacGenerator {
         // TODO: Static method that provides a ParamsParser with all default renderers
         // If those name values are modified, update the documentation accordingly
         parser.registerParams("noOperation", NoOperationTaskParams.class);
-        parser.registerParams("sequence", ModelSequenceTaskParams.class);
-        parser.registerParams("schedule", ModelScheduleTaskParams.class);
+        parser.registerParams("sequence", TileSequenceTaskParams.class);
+        parser.registerParams("schedule", TileScheduleTaskParams.class);
 
         parser.registerParams("copyHeightmap", CopyHeightmapTaskParams.class);
         parser.registerParams("computeHeightmapStats", HeightmapStatsTaskParams.class);

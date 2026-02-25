@@ -74,11 +74,6 @@ public class ScheduleTaskParams<T> extends TaskParams<T> {
         // Set of tasks known to be followed by another task
         Set<String> followed = new HashSet<>();
 
-        System.out.println("Flatten "+mainName);
-        tasks.tasks.forEach((name, task) -> {
-            System.out.println("  Task "+name);
-            System.out.println("    after: "+task.after);
-        });
         // Flatten internal schedule
         tasks.tasks.forEach((name, task) -> {
             // Translate dependencies
@@ -110,18 +105,7 @@ public class ScheduleTaskParams<T> extends TaskParams<T> {
             task.after.addAll(internal.isEmpty() ? after : internal);
 
             // Flatten subtask
-            task.flatten(name).forEach((flatName, flatTask) -> {
-                 result.put(mainName + SEPARATOR + flatName, flatTask);
-            });
-
-
-            // Avant d'applatir les sous taches, il faut mettre à jour les dépendances du schedule
-
-            // Peut être d'abord applatir le schedule puis maj les dépendances et enfin applatir les sous taches.
-
-            // Il ne faut garder dans result que le résultat de l'applatissement des sous taches + la tache de fin
-
-
+            result.putAll(task.flatten(mainName + SEPARATOR + name));
         });
 /* TODO LATER
         // Merge model selections
@@ -149,7 +133,8 @@ public class ScheduleTaskParams<T> extends TaskParams<T> {
 
     @Override
     public Task<T> create(Generation generation) {
-        //TODO: Should throw exception
-        return NoOperationTask.instance();
+        // Once flattened, ScheduleTaskParams is replaced by its subtasks params plus a NoOperationParams.
+        throw new IllegalStateException("A schedule task is not expected to be directly created");
     }
+
 }

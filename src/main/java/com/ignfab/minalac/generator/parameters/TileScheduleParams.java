@@ -27,18 +27,13 @@ public class TileScheduleParams extends NamedTaskListParams<GenerationTile> {
         Map<String, TaskParams<GenerationTile>> flatTasks = new HashMap<>();
         tasks.forEach((name, task) -> { flatTasks.putAll(task.flatten(name)); });
 
-            System.out.println();
         // Create tasks
         flatTasks.forEach((name, task) -> {
-            System.out.println("Scheduling "+name);
             scheduler.schedule(name, task.create(generation));
         });
-            System.out.println();
 
-            System.out.println("Resulting schedule:");
         // Once all tasks created, we can add dependencies
         flatTasks.forEach((name, task) -> {
-            System.out.println("Task "+name+ " after "+task.after);
             for (String after : task.after)
                 scheduler.addDependency(name, after);
         });
