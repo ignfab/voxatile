@@ -6,6 +6,8 @@ import com.ignfab.minalac.generator.utils.execution.Task;
 
 /**
  * Parameters for a {@link NoOperationTask}.
+ *
+ * @param <T> task execution context type (same as in {@link Task<T>}).
  */
 public class NoOperationTaskParams<T> extends TaskParams<T> {
     @Override

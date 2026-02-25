@@ -16,7 +16,7 @@ import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
  * It can perform parallel operations and ensure execution order between some tasks.
  * A context object of generic type T is passed to executed tasks.
  *
- * @param <T> tasks execution context type
+ * @param <T> tasks execution context type (same as in {@link Task<T>}).
  */
 public class Scheduler<T> {
     // An executor using a thread pool to run tasks

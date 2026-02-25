@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.parameters.tasks.tile;
 
 import java.beans.ConstructorProperties;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -26,4 +27,15 @@ public class TileSequenceTaskParams extends SequenceTaskParams<GenerationTile> i
         return models;
     }
 
+    @Override
+    public Map<String, TaskParams<GenerationTile>> flatten(String mainName) {
+        Map<String, TaskParams<GenerationTile>> result = super.flatten(mainName);
+
+        // Merge model selections
+        for (TaskParams<GenerationTile> task : result.values())
+            if (task instanceof ModelTaskParams modelTask)
+                modelTask.models().narrowDown(models());
+
+        return result;
+    }
 }

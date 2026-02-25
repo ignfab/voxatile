@@ -5,13 +5,17 @@ import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.PolymorphicParams;
 import com.ignfab.minalac.generator.utils.execution.Task;
 
+/**
+ * Params class for {@link Task<T>}.
+ *
+ * @param <T> tasks execution context type (same as in {@link Task<T>}).
+ */
 public abstract class TaskParams<T> extends PolymorphicParams {
     /**
      * Separator used to build subtask names.
@@ -25,51 +29,45 @@ public abstract class TaskParams<T> extends PolymorphicParams {
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     public Set<String> after = new HashSet<>();
 
-    /**
-     * {@code after} field setter.
-     * <p>
-     * This setter forbids usage of {@code :} char in task name.
-     * This cannot be done in {@link #validate()} because it is called after tasks have been
-     * added by control tasks (and they have {@code :} chars in their name).
-     */
-    @JsonProperty("after")
-    public void setAfter(Set<String> values) {
-        values.forEach(TaskParams::validateName);
-        after.addAll(values);
+    @Override
+    public void validate() {
+        super.validate();
+        after.forEach(TaskParams::validateName);
     }
 
+    /**
+     * Creates corresponding {@link Task<T>}.
+     */
     public abstract Task<T> create(Generation generation);
 
     /**
-     * TODO:
-     *
-     *
-     * Create additional {@link TaskParams} if task needs to.
-     * This is the case of {@link ScheduleTaskParams} and {@link SequenceTaskParams}.
+     * Returns a flattened schedule of all subtask, including descendants.
      * <p>
-     * Warning: this may change current object and should be used only once during
-     * schedule creation from params.
+     * This task will be included in the list.
+     * Tasks will be renamed to avoid any conflict, prefixed by parent task(s) name(s), separated by {@link #SEPARATOR}.
+     * All {@code after}s will be updated accordingly.
      *
-     * @param prefix prefix added to eventual subtask names
-     * @return additional tasks indexed by their name TODO:
+     * @param name Name to use for this task
+     *
+     * @return All subtasks indexed by their name
      */
-
-/*
-Applati une tache en lui donnant un nom.
-
-Ne contient pas forcément la tache this mais doit contenir tout ce qu'il faut pour que le schedule final fonctionne.
-
-*/
-
     public Map<String, ? extends TaskParams<T>> flatten(String name) {
         return Map.of(name, this);
     }
 
+    /**
+     * Validates a task name.
+     * <p>
+     * To avoid any hack or mistake, {@link #SEPARATOR} char is forbidden in task name.
+     *
+     * @param name Task name to validate
+     *
+     * @throws IllegalArgumentException if task name is not valid.
+     */
     public static void validateName(String name) {
         if (name.contains(SEPARATOR))
         throw new IllegalArgumentException(
             "Task name \"%s\" contains invalid \"%s\" char".formatted(name, SEPARATOR)
         );
     }
-
 }

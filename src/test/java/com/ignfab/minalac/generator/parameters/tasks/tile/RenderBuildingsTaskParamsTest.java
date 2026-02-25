@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.parameters.tasks;
+package com.ignfab.minalac.generator.parameters.tasks.tile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidNullException;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
-import com.ignfab.minalac.generator.parameters.tasks.tile.RenderBuildingsTaskParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 

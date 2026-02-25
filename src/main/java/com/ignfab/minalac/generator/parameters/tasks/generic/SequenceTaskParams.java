@@ -12,26 +12,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.parameters.tasks.HasModelSelection;
-import com.ignfab.minalac.generator.tasks.NoOperationTask;
 import com.ignfab.minalac.generator.utils.execution.Task;
 
 /**
  * Parameters for a task running other tasks one by one in sequence.
  * <p>
- * This params class only instantiates a {@link NoOperationTask} but it
- * {@link #createAdditionalTaskParams creates additional task params} for its subtasks
+ * This params class is not intended to instanciate a task object using {@link #create(Generation)}.
+ * Subtasks params and a {@link NoOperationTaskParams} (end task) will rather be created using {@link #flatten(String)}.
+ * Then, these flattened task params can be used to instanciate corresponding task objects.
+ *
+ * @param <T> tasks execution context type (same as in {@link Task<T>}).
  */
 public class SequenceTaskParams<T> extends TaskParams<T> {
     /**
-     * List of subtasks in run order.
+     * Subtasks in run order.
      */
     @JsonSetter(nulls = Nulls.FAIL, contentNulls = Nulls.FAIL)
     @JsonProperty("do")
     public List<TaskParams<T>> tasks;
 
     /**
-     * List of imported dependencies (names of external tasks that could be used as dependencies for subtasks).
+     * Imported dependencies (names of external tasks that could be used as dependencies for subtasks).
      */
     @JsonSetter(nulls = Nulls.SKIP)
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
@@ -50,7 +51,6 @@ public class SequenceTaskParams<T> extends TaskParams<T> {
     @Override
     public void validate() {
         super.validate();
-
         using.forEach(TaskParams::validateName);
         tasks.forEach(TaskParams::validate);
     }
@@ -74,13 +74,7 @@ public class SequenceTaskParams<T> extends TaskParams<T> {
 
             result.putAll(task.flatten(taskName));
         }
-/* TODO LATER
-        // Merge model selections
-        if (this instanceof HasModelSelection modelThis)
-            for (TaskParams<T> task : result.values())
-                if (task instanceof HasModelSelection modelTask)
-                    modelTask.models().narrowDown(modelThis.models());
-*/
+
         // Sequence task (which is a noop marker) starts after last task
         TaskParams<T> endTask = new NoOperationTaskParams<>();
         endTask.after = Set.of(mainName + SEPARATOR + index);
@@ -92,6 +86,7 @@ public class SequenceTaskParams<T> extends TaskParams<T> {
     @Override
     public Task<T> create(Generation generation) {
         // Once flattened, SequenceTaskParams is replaced by its subtasks params plus a NoOperationParams.
+        // It should not be {@code create}d.
         throw new IllegalStateException("A sequence task is not expected to be directly created");
     }
 }

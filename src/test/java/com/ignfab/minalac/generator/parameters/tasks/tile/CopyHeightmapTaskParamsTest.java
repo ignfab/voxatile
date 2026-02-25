@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.parameters.tasks;
+package com.ignfab.minalac.generator.parameters.tasks.tile;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +14,6 @@ import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams
 import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.models.TestingModelSelectionParams;
-import com.ignfab.minalac.generator.parameters.tasks.tile.CopyHeightmapTaskParams;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
