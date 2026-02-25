@@ -42,14 +42,14 @@ import com.ignfab.minalac.generator.parameters.tasks.tile.CopyHeightmapTaskParam
 import com.ignfab.minalac.generator.parameters.tasks.tile.FetchDataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.FillBetweenHeightmapAndMetadataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.HeightmapStatsTaskParams;
-import com.ignfab.minalac.generator.parameters.tasks.tile.TileScheduleTaskParams;
-import com.ignfab.minalac.generator.parameters.tasks.tile.TileSequenceTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.PopulateHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.RenderHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.RenderLinesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.RenderSurfacesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.tile.SetSpawnTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.tile.TileScheduleTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.tile.TileSequenceTaskParams;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;

@@ -4,16 +4,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.ignfab.minalac.generator.parameters.tasks.tile.TileTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.generic.TaskParams;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public final class ScheduleParamsTester {
+public final class ScheduleParamsTester<T> {
     // Utility class
     private ScheduleParamsTester() {}
 
-    private static void assertValidScheduleTask(Map<String, TileTaskParams> schedule, List<String> seen, String taskName) {
+    private static <T> void assertValidScheduleTask(Map<String, TaskParams<T>> schedule, List<String> seen, String taskName) {
         if (seen.contains(taskName)) {
             String cycle = null;
             for (String name : seen) {
@@ -43,18 +43,18 @@ public final class ScheduleParamsTester {
      * </ul>
      * @param schedule Schedule as a map of tasks indexed by their names
      */
-    public static void assertValidSchedule(Map<String, TileTaskParams> schedule) {
+    public static <T> void assertValidSchedule(Map<String, TaskParams<T>> schedule) {
         for (String name : schedule.keySet())
             assertValidScheduleTask(schedule, new LinkedList<>(), name);
     }
 
     // Returns true if afterName is anyhow after beforeName in schedule.
-    private static boolean checkOrder(
-        Map<String, TileTaskParams> schedule,
+    private static <T> boolean checkOrder(
+        Map<String, TaskParams<T>> schedule,
         String beforeName,
         String afterName
     ) {
-        TileTaskParams after = schedule.get(afterName);
+        TaskParams<T> after = schedule.get(afterName);
         if (after.after.contains(beforeName))
             return true;
 
@@ -77,8 +77,8 @@ public final class ScheduleParamsTester {
      * @param predecessorName Name of the task expected to run before successor
      * @param successorsNames Names of tasks expected to run after predecessor
      */
-    public static void assertPredecessor(
-        Map<String, TileTaskParams> schedule,
+    public static <T> void assertPredecessor(
+        Map<String, TaskParams<T>> schedule,
         String predecessorName,
         String... successorsNames
     ) {
@@ -103,8 +103,8 @@ public final class ScheduleParamsTester {
      * @param predecessorName Name of the predecessor task to test
      * @param successorsNames Name of tasks expected to have no dependancy to predecessor
      */
-    public static void assertNotPredecessor(
-        Map<String, TileTaskParams> schedule,
+    public static <T> void assertNotPredecessor(
+        Map<String, TaskParams<T>> schedule,
         String predecessorName,
         String... successorsNames
     ) {

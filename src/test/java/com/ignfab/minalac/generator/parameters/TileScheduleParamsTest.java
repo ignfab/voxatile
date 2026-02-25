@@ -1,16 +1,16 @@
 package com.ignfab.minalac.generator.parameters;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.Test;
-
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.junit.jupiter.api.Test;
+
 import com.ignfab.minalac.generator.parameters.tasks.generic.NoOperationTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.generic.ScheduleTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.generic.SequenceTaskParams;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TileScheduleParamsTest {
     @Test

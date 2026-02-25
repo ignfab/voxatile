@@ -53,18 +53,20 @@ public class ScheduleParams<T> {
     }
 
     /**
-     * Creates correspondig {@link Scheduler<T>} object.
+     * Creates corresponding {@link Scheduler<T>} object.
+     *
+     * @param generation Generation for which create the scheduler
+     *
+     * @return created scheduler
      */
     public Scheduler<T> create(Generation generation) {
         Scheduler<T> scheduler = new Scheduler<>();
 
         Map<String, TaskParams<T>> flat = new HashMap<>();
-        tasks.forEach((name, task) -> { flat.putAll(task.flatten(name)); });
+        tasks.forEach((name, task) -> flat.putAll(task.flatten(name)));
 
         // Create tasks
-        flat.forEach((name, task) -> {
-            scheduler.schedule(name, task.create(generation));
-        });
+        flat.forEach((name, task) -> scheduler.schedule(name, task.create(generation)));
 
         // Once all tasks created, we can add dependencies
         flat.forEach((name, task) -> {

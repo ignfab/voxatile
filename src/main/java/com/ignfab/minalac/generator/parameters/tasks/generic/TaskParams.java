@@ -7,6 +7,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.PolymorphicParams;
 import com.ignfab.minalac.generator.utils.execution.Task;
@@ -37,6 +38,10 @@ public abstract class TaskParams<T> extends PolymorphicParams {
 
     /**
      * Creates corresponding {@link Task<T>}.
+     *
+     * @param generation generation to create task for
+     *
+     * @return created task
      */
     public abstract Task<T> create(Generation generation);
 

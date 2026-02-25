@@ -2,8 +2,8 @@ package com.ignfab.minalac.generator.parameters.tasks.tile;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
-import com.ignfab.minalac.generator.parameters.tasks.HasModelSelection;
 import com.ignfab.minalac.generator.parameters.tasks.generic.ScheduleTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.generic.SequenceTaskParams;
 
