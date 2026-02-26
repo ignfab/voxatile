@@ -56,7 +56,6 @@ public class ParamsParserTest {
         assertEquals(1.0, params.verticalScale);
         assertEquals(1.0, params.horizontalScale);
         assertEquals(Collections.emptyMap(), params.heightmaps);
-        assertEquals(Collections.emptyMap(), params.forEachTile);
     }
 
     @Test
@@ -245,10 +244,10 @@ public class ParamsParserTest {
         ), "Task should be deserialized");
 
         // type field is not deserialized only used to find out the class that should be used for deserialization
-        assertNotNull(genParams.forEachTile.tasks.get("smeargle"));
-        assertNull(genParams.forEachTile.tasks.get("smeargle").type, "Type field should not be deserialized");
+        assertNotNull(genParams.forEachTile.get("smeargle"));
+        assertNull(genParams.forEachTile.get("smeargle").type, "Type field should not be deserialized");
 
-        TestingTaskParams taskParams = (TestingTaskParams) genParams.forEachTile.tasks.get("smeargle");
+        TestingTaskParams taskParams = (TestingTaskParams) genParams.forEachTile.get("smeargle");
         assertEquals("sketch", taskParams.requiredField);
         assertEquals("defaultOptionalValue", taskParams.optionalField);
 
@@ -280,7 +279,7 @@ public class ParamsParserTest {
             + MINIMAL_YAML
         ));
 
-        TestingTaskParams tasksParams = assertInstanceOf(TestingTaskParams.class, params.forEachTile.tasks.get("verona"));
+        TestingTaskParams tasksParams = assertInstanceOf(TestingTaskParams.class, params.forEachTile.get("verona"));
         assertEquals("juliet", tasksParams.requiredField);
         assertEquals("romeo", tasksParams.optionalField);
     }

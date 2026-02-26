@@ -44,6 +44,16 @@ public class ScheduleParams<T> {
     }
 
     /**
+     * Gets a tasks from schedule.
+     *
+     * @param name Name of the task to add
+     * @return Found task or null if no task found
+     */
+    public TaskParams<T> get(String name) {
+        return tasks.get(name);
+    }
+
+    /**
      * Validates this schedule and all its subtasks.
      *
      * @throws IllegalArgumentException if any parameter is invalid.
