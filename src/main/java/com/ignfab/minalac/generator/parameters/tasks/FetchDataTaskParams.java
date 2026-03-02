@@ -15,7 +15,7 @@ import com.ignfab.minalac.generator.tasks.FetchDataTask;
 /**
  * Parameters for creating a {@link FetchDataTask}.
  */
-public class FetchDataTaskParams extends TileTaskParams {
+public class FetchDataTaskParams extends TaskParams {
     /**
      * Type to give to provided models (required).
      */
@@ -57,6 +57,7 @@ public class FetchDataTaskParams extends TileTaskParams {
         if (modelType.isBlank())
             throw new IllegalArgumentException("The 'modelType' field cannot be empty or contain only whitespace.");
 
+        super.validate();
         provider.validate();
         processor.validate();
         postProcessing.validate();

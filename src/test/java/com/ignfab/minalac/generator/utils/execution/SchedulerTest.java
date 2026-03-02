@@ -15,11 +15,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SchedulerTest {
-    private Scheduler<Void> scheduler;
+    private Scheduler scheduler;
 
     @BeforeEach
     public void setUp() {
-        scheduler = new Scheduler<>();
+        scheduler = new Scheduler();
     }
 
     @AfterEach
@@ -31,11 +31,11 @@ public class SchedulerTest {
     public void testTasksWithoutDependency() {
         List<String> actual = Collections.synchronizedList(new ArrayList<>());
 
-        scheduler.schedule("testWithoutDependency:a", (context) -> actual.add("a"));
-        scheduler.schedule("testWithoutDependency:b", (context) -> actual.add("b"));
-        scheduler.schedule("testWithoutDependency:c", (context) -> actual.add("c"));
+        scheduler.addTask("testWithoutDependency:a", () -> actual.add("a"));
+        scheduler.addTask("testWithoutDependency:b", () -> actual.add("b"));
+        scheduler.addTask("testWithoutDependency:c", () -> actual.add("c"));
 
-        assertDoesNotThrow(() -> scheduler.run(null, 1, TimeUnit.MINUTES));
+        assertDoesNotThrow(() -> scheduler.run(1, TimeUnit.MINUTES));
 
         List<String> expected = Arrays.asList("a", "b", "c");
         assertTrue(expected.size() == actual.size() && expected.containsAll(actual) && actual.containsAll(expected),
@@ -47,14 +47,14 @@ public class SchedulerTest {
     public void testTasksWithDependency() {
         List<String> actual = Collections.synchronizedList(new ArrayList<>());
 
-        scheduler.schedule("testWithDependency:1", (context) -> actual.add("1"));
-        scheduler.schedule("testWithDependency:2", (context) -> actual.add("2"));
-        scheduler.schedule("testWithDependency:3", (context) -> actual.add("3"));
+        scheduler.addTask("testWithDependency:1", () -> actual.add("1"));
+        scheduler.addTask("testWithDependency:2", () -> actual.add("2"));
+        scheduler.addTask("testWithDependency:3", () -> actual.add("3"));
         scheduler.addDependency("testWithDependency:2", "testWithDependency:1");
         scheduler.addDependency("testWithDependency:3", "testWithDependency:1");
         scheduler.addDependency("testWithDependency:3", "testWithDependency:2");
 
-        assertDoesNotThrow(() -> scheduler.run(null, 1, TimeUnit.MINUTES));
+        assertDoesNotThrow(() -> scheduler.run(1, TimeUnit.MINUTES));
 
         List<String> expected = Arrays.asList("1", "2", "3");
         assertEquals(expected, actual);
@@ -64,16 +64,16 @@ public class SchedulerTest {
     public void testResetTasks() {
         List<String> actual = Collections.synchronizedList(new ArrayList<>());
 
-        scheduler.schedule("testReset:x", (context) -> actual.add("x"));
-        scheduler.schedule("testReset:y", (context) -> actual.add("y"));
-        scheduler.schedule("testReset:z", (context) -> actual.add("z"));
+        scheduler.addTask("testReset:x", () -> actual.add("x"));
+        scheduler.addTask("testReset:y", () -> actual.add("y"));
+        scheduler.addTask("testReset:z", () -> actual.add("z"));
         scheduler.addDependency("testReset:y", "testReset:x");
         scheduler.addDependency("testReset:z", "testReset:y");
 
         List<String> expected = Arrays.asList("x", "y", "z");
 
         for (int i = 1; i <= 3; i++) {
-            assertDoesNotThrow(() -> scheduler.run(null, 1, TimeUnit.MINUTES));
+            assertDoesNotThrow(() -> scheduler.run(1, TimeUnit.MINUTES));
             assertEquals(expected, actual, "Iteration " + i);
             actual.clear();
         }
@@ -81,12 +81,12 @@ public class SchedulerTest {
 
     @Test
     public void testFailingTask() {
-        ScheduledTask<Void> task = new ScheduledTask<>("testFailingTask:id", (context) -> {
+        ScheduledTask task = new ScheduledTask("testFailingTask:id", () -> {
             throw new RuntimeException("Boom!");
         });
         scheduler.schedule(task);
 
-        TaskFailedException t = assertThrows(TaskFailedException.class, () -> scheduler.run(null, 1, TimeUnit.MINUTES));
+        TaskFailedException t = assertThrows(TaskFailedException.class, () -> scheduler.run(1, TimeUnit.MINUTES));
 
         assertEquals(task, t.getTask());
     }
@@ -94,7 +94,7 @@ public class SchedulerTest {
     @Test
     public void testLongTaskTimedOut() {
         AtomicBoolean executed = new AtomicBoolean(false);
-        scheduler.schedule("testLongTaskTimeout:id", (context) -> {
+        scheduler.addTask("testLongTaskTimeout:id", () -> {
             try {
                 Thread.sleep(10_000); // Completes after 10s
             } catch (InterruptedException e) {
@@ -103,23 +103,23 @@ public class SchedulerTest {
             executed.set(true); // Should never happen because timeout is 50ms
         });
 
-        assertThrows(TimeoutException.class, () -> scheduler.run(null, 50, TimeUnit.MILLISECONDS));
+        assertThrows(TimeoutException.class, () -> scheduler.run(50, TimeUnit.MILLISECONDS));
         assertFalse(executed.get());
     }
 
     @Test
     public void testDeadLock() {
-        scheduler.schedule("testDeadLock:A", (context) -> {});
-        scheduler.schedule("testDeadLock:B", (context) -> {});
+        scheduler.addTask("testDeadLock:A", () -> {});
+        scheduler.addTask("testDeadLock:B", () -> {});
         scheduler.addDependency("testDeadLock:A", "testDeadLock:B");
         scheduler.addDependency("testDeadLock:B", "testDeadLock:A");
 
-        assertThrows(IllegalStateException.class, () -> scheduler.run(null, 1, TimeUnit.MINUTES));
+        assertThrows(IllegalStateException.class, () -> scheduler.run(1, TimeUnit.MINUTES));
     }
 
     @Test
     public void testCancel() {
-        ScheduledTask<Void> cancelled = new ScheduledTask<>("testCancel:cancelled", (context) -> {
+        ScheduledTask cancelled = new ScheduledTask("testCancel:cancelled", () -> {
             try {
                 Thread.sleep(3_000); // Completes after 3s
             } catch (InterruptedException e) {
@@ -127,7 +127,7 @@ public class SchedulerTest {
             }
         });
 
-        ScheduledTask<Void> failed = new ScheduledTask<>("testCancel:fail", (context) -> {
+        ScheduledTask failed = new ScheduledTask("testCancel:fail", () -> {
             try {
                 Thread.sleep(500); // Completes after 0.5s
             } catch (InterruptedException e) {
@@ -136,13 +136,13 @@ public class SchedulerTest {
             throw new RuntimeException("Boom!");
         });
 
-        ScheduledTask<Void> success = new ScheduledTask<>("testCancel:success", (context) -> {});
+        ScheduledTask success = new ScheduledTask("testCancel:success", () -> {});
 
         scheduler.schedule(cancelled);
         scheduler.schedule(failed);
         scheduler.schedule(success);
 
-        assertThrows(TaskFailedException.class, () -> scheduler.run(null, 1, TimeUnit.MINUTES));
+        assertThrows(TaskFailedException.class, () -> scheduler.run(1, TimeUnit.MINUTES));
         assertEquals(ScheduledTaskState.RUNNING, cancelled.state());
         assertEquals(ScheduledTaskState.FAILED, failed.state());
         assertEquals(ScheduledTaskState.FINISHED, success.state());
