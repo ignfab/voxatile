@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.generation;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
@@ -16,7 +17,7 @@ import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationSt
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
 import com.ignfab.minalac.generator.utils.execution.Scheduler;
-import com.ignfab.minalac.generator.utils.iterator.Iterables;
+import com.ignfab.minalac.generator.utils.iterator.Iterators;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -43,11 +44,12 @@ public class Generation {
     private final VoxelWorld world;
     private final HeightmapDeclarationStore heightmaps = new HeightmapDeclarationStore();
 
-    private final Scheduler<GenerationTile> scheduler = new Scheduler<>();
+    private final Scheduler scheduler = new Scheduler();
 
     private final int maxTileSize;
     private final Collection<WorldBBox2d> tiles;
 
+    private final Iterator<GenerationTile> tileIterator;
     /**
      * Constructs a new generation context.
      * It sets {@code VoxelWorld}'s limits in way the center is at {@code WorldCoords2d} (0, 0).
@@ -94,6 +96,9 @@ public class Generation {
 
         this.maxTileSize = maxTileSize;
         tiles = world.tiles(maxTileSize);
+        tileIterator = Iterators.remap(tiles.iterator(),
+            bbox -> new GenerationTile(this, bbox.to3d(world.limits().minZ(), world.limits().sizeZ()))
+        );
 
         this.crs = crs;
         this.verticalScale = verticalScale;
@@ -131,7 +136,7 @@ public class Generation {
     /**
      * {@return the generation scheduler}
      */
-    public Scheduler<GenerationTile> scheduler() {
+    public Scheduler scheduler() {
         return scheduler;
     }
 
@@ -209,11 +214,16 @@ public class Generation {
     }
 
     /**
-     * {@return an iterable over generation tiles}
+     * Switches to next tile.
+     *
+     * @return false if no more tile
      */
-    public Iterable<GenerationTile> tiles() {
-        return Iterables.remap(tiles,
-            bbox -> new GenerationTile(this, bbox.to3d(world.limits().minZ(), world.limits().sizeZ()))
-        );
+    public boolean nextTile() {
+        boolean hasNext = tileIterator.hasNext();
+        if (hasNext)
+            GenerationTile.setCurrent(tileIterator.next());
+        else
+            GenerationTile.setCurrent(null);
+        return hasNext;
     }
 }

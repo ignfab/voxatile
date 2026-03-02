@@ -16,7 +16,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
  * Parameters for creating a {@link RenderHeightmapTask}.
  * Can be used by providing either at field or both minimum and maximum fields.
  */
-public class RenderHeightmapTaskParams extends TileTaskParams {
+public class RenderHeightmapTaskParams extends TaskParams {
     /**
      * The heightmap to use.
      */
@@ -51,6 +51,9 @@ public class RenderHeightmapTaskParams extends TileTaskParams {
         if ((at != null || minimum == null || maximum == null)
             && (at == null || minimum != null || maximum != null))
             throw new IllegalArgumentException("Either at or both minimum and maximum must be provided");
+
+        super.validate();
+
         if (at != null)
             at.validate();
         else {

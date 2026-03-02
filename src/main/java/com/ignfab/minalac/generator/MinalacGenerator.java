@@ -49,6 +49,7 @@ import com.ignfab.minalac.generator.parameters.tasks.SetSpawnTaskParams;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 
 /**
@@ -154,14 +155,16 @@ public final class MinalacGenerator {
         int currentTile = 0;
 
         try {
-            for (GenerationTile tile : generation.tiles()) {
+            while (generation.nextTile()) {
                 currentTile++;
-                String tileString = "%d/%d (x=%d..%d, y=%d..%d)".formatted(currentTile, numberOfTiles, tile.limits().minX(), tile.limits().maxX(), tile.limits().minY(), tile.limits().maxY());
+                WorldBBox3d limits = GenerationTile.current().limits();
+                String tileString = "%d/%d (x=%d..%d, y=%d..%d)".formatted(currentTile, numberOfTiles, limits.minX(), limits.maxX(), limits.minY(), limits.maxY());
                 System.out.printf("%nTile %s.%n", tileString);
 
                 // Generate tile
                 Instant tileGenerationStart = Instant.now();
-                generation.scheduler().run(tile, 5, TimeUnit.MINUTES);
+
+                generation.scheduler().run(5, TimeUnit.MINUTES);
                 Duration tileGenerationDuration = Duration.between(tileGenerationStart, Instant.now());
 
                 generatingDuration = generatingDuration.plus(tileGenerationDuration);
@@ -169,7 +172,7 @@ public final class MinalacGenerator {
 
                 // Save tile
                 Instant tileSavingStart = Instant.now();
-                tile.save();
+                GenerationTile.current().save();
                 Duration tileSavingDuration = Duration.between(tileSavingStart, Instant.now());
 
                 mapSavingDuration = mapSavingDuration.plus(tileSavingDuration);

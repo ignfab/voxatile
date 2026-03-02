@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 
 /**
- * Abstract class for {@link TileTaskParams} having a modifiable model selection.
+ * Abstract class for {@link TaskParams} having a model selection.
  */
-public abstract class ModelTaskParams extends TileTaskParams {
+public abstract class ModelTaskParams extends TaskParams {
     /**
      * The type of models to get data from (optional).
      *
@@ -17,6 +17,13 @@ public abstract class ModelTaskParams extends TileTaskParams {
      */
     @JsonSetter(nulls = Nulls.SKIP)
     public ModelSelectionParams models = new ModelSelectionParams();
+
+    /**
+     * @return the model selection params.
+     */
+    public ModelSelectionParams models() {
+        return models;
+    }
 
     @Override
     public void validate() {
