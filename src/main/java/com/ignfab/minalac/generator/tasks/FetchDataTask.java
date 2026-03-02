@@ -12,7 +12,7 @@ import com.ignfab.minalac.generator.processors.post.PostProcessor;
 /**
  * A {@link TileTask} fetching data from a provider, processing models with a processor applying a post-processor to each model.
  */
-public class FetchDataTask implements TileTask {
+public class FetchDataTask extends TileTask {
     private final String modelType;
     private final Provider<?> provider;
     private final Processor<Object, ?> processor;

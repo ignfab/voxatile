@@ -9,7 +9,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 /**
  * A {@link TileTask} placing things between a minimum and maximum heightmap.
  */
-public class RenderHeightmapTask implements TileTask {
+public class RenderHeightmapTask extends TileTask {
     private final ReadableHeightmapSpec minimum;
     private final ReadableHeightmapSpec maximum;
     private final Placeable placeable;

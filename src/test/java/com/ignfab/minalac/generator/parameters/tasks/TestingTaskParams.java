@@ -44,7 +44,7 @@ public class TestingTaskParams extends TileTaskParams {
     /**
      * Dummy task for tests.
      */
-    static class Task implements TileTask {
+    static class Task extends TileTask {
         @Override
         public void run(GenerationTile tile) {}
     }

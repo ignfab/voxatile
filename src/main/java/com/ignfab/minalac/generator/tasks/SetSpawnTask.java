@@ -8,7 +8,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
  * This task sets {@link com.ignfab.minalac.generator.world.VoxelWorldMetadata} spawn position.
  * It queries the heightmap to determine the altitude of the spawn point.
  * */
-public class SetSpawnTask implements TileTask {
+public class SetSpawnTask extends TileTask {
     private final ReadableHeightmapSpec heightmapSpec;
     private final WorldCoords2d spawn;
 

@@ -19,6 +19,24 @@ public class GenerationTile {
     private final HeightmapStore heightmaps;
     private final ModelStore models = new ModelStore();
 
+    private static GenerationTile currentTile = null;
+
+    /**
+     * @return current tile if any or null
+     */
+    public static GenerationTile current() {
+        return currentTile;
+    }
+
+    /**
+     * Sets current tile (or null for none).
+     *
+     * @param tile tile to set
+     */
+    public static void setCurrent(GenerationTile tile) {
+        currentTile = tile;
+    }
+
     /**
      * Creates a new {@code GenerationTile} for a generation and a volume.
      *

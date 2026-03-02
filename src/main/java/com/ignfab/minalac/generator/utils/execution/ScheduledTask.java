@@ -4,17 +4,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.function.Consumer;
 
 /**
  * A task registered in the {@link Scheduler}.
- *
- * @param <T> execution context type
  */
-public class ScheduledTask<T> {
+public class ScheduledTask {
     private final String id;
-    private final Consumer<T> task;
-    private final Set<ScheduledTask<T>> dependencies;
+    private final Runnable task;
+    private final Set<ScheduledTask> dependencies;
     private ScheduledTaskState state;
     private TaskFailedException error;
     private Future<?> future;
@@ -25,7 +22,7 @@ public class ScheduledTask<T> {
      * @param id the ID of the task
      * @param task the runnable to execute
      */
-    public ScheduledTask(String id, Consumer<T> task) {
+    public ScheduledTask(String id, Runnable task) {
         this.id = id;
         this.task = task;
         this.dependencies = new HashSet<>();
@@ -47,14 +44,13 @@ public class ScheduledTask<T> {
      *
      * @param executor the service where tasks are submitted for execution
      * @param lock the lock used for communication
-     * @param context execution context for this task
      * @return true if the task was submitted for execution.
      */
-    public boolean tryExecute(T context, ExecutorService executor, Object lock) {
+    public boolean tryExecute(ExecutorService executor, Object lock) {
         // Check if task can run
         if (state != ScheduledTaskState.WAITING)
             return false;
-        for (ScheduledTask<T> task : dependencies)
+        for (ScheduledTask task : dependencies)
             if (task.state() != ScheduledTaskState.FINISHED)
                 return false;
 
@@ -65,7 +61,7 @@ public class ScheduledTask<T> {
                 Thread.currentThread().setName(id);
                 System.out.printf("Starting task %s%n", id);
                 state = ScheduledTaskState.RUNNING;
-                task.accept(context);
+                task.run();
                 state = ScheduledTaskState.FINISHED;
                 System.out.printf("Task %s finished%n", id);
             } catch (RuntimeException e) {
@@ -97,7 +93,7 @@ public class ScheduledTask<T> {
      *
      * @param dependency the dependency task
      */
-    protected void addDependency(ScheduledTask<T> dependency) {
+    protected void addDependency(ScheduledTask dependency) {
         this.dependencies.add(dependency);
     }
 

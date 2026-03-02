@@ -9,7 +9,7 @@ import com.ignfab.minalac.generator.models.ModelSelection;
  *
  * @param <M> Model type for this task.
  */
-public abstract class ModelTask<M extends Model> implements TileTask {
+public abstract class ModelTask<M extends Model> extends TileTask {
     private final Class<M> cls;
     private final ModelSelection selection;
 
@@ -31,5 +31,6 @@ public abstract class ModelTask<M extends Model> implements TileTask {
      * @param model concerned model
      * @param tile tile to render into
      */
+    // TODO: Tile may be passed using `GenerationTile.current()`
     protected abstract void run(M model, GenerationTile tile);
 }
