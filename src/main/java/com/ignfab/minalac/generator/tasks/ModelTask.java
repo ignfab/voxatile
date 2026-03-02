@@ -31,5 +31,6 @@ public abstract class ModelTask<M extends Model> implements TileTask {
      * @param model concerned model
      * @param tile tile to render into
      */
+    // TODO: Tile may be passed using `GenerationTile.current()`
     protected abstract void run(M model, GenerationTile tile);
 }
