@@ -9,7 +9,7 @@ import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
  * Abstract class for {@link TileTaskParams} having a model selection
  * modifiable by {@link SequenceTaskParams} and {@link ScheduleTaskParams}.
  */
-public abstract class ModelTaskParams extends TaskParams {
+public abstract class ModelTaskParams extends TaskParams implements HasModelSelection {
     /**
      * The type of models to get data from (optional).
      *
@@ -18,6 +18,11 @@ public abstract class ModelTaskParams extends TaskParams {
      */
     @JsonSetter(nulls = Nulls.SKIP)
     public ModelSelectionParams models = new ModelSelectionParams();
+
+    @Override
+    public ModelSelectionParams models() {
+        return models;
+    }
 
     @Override
     public void validate() {

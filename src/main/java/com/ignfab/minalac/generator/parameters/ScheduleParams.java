@@ -35,8 +35,7 @@ public class ScheduleParams extends LinkedHashMap<String, TaskParams> {
         // Flatten schedule params into tasks map
         Map<String, TaskParams> tasks = new HashMap<>();
         forEach((name, task) -> {
-            tasks.putAll(task.createAdditionalTaskParams(name));
-            tasks.put(name, task);
+            tasks.putAll(task.flatten(name));
         });
 
         // Create tasks

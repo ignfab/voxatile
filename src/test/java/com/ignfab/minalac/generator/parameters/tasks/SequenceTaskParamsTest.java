@@ -49,9 +49,9 @@ public class SequenceTaskParamsTest {
     }
 
     @Test
-    public void testCreateAdditionalTaskParams() {
+    public void testFlatten() {
         SequenceTaskParams params;
-        Map<String, TaskParams> additional;
+        Map<String, TaskParams> schedule;
 
         // Base sequence task
         params = new SequenceTaskParams(List.of(
@@ -60,13 +60,13 @@ public class SequenceTaskParamsTest {
             new TestingTaskParams()
         ));
 
-        additional = params.createAdditionalTaskParams("test");
-        ScheduleParamsTester.assertValidSchedule(additional);
-        assertTrue(additional.containsKey("test:1"));
-        assertTrue(additional.containsKey("test:2"));
-        assertTrue(additional.containsKey("test:3"));
-        ScheduleParamsTester.assertPredecessor(additional, "test:1", "test:2");
-        ScheduleParamsTester.assertPredecessor(additional, "test:2", "test:3");
+        schedule = params.flatten("test");
+        ScheduleParamsTester.assertValidSchedule(schedule);
+        assertTrue(schedule.containsKey("test:1"));
+        assertTrue(schedule.containsKey("test:2"));
+        assertTrue(schedule.containsKey("test:3"));
+        ScheduleParamsTester.assertPredecessor(schedule, "test:1", "test:2");
+        ScheduleParamsTester.assertPredecessor(schedule, "test:2", "test:3");
 
         // Sequence in sequence
         params = new SequenceTaskParams(List.of(
@@ -79,24 +79,24 @@ public class SequenceTaskParamsTest {
             new TestingTaskParams()
         ));
 
-        additional = params.createAdditionalTaskParams("test");
+        schedule = params.flatten("test");
 
-        ScheduleParamsTester.assertValidSchedule(additional);
-        assertTrue(additional.containsKey("test:1"));
-        assertTrue(additional.containsKey("test:2"));
-        assertTrue(additional.containsKey("test:2:1"));
-        assertTrue(additional.containsKey("test:2:2"));
-        assertTrue(additional.containsKey("test:2:3"));
-        assertTrue(additional.containsKey("test:3"));
+        ScheduleParamsTester.assertValidSchedule(schedule);
+        assertTrue(schedule.containsKey("test:1"));
+        assertTrue(schedule.containsKey("test:2"));
+        assertTrue(schedule.containsKey("test:2:1"));
+        assertTrue(schedule.containsKey("test:2:2"));
+        assertTrue(schedule.containsKey("test:2:3"));
+        assertTrue(schedule.containsKey("test:3"));
 
-        ScheduleParamsTester.assertPredecessor(additional, "test:1", "test:2:1");
-        ScheduleParamsTester.assertPredecessor(additional, "test:2:1", "test:2:2");
-        ScheduleParamsTester.assertPredecessor(additional, "test:2:2", "test:2:3");
-        ScheduleParamsTester.assertPredecessor(additional, "test:2:3", "test:3");
+        ScheduleParamsTester.assertPredecessor(schedule, "test:1", "test:2:1");
+        ScheduleParamsTester.assertPredecessor(schedule, "test:2:1", "test:2:2");
+        ScheduleParamsTester.assertPredecessor(schedule, "test:2:2", "test:2:3");
+        ScheduleParamsTester.assertPredecessor(schedule, "test:2:3", "test:3");
     }
 
     @Test
-    public void testCreateAdditionalTaskParamsAfter() {
+    public void testFlattenAfter() {
         SequenceTaskParams sequence = new SequenceTaskParams(List.of(
             new TestingTaskParams(),
             new TestingTaskParams()
@@ -114,19 +114,19 @@ public class SequenceTaskParamsTest {
         sequence.after.add("first");
         last.after.add("sequence");
 
-        Map<String, TaskParams> additional = params.createAdditionalTaskParams("test");
+        Map<String, TaskParams> schedule = params.flatten("test");
 
         // Checks both task after sequence and sequence after task
 
-        ScheduleParamsTester.assertValidSchedule(additional);
-        ScheduleParamsTester.assertPredecessor(additional, "test:sequence:2", "test:last");
-        ScheduleParamsTester.assertPredecessor(additional, "test:first", "test:sequence:1");
-        ScheduleParamsTester.assertNotPredecessor(additional, "test:other", "test:sequence:1");
-        ScheduleParamsTester.assertNotPredecessor(additional, "test:sequence:2", "test:other");
+        ScheduleParamsTester.assertValidSchedule(schedule);
+        ScheduleParamsTester.assertPredecessor(schedule, "test:sequence:2", "test:last");
+        ScheduleParamsTester.assertPredecessor(schedule, "test:first", "test:sequence:1");
+        ScheduleParamsTester.assertNotPredecessor(schedule, "test:other", "test:sequence:1");
+        ScheduleParamsTester.assertNotPredecessor(schedule, "test:sequence:2", "test:other");
     }
 
     @Test
-    public void testCreateAdditionalTaskParamsUsing() {
+    public void testFlattenUsing() {
 
         TestingTaskParams subtask = new TestingTaskParams();
         TestingTaskParams subsubtask = new TestingTaskParams();
@@ -155,16 +155,16 @@ public class SequenceTaskParamsTest {
         subsubtask.after.add("task");
         subsequence.using.add("task");
 
-        Map<String, TaskParams> additional = assertDoesNotThrow(() -> params.createAdditionalTaskParams("main"));
+        Map<String, TaskParams> schedule = assertDoesNotThrow(() -> params.flatten("main"));
 
-        ScheduleParamsTester.assertValidSchedule(additional);
-        ScheduleParamsTester.assertPredecessor(additional, "main:task", "main:sequence:3", "main:sequence:2:2");
-        ScheduleParamsTester.assertNotPredecessor(additional, "main:task", "main:sequence:2:1", "main:sequence:1");
-        ScheduleParamsTester.assertNotPredecessor(additional, "main:sequence:3", "main:sequence:2:2", "main:sequence:3");
+        ScheduleParamsTester.assertValidSchedule(schedule);
+        ScheduleParamsTester.assertPredecessor(schedule, "main:task", "main:sequence:3", "main:sequence:2:2");
+        ScheduleParamsTester.assertNotPredecessor(schedule, "main:task", "main:sequence:2:1", "main:sequence:1");
+        ScheduleParamsTester.assertNotPredecessor(schedule, "main:sequence:3", "main:sequence:2:2", "main:sequence:3");
     }
 
     @Test
-    public void testModelSelection() {
+    public void testFlattenModelSelection() {
         // Just ensure model selection merging has not been forgotten
         TestingTaskParams task1 = new TestingTaskParams();
         TestingTaskParams task2 = new TestingTaskParams();
@@ -173,10 +173,10 @@ public class SequenceTaskParamsTest {
         SequenceTaskParams params = new SequenceTaskParams(List.of(task1, task2));
         params.models.type = "bar";
 
-        Map<String, TaskParams> additional = params.createAdditionalTaskParams("test");
-        TestingTaskParams test1 = assertInstanceOf(TestingTaskParams.class, additional.get("test:1"));
+        Map<String, TaskParams> schedule = params.flatten("test");
+        TestingTaskParams test1 = assertInstanceOf(TestingTaskParams.class, schedule.get("test:1"));
         assertEquals(ModelSelection.NONE, test1.models.create());
-        TestingTaskParams test2 = assertInstanceOf(TestingTaskParams.class, additional.get("test:2"));
+        TestingTaskParams test2 = assertInstanceOf(TestingTaskParams.class, schedule.get("test:2"));
         assertEquals("bar", test2.models.type);
     }
 }

@@ -14,14 +14,14 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.tasks.NoOperationTask;
 import com.ignfab.minalac.generator.tasks.Task;
 
 /**
  * Parameters for a task running other tasks, parallelized, with dependencies between them (like in a schedule).
  * <p>
- * This params class only instanciates a {@link NoOperationTask} but it
- * {@link #createAdditionalTaskParams creates additional task params} for its subtasks.
+ * This params class is not intended to instanciate a task object using {@link #create(Generation)}.
+ * Subtasks params and a {@link NoOperationTaskParams} (end task) will rather be created using {@link #flatten(String)}.
+ * Then, these flattened task params can be used to instanciate corresponding task objects.
  */
 public class ScheduleTaskParams extends ModelTaskParams {
 
@@ -67,7 +67,7 @@ public class ScheduleTaskParams extends ModelTaskParams {
     }
 
     @Override
-    public Map<String, TaskParams> createAdditionalTaskParams(String prefix) {
+    public Map<String, TaskParams> flatten(String mainName) {
         // Resulting task params indexed by name
         Map<String, TaskParams> result = new HashMap<>();
 
@@ -76,35 +76,23 @@ public class ScheduleTaskParams extends ModelTaskParams {
 
         // Flatten internal schedule
         tasks.forEach((name, task) -> {
-            task.createAdditionalTaskParams(name).forEach((addname, addtask) -> {
-                 result.put(prefix + SEPARATOR + addname, addtask);
-            });
-            result.put(prefix + SEPARATOR + name, task);
-        });
-
-        // Merge model selections
-        for (TaskParams task : result.values())
-            if (task instanceof ModelTaskParams modelTask)
-                modelTask.models.narrowDown(models);
-
-        // Translate dependencies
-        result.forEach((subname, subtask) -> {
+            // Translate dependencies
             Set<String> external = new HashSet<>();
             Set<String> internal = new HashSet<>();
 
             // Process subtask afters: may be internal or external dependencies
-            for (String after : subtask.after) {
+            for (String after : task.after) {
                 if (using.contains(after))
                     // Do not translate external dependencies
                     external.add(after);
                 else {
                     // Internal dependencies are translated and checked
-                    if (!result.containsKey(prefix + SEPARATOR + after))
+                    if (!tasks.containsKey(after))
                         throw new IllegalArgumentException(
                             "Subtask \"%s\" depends on non existent \"%s\" subtask (may be missing in \"using\")"
-                            .formatted(subname, after)
+                            .formatted(name, after)
                         );
-                    internal.add(prefix + SEPARATOR + after);
+                    internal.add(mainName + SEPARATOR + after);
                     // Mark followed task
                     followed.add(after);
                 }
@@ -113,23 +101,36 @@ public class ScheduleTaskParams extends ModelTaskParams {
             // We could add main task dependencies to each subtask but it is useless
             // if subtask already depends on another subtask (i.e. has internal dependencies).
             // We do not know about eventual possible external dependencies simplification.
-            subtask.after = new HashSet<>(external);
-            subtask.after.addAll(internal.isEmpty() ? after : internal);
+            task.after = new HashSet<>(external);
+            task.after.addAll(internal.isEmpty() ? after : internal);
+
+            // Flatten subtask
+            result.putAll(task.flatten(mainName + SEPARATOR + name));
         });
 
-        // Replace main task dependencies with all non followed subtasks.
-        // Main task is a noop task that will start after all subtasks have ended
+        // Merge model selections of all flattened subtasks
+        for (TaskParams task : result.values())
+            if (task instanceof ModelTaskParams modelTask)
+                modelTask.models.narrowDown(models);
+
+        // Replace end task dependencies with all non followed subtasks.
+        // End task is a NoOperation task that will start after all subtasks have ended
         // so it can be safely used as "after" for "after all subtasks ended".
-        after = tasks.keySet().stream()
+        TaskParams endTask = new NoOperationTaskParams();
+        endTask.after = tasks.keySet().stream()
             .filter(Predicate.not(followed::contains))
-            .map(name -> prefix + SEPARATOR + name)
+            .map(name -> mainName + SEPARATOR + name)
             .collect(Collectors.toSet());
+
+        result.put(mainName, endTask);
 
         return result;
     }
 
     @Override
     public Task create(Generation generation) {
-        return NoOperationTask.instance();
+        // Once flattened, SequenceTaskParams is replaced by its subtasks params plus a NoOperationParams.
+        // It should not be {@code create}d.
+        throw new IllegalStateException("A sequence task is not expected to be directly created");
     }
 }

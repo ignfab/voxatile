@@ -52,9 +52,9 @@ public class ScheduleTaskParamsTest {
     }
 
     @Test
-    public void testCreateAdditionalTaskParams() {
+    public void testFlatten() {
         ScheduleTaskParams params;
-        Map<String, TaskParams> additional;
+        Map<String, TaskParams> flat;
 
         // Base schedule task
         params = new ScheduleTaskParams(Map.of(
@@ -63,11 +63,11 @@ public class ScheduleTaskParamsTest {
             "c", new TestingTaskParams()
         ));
 
-        additional = params.createAdditionalTaskParams("test");
-        ScheduleParamsTester.assertValidSchedule(additional);
-        assertTrue(additional.containsKey("test:a"));
-        assertTrue(additional.containsKey("test:b"));
-        assertTrue(additional.containsKey("test:c"));
+        flat = params.flatten("test");
+        ScheduleParamsTester.assertValidSchedule(flat);
+        assertTrue(flat.containsKey("test:a"));
+        assertTrue(flat.containsKey("test:b"));
+        assertTrue(flat.containsKey("test:c"));
 
         // Schedule in schedule
         params = new ScheduleTaskParams(Map.of(
@@ -79,18 +79,18 @@ public class ScheduleTaskParamsTest {
             ))
         ));
 
-        additional = params.createAdditionalTaskParams("test");
+        flat = params.flatten("test");
 
-        ScheduleParamsTester.assertValidSchedule(additional);
-        assertTrue(additional.containsKey("test:A"));
-        assertTrue(additional.containsKey("test:B"));
-        assertTrue(additional.containsKey("test:S:X"));
-        assertTrue(additional.containsKey("test:S:Y"));
+        ScheduleParamsTester.assertValidSchedule(flat);
+        assertTrue(flat.containsKey("test:A"));
+        assertTrue(flat.containsKey("test:B"));
+        assertTrue(flat.containsKey("test:S:X"));
+        assertTrue(flat.containsKey("test:S:Y"));
     }
 
     @DisplayName("Test all task in a schedule runs before tasks that are after schedule")
     @Test
-    public void testCreateAdditionalTaskParamsAfterSchedule() {
+    public void testFlattenAfterSchedule() {
 
         TaskParams taskB = new TestingTaskParams();
         TaskParams taskC = new TestingTaskParams();
@@ -108,7 +108,7 @@ public class ScheduleTaskParamsTest {
         taskB.after.add("S");
         taskC.after.add("S");
 
-        Map<String, TaskParams> schedule = params.createAdditionalTaskParams("T");
+        Map<String, TaskParams> schedule = params.flatten("T");
 
         ScheduleParamsTester.assertValidSchedule(schedule);
         ScheduleParamsTester.assertNotPredecessor(schedule, "T:S:X", "T:A");
@@ -119,7 +119,7 @@ public class ScheduleTaskParamsTest {
 
     @DisplayName("Test all task in a schedule runs after schedule afters")
     @Test
-    public void testCreateAdditionalTaskParamsScheduleAfter() {
+    public void testFlattenScheduleAfter() {
 
         ScheduleTaskParams taskS = new ScheduleTaskParams(Map.of(
             "X", new TestingTaskParams(),
@@ -135,7 +135,7 @@ public class ScheduleTaskParamsTest {
         taskS.after.add("A");
         taskS.after.add("B");
 
-        Map<String, TaskParams> schedule = params.createAdditionalTaskParams("T");
+        Map<String, TaskParams> schedule = params.flatten("T");
 
         ScheduleParamsTester.assertValidSchedule(schedule);
         ScheduleParamsTester.assertPredecessor(schedule, "T:A", "T:S:X", "T:S:Y");
@@ -145,7 +145,7 @@ public class ScheduleTaskParamsTest {
 
     @DisplayName("Verify a subtask cannot depend on a main task")
     @Test
-    public void testCreateAdditionalTaskParamsNotUsing() {
+    public void testFlattenNotUsing() {
         TestingTaskParams subtask = new TestingTaskParams();
 
         ScheduleTaskParams main = new ScheduleTaskParams(
@@ -156,11 +156,11 @@ public class ScheduleTaskParamsTest {
         );
 
         subtask.after.add("maintask");
-        assertThrows(IllegalArgumentException.class, () -> main.createAdditionalTaskParams("main"));
+        assertThrows(IllegalArgumentException.class, () -> main.flatten("main"));
     }
 
     @Test
-    public void testCreateAdditionalTaskParamsUsing() {
+    public void testFlattenUsing() {
         // For these tests, we use a "main" ScheduleTaskParams in which we test "tested" ScheduleTaskParams
 
         TestingTaskParams subtask = new TestingTaskParams();
@@ -202,7 +202,7 @@ public class ScheduleTaskParamsTest {
 
         */
 
-        Map<String, TaskParams> result = assertDoesNotThrow(() -> main.createAdditionalTaskParams("main"));
+        Map<String, TaskParams> result = assertDoesNotThrow(() -> main.flatten("main"));
 
         ScheduleParamsTester.assertValidSchedule(result);
         ScheduleParamsTester.assertPredecessor(result, "main:task", "main:schedule:subtask", "main:schedule:subschedule:subsubtask");
@@ -225,10 +225,10 @@ public class ScheduleTaskParamsTest {
         ));
         params.models.type = "bar";
 
-        Map<String, TaskParams> additional = params.createAdditionalTaskParams("test");
-        TestingTaskParams testFoo = assertInstanceOf(TestingTaskParams.class, additional.get("test:foo"));
+        Map<String, TaskParams> flat = params.flatten("test");
+        TestingTaskParams testFoo = assertInstanceOf(TestingTaskParams.class, flat.get("test:foo"));
         assertEquals(ModelSelection.NONE, testFoo.models.create());
-        TestingTaskParams testBar = assertInstanceOf(TestingTaskParams.class, additional.get("test:bar"));
+        TestingTaskParams testBar = assertInstanceOf(TestingTaskParams.class, flat.get("test:bar"));
         assertEquals("bar", testBar.models.type);
     }
 

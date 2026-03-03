@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.tasks.NoOperationTask;
 import com.ignfab.minalac.generator.tasks.Task;
 
@@ -29,7 +30,7 @@ public class SequenceTaskParams extends ModelTaskParams {
      */
     @JsonSetter(nulls = Nulls.FAIL, contentNulls = Nulls.FAIL)
     @JsonProperty("do")
-    public List<TaskParams> subtasks;
+    public List<TaskParams> tasks;
 
     /**
      * List of imported dependencies (names of external tasks that could be used as dependencies for subtasks).
@@ -45,7 +46,7 @@ public class SequenceTaskParams extends ModelTaskParams {
      */
     @ConstructorProperties("subtasks")
     public SequenceTaskParams(List<TaskParams> subtasks) {
-        this.subtasks = subtasks;
+        tasks = subtasks;
     }
 
     @Override
@@ -53,47 +54,51 @@ public class SequenceTaskParams extends ModelTaskParams {
         super.validate();
 
         using.forEach(TaskParams::validateTaskName);
-        subtasks.forEach(TaskParams::validate);
+        tasks.forEach(TaskParams::validate);
     }
 
     @Override
-    public Map<String, TaskParams> createAdditionalTaskParams(String prefix) {
+    public Map<String, TaskParams> flatten(String mainName) {
         Map<String, TaskParams> result = new HashMap<>();
 
         int index = 0;
-        for (TaskParams subtask : subtasks) {
+        for (TaskParams task : tasks) {
             if (index == 0)
                 // First task starts after sequence afters
-                subtask.after.addAll(after);
+                task.after.addAll(after);
             else
                 // Other tasks start after their previous task
-                subtask.after.add(prefix + SEPARATOR + index);
+                task.after.add(mainName + SEPARATOR + index);
 
             index++;
 
-            String subname = prefix + SEPARATOR + index;
+            String taskName = mainName + SEPARATOR + index;
 
-            result.put(subname, subtask);
-
-            // getAditionalTaskParams is supposed to prefix all its results with subname
-            // so we can presume no result will be overwritten.
-            result.putAll(subtask.createAdditionalTaskParams(subname));
+            result.putAll(task.flatten(taskName));
         }
 
-        // Merge model selections
+        // Merge model selections of all flattened subtasks
         for (TaskParams task : result.values())
             if (task instanceof ModelTaskParams modelTask)
                 modelTask.models.narrowDown(models);
 
         // Sequence task (which is a noop marker) starts after last task
-        after = Set.of(prefix + SEPARATOR + index);
+        TaskParams endTask = new NoOperationTaskParams();
+        endTask.after = Set.of(mainName + SEPARATOR + index);
+        result.put(mainName, endTask);
 
         return result;
     }
 
     @Override
     public Task create(Generation generation) {
-        return NoOperationTask.instance();
+        // Once flattened, SequenceTaskParams is replaced by its subtasks params plus a NoOperationParams.
+        // It should not be {@code create}d.
+        throw new IllegalStateException("A sequence task is not expected to be directly created");
     }
 
+    @Override
+    public ModelSelectionParams models() {
+        return models;
+    }
 }

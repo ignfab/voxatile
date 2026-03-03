@@ -37,17 +37,18 @@ public abstract class TaskParams extends PolymorphicParams {
     public abstract Task create(Generation generation);
 
     /**
-     * Create additional {@link TileTaskParams} if task needs to.
-     * This is the case of {@link ScheduleTaskParams} and {@link SequenceTaskParams}.
+     * Returns a flattened schedule of all subtask, including descendants.
      * <p>
-     * Warning: this may change current object and should be used only once during
-     * schedule creation from params (see {@link TileScheduleParams#create}).
+     * This task will be included in the list.
+     * Tasks will be renamed to avoid any conflict, prefixed by parent task(s) name(s), separated by {@link #SEPARATOR}.
+     * All {@code after}s will be updated accordingly.
      *
-     * @param prefix prefix added to eventual subtask names
-     * @return additional tasks indexed by their name
+     * @param name Name to use for this task
+     *
+     * @return All subtasks indexed by their name
      */
-    public Map<String, TaskParams> createAdditionalTaskParams(String prefix) {
-        return Map.of();
+    public Map<String, TaskParams> flatten(String name) {
+        return Map.of(name, this);
     }
 
     /**
