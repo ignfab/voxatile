@@ -7,7 +7,6 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.cfg.MapperBuilder;
 import tools.jackson.databind.jsontype.NamedType;
-import tools.jackson.databind.module.SimpleModule;
 import tools.jackson.dataformat.yaml.YAMLMapper;
 
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
@@ -43,9 +42,7 @@ public final class ParamsTester {
         builder.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
         builder.enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION);
 
-        SimpleModule module = new SimpleModule("ParamsTesterModule");
-        module.setDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
-        builder.addModule(module);
+        builder.addModule(new ParamsParser.MinalacParserModule());
 
         format.registerPlaceableDeserializer(builder);
 
