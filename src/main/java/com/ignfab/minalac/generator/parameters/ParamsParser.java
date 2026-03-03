@@ -35,16 +35,14 @@ public class ParamsParser {
      * @param serialized A string containing the generation parameters data in Json or Yaml format
      * @return the corresponding generation parameters object.
      * @throws ParseException if an error occurs during deserialization such as an invalid structure
-     * @throws JacksonException
      */
-    public GenerationParams parse(String serialized) throws ParseException, JacksonException {
+    public GenerationParams parse(String serialized) throws ParseException {
         GenerationParams params;
-        SimpleModule module;
 
         // Custom deserializers
-        module = new SimpleModule("MinalacParserModule");
+        MinalacParserModule module = new MinalacParserModule();
+        // TODO OutputFormat handling might be relocated to the MinalacParserModule (not sure)
         module.addDeserializer(OutputFormat.class, formatDeserializer);
-        module.setDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
         mapperBuilder.addModule(module);
 
         YAMLMapper mapper = mapperBuilder.build();
@@ -103,4 +101,22 @@ public class ParamsParser {
         formatDeserializer.registerFormat(name, format);
     }
 
+    /**
+     * Jackson module used by this parser.
+     */
+    public static class MinalacParserModule extends SimpleModule {
+        /**
+         * Creates a new instante of this module.
+         */
+        public MinalacParserModule() {
+            super("MinalacParserModule");
+        }
+
+        @Override
+        public void setupModule(SetupContext context) {
+            super.setupModule(context);
+            context.addDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
+            context.addDeserializerModifier(new JsonWrapper.BeanModifier());
+        }
+    }
 }

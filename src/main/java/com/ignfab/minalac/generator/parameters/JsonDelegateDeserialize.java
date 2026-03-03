@@ -44,13 +44,7 @@ public @interface JsonDelegateDeserialize {
 
     /**
      * Jackson handler to wrap deserializer of annotated beans with the requested one.
-     * This should be registered in the {@link tools.jackson.databind.cfg.MapperBuilder}:
-     * <pre>{@code
-     *  MapperBuilder<?, ?> mapperBuilder = ...;
-     *  SimpleModule module = new SimpleModule("MyModule");
-     *  module.setDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
-     *  mapperBuilder.addModule(module);
-     * }</pre>
+     * This is bundled by default with the {@link com.ignfab.minalac.generator.parameters.ParamsParser.MinalacParserModule}.
      */
     class BeanModifier extends ValueDeserializerModifier {
         @Override
