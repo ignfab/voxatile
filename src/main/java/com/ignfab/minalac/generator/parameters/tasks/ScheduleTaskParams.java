@@ -62,56 +62,55 @@ public class ScheduleTaskParams extends ModelTaskParams {
                     "Cannot use \"%s\" as task name as it is already in using list"
                     .formatted(name)
                 );
+
+            for (String after : subtask.after)
+                // Task may depend on a task at same level or listed in using list.
+                if (!using.contains(after) && !tasks.containsKey(after))
+                    throw new IllegalArgumentException("Unknown task \"%s\" in after list".formatted(after));
+
             subtask.validate();
         });
     }
 
     @Override
-    public Map<String, TaskParams> flatten(String mainName) {
+    public Map<String, TaskParams> flatten(String parentName) {
+
         // Resulting task params indexed by name
         Map<String, TaskParams> result = new HashMap<>();
 
-        // Set of tasks known to be followed by another task
-        Set<String> followed = new HashSet<>();
+        // Subtasks known to be followed by another subtask
+        Set<String> followed = tasks.values().stream()
+            .flatMap((task) -> task.after.stream())
+            .filter(Predicate.not(using::contains))
+            .collect(Collectors.toSet());
 
-        // Flatten internal schedule
-        tasks.forEach((name, task) -> {
-            // Translate dependencies
-            Set<String> external = new HashSet<>();
-            Set<String> internal = new HashSet<>();
-
-            // Process subtask afters: may be internal or external dependencies
-            for (String after : task.after) {
-                if (using.contains(after))
-                    // Do not translate external dependencies
-                    external.add(after);
-                else {
-                    // Internal dependencies are translated and checked
-                    if (!tasks.containsKey(after))
-                        throw new IllegalArgumentException(
-                            "Subtask \"%s\" depends on non existent \"%s\" subtask (may be missing in \"using\")"
-                            .formatted(name, after)
-                        );
-                    internal.add(mainName + SEPARATOR + after);
-                    // Mark followed task
-                    followed.add(after);
-                }
-            }
-
-            // We could add main task dependencies to each subtask but it is useless
-            // if subtask already depends on another subtask (i.e. has internal dependencies).
-            // We do not know about eventual possible external dependencies simplification.
-            task.after = new HashSet<>(external);
-            task.after.addAll(internal.isEmpty() ? after : internal);
-
-            // Flatten subtask
-            result.putAll(task.flatten(mainName + SEPARATOR + name));
+        // Add main task dependancies to all subtasks not following any other subtask
+        // (i.e. having some `after` not in `using`).
+        // We could add main task dependencies to each subtask but it is useless.
+        tasks.values().forEach((task) -> {
+            for (String after : task.after)
+                if (!using.contains(after))
+                    return;
+            task.after.addAll(after);
         });
 
-        // Merge model selections of all flattened subtasks
-        for (TaskParams task : result.values())
-            if (task instanceof ModelTaskParams modelTask)
-                modelTask.models.narrowDown(models);
+        // Flatten subtasks
+        tasks.forEach((name, task) ->
+            // We ask each subtask to flatten itself and then perform some translations to resulting tasks
+            task.flatten(name).forEach((resultName, resultTask) -> {
+                // Translate dependencies
+                resultTask.after = resultTask.after.stream()
+                    .map((after) -> using.contains(after) ? after : parentName + SEPARATOR + after)
+                    .collect(Collectors.toSet());
+
+                // Merge model selection
+                if (resultTask instanceof ModelTaskParams modelTask)
+                    modelTask.models.narrowDown(models);
+
+                // Translate name
+                result.put(parentName + SEPARATOR + resultName, resultTask);
+            })
+        );
 
         // Replace end task dependencies with all non followed subtasks.
         // End task is a NoOperation task that will start after all subtasks have ended
@@ -119,11 +118,16 @@ public class ScheduleTaskParams extends ModelTaskParams {
         TaskParams endTask = new NoOperationTaskParams();
         endTask.after = tasks.keySet().stream()
             .filter(Predicate.not(followed::contains))
-            .map(name -> mainName + SEPARATOR + name)
+            .map(name -> parentName + SEPARATOR + name)
             .collect(Collectors.toSet());
 
-        result.put(mainName, endTask);
+        result.put(parentName, endTask);
 
+        System.out.println("\nSchedule Flattened(" + parentName+")");
+        result.forEach((name, task) -> {
+            System.out.println("  "+name+":");
+            task.after.forEach((after) -> System.out.println("    - "+after));
+        });
         return result;
     }
 
