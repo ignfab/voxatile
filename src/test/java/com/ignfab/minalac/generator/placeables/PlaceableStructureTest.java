@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.placeables;
 
-import java.util.Set;
+import java.util.Collection;
 
 import org.junit.jupiter.api.Test;
 
@@ -221,51 +221,29 @@ public class PlaceableStructureTest {
     }
 
     @Test
-    public void testPalette() {
-        TestingVoxel voxel1 = new TestingVoxel("1");
-        TestingVoxel voxel2 = new TestingVoxel("2");
-        TestingVoxel voxel3 = new TestingVoxel("3");
+    public void testComponents() {
+        TestingPlaceable placeable1 = new TestingPlaceable();
+        TestingPlaceable placeable2 = new TestingPlaceable();
 
         PlaceableStructure structure0 = PlaceableStructure.EMPTY;
-        PlaceableStructure structure1 = PlaceableStructure.builder().set(0, 0, 0, voxel1).build();
+        PlaceableStructure structure1 = PlaceableStructure.builder().set(0, 0, 0, placeable1).build();
         PlaceableStructure structure2 = PlaceableStructure.builder()
-            .set(1, 2, 3, voxel1)
-            .set(-1, -2, -3, voxel2)
-            .build();
-        PlaceableStructure structure3 = PlaceableStructure.builder()
-            .set(1, 2, 3, voxel3)
-            .set(-1, -2, -3, voxel3)
-            .build();
-        PlaceableStructure structure4 = PlaceableStructure.builder()
-            .set(1, 2, 3, voxel1)
-            .set(0, 0, 0, structure2)
-            .set(-1, -2, -3, voxel3)
+            .set(1, 2, 3, placeable1)
+            .set(-1, -2, -3, placeable2)
             .build();
 
         // Test with empty structure
-        assertTrue(structure0.palette().isEmpty(), "Palette should be empty");
+        assertTrue(structure0.components().isEmpty(), "Components should be empty");
 
-        // Test with one child
-        Set<Placeable> palette1 = structure1.palette();
-        assertEquals(1, palette1.size(), "Palette should contain one element");
-        assertEquals(voxel1, palette1.iterator().next(), "Palette should contain the voxel");
+        // Test with one element
+        Collection<Placeable> components1 = structure1.components();
+        assertEquals(1, components1.size(), "Components should contain one element");
+        assertEquals(placeable1, components1.iterator().next(), "Components should contain the placeable");
 
-        // Test with two children
-        Set<Placeable> palette2 = structure2.palette();
-        assertEquals(2, palette2.size(), "Palette should contain two elements");
-        assertTrue(palette2.contains(voxel1), "Palette should contain the first voxel");
-        assertTrue(palette2.contains(voxel2), "Palette should contain the second voxel");
-
-        // Test with repeated children
-        Set<Placeable> palette3 = structure3.palette();
-        assertEquals(1, palette3.size(), "Palette should contain one element");
-        assertEquals(voxel3, palette3.iterator().next(), "Palette should contain the voxel");
-
-        // Test with nested children (including repeated)
-        Set<Placeable> palette4 = structure4.palette();
-        assertEquals(3, palette4.size(), "Palette should contain three elements");
-        assertTrue(palette4.contains(voxel1), "Palette should contain the first voxel");
-        assertTrue(palette4.contains(voxel2), "Palette should contain the second voxel");
-        assertTrue(palette4.contains(voxel3), "Palette should contain the third voxel");
+        // Test with two elements
+        Collection<Placeable> components2 = structure2.components();
+        assertEquals(2, components2.size(), "Components should contain two elements");
+        assertTrue(components2.contains(placeable1), "Components should contain the first placeable");
+        assertTrue(components2.contains(placeable2), "Components should contain the second placeable");
     }
 }
