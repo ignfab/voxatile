@@ -131,6 +131,7 @@
     <module name="AvoidStarImport">
       <property name="excludes" value="org.junit.jupiter.api.Assertions"/>
       <property name="excludes" value="com.ignfab.minalac.generator.utils.iterator.IteratorTester"/>
+      <property name="excludes" value="com.ignfab.minalac.generator.parameters.tasks.ScheduleParamsTester"/>
     </module>
     <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
     <module name="RedundantImport"/>
