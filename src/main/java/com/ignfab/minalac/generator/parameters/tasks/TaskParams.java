@@ -40,7 +40,7 @@ public abstract class TaskParams extends PolymorphicParams {
      * Returns a flattened schedule of all subtask, including descendants.
      * <p>
      * This task will be included in the list.
-     * Tasks will be renamed to avoid any conflict, prefixed by parent task(s) name(s), separated by {@link #SEPARATOR}.
+     * Tasks will be renamed according to the context, in order to avoid conflicts.
      * All {@code after}s will be updated accordingly.
      *
      * @param name Name to use for this task
@@ -54,7 +54,33 @@ public abstract class TaskParams extends PolymorphicParams {
     /**
      * Separator used to build subtask names.
      */
-    protected static final String SEPARATOR = ":";
+    private static final String SEPARATOR = ":";
+
+    /**
+     * Marker for sequences.
+     */
+    private static final String MARKER = "#";
+
+    /**
+     * Creates a task full name from a parent and a task name.
+     *
+     * @param parent Parent task name
+     * @param name Task name
+     * @return Task full name
+     */
+    protected String makeTaskFullName(String parent, String name) {
+        return parent + SEPARATOR + name;
+    }
+
+    /**
+     * Creates a task name out of a sequence number.
+     *
+     * @param number Task sequence number
+     * @return task name
+     */
+    protected String makeTaskName(int number) {
+        return MARKER + number;
+    }
 
     /**
      * Validates a name for a task.
@@ -71,6 +97,10 @@ public abstract class TaskParams extends PolymorphicParams {
         if (name.contains(SEPARATOR))
             throw new IllegalArgumentException(
                 "Task name \"%s\" cannot contain \"%s\" char".formatted(name, SEPARATOR)
+            );
+        if (name.contains(MARKER))
+            throw new IllegalArgumentException(
+                "Task name \"%s\" cannot contain \"%s\" char".formatted(name, MARKER)
             );
     }
 }

@@ -12,8 +12,8 @@ import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelPar
 import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.TestingProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.NoOperationTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
-import com.ignfab.minalac.generator.parameters.tasks.TestingTaskParams;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +28,7 @@ public class GenerationParamsTest {
         OutputFormat format = new OutputFormat(TestingVoxelWorld::new, TestingVoxelParams.class, TestingVoxelParams::new);
         params = new GenerationParams(area, format);
         params.heightmaps = new HashMap<>();
-        params.forEachTile = new HashMap<>();
+        params.forEachTile = new ScheduleParams();
     }
 
     @Test
@@ -116,10 +116,10 @@ public class GenerationParamsTest {
         params.crs = "EPSG:5643";
         params.heightmaps.put("ground", new HeightmapDeclarationParams("3"));
         params.heightmaps.put("altitude", new HeightmapDeclarationParams("minimal"));
-        params.forEachTile.put("renderer1", new TestingTaskParams("value1"));
-        params.forEachTile.put("renderer2", new TestingTaskParams("value2"));
-        params.forEachTile.put("source1", new FetchDataTaskParams("models1", new TestingProviderParams("value3"), new TestingProcessorParams("value4")));
-        params.forEachTile.put("source2", new FetchDataTaskParams("models2", new TestingProviderParams("value5"), new TestingProcessorParams("value6")));
+        params.forEachTile.tasks.put("task1", new NoOperationTaskParams());
+        params.forEachTile.tasks.put("task2", new NoOperationTaskParams());
+        params.forEachTile.tasks.put("source1", new FetchDataTaskParams("models1", new TestingProviderParams("value1"), new TestingProcessorParams("value2")));
+        params.forEachTile.tasks.put("source2", new FetchDataTaskParams("models2", new TestingProviderParams("value3"), new TestingProcessorParams("value3")));
 
         TestingVoxelParams placeable = new TestingVoxelParams("voxel");
         RenderBuildingsTaskParams task = new RenderBuildingsTaskParams(
@@ -129,7 +129,7 @@ public class GenerationParamsTest {
         );
         task.models.type = "building";
 
-        params.forEachTile.put("building", task);
+        params.forEachTile.tasks.put("building", task);
         Generation generation = params.create(100);
 
         assertNotNull(generation);
