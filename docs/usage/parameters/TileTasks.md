@@ -6,6 +6,10 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
 
 ## Table of contents
 
+* [Organizational tasks](#organizational-tasks)
+  * [`noOperation`](OrganizationalTasks.md#nooperation)
+  * [`sequence`](OrganizationalTasks.md#sequence)
+  * [`schedule`](OrganizationalTasks.md#schedule)
 * [Tasks fetching data](#tasks-fetching-data)
   * [`fetchData`](#fetchdata)
 * [Tasks operating on world](#tasks-operating-on-world)
@@ -19,6 +23,11 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`populateHeightmap`](#populateheightmap)
   * [`copyHeightmap`](#copyheightmap)
   * [`computeHeightmapStats`](#computeheightmapstats)
+
+## Organizational tasks
+
+Organizational tasks don't perform processing, but help in organizing other tasks.
+They are detailed in [OrganizationalTasks.md](OrganizationalTasks.md).
 
 ## Tasks fetching data
 

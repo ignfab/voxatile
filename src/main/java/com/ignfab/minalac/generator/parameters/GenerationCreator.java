@@ -10,7 +10,6 @@ import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.utils.execution.Task;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
@@ -65,14 +64,7 @@ public final class GenerationCreator {
         );
 
         // ForEachTile scheduling
-        params.forEachTile.forEach((name, taskParams) -> {
-            Task task = taskParams.create(generation);
-            generation.scheduler().addTask(name, task);
-        });
-        params.forEachTile.forEach((name, taskParams) -> {
-            for (String depName : taskParams.after)
-                generation.scheduler().addDependency(name, depName);
-        });
+        params.forEachTile.populate(generation, generation.scheduler());
 
         return generation;
     }

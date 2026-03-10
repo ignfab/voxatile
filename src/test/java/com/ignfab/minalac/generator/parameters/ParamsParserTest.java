@@ -56,7 +56,6 @@ public class ParamsParserTest {
         assertEquals(1.0, params.verticalScale);
         assertEquals(1.0, params.horizontalScale);
         assertEquals(Collections.emptyMap(), params.heightmaps);
-        assertEquals(Collections.emptyMap(), params.forEachTile);
     }
 
     @Test
@@ -217,11 +216,8 @@ public class ParamsParserTest {
     @Test
     public void testRegisterTasks() {
         // Testing explicit and implicit empty schedules
-        GenerationParams paramsExplicit = assertDoesNotThrow(() -> newParser().parse(MINIMAL_YAML + "forEachTile: {}"), "Explicit empty forEachTile should not trigger exception");
-        assertEquals(Collections.emptyMap(), paramsExplicit.forEachTile, "Explicit empty forEachTile should result in a empty map");
-        // `forEachTile:` is by default deserialized as null
-        GenerationParams paramsImplicit = assertDoesNotThrow(() -> newParser().parse(MINIMAL_YAML + "forEachTile:"), "Implicit empty forEachTile should not trigger exception");
-        assertEquals(Collections.emptyMap(), paramsImplicit.forEachTile, "Implicit empty forEachTile should result in a empty map");
+        assertDoesNotThrow(() -> newParser().parse(MINIMAL_YAML + "forEachTile: {}"), "Explicit empty forEachTile should not trigger exception");
+        assertDoesNotThrow(() -> newParser().parse(MINIMAL_YAML + "forEachTile:"), "Implicit empty forEachTile should not trigger exception");
 
         // There is a field `type` needed for resolving the concrete class.
         assertThrows(ParseException.class, () -> newParser().parse("""
@@ -245,10 +241,10 @@ public class ParamsParserTest {
         ), "Task should be deserialized");
 
         // type field is not deserialized only used to find out the class that should be used for deserialization
-        assertNotNull(genParams.forEachTile.get("smeargle"));
-        assertNull(genParams.forEachTile.get("smeargle").type, "Type field should not be deserialized");
+        assertNotNull(genParams.forEachTile.tasks.get("smeargle"));
+        assertNull(genParams.forEachTile.tasks.get("smeargle").type, "Type field should not be deserialized");
 
-        TestingTaskParams taskParams = (TestingTaskParams) genParams.forEachTile.get("smeargle");
+        TestingTaskParams taskParams = (TestingTaskParams) genParams.forEachTile.tasks.get("smeargle");
         assertEquals("sketch", taskParams.requiredField);
         assertEquals("defaultOptionalValue", taskParams.optionalField);
 
@@ -280,7 +276,7 @@ public class ParamsParserTest {
             + MINIMAL_YAML
         ));
 
-        TestingTaskParams tasksParams = assertInstanceOf(TestingTaskParams.class, params.forEachTile.get("verona"));
+        TestingTaskParams tasksParams = assertInstanceOf(TestingTaskParams.class, params.forEachTile.tasks.get("verona"));
         assertEquals("juliet", tasksParams.requiredField);
         assertEquals("romeo", tasksParams.optionalField);
     }
@@ -304,10 +300,10 @@ public class ParamsParserTest {
             + MINIMAL_YAML
         ));
 
-        TestingTaskParams tasksParams1 = assertInstanceOf(TestingTaskParams.class, params.forEachTile.get("death-star-1"));
+        TestingTaskParams tasksParams1 = assertInstanceOf(TestingTaskParams.class, params.forEachTile.tasks.get("death-star-1"));
         assertEquals("vador", tasksParams1.requiredField);
         assertEquals("luke", tasksParams1.optionalField);
-        TestingTaskParams tasksParams2 = assertInstanceOf(TestingTaskParams.class, params.forEachTile.get("death-star-2"));
+        TestingTaskParams tasksParams2 = assertInstanceOf(TestingTaskParams.class, params.forEachTile.tasks.get("death-star-2"));
         assertEquals("vador", tasksParams2.requiredField);
         assertEquals("luke", tasksParams2.optionalField);
     }

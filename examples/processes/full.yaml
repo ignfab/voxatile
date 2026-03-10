@@ -6,15 +6,26 @@ heightmaps:
 
 forEachTile:
 
-  fetchAltitude:
-    type: fetchData
-    modelType: altitude
-    provider:
-      type: wmsFloat
-      url: https://data.geopf.fr/wms-r/wms
-      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
-    processor:
-      type: floatMatrix
+  altitude:
+    type: sequence
+    do:
+    - type: fetchData
+      modelType: altitude
+      provider:
+        type: wmsFloat
+        url: https://data.geopf.fr/wms-r/wms
+        layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+      processor:
+        type: floatMatrix
+    - type: populateHeightmap
+      models:
+        type: altitude
+      heightmap: ground
+    - type: setSpawn
+      heightmap:
+        sum: [ground, 1]
+      x: 0
+      y: 0
 
   fetchBuildings:
     type: fetchData
@@ -44,16 +55,6 @@ forEachTile:
         value: 5
         as: integer
 
-  fetchVegetation:
-    type: fetchData
-    modelType: vegetation
-    provider:
-      type: wfs
-      url: https://data.geopf.fr/wfs/wfs
-      features: BDTOPO_V3:zone_de_vegetation
-    processor:
-      type: geoToolsVector
-
   fetchWater:
     type: fetchData
     modelType: water
@@ -75,7 +76,7 @@ forEachTile:
       type: geoToolsVector
 
   setAltitude:
-    after: fetchAltitude
+    after: altitude
     type: populateHeightmap
     models:
       type: altitude
@@ -92,7 +93,7 @@ forEachTile:
   flattenWater:
     after:
       - fetchWater
-      - setAltitude
+      - altitude
     type: copyHeightmap
     models:
       type: water
@@ -103,7 +104,7 @@ forEachTile:
 
   renderGround:
     after:
-      - setAltitude
+      - altitude
       - flattenWater
     type: renderHeightmap
     at: ground
@@ -151,40 +152,49 @@ forEachTile:
     wall: *voxel-stone
     window: *voxel-glass
 
-  renderForest:
-    after:
-      - renderGround
-      - fetchVegetation
-    type: renderSurfaces
-    models:
-      type: vegetation
-      filter:
-        metadata: nature
-        in:
-          - "Bois"
-          - "Forêt fermée de conifères"
-          - "Forêt fermée de feuillus"
-          - "Forêt fermée mixte"
-          - "Forêt ouverte"
-          - "Zone arborée"
-    heightmap: ground
-    place:
-      - pattern:
-          seed: forest-grass
-          chance: 0.1
-          place:
-            structure:
-              - at: [0, 0, 1]
-                put: *forest-grass
-      - *voxel-forest-ground
-      - pattern:
-          seed: forest-tree1
-          chance: 0.01
-          place: *forest-tree1
-      - pattern:
-          seed: tree2
-          chance: 0.003
-          place: *forest-tree2
+  forest:
+    type: sequence
+    using: renderGround
+    do:
+      - type: fetchData
+        modelType: vegetation
+        provider:
+          type: wfs
+          url: https://data.geopf.fr/wfs/wfs
+          features: BDTOPO_V3:zone_de_vegetation
+        processor:
+          type: geoToolsVector
+      - type: renderSurfaces
+        after: renderGround
+        models:
+          type: vegetation
+          filter:
+            metadata: nature
+            in:
+              - "Bois"
+              - "Forêt fermée de conifères"
+              - "Forêt fermée de feuillus"
+              - "Forêt fermée mixte"
+              - "Forêt ouverte"
+              - "Zone arborée"
+        heightmap: ground
+        place:
+          - pattern:
+              seed: forest-grass
+              chance: 0.1
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *forest-grass
+          - *voxel-forest-ground
+          - pattern:
+              seed: forest-tree1
+              chance: 0.01
+              place: *forest-tree1
+          - pattern:
+              seed: tree2
+              chance: 0.003
+              place: *forest-tree2
 
   populateWaterPresence:
     after: fetchWater
@@ -219,7 +229,7 @@ forEachTile:
       - computeWaterDepth
       # Vegetation and water vector data overlap in certain areas. (Because of vegetation representing canopy)
       # The dependency and air voxel below should be removed when cropping is implemented on vector data.
-      - renderForest
+      - forest
     type: renderHeightmap
     minimum:
       sum:
@@ -239,7 +249,7 @@ forEachTile:
     after:
       - fetchRoads
       - renderGround
-      - renderForest
+      - forest
     type: renderLines
     models:
       type: road
