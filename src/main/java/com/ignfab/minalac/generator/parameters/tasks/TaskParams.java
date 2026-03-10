@@ -56,10 +56,21 @@ public abstract class TaskParams extends PolymorphicParams {
      */
     protected static final String SEPARATOR = ":";
 
-    protected static void validateTaskName(String name) {
+    /**
+     * Validates a name for a task.
+     *
+     * @param name task name to validate
+     *
+     * @throws IllegalArgumentException if task name is invalid
+     */
+    public static void validateTaskName(String name) {
+        if (name == null)
+            throw new IllegalArgumentException("Task name cannot be null");
+        if (name.isBlank())
+            throw new IllegalArgumentException("Task name cannot be blank");
         if (name.contains(SEPARATOR))
             throw new IllegalArgumentException(
-                "Task name \"%s\" contains invalid \"%s\" char".formatted(name, SEPARATOR)
+                "Task name \"%s\" cannont contain \"%s\" char".formatted(name, SEPARATOR)
             );
     }
 }

@@ -31,9 +31,9 @@ public class SchedulerTest {
     public void testTasksWithoutDependency() {
         List<String> actual = Collections.synchronizedList(new ArrayList<>());
 
-        scheduler.schedule("testWithoutDependency:a", () -> actual.add("a"));
-        scheduler.schedule("testWithoutDependency:b", () -> actual.add("b"));
-        scheduler.schedule("testWithoutDependency:c", () -> actual.add("c"));
+        scheduler.addTask("testWithoutDependency:a", () -> actual.add("a"));
+        scheduler.addTask("testWithoutDependency:b", () -> actual.add("b"));
+        scheduler.addTask("testWithoutDependency:c", () -> actual.add("c"));
 
         assertDoesNotThrow(() -> scheduler.run(1, TimeUnit.MINUTES));
 
@@ -47,9 +47,9 @@ public class SchedulerTest {
     public void testTasksWithDependency() {
         List<String> actual = Collections.synchronizedList(new ArrayList<>());
 
-        scheduler.schedule("testWithDependency:1", () -> actual.add("1"));
-        scheduler.schedule("testWithDependency:2", () -> actual.add("2"));
-        scheduler.schedule("testWithDependency:3", () -> actual.add("3"));
+        scheduler.addTask("testWithDependency:1", () -> actual.add("1"));
+        scheduler.addTask("testWithDependency:2", () -> actual.add("2"));
+        scheduler.addTask("testWithDependency:3", () -> actual.add("3"));
         scheduler.addDependency("testWithDependency:2", "testWithDependency:1");
         scheduler.addDependency("testWithDependency:3", "testWithDependency:1");
         scheduler.addDependency("testWithDependency:3", "testWithDependency:2");
@@ -64,9 +64,9 @@ public class SchedulerTest {
     public void testResetTasks() {
         List<String> actual = Collections.synchronizedList(new ArrayList<>());
 
-        scheduler.schedule("testReset:x", () -> actual.add("x"));
-        scheduler.schedule("testReset:y", () -> actual.add("y"));
-        scheduler.schedule("testReset:z", () -> actual.add("z"));
+        scheduler.addTask("testReset:x", () -> actual.add("x"));
+        scheduler.addTask("testReset:y", () -> actual.add("y"));
+        scheduler.addTask("testReset:z", () -> actual.add("z"));
         scheduler.addDependency("testReset:y", "testReset:x");
         scheduler.addDependency("testReset:z", "testReset:y");
 
@@ -94,7 +94,7 @@ public class SchedulerTest {
     @Test
     public void testLongTaskTimedOut() {
         AtomicBoolean executed = new AtomicBoolean(false);
-        scheduler.schedule("testLongTaskTimeout:id", () -> {
+        scheduler.addTask("testLongTaskTimeout:id", () -> {
             try {
                 Thread.sleep(10_000); // Completes after 10s
             } catch (InterruptedException e) {
@@ -109,8 +109,8 @@ public class SchedulerTest {
 
     @Test
     public void testDeadLock() {
-        scheduler.schedule("testDeadLock:A", () -> {});
-        scheduler.schedule("testDeadLock:B", () -> {});
+        scheduler.addTask("testDeadLock:A", () -> {});
+        scheduler.addTask("testDeadLock:B", () -> {});
         scheduler.addDependency("testDeadLock:A", "testDeadLock:B");
         scheduler.addDependency("testDeadLock:B", "testDeadLock:A");
 

@@ -16,7 +16,7 @@ import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
  * It can perform parallel operations and ensure execution order between some tasks.
  * A context object of generic type T is passed to executed tasks.
  */
-public class Scheduler {
+public class Scheduler implements Schedule {
     // An executor using a thread pool to run tasks
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final Map<String, ScheduledTask> tasks = new HashMap<>();
@@ -26,18 +26,7 @@ public class Scheduler {
 
     /**
      * Schedules the task to be executed when all dependencies are finished.
-     * If the task has no dependency, it will be executed at {@link #run(context, long, TimeUnit)}.
-     *
-     * @param id the ID of the task
-     * @param task the task to be scheduled
-     */
-    public void schedule(String id, Runnable task) {
-        schedule(new ScheduledTask(id, task));
-    }
-
-    /**
-     * Schedules the task to be executed when all dependencies are finished.
-     * If the task has no condition, it will be executed at {@link #run(context, long, TimeUnit)}.
+     * If the task has no condition, it will be executed at {@link #run(long, TimeUnit)}.
      *
      * @param task the task to be scheduled
      */
@@ -45,16 +34,6 @@ public class Scheduler {
         if (tasks.containsKey(task.id()))
             throw new IllegalArgumentException("Task %s already scheduled".formatted(task.id()));
         tasks.put(task.id(), task);
-    }
-
-    /**
-     * Makes {@code idTask} dependent on the completion of the specified {@code idDependency} task.
-     *
-     * @param idTask the id of the task
-     * @param idDependency the id the dependency
-     */
-    public void addDependency(String idTask, String idDependency) {
-        getTask(idTask).addDependency(getTask(idDependency));
     }
 
     /**
@@ -141,5 +120,15 @@ public class Scheduler {
         if (!tasks.containsKey(id))
             throw new IllegalArgumentException("Task %s doesn't exist".formatted(id));
         return tasks.get(id);
+    }
+
+    @Override
+    public void addTask(String id, Runnable task) {
+        schedule(new ScheduledTask(id, task));
+    }
+
+    @Override
+    public void addDependency(String idTask, String idDependency) {
+        getTask(idTask).addDependency(getTask(idDependency));
     }
 }

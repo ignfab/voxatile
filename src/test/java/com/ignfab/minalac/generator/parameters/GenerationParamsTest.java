@@ -118,7 +118,7 @@ public class GenerationParamsTest {
         params.heightmaps.put("ground", new HeightmapDeclarationParams("3"));
         params.heightmaps.put("altitude", new HeightmapDeclarationParams("minimal"));
         params.forEachTile.put("task1", new NoOperationTaskParams());
-        params.forEachTile.put("task1", new NoOperationTaskParams());
+        params.forEachTile.put("task2", new NoOperationTaskParams());
         params.forEachTile.put("source1", new FetchDataTaskParams("models1", new TestingProviderParams("value1"), new TestingProcessorParams("value2")));
         params.forEachTile.put("source2", new FetchDataTaskParams("models2", new TestingProviderParams("value3"), new TestingProcessorParams("value3")));
 

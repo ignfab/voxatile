@@ -51,7 +51,7 @@ public class SequenceTaskParamsTest {
     @Test
     public void testFlatten() {
         SequenceTaskParams params;
-        Map<String, TaskParams> schedule;
+        Map<String, TaskParams> tasks;
 
         // Base sequence task
         params = new SequenceTaskParams(List.of(
@@ -60,13 +60,13 @@ public class SequenceTaskParamsTest {
             new TestingTaskParams()
         ));
 
-        schedule = params.flatten("test");
-        ScheduleParamsTester.assertValidSchedule(schedule);
-        assertTrue(schedule.containsKey("test:1"));
-        assertTrue(schedule.containsKey("test:2"));
-        assertTrue(schedule.containsKey("test:3"));
-        ScheduleParamsTester.assertPredecessor(schedule, "test:1", "test:2");
-        ScheduleParamsTester.assertPredecessor(schedule, "test:2", "test:3");
+        tasks = params.flatten("test");
+        ScheduleParamsTester.assertValidSchedule(tasks);
+        assertTrue(tasks.containsKey("test:1"));
+        assertTrue(tasks.containsKey("test:2"));
+        assertTrue(tasks.containsKey("test:3"));
+        ScheduleParamsTester.assertPredecessor(tasks, "test:1", "test:2");
+        ScheduleParamsTester.assertPredecessor(tasks, "test:2", "test:3");
 
         // Sequence in sequence
         params = new SequenceTaskParams(List.of(
@@ -79,20 +79,20 @@ public class SequenceTaskParamsTest {
             new TestingTaskParams()
         ));
 
-        schedule = params.flatten("test");
+        tasks = params.flatten("test");
 
-        ScheduleParamsTester.assertValidSchedule(schedule);
-        assertTrue(schedule.containsKey("test:1"));
-        assertTrue(schedule.containsKey("test:2"));
-        assertTrue(schedule.containsKey("test:2:1"));
-        assertTrue(schedule.containsKey("test:2:2"));
-        assertTrue(schedule.containsKey("test:2:3"));
-        assertTrue(schedule.containsKey("test:3"));
+        ScheduleParamsTester.assertValidSchedule(tasks);
+        assertTrue(tasks.containsKey("test:1"));
+        assertTrue(tasks.containsKey("test:2"));
+        assertTrue(tasks.containsKey("test:2:1"));
+        assertTrue(tasks.containsKey("test:2:2"));
+        assertTrue(tasks.containsKey("test:2:3"));
+        assertTrue(tasks.containsKey("test:3"));
 
-        ScheduleParamsTester.assertPredecessor(schedule, "test:1", "test:2:1");
-        ScheduleParamsTester.assertPredecessor(schedule, "test:2:1", "test:2:2");
-        ScheduleParamsTester.assertPredecessor(schedule, "test:2:2", "test:2:3");
-        ScheduleParamsTester.assertPredecessor(schedule, "test:2:3", "test:3");
+        ScheduleParamsTester.assertPredecessor(tasks, "test:1", "test:2:1");
+        ScheduleParamsTester.assertPredecessor(tasks, "test:2:1", "test:2:2");
+        ScheduleParamsTester.assertPredecessor(tasks, "test:2:2", "test:2:3");
+        ScheduleParamsTester.assertPredecessor(tasks, "test:2:3", "test:3");
     }
 
     @Test
@@ -114,15 +114,16 @@ public class SequenceTaskParamsTest {
         sequence.after.add("first");
         last.after.add("sequence");
 
-        Map<String, TaskParams> schedule = params.flatten("test");
+        Map<String, TaskParams> tasks = params.flatten("test");
+//        tasks.forEach((name, task) -> System.out.printf("%s : %s%n", name, task.after));
 
         // Checks both task after sequence and sequence after task
 
-        ScheduleParamsTester.assertValidSchedule(schedule);
-        ScheduleParamsTester.assertPredecessor(schedule, "test:sequence:2", "test:last");
-        ScheduleParamsTester.assertPredecessor(schedule, "test:first", "test:sequence:1");
-        ScheduleParamsTester.assertNotPredecessor(schedule, "test:other", "test:sequence:1");
-        ScheduleParamsTester.assertNotPredecessor(schedule, "test:sequence:2", "test:other");
+        ScheduleParamsTester.assertValidSchedule(tasks);
+        ScheduleParamsTester.assertPredecessor(tasks, "test:sequence:2", "test:last");
+        ScheduleParamsTester.assertPredecessor(tasks, "test:first", "test:sequence:1");
+        ScheduleParamsTester.assertNotPredecessor(tasks, "test:other", "test:sequence:1");
+        ScheduleParamsTester.assertNotPredecessor(tasks, "test:sequence:2", "test:other");
     }
 
     @Test
@@ -155,12 +156,11 @@ public class SequenceTaskParamsTest {
         subsubtask.after.add("task");
         subsequence.using.add("task");
 
-        Map<String, TaskParams> schedule = assertDoesNotThrow(() -> params.flatten("main"));
-
-        ScheduleParamsTester.assertValidSchedule(schedule);
-        ScheduleParamsTester.assertPredecessor(schedule, "main:task", "main:sequence:3", "main:sequence:2:2");
-        ScheduleParamsTester.assertNotPredecessor(schedule, "main:task", "main:sequence:2:1", "main:sequence:1");
-        ScheduleParamsTester.assertNotPredecessor(schedule, "main:sequence:3", "main:sequence:2:2", "main:sequence:3");
+        Map<String, TaskParams> tasks = params.flatten("main");
+        ScheduleParamsTester.assertValidSchedule(tasks);
+        ScheduleParamsTester.assertPredecessor(tasks, "main:task", "main:sequence:3", "main:sequence:2:2");
+        ScheduleParamsTester.assertNotPredecessor(tasks, "main:task", "main:sequence:2:1", "main:sequence:1");
+        ScheduleParamsTester.assertNotPredecessor(tasks, "main:sequence:3", "main:sequence:2:2", "main:sequence:3");
     }
 
     @Test
