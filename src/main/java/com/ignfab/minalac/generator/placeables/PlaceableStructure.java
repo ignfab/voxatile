@@ -3,10 +3,6 @@ package com.ignfab.minalac.generator.placeables;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ignfab.minalac.generator.utils.axis.mappers.builders.ConstantAxisMapperBuilder;
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
-import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
-import com.ignfab.minalac.generator.utils.axis.mappers.builders.AxisMapperBuilder;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.VoxelTile;
@@ -97,10 +93,6 @@ public final class PlaceableStructure implements Structure {
      */
     public static Builder builder() {
         return new Builder();
-    }
-
-    public LayoutBuilder toLayoutBuilder() {
-        return new FixedLayoutBuilder(this);
     }
 
     /**
@@ -227,49 +219,6 @@ public final class PlaceableStructure implements Structure {
          */
         public PlaceableStructure build() {
             return placeables.isEmpty() ? EMPTY : new PlaceableStructure(placeables);
-        }
-    }
-
-    private static class FixedLayoutBuilder implements LayoutBuilder {
-        PlaceableStructure structure;
-        AxisMapperBuilder axisXBuilder;
-        AxisMapperBuilder axisYBuilder;
-        AxisMapperBuilder axisZBuilder;
-
-
-        public FixedLayoutBuilder(PlaceableStructure structure) {
-            this.structure = structure;
-            this.axisXBuilder = new ConstantAxisMapperBuilder(structure.limits.sizeX());
-            this.axisYBuilder = new ConstantAxisMapperBuilder(structure.limits.sizeY());
-            this.axisZBuilder = new ConstantAxisMapperBuilder(structure.limits.sizeZ());
-        }
-
-        @Override
-        public Structure build(int sizeX, int sizeY, int sizeZ) {
-            // checkResizability(sizeX, sizeY, sizeZ);
-            // TODO: Apply translation
-            return structure;
-        }
-
-        @Override
-        public AxisMapperBuilder axisX() {
-            return axisXBuilder;
-        }
-
-        @Override
-        public AxisMapperBuilder axisY() {
-            return axisYBuilder;
-        }
-
-        @Override
-        public AxisMapperBuilder axisZ() {
-            return axisZBuilder;
-        }
-
-        @Override
-        public void checkBuildable(int sizeX, int sizeY, int sizeZ) throws UnbuildableException {
-            System.out.println(sizeX + ", " + sizeX + ", " + sizeZ);
-            //throw new UnsupportedOperationException("Not implemented yet");
         }
     }
 }

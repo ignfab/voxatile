@@ -19,7 +19,7 @@ public class PocStructureBuilderTaskParams extends TileTaskParams {
     public TileTask create(Generation generation) {
         return new PocStructureBuilderTask(
             minimum.create(generation.heightmaps()),
-            layout.create(generation.seed()),
+            layout.createBuilder(generation.seed()),
             fallback.create(generation.seed()),
             new WorldCoords3d(placeDebug.at.x, placeDebug.at.y, placeDebug.at.z),
             new WorldSize3d(placeDebug.size.x, placeDebug.size.y, placeDebug.size.z)

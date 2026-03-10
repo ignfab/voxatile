@@ -42,6 +42,7 @@ import com.ignfab.minalac.generator.parameters.tasks.FillBetweenHeightmapAndMeta
 import com.ignfab.minalac.generator.parameters.tasks.HeightmapStatsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.PopulateHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.RenderFacadeTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderLinesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderSurfacesTaskParams;
@@ -107,6 +108,7 @@ public final class MinalacGenerator {
         parser.registerParams("fillBetweenHeightmapAndMetadata", FillBetweenHeightmapAndMetadataTaskParams.class);
         parser.registerParams("populateHeightmap", PopulateHeightmapTaskParams.class);
         parser.registerParams("renderBuildings", RenderBuildingsTaskParams.class);
+        parser.registerParams("renderFacade", RenderFacadeTaskParams.class);
         parser.registerParams("renderHeightmap", RenderHeightmapTaskParams.class);
         parser.registerParams("renderSurfaces", RenderSurfacesTaskParams.class);
         parser.registerParams("renderLines", RenderLinesTaskParams.class);

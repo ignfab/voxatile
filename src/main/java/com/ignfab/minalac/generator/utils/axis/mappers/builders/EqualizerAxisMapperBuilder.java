@@ -81,24 +81,20 @@ public class EqualizerAxisMapperBuilder implements AxisMapperBuilder {
     // underlyingMin should be strictly positive
     // TODO-12 : Revoir cette partie : elle est testée à la louche
     private DistributionResult compute(int size, int underlyingMin) {
-        int n = size / underlyingMin;
-        int remainder = size % underlyingMin;
+        int count = size / underlyingMin;
+        int remaining = size % underlyingMin;
 
-        int[] lengths = new int[n];
+        int[] lengths = new int[count];
         Arrays.fill(lengths, underlyingMin);
 
-        for (int i = 0; i < n; i++) {
-            int subRemainder = (remainder % n == 0) ? remainder / n : (remainder / n) + 1;
-            int maxPossibleSize = underlying.maxSizeUnder(underlyingMin + subRemainder);
-            if (lengths[i] < maxPossibleSize) {
-                int added = maxPossibleSize - lengths[i];
-                lengths[i] = maxPossibleSize;
-                remainder = remainder - added;
-            }
-            n--;
+        for (int index = 0; index < count; index++) {
+            int possible = underlying.maxSizeUnder(underlyingMin + Math.ceilDiv(remaining, count));
+            remaining += lengths[index] - possible;
+            lengths[index] = possible;
+            count--;
         }
 
-        return new DistributionResult(lengths, remainder);
+        return new DistributionResult(lengths, remaining);
     }
 
     private record DistributionResult(int[] lengths, int remainder) {

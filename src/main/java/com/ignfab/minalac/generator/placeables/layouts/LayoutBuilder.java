@@ -45,5 +45,6 @@ public interface LayoutBuilder {
      *
      * @throws UnbuildableException if not buildable.
      */
+    // Usage ?
     void checkBuildable(int sizeX, int sizeY, int sizeZ) throws UnbuildableException;
 }

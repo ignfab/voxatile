@@ -56,28 +56,37 @@ references:
       - "ooo"
   - &windows-two
     with:
-      'b': default:sandstonebrick
-      'g': default:glass
+      'b': default:sandstone
+      'B': default:sandstone_block
+      '-': default:glass
     axes: [ z, x ]
     blueprint:
       - "bbb"
-      - "bgb"
-      - "bgb"
-      - "bbb"
+      - "b-b"
+      - "b-b"
+      - "BBB"
   - &left
     with:
-      'b': default:sandstonebrick
-      's': default:silver_sand
+      'b': default:sandstone
+      'B': default:sandstone_block
+      'c': default:desert_sandstone_block
     axes: [ z, x ]
     blueprint:
-      - "sb"
+      - "cb"
+      - "cb"
+      - "cb"
+      - "cB"
   - &right
     with:
-      'b': default:sandstonebrick
-      's': default:silver_sand
+      'b': default:sandstone
+      'B': default:sandstone_block
+      'c': default:desert_sandstone_block
     axes: [ z, x ]
     blueprint:
-      - "bs"
+      - "bc"
+      - "bc"
+      - "bc"
+      - "Bc"
   - &rdc
       - put: default:stone
         at: [ 0, 0, 0 ]

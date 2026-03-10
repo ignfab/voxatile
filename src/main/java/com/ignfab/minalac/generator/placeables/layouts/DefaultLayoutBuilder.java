@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.placeables.Structure;
+import com.ignfab.minalac.generator.placeables.EmptyStructure;
 import com.ignfab.minalac.generator.placeables.LayoutStructure;
 import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
@@ -43,6 +44,11 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
         axisX = axisXBuilder.build(sizeX);
         axisY = axisYBuilder.build(sizeY);
         axisZ = axisZBuilder.build(sizeZ);
+
+        if (axisX.intervals().length == 0 ||
+            axisY.intervals().length == 0 ||
+            axisZ.intervals().length == 0)
+        return EmptyStructure.INSTANCE;
 
         Structure[][][] structures = new Structure
             [axisX.intervals().length]

@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.utils.axis.mappers.builders;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import com.ignfab.minalac.generator.exceptions.UnbuildableException;
@@ -11,7 +12,7 @@ import com.ignfab.minalac.generator.utils.axis.mappers.SizesAxisMapper;
 
 public class PriorityRepartitionAxisMapperBuilder implements AxisMapperBuilder {
     private final AxisMapperBuilder[] builders;
-    private final TreeMap<Integer, List<Integer>> map = new TreeMap<>(Collections.reverseOrder());
+    private final TreeMap<Integer, List<Integer>> priorities = new TreeMap<>(Collections.reverseOrder());
     private final int[] minLengths;
     private final int minimalSize;
 
@@ -22,7 +23,7 @@ public class PriorityRepartitionAxisMapperBuilder implements AxisMapperBuilder {
         int sum = 0;
         minLengths = new int[builders.length];
         for (int i = 0; i < priorities.length; i++) {
-            map.computeIfAbsent(priorities[i], k -> new ArrayList<>()).add(i);
+            this.priorities.computeIfAbsent(priorities[i], k -> new ArrayList<>()).add(i);
             minLengths[i] = builders[i].minimumSize();
             sum = sum + minLengths[i];
         }
@@ -59,33 +60,26 @@ public class PriorityRepartitionAxisMapperBuilder implements AxisMapperBuilder {
     }
 
     private DistributionResult compute(int size) {
-        int remainder = size - minimalSize;
-        if (remainder == 0) return new DistributionResult(minLengths, 0);
+        // We start with minimum size for everyone.
+        int remaining = size - minimalSize;
+        if (remaining == 0) return new DistributionResult(minLengths, 0);
+        int[] lengths = new int[minLengths.length];
 
-        // int[] lengths = Arrays.copyOf(minLengths, builders.length);
-        int[] lengths = new int[builders.length];
+        // Now we distribute remaining by prirority order
+        for (Map.Entry<Integer, List<Integer>> priority: priorities.entrySet()) {
+            int count = priority.getValue().size();
 
-        for (Integer key : map.keySet()) {
-            List<Integer> priorityBuilderIndexes = map.get(key);
-            int n = priorityBuilderIndexes.size();
-            for (Integer index : priorityBuilderIndexes) {
-                lengths[index] = minLengths[index];
-                // TODO: C'est peut etre mieux de faire une variable du reste pour les candidats
-                // L'arrondi supérieur c'est pour assurer que l'on donne au premier un peu plus par exemple 17 : 6 - 6 - 5 ou  16 : 6 - 5 - 5
-                // Ca amrche bien quand ce qui est retranché est le subremainer (sauf que ici c'est le added qui est retranché
-                // Donc à verifier si il y a un probleme ou pas
-                int subRemainder = (remainder % n == 0) ? remainder / n : (remainder / n) + 1;
-                int maxPossibleSize = builders[index].maxSizeUnder(lengths[index] + subRemainder);
-                // maxPossibleSize peut être 0 ou négatif, en revanche lengths est au minium 0
-                if (lengths[index] < maxPossibleSize) {
-                    int added = maxPossibleSize - lengths[index];
-                    lengths[index] = maxPossibleSize;
-                    remainder = remainder - added;
-                }
-                n--;
+            for (int index : priority.getValue()) {
+                int possible = builders[index].maxSizeUnder(minLengths[index] + Math.ceilDiv(remaining, count));
+
+                // TODO: Check: possible could be negative?
+
+                remaining += minLengths[index] - possible;
+                lengths[index] = possible;
+                count--;
             }
         }
-        return new DistributionResult(lengths, remainder);
+        return new DistributionResult(lengths, remaining);
     }
 
     private record DistributionResult(int[] lengths, int remainder) {
