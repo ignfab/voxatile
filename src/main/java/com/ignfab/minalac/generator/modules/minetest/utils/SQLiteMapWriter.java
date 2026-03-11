@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.outputs.minetest.utils;
+package com.ignfab.minalac.generator.modules.minetest.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.ignfab.minalac.generator.outputs.minetest.Block;
+import com.ignfab.minalac.generator.modules.minetest.Block;
 import com.ignfab.minalac.generator.world.MapWriteException;
 
 /**

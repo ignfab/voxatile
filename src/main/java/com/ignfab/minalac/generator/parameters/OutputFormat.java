@@ -1,9 +1,9 @@
 package com.ignfab.minalac.generator.parameters;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonParser;
@@ -23,7 +23,7 @@ import com.ignfab.minalac.generator.world.VoxelWorld;
  * Actually, deserialized from a string containing the registered format name.
  */
 public class OutputFormat {
-    private Supplier<VoxelWorld> worldCreator;
+    private Function<File, VoxelWorld> worldCreator;
     private Class<? extends PlaceableParams> voxelParams;
     private Function<String, PlaceableParams> shortcutVoxelParams;
 
@@ -35,7 +35,7 @@ public class OutputFormat {
      * @param shortcutVoxelParams Method creating a {@code PlaceableParams} from a String
      */
     public OutputFormat(
-        Supplier<VoxelWorld> worldCreator,
+        Function<File, VoxelWorld> worldCreator,
         Class<? extends PlaceableParams> voxelParams,
         Function<String, PlaceableParams> shortcutVoxelParams
     ) {
@@ -47,10 +47,11 @@ public class OutputFormat {
     /**
      * Creates a {@code VoxelWorld} for this format.
      *
+     * @param destination Where to write generated world
      * @return A new {@code VoxelWorld}
      */
-    public VoxelWorld createWorld() {
-        return worldCreator.get();
+    public VoxelWorld createWorld(File destination) {
+        return worldCreator.apply(destination);
     }
 
     /**

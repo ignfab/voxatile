@@ -1,10 +1,10 @@
-package com.ignfab.minalac.generator.outputs.minetest;
+package com.ignfab.minalac.generator.modules.minetest;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
-import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
+import com.ignfab.minalac.generator.modules.minetest.utils.SQLiteMapWriter;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.MapWriteException;

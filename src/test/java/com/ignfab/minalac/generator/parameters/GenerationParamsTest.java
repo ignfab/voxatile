@@ -24,7 +24,7 @@ public class GenerationParamsTest {
     void setUp() {
         GenerationParams.Area.LatitudeLongitude center = new GenerationParams.Area.LatitudeLongitude(5.8, 2.4);
         GenerationParams.Area area = new GenerationParams.Area(center, 50, 75);
-        OutputFormat format = new OutputFormat(TestingVoxelWorld::new, TestingVoxelParams.class, TestingVoxelParams::new);
+        OutputFormat format = new OutputFormat((destination) -> new TestingVoxelWorld(), TestingVoxelParams.class, TestingVoxelParams::new);
         params = new GenerationParams(area, format);
         params.heightmaps = new HashMap<>();
         params.forEachTile = new ScheduleParams();
@@ -129,7 +129,7 @@ public class GenerationParamsTest {
         task.models.type = "building";
 
         params.forEachTile.tasks.put("building", task);
-        Generation generation = params.create(100);
+        Generation generation = params.create(null, 100);
 
         assertNotNull(generation);
         assertEquals("test", generation.world().getMetadata().getWorldName());
