@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.outputs.minetest;
+package com.ignfab.minalac.generator.modules.minetest;
 
 import org.junit.jupiter.api.Test;
 

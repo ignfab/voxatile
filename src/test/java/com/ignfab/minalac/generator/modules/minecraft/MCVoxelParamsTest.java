@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.parameters.placeables.voxels;
+package com.ignfab.minalac.generator.modules.minecraft;
 
 import org.junit.jupiter.api.Test;
 

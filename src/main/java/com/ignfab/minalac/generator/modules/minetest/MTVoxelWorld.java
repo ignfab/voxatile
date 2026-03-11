@@ -1,10 +1,10 @@
-package com.ignfab.minalac.generator.outputs.minetest;
+package com.ignfab.minalac.generator.modules.minetest;
 
 import java.io.File;
 import java.util.Collection;
 
 import com.ignfab.minalac.generator.generation.SquareUnitsTileGenerator;
-import com.ignfab.minalac.generator.outputs.minetest.utils.SQLiteMapWriter;
+import com.ignfab.minalac.generator.modules.minetest.utils.SQLiteMapWriter;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;

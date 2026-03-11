@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.parameters;
 
 import java.beans.ConstructorProperties;
+import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -131,11 +132,12 @@ public class GenerationParams {
     /**
      * Creates the corresponding {@link Generation}.
      *
+     * @param destination where to write generated world
      * @param maxTileSize max tile size if tiling wanted, else null
      * @return the corresponding {@code Generation}
      */
-    public Generation create(Integer maxTileSize) {
-        return GenerationCreator.create(this, maxTileSize);
+    public Generation create(File destination, Integer maxTileSize) {
+        return GenerationCreator.create(destination, this, maxTileSize);
     }
 
     /**

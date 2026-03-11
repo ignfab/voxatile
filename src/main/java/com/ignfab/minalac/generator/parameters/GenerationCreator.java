@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.parameters;
 
+import java.io.File;
+
 import org.geotools.api.geometry.Position;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
@@ -23,11 +25,12 @@ public final class GenerationCreator {
     /**
      * Creates a new {@code Generation} from the specified parameters.
      *
+     * @param destination where to write generated world
      * @param params the parameters
      * @param maxTileSize max tile size if tiling wanted, else null
      * @return the corresponding generation object
      */
-    static Generation create(GenerationParams params, Integer maxTileSize) {
+    static Generation create(File destination, GenerationParams params, Integer maxTileSize) {
         // TODO : If not provided its default value should be calculated by finding the appropriated projected CRS for the provided center point.
         // At the moment the default value is EPSG:2154
         CoordinateReferenceSystem targetCrs;
@@ -43,7 +46,7 @@ public final class GenerationCreator {
             throw new RuntimeException("Wasn't able to convert the coordinates", e);
         }
 
-        VoxelWorld world = params.format.createWorld();
+        VoxelWorld world = params.format.createWorld(destination);
         world.getMetadata().setWorldName(params.worldName);
         Generation generation = new Generation(
             world,

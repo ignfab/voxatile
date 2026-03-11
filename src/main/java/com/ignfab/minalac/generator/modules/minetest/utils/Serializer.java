@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.outputs.minetest.utils;
+package com.ignfab.minalac.generator.modules.minetest.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,12 +13,12 @@ import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.SoftReferenceObjectPool;
 
-import com.ignfab.minalac.generator.outputs.minetest.Block;
+import com.ignfab.minalac.generator.modules.minetest.Block;
 
 /**
  * This class is responsible for providing the serialized {@code Block} needed by the {@code map.sqlite} file.
  * @see SQLiteMapWriter
- * @see com.ignfab.minalac.generator.outputs.minetest.MTVoxelTile#save()
+ * @see com.ignfab.minalac.generator.modules.minetest.MTVoxelTile#save()
  */
 public class Serializer implements AutoCloseable {
     // Shared pool of internal state objects to minimize memory allocations.
