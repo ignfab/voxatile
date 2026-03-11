@@ -24,7 +24,7 @@ public class ParamsParserTest {
 
     private ParamsParser newParser() {
         ParamsParser parser = new ParamsParser();
-        parser.registerFormat("testing", new OutputFormat(TestingVoxelWorld::new, TestingVoxelParams.class, TestingVoxelParams::new));
+        parser.registerFormat("testing", new OutputFormat((destination) -> new TestingVoxelWorld(), TestingVoxelParams.class, TestingVoxelParams::new));
         return parser;
     }
 

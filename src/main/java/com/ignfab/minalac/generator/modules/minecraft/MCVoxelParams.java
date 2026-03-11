@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.parameters.placeables.voxels;
+package com.ignfab.minalac.generator.modules.minecraft;
 
 import java.beans.ConstructorProperties;
 import java.util.Map;
@@ -6,7 +6,6 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
-import com.ignfab.minalac.generator.outputs.minecraft.MCVoxel;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;

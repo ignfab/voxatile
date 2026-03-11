@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.outputs.minecraft;
+package com.ignfab.minalac.generator.modules.minecraft;
 
 import java.util.HashMap;
 import java.util.Map;
