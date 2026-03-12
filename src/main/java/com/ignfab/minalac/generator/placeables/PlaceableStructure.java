@@ -3,9 +3,10 @@ package com.ignfab.minalac.generator.placeables;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ignfab.minalac.generator.placeables.resized.builders.ConstantIndexMapperBuilder;
-import com.ignfab.minalac.generator.placeables.resized.ResizedStructureBuilder;
-import com.ignfab.minalac.generator.placeables.resized.IndexMapperBuilder;
+import com.ignfab.minalac.generator.utils.axis.mappers.builders.ConstantAxisMapperBuilder;
+import com.ignfab.minalac.generator.exceptions.UnbuildableException;
+import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
+import com.ignfab.minalac.generator.utils.axis.mappers.builders.AxisMapperBuilder;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import com.ignfab.minalac.generator.world.VoxelTile;
@@ -98,8 +99,8 @@ public final class PlaceableStructure implements Structure {
         return new Builder();
     }
 
-    public ResizedStructureBuilder toFixedResizedBuilder() {
-        return new FixedSB(this);
+    public LayoutBuilder toLayoutBuilder() {
+        return new FixedLayoutBuilder(this);
     }
 
     /**
@@ -229,18 +230,18 @@ public final class PlaceableStructure implements Structure {
         }
     }
 
-    private static class FixedSB implements ResizedStructureBuilder {
+    private static class FixedLayoutBuilder implements LayoutBuilder {
         PlaceableStructure structure;
-        IndexMapperBuilder axisXBuilder;
-        IndexMapperBuilder axisYBuilder;
-        IndexMapperBuilder axisZBuilder;
+        AxisMapperBuilder axisXBuilder;
+        AxisMapperBuilder axisYBuilder;
+        AxisMapperBuilder axisZBuilder;
 
 
-        public FixedSB(PlaceableStructure structure) {
+        public FixedLayoutBuilder(PlaceableStructure structure) {
             this.structure = structure;
-            this.axisXBuilder = new ConstantIndexMapperBuilder(structure.limits.sizeX());
-            this.axisYBuilder = new ConstantIndexMapperBuilder(structure.limits.sizeY());
-            this.axisZBuilder = new ConstantIndexMapperBuilder(structure.limits.sizeZ());
+            this.axisXBuilder = new ConstantAxisMapperBuilder(structure.limits.sizeX());
+            this.axisYBuilder = new ConstantAxisMapperBuilder(structure.limits.sizeY());
+            this.axisZBuilder = new ConstantAxisMapperBuilder(structure.limits.sizeZ());
         }
 
         @Override
@@ -251,22 +252,22 @@ public final class PlaceableStructure implements Structure {
         }
 
         @Override
-        public IndexMapperBuilder axisX() {
+        public AxisMapperBuilder axisX() {
             return axisXBuilder;
         }
 
         @Override
-        public IndexMapperBuilder axisY() {
+        public AxisMapperBuilder axisY() {
             return axisYBuilder;
         }
 
         @Override
-        public IndexMapperBuilder axisZ() {
+        public AxisMapperBuilder axisZ() {
             return axisZBuilder;
         }
 
         @Override
-        public void checkResizability(int sizeX, int sizeY, int sizeZ) {
+        public void checkBuildable(int sizeX, int sizeY, int sizeZ) throws UnbuildableException {
             System.out.println(sizeX + ", " + sizeX + ", " + sizeZ);
             //throw new UnsupportedOperationException("Not implemented yet");
         }
