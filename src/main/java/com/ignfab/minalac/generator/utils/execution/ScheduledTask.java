@@ -126,7 +126,7 @@ public class ScheduledTask<T> {
     }
 
     public String toString() {
-        String deps = dependencies.isEmpty()? "":"(depends on %s)".formatted(dependencies.stream().map(ScheduledTask::id).collect(Collectors.joining(", ")));
+        String deps = dependencies.isEmpty() ? "" : "(depends on %s)".formatted(dependencies.stream().map(ScheduledTask::id).collect(Collectors.joining(", ")));
         return "%s: %s %s".formatted(id, state, deps);
     }
 }
