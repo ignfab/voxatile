@@ -8,6 +8,7 @@ import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
+import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * A {@link TileTask} fetching data from a provider, processing models with a processor applying a post-processor to each model.
@@ -57,7 +58,9 @@ public class FetchDataTask implements TileTask {
      * @param tile tile for which data is fetched (it gives the wanted area)
      */
     public void run(GenerationTile tile) {
-        try (Provider.Result<?> result = provider.provide(tile.limits())) {
+        // Buffer around limits to mitigate weird tiling issue
+        WorldBBox3d limits = new WorldBBox3d(tile.limits().min().add(-1, -1, 0), tile.limits().max().add(1, 1, 0));
+        try (Provider.Result<?> result = provider.provide(limits)) {
             processor.initialize(result.crs());
             while (result.hasNext()) {
                 Object data = result.next();
