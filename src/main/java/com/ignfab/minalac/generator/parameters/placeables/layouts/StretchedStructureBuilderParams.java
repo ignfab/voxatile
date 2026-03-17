@@ -4,11 +4,12 @@ import java.util.List;
 
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
-import com.ignfab.minalac.generator.placeables.resized.DefaultResizedStructureBuilder;
-import com.ignfab.minalac.generator.placeables.resized.ResizedStructureBuilder;
+import com.ignfab.minalac.generator.placeables.layouts.DefaultLayoutBuilder;
+import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
+import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
-public class StretchedStructureBuilderParams extends AxisStructureBuilderParams {
+public class StretchedStructureBuilderParams extends LayoutBuilderParams {
     public PlaceableStructureParams stretched;
     public ElasticAtParams elasticAt;
 
@@ -31,11 +32,9 @@ public class StretchedStructureBuilderParams extends AxisStructureBuilderParams 
             throw new IllegalArgumentException("Bad request : min repeti must be postive");
     }
 
-
-
-    public ResizedStructureBuilder create(Seed seed) {
+    public LayoutBuilder create(Seed seed) {
         PlaceableStructure structure = stretched.create(seed);
-        ResizedStructureBuilder builder = structure.toFixedResizedBuilder();
+        LayoutBuilder builder = structure.toLayoutBuilder();
         if (elasticAt.x !=  null) {
             int elasticAtValue = elasticAt.x.get(0);
             int minRepetition = elasticAt.x.get(1);
@@ -43,7 +42,7 @@ public class StretchedStructureBuilderParams extends AxisStructureBuilderParams 
                 throw new UnsupportedOperationException("Not inside");
             if (minRepetition == 0 && structure.limits().sizeX() <= 1)
                 throw new UnsupportedOperationException("TODO-12");
-            builder = DefaultResizedStructureBuilder.stretchX(builder, elasticAtValue, minRepetition);
+            builder = DefaultLayoutBuilder.stretch(builder, Axis.X, elasticAtValue, minRepetition, Integer.MAX_VALUE);
         }
 
         if (elasticAt.y !=  null) {
@@ -53,7 +52,7 @@ public class StretchedStructureBuilderParams extends AxisStructureBuilderParams 
                 throw new UnsupportedOperationException("Not inside");
             if (minRepetition == 0 && structure.limits().sizeY() <= 1)
                 throw new UnsupportedOperationException("TODO-12");
-            builder = DefaultResizedStructureBuilder.stretchY(builder, elasticAtValue, minRepetition);
+            builder = DefaultLayoutBuilder.stretch(builder, Axis.Y, elasticAtValue, minRepetition, Integer.MAX_VALUE);
         }
 
         if (elasticAt.z !=  null) {
@@ -63,7 +62,7 @@ public class StretchedStructureBuilderParams extends AxisStructureBuilderParams 
                 throw new UnsupportedOperationException("Not inside");
             if (minRepetition == 0 && structure.limits().sizeZ() <= 1)
                 throw new UnsupportedOperationException("TODO-12");
-            builder = DefaultResizedStructureBuilder.stretchZ(builder, elasticAtValue, minRepetition);
+            builder = DefaultLayoutBuilder.stretch(builder, Axis.Z, elasticAtValue, minRepetition, Integer.MAX_VALUE);
         }
         return builder;
     }
