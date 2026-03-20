@@ -120,7 +120,11 @@ public class LinearRing2dTest {
 
     @Test
     public void testPolygons() {
-        assertFalse(assertDoesNotThrow(ring::polygons).iterator().hasNext());
+        // Ring can be seen as a polygon, so it has only one polygon.
+        // Polygon unique line string may be inverted so we cannot compare it.
+        Iterator<Polygon2d> iter = assertDoesNotThrow(ring::polygons).iterator();
+        assertDoesNotThrow(iter::next);
+        assertFalse(iter.hasNext());
     }
 
     @Test

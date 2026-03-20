@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.voxelization.shape2d;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -110,5 +111,11 @@ public class LinearRing2d extends LineString2d {
      */
     public LinearRing2d toCounterClockwise() {
         return isClockwise() ? invert() : this;
+    }
+
+    // A linear ring could be considered as a polygon
+    @Override
+    public Iterable<Polygon2d> polygons() {
+        return List.of(new Polygon2d(this, Collections.emptyList()));
     }
 }

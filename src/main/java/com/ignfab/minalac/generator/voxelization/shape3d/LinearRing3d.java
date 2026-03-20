@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.voxelization.shape3d;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -110,5 +111,11 @@ public class LinearRing3d extends LineString3d {
      */
     public LinearRing3d toCounterClockwiseXY() {
         return isClockwiseXY() ? invert() : this;
+    }
+
+    // A linear ring could be considered as a polygon
+    @Override
+    public Iterable<Polygon3d> polygons() {
+        return List.of(new Polygon3d(this, Collections.emptyList()));
     }
 }

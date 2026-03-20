@@ -18,7 +18,7 @@ import com.ignfab.minalac.generator.utils.coordinates.CoordsConverterProvider;
  */
 public class GeoToolsVectorProcessor extends ConvertingProcessor<SimpleFeature, JTSGeometryModel> {
     /**
-     * Creates a new processor using the given converter to for the {@link JTSGeometryModel}.
+     * Creates a new processor using the given converter for the {@link JTSGeometryModel}.
      * @param converterProvider the converter provider to transform coordinates from map to world
      */
     public GeoToolsVectorProcessor(CoordsConverterProvider converterProvider) {
