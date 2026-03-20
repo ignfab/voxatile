@@ -28,7 +28,7 @@ public class RenderLines2dTask extends ModelTask<Shape2dConvertibleModel> {
      *
      * @param selection selection of models to render
      * @param structure structure placed along the lines
-     * @param heightmapSpec if not null, only parts of the lines over that heightmap are rendered
+     * @param heightmapSpec heightmap on which draw lines
      */
     public RenderLines2dTask(
         ModelSelection selection,

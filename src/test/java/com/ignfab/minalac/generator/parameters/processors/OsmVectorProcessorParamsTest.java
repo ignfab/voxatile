@@ -11,7 +11,7 @@ import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GeoToolsVectorProcessorParamsTest {
+public class OsmVectorProcessorParamsTest {
     @Test
     public void testCreate() throws FactoryException {
         CoordinateReferenceSystem crs2154 = CRS.decode("EPSG:2154");
@@ -19,7 +19,7 @@ public class GeoToolsVectorProcessorParamsTest {
         Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, crs2154, 0, 0, 20, 20, 1, 1, 0.0, 100);
 
         // A simple OK test
-        GeoToolsVectorProcessorParams params = new GeoToolsVectorProcessorParams();
+        OsmProcessorParams params = new OsmProcessorParams();
         assertDoesNotThrow(() -> params.create(generation));
     }
 }
