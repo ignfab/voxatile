@@ -7,6 +7,7 @@ Task of type `fetchData` fetches data from geographic data source, processes it,
 * [Example](#example)
 * [Extra parameters](#extra-parameters)
 * [Providers](#providers)
+  * [`overpass` (Open Street Map)](#overpass-open-street-map)
   * [`wfs` (Web Feature Service)](#wfs-web-feature-service)
   * [`gpkg` (GeoPackage)](#gpkg-geopackage)
   * [`shapefile` (Shapefile)](#shapefile-shapefile)
@@ -16,6 +17,7 @@ Task of type `fetchData` fetches data from geographic data source, processes it,
   * [`lasTiled` (Point clouds from multiple tiled LAS/LAZ files)](#lastiled-point-clouds-from-multiple-tiled-laslaz-files)
   * [`cityjson` (CityJSON)](#cityjson-cityjson)
 * [Processors](#processors)
+  * [`osm` (Open Street Map)](#osm-open-street-map)
   * [`geoToolsVector` (GeoTools vector processor)](#geotoolsvector-geotools-vector-processor)
   * [`floatMatrix` (Float matrix processor)](#floatmatrix-float-matrix-processor)
   * [`lasPoints` (Individual LAS points processor)](#laspoints-individual-las-points-processor)
@@ -65,6 +67,29 @@ Not all processors are compatible with all provider. See [providers](#provider-p
 ## Providers
 
 A provider fetches data from a source and provides it as-is to a processor. Provider type is identified by `type` field.
+
+### `overpass` (Open Street Map)
+Provider of type `overpass` fetches Open Street Map vector data from [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API).
+
+**Extra parameters**:
+- `url` (required): URL of the Overpass service to use.
+- `query` (required): [Overpass query](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL) to use to get data.
+
+Each entity returned by the Overpass query will be processed as a model.
+
+Ensure query will return only one entity per object (building, road, ...). The provider takes care of retrieving the full geometries.
+
+Example:
+```yaml
+  provider:
+    type: overpass
+    url: https://overpass-api.de/api/interpreter
+    query: nwr[building]
+```
+
+This will fetch all entities with a `building` tag and create corresponding models. Nodes and ways defining the geometry of `building` entities will automatically be fetched by the provider, and should not be included in query (it would otherwise result in them being fetched twice, possibly causing rendering glitches later on).
+
+**Default processor**: `osm`
 
 ### `wfs` (Web Feature Service)
 Provider of type `wfs` fetches vector data from a [Web Feature Service](https://en.wikipedia.org/wiki/Web_Feature_Service) source. Source must support WFS 1.1 and GML 3.1 versions.
@@ -150,6 +175,13 @@ A provider capable of reading JSON-encoded data from a [CityGML](https://en.wiki
 ## Processors
 
 A processor converts data from a provider into models. Processor type is identified by `type` field.
+
+### `osm` (Open Street Map)
+Processor of type `osm` takes vector OSM data from `overpass` provider and turns them into models.
+
+**Extra parameters**: None
+
+**Suitable providers**: `overpass`
 
 ### `geoToolsVector` (GeoTools vector processor)
 Processor of type `geoToolsVector` takes vector features and turns them into models, using GeoTools library.

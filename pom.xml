@@ -17,6 +17,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <geotools.version>31.0</geotools.version>
+        <osm4j.version>1.4.1</osm4j.version>
     </properties>
 
     <repositories>
@@ -30,6 +31,16 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </repository>
+        <!-- OSM4J repository -->
+        <repository>
+            <id>topobyte</id>
+            <url>https://mvn.topobyte.de/</url>
+        </repository>
+        <!-- Required by OSM4J -->
+        <repository>
+            <id>slimjars</id>
+            <url>https://mvn.slimjars.com</url>
         </repository>
         <repository>
             <id>github</id>
@@ -163,6 +174,22 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
             <version>2.12.1</version>
+        </dependency>
+        <!-- OSM4J -->
+        <dependency>
+            <groupId>de.topobyte</groupId>
+            <artifactId>osm4j-core</artifactId>
+            <version>${osm4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.topobyte</groupId>
+            <artifactId>osm4j-xml</artifactId>
+            <version>${osm4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.topobyte</groupId>
+            <artifactId>osm4j-geometry</artifactId>
+            <version>${osm4j.version}</version>
         </dependency>
         <!-- LiDAR data manipulation -->
         <dependency>

@@ -72,4 +72,10 @@ public class LinearRing3d extends LineString3d {
     public Line3d get(int index) {
         return lines.get(Math.floorMod(index, size()));
     }
+
+    // A linear ring could be considered as a polygon
+    @Override
+    public Iterable<Polygon3d> polygons() {
+        return List.of(new Polygon3d(this, Collections.emptyList()));
+    }
 }
