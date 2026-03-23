@@ -42,10 +42,10 @@ public class CombinedPlaceableParams extends PlaceableParams {
 
     @Override
     public Placeable create(Seed seed) {
-        CombinedPlaceable combined = new CombinedPlaceable();
+        CombinedPlaceable.Builder combined = CombinedPlaceable.builder();
         for (PlaceableParams placeable : placeableParams)
             combined.add(placeable.create(seed));
 
-        return combined;
+        return combined.build();
     }
 }

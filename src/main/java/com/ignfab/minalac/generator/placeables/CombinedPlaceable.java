@@ -8,18 +8,25 @@ import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A placeable that is a combination of placeables.
- * Placeable will be placed the order they were added.
+ * Placeable will be placed in the order they were given.
+ * This object itself is immutable, but can be created with the {@link #builder()}.
  */
-public class CombinedPlaceable implements CompoundPlaceable {
-    private final List<Placeable> placeables = new LinkedList<>();
+public final class CombinedPlaceable implements CompoundPlaceable {
+    private final List<Placeable> placeables;
 
     /**
-     * Add a placeable at the end of the {@code CombinedPlaceable}'s placeables list.
-     *
-     * @param placeable Placeable to add
+     * Reusable empty combined placeable instance.
+     * Note that there are not much cases where this is useful (mostly unit tests).
+     * You should consider using {@link Nothing#INSTANCE} for similar behavior instead!
      */
-    public void add(Placeable placeable) {
-        placeables.add(placeable);
+    public static final CombinedPlaceable EMPTY = new CombinedPlaceable();
+
+    private CombinedPlaceable() {
+        placeables = List.of();
+    }
+
+    private CombinedPlaceable(List<Placeable> placeables) {
+        this.placeables = List.copyOf(placeables);
     }
 
     @Override
@@ -30,5 +37,58 @@ public class CombinedPlaceable implements CompoundPlaceable {
     @Override
     public Collection<Placeable> components() {
         return placeables;
+    }
+
+    /**
+     * Creates a new builder from this combined placeable.
+     * @return a pre-filled builder with this placeable's content
+     */
+    public Builder toBuilder() {
+        return builder().addAll(this.placeables);
+    }
+
+    /**
+     * Creates a new builder.
+     * @return an empty builder
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * Simple builder to create combined placeables from multiple placeables.
+     */
+    public static final class Builder {
+        private final List<Placeable> placeables = new LinkedList<>();
+
+        /**
+         * Adds a placeable at the end of the placeables list.
+         *
+         * @param placeable Placeable to add
+         * @return {@code this}
+         */
+        public Builder add(Placeable placeable) {
+            placeables.add(placeable);
+            return this;
+        }
+
+        /**
+         * Adds placeables in order at the end of the placeables list.
+         *
+         * @param placeables Placeables to add
+         * @return {@code this}
+         */
+        public Builder addAll(Collection<? extends Placeable> placeables) {
+            this.placeables.addAll(placeables);
+            return this;
+        }
+
+        /**
+         * Creates an immutable combined placeable from this builder.
+         * @return the created placeable
+         */
+        public CombinedPlaceable build() {
+            return placeables.isEmpty() ? EMPTY : new CombinedPlaceable(placeables);
+        }
     }
 }

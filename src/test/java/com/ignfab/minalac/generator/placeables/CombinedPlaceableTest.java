@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CombinedPlaceableTest {
     @Test
-    public void testConstructor() {
-        assertDoesNotThrow(CombinedPlaceable::new);
+    public void testEmptyBuilder() {
+        assertSame(CombinedPlaceable.EMPTY, CombinedPlaceable.builder().build());
     }
 
     @Test
     public void testAdd() {
-        CombinedPlaceable combined = new CombinedPlaceable();
+        CombinedPlaceable.Builder combined = CombinedPlaceable.builder();
 
         assertDoesNotThrow(() -> combined.add(new TestingPlaceable()));
         assertDoesNotThrow(() -> combined.add(new TestingPlaceable()));
@@ -28,14 +28,12 @@ public class CombinedPlaceableTest {
         TestingPlaceable placeable1 = new TestingPlaceable();
         TestingPlaceable placeable2 = new TestingPlaceable();
 
-        CombinedPlaceable combined0 = new CombinedPlaceable();
-        CombinedPlaceable combined1 = new CombinedPlaceable();
-        CombinedPlaceable combined2 = new CombinedPlaceable();
-
-        combined1.add(placeable1);
-
-        combined2.add(placeable1);
-        combined2.add(placeable2);
+        CombinedPlaceable combined0 = CombinedPlaceable.EMPTY;
+        CombinedPlaceable combined1 = CombinedPlaceable.builder().add(placeable1).build();
+        CombinedPlaceable combined2 = CombinedPlaceable.builder()
+            .add(placeable1)
+            .add(placeable2)
+            .build();
 
         // Test without any child
         assertDoesNotThrow(() -> combined0.place(TestingVoxelTile.UNUSED, 1, 2, 3));
@@ -55,14 +53,12 @@ public class CombinedPlaceableTest {
         TestingPlaceable placeable1 = new TestingPlaceable();
         TestingPlaceable placeable2 = new TestingPlaceable();
 
-        CombinedPlaceable combined0 = new CombinedPlaceable();
-        CombinedPlaceable combined1 = new CombinedPlaceable();
-        CombinedPlaceable combined2 = new CombinedPlaceable();
-
-        combined1.add(placeable1);
-
-        combined2.add(placeable1);
-        combined2.add(placeable2);
+        CombinedPlaceable combined0 = CombinedPlaceable.EMPTY;
+        CombinedPlaceable combined1 = CombinedPlaceable.builder().add(placeable1).build();
+        CombinedPlaceable combined2 = CombinedPlaceable.builder()
+            .add(placeable1)
+            .add(placeable2)
+            .build();
 
         // Test without any child
         assertTrue(combined0.components().isEmpty(), "Components should be empty");
