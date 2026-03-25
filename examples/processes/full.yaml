@@ -331,6 +331,33 @@ forEachTile:
         stretchZ:
           at: 0
 
+  renderResidentialRoof:
+    after: renderResidentialBuildings
+    type: renderRoof
+    roofType: hipped
+    models:
+      type: buildings
+      filter:
+        metadata: usage_1
+        equals: Résidentiel
+    height: height
+    altitude: ground-floor-altitude
+    place: default:stone
+
+  renderOfficeRoof:
+    after: renderOfficeBuildings
+    type: renderRoof
+    roofType: flat
+    models:
+      type: buildings
+      filter:
+        not:
+          metadata: usage_1
+          equals: Résidentiel
+    height: height
+    altitude: ground-floor-altitude
+    place: default:stone
+
   renderForest:
     after:
       - renderGround
