@@ -81,6 +81,16 @@ public record WorldCoords2d(int x, int y) implements Positioned2d {
     }
 
     /**
+     * Returns square distance to a given position.
+     * @param x x-axis component of the position to compute square distance with
+     * @param y y-axis component of the position to compute square distance with
+     * @return square distance with given position.
+     */
+    public int squareDistanceTo(int x, int y) {
+        return (this.x - x) * (this.x - x) + (this.y - y) * (this.y - y);
+    }
+
+    /**
      * Returns one of {@code WorldCoords2d} component.
      * @param axis component axis
      * @return component value

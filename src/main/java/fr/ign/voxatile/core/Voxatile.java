@@ -47,6 +47,7 @@ import fr.ign.voxatile.core.parameters.tasks.RenderLines2dTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.RenderLines3dTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.RenderPoints2dTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.RenderPoints3dTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.RenderRoofTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.RenderSurfacesTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.ScheduleTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.SequenceTaskParams;
@@ -133,6 +134,8 @@ public final class Voxatile {
         parser.registerParams("renderLines2d", RenderLines2dTaskParams.class);
         parser.registerParams("renderPoints3d", RenderPoints3dTaskParams.class);
         parser.registerParams("renderPoints2d", RenderPoints2dTaskParams.class);
+        parser.registerParams("renderRoof", RenderRoofTaskParams.class);
+        parser.registerParams("renderSurfaces", RenderSurfacesTaskParams.class);
         parser.registerParams("setSpawn", SetSpawnTaskParams.class);
         parser.registerParams("renderFacades", RenderFacadesTaskParams.class);
         parser.registerParams("buildLayout", BuildLayoutTaskParams.class);
