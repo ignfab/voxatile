@@ -1,0 +1,133 @@
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+  fetchAltitude:
+    type: fetchData
+    modelType: altitude
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    processor:
+      type: floatMatrix
+
+  fetchBuildings:
+    type: fetchData
+    modelType: buildings
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:batiment
+      maxFeaturesPerQuery: 500
+    processor:
+      type: geoToolsVector
+    postProcessing:
+      - type: copy
+        metadata: hauteur
+        to: height
+      - type: parse
+        metadata: height
+        as: decimal
+        ifMissing: ignore
+        ifNotParsable: removeMetadata
+      - type: truncate
+        metadata: height
+        method: round
+        ifMissing: ignore
+      - type: default
+        metadata: height
+        value: 5
+        as: integer
+
+  setAltitude:
+    after: fetchAltitude
+    type: populateHeightmap
+    models:
+      type: altitude
+    heightmap: ground
+
+  setSpawn:
+    after: setAltitude
+    type: setSpawn
+    heightmap:
+      sum: [ ground, 1 ]
+    x: 0
+    y: 0
+
+  renderGround:
+    after:
+      - setAltitude
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - put: *voxel-grass
+          at: [ 0, 0, 0 ]
+        - put: *voxel-dirt
+          at: [ 0, 0, -3..-1 ]
+        - put: *voxel-stone
+          at: [ 0, 0, -20..-4 ]
+
+  computeBuildingsAltitude:
+    after:
+      - fetchBuildings
+      - renderGround
+    type: computeHeightmapStats
+    models:
+      type: buildings
+    heightmap: ground
+    compute:
+      minimum: minimum-ground-altitude
+      maximum: ground-floor-altitude
+
+  flattenGroundBuildings:
+    after:
+      - computeBuildingsAltitude
+    type: fillBetweenHeightmapAndMetadata
+    models:
+      type: buildings
+    heightmap: ground
+    altitudeMetadata: ground-floor-altitude
+    placeAbove: *voxel-empty
+    placeBelow: *voxel-building-ground
+
+  renderBuildings:
+    after: flattenGroundBuildings
+    type: renderBuildings
+    models:
+      type: buildings
+      filter:
+        metadata: height
+        greaterThan: 0
+    roof: *voxel-cobble
+    wall: *voxel-stone
+    window: *voxel-glass
+
+  renderResidentialRoof:
+    after: renderBuildings
+    type: renderRoof
+    roofType: hipped
+    models:
+      type: buildings
+      filter:
+        metadata: usage_1
+        equals: Résidentiel
+    height: height
+    altitude: ground-floor-altitude
+    place: default:stone
+
+  renderOfficeRoof:
+    after: renderBuildings
+    type: renderRoof
+    roofType: flat
+    models:
+      type: buildings
+      filter:
+        not:
+          metadata: usage_1
+          equals: Résidentiel
+    height: height
+    altitude: ground-floor-altitude
+    place: default:stone

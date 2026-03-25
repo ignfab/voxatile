@@ -79,6 +79,10 @@ public record WorldCoords2d(int x, int y) implements Positioned2d {
         return new WorldCoords2d((int) Math.ceil(x), (int) Math.ceil(y));
     }
 
+    public int squareDistanceTo(int x, int y) {
+        return (this.x - x) * (this.x - x) + (this.y - y) * (this.y - y);
+    }
+
     @Override
     public WorldCoords2d coords() {
         return this;
