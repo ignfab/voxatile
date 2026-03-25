@@ -171,6 +171,16 @@ forEachTile:
               chance: 0.003
               place: *forest-tree2
 
+  renderRoof:
+    after: renderBuildings
+    type: renderRoof
+    roofType: hipped
+    models:
+      type: buildings
+    height: height
+    altitude: ground-floor-altitude
+    place: default:stone
+
   populateWaterPresence:
     after: fetchWater
     type: copyHeightmap
