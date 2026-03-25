@@ -50,6 +50,8 @@ public class RenderFacadeTask  extends ModelTask<Shape2dConvertibleModel> {
         if (height == null || baseAltitude == null || height < 0)
             return;
 
+        height = (int) Math.round(height / tile.generation().getVerticalScale());
+
         // Process each lineString (actually linearRing) separately
         for (LineString2d lineString : model.toShape2d().lineStrings()) {
 
