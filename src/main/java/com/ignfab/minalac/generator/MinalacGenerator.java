@@ -37,6 +37,7 @@ import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.CopyHeightmapTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.DebugLayoutTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.FillBetweenHeightmapAndMetadataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.HeightmapStatsTaskParams;
@@ -131,6 +132,8 @@ public final class MinalacGenerator {
         parser.registerParams("truncate", MetadataTruncatePostProcessorParams.class);
         parser.registerParams("geometryBuffer", JTSGeometryBufferPostProcessorParams.class);
         parser.registerParams("remap", MetadataValueMappingPostProcessorParams.class);
+
+        parser.registerParams("debugLayout", DebugLayoutTaskParams.class);
 
         Generation generation = parser.parse(parameters).create(maxTileSize);
 

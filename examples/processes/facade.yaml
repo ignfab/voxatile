@@ -1,6 +1,15 @@
-heightmaps:
-  ground:
-    default: 0
+#
+# This is a tool for working out facades
+#
+# It will work only on Minetest/Luanti for now but may be easily adapted to other games.
+#
+# Put your facade params to test in `&facade` anchor and launch generation.
+#
+# Samples of your facade, with various sizes, will be placed in resulting world.
+#
+
+# TODO:
+# - move that outside of processes and add area information to make it stand alone.
 
 references:
   - &corner-material default:desert_sandstone_block
@@ -16,12 +25,6 @@ references:
       "*": default:glass
       "=": *lintel-material
       "|": default:fence_junglewood
-  - &modern-wall default:clay
-  - &modern-glass default:obsidian_glass
-  - &modern-materials
-    with:
-      "O": *modern-wall
-      "*": *modern-glass
   - &facade
     - along: x
       concatenate:
@@ -107,18 +110,11 @@ forEachTile:
 
   renderGround:
     type: renderHeightmap
-    at: ground
-    place:
-      structure:
-        - put: *voxel-grass
-          at: [0, 0, 0]
-        - put: *voxel-dirt
-          at: [0, 0, -3..-1]
-        - put: *voxel-stone
-          at: [0, 0, -20..-4]
+    at: 0
+    place: default:stone
 
   renderBackground:
-    type: debugFacade
+    type: debugLayout
     build:
       - along: x
         repeat:
@@ -134,60 +130,60 @@ forEachTile:
       y: 60
       z: 1
     size:
-      width: 250
-      height: 100
+      x: 250
+      z: 100
 
   renderFacadeTiny:
-    type: debugFacade
+    type: debugLayout
     build: *facade
     at:
       x: -50
       y: 50
       z: 1
     size:
-      width: 8
-      height: 4
+      x: 8
+      z: 4
 
   renderFacadeSmall:
-    type: debugFacade
+    type: debugLayout
     build: *facade
     at:
       x: -40
       y: 50
       z: 1
     size:
-      width: 11
-      height: 9
+      x: 11
+      z: 9
 
   renderFacadeMedium:
-    type: debugFacade
+    type: debugLayout
     build: *facade
     at:
       x: -25
       y: 50
       z: 1
     size:
-      width: 20
-      height: 22
+      x: 20
+      z: 22
 
   renderFacadeLarge:
-    type: debugFacade
+    type: debugLayout
     build: *facade
     at:
       x: 0
       y: 50
       z: 1
     size:
-      width: 32
-      height: 30
+      x: 32
+      z: 30
 
   renderFacadeHuge:
-    type: debugFacade
+    type: debugLayout
     build: *facade
     at:
       x: 40
       y: 50
       z: 1
     size:
-      width: 52
-      height: 45
+      x: 52
+      z: 45
