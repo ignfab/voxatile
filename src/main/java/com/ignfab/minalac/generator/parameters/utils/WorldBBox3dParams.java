@@ -1,26 +1,36 @@
 package com.ignfab.minalac.generator.parameters.utils;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+
+import com.ignfab.minalac.generator.parameters.JsonWrapper;
 import com.ignfab.minalac.generator.utils.IntegerInterval;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * Parameters describing a {@link WorldBBox3d}.
  * <p>
- * A BBox can be described as an array of tree coordinates or coorinates intervals (in x, y, z order).
+ * A BBox can be described as an array of three coordinates or coordinates intervals (in x, y, z order).
  */
-public class WorldBBox3dParams extends ArrayList<IntegerIntervalParams> {
+@JsonWrapper
+public class WorldBBox3dParams {
+    /**
+     * The three intervals (required).
+     */
+    @JsonSetter(nulls = Nulls.FAIL, contentNulls = Nulls.FAIL)
+    public List<IntegerIntervalParams> intervals;
 
     /**
      * Validates parameters.
      */
     public void validate() {
-        if (size() != 3)
+        if (intervals.size() != 3)
             throw new IllegalArgumentException("3d box should have three coordinates");
-        get(0).validate();
-        get(1).validate();
-        get(2).validate();
+        intervals.get(0).validate();
+        intervals.get(1).validate();
+        intervals.get(2).validate();
     }
 
     /**
@@ -29,9 +39,9 @@ public class WorldBBox3dParams extends ArrayList<IntegerIntervalParams> {
      * @return created {@link WorldBBox3d}
      */
     public WorldBBox3d create() {
-        IntegerInterval xs = get(0).create();
-        IntegerInterval ys = get(1).create();
-        IntegerInterval zs = get(2).create();
+        IntegerInterval xs = intervals.get(0).create();
+        IntegerInterval ys = intervals.get(1).create();
+        IntegerInterval zs = intervals.get(2).create();
 
         return new WorldBBox3d(xs.begin(), ys.begin(), zs.begin(), xs.size(), ys.size(), zs.size());
     }
