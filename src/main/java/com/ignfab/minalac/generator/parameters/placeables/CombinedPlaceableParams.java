@@ -1,12 +1,11 @@
 package com.ignfab.minalac.generator.parameters.placeables;
 
-import java.util.LinkedList;
 import java.util.List;
 
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.DeserializationContext;
-import tools.jackson.databind.JsonNode;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 
+import com.ignfab.minalac.generator.parameters.JsonWrapper;
 import com.ignfab.minalac.generator.placeables.CombinedPlaceable;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
@@ -15,24 +14,13 @@ import com.ignfab.minalac.generator.utils.random.Seed;
  * Parameters for a {@link CombinedPlaceable}.
  * CombinedPlaceable is actually represented by a list of placeables in parameter file.
  */
+@JsonWrapper
 public class CombinedPlaceableParams extends PlaceableParams {
     /**
      * Contained placeable params.
      */
-    public List<PlaceableParams> placeableParams = new LinkedList<>();
-
-    /**
-     * Creates a new {@code CombinedPlaceableParams}.
-     *
-     * This class is suposed to be instantiated only from {@link PlaceableParams} custom deserializer.
-     *
-     * @param array Array of {@code JsonNode} deserializable into {@code Placeable}
-     * @param context Context to use to deserialize placeables
-     */
-    public CombinedPlaceableParams(Iterable<JsonNode> array, DeserializationContext context) throws JacksonException {
-        for (JsonNode node : array)
-            placeableParams.add(context.readTreeAsValue(node, PlaceableParams.class));
-    }
+    @JsonSetter(nulls = Nulls.FAIL, contentNulls = Nulls.FAIL)
+    public List<PlaceableParams> placeableParams;
 
     @Override
     public void validate() {

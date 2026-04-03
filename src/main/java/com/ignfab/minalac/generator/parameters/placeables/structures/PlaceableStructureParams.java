@@ -1,18 +1,14 @@
 package com.ignfab.minalac.generator.parameters.placeables.structures;
 
-import java.util.LinkedList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.JsonParser;
-import tools.jackson.core.exc.InputCoercionException;
-import tools.jackson.databind.DeserializationContext;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ValueDeserializer;
-import tools.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.Nulls;
 
+import com.ignfab.minalac.generator.parameters.JsonWrapper;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.utils.random.Seed;
@@ -22,14 +18,15 @@ import com.ignfab.minalac.generator.utils.random.Seed;
  * <p>
  * Structure can be described using one of PlaceableStructureParams.Variant subclass or a combination of several.
  */
-@JsonDeserialize(using = PlaceableStructureParams.Deserializer.class)
+@JsonWrapper
 public final class PlaceableStructureParams extends PlaceableParams {
 
-    private final List<Variant> params;
-
-    private PlaceableStructureParams(List<Variant> params) {
-        this.params = params;
-    }
+    /**
+     * Structure contents.
+     */
+    @JsonSetter(nulls = Nulls.FAIL, contentNulls = Nulls.FAIL)
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    public List<Variant> params;
 
     @Override
     public void validate() {
@@ -45,34 +42,6 @@ public final class PlaceableStructureParams extends PlaceableParams {
             param.apply(seed, structureBuilder);
 
         return structureBuilder.build();
-    }
-
-    /**
-     * Custom deserializer creating a PlaceableStructureParams out of a structure list or single structure.
-     */
-    public static class Deserializer extends ValueDeserializer<PlaceableStructureParams> {
-
-        @Override
-        public PlaceableStructureParams deserialize(JsonParser parser, DeserializationContext context) throws JacksonException {
-            JsonNode node = parser.readValueAsTree();
-
-            // Decode array into structure list
-            if (node.isArray()) {
-                List<Variant> list = new LinkedList<>();
-                for (JsonNode item : node)
-                    list.add(context.readTreeAsValue(item, Variant.class));
-
-                return new PlaceableStructureParams(list);
-            }
-
-            // Decode single structure into a single value list
-            if (node.isObject()) {
-                Variant structure = context.readTreeAsValue(node, Variant.class);
-                return new PlaceableStructureParams(List.of(structure));
-            }
-
-            throw new InputCoercionException(parser, "Structure should be either a list or an single structure", node.asToken(), PlaceableStructureParams.class);
-        }
     }
 
     /**

@@ -50,7 +50,7 @@ public abstract class PlaceableParams {
                 return format.createVoxelParams(node.asString());
             }
             if (node.isArray())
-                return new CombinedPlaceableParams(node, context);
+                return context.readTreeAsValue(node, CombinedPlaceableParams.class);
 
             if (!node.isObject())
                 throw new InputCoercionException(parser, "Placeable should be either a string, an object or a list of placeables", node.asToken(), PlaceableParams.class);

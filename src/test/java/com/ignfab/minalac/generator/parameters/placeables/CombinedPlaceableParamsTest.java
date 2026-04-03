@@ -20,24 +20,24 @@ public class CombinedPlaceableParamsTest {
         PlaceableParams invalid = new TestingPlaceableParams(null);
         PlaceableParams valid = new TestingPlaceableParams(new TestingPlaceable());
 
-        CombinedPlaceableParams params = new CombinedPlaceableParams(List.of(), null);
+        CombinedPlaceableParams params = new CombinedPlaceableParams();
 
-        params.placeableParams.add(valid);
-        params.placeableParams.add(valid);
+        params.placeableParams = List.of(valid, valid);
         assertDoesNotThrow(params::validate);
 
-        params.placeableParams.add(invalid);
-        params.placeableParams.add(valid);
+        params.placeableParams = List.of(invalid, valid);
         assertThrows(IllegalArgumentException.class, params::validate);
     }
 
     @Test
     public void testCreate() throws JacksonException {
         TestingPlaceable placeable = new TestingPlaceable();
-        CombinedPlaceableParams params = new CombinedPlaceableParams(List.of(), null);
-        params.placeableParams.add(new TestingPlaceableParams(placeable));
-        params.placeableParams.add(new TestingPlaceableParams(placeable));
-        params.placeableParams.add(new TestingPlaceableParams(placeable));
+        CombinedPlaceableParams params = new CombinedPlaceableParams();
+        params.placeableParams = List.of(
+            new TestingPlaceableParams(placeable),
+            new TestingPlaceableParams(placeable),
+            new TestingPlaceableParams(placeable)
+        );
 
         Placeable result = assertDoesNotThrow(() -> params.create(TestingSeed.UNUSED));
         CombinedPlaceable combined = assertInstanceOf(CombinedPlaceable.class, result);
