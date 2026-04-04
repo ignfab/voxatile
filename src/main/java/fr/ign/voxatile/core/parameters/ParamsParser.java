@@ -4,8 +4,6 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.core.StreamReadFeature;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.exc.MismatchedInputException;
-import tools.jackson.databind.exc.ValueInstantiationException;
 import tools.jackson.databind.jsontype.NamedType;
 import tools.jackson.databind.module.SimpleModule;
 import tools.jackson.dataformat.yaml.YAMLAnchorReplayingFactory;
@@ -51,7 +49,7 @@ public class ParamsParser {
         try {
             document = mapper.readTree(serialized);
         } catch (JacksonException e) {
-            throw new ParseException(e);
+            throw ParseException.fromJacksonException(e);
         }
 
         if (!document.has("format"))
@@ -68,8 +66,8 @@ public class ParamsParser {
         try {
             // Rebuild the mapper because format-specific configuration was added
             params = rebuilder.build().treeToValue(document, GenerationParams.class);
-        } catch (MismatchedInputException | ValueInstantiationException e) {
-            throw new ParseException(e);
+        } catch (JacksonException e) {
+            throw ParseException.fromJacksonException(e);
         }
 
         try {
