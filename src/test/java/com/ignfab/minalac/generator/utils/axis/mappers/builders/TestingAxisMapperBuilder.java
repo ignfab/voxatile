@@ -2,18 +2,24 @@ package com.ignfab.minalac.generator.utils.axis.mappers.builders;
 
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
 
-public class TestingIndexMapperBuilder implements AxisMapperBuilder {
+public class TestingAxisMapperBuilder implements AxisMapperBuilder {
     private int min;
     private int max;
+    private int origin;
 
-    public TestingIndexMapperBuilder(int min, int max) {
+    public TestingAxisMapperBuilder(int min, int max, int origin) {
         if (max < min)
             throw new RuntimeException("max should be greater than min");
         this.min = min;
         this.max = max;
+        this.origin = origin;
     }
 
-    public TestingIndexMapperBuilder(int size) {
+    public TestingAxisMapperBuilder(int min, int max) {
+        this(min, max, 0);
+    }
+
+    public TestingAxisMapperBuilder(int size) {
         min = size;
         max = size;
     }
@@ -33,5 +39,10 @@ public class TestingIndexMapperBuilder implements AxisMapperBuilder {
     @Override
     public int minimumSize() {
         return min;
+    }
+
+    @Override
+    public int origin() {
+        return origin;
     }
 }

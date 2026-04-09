@@ -3,9 +3,9 @@ package com.ignfab.minalac.generator.parameters.placeables.layouts;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import tools.jackson.core.exc.InputCoercionException;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonParser;
+import tools.jackson.core.exc.InputCoercionException;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ValueDeserializer;
@@ -74,6 +74,9 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
         return builder;
     }
 
+    /**
+     * A custom deserializer for {@code StructureLayoutBuilderParams}.
+     */
     public static class Deserializer extends ValueDeserializer<StructureLayoutBuilderParams> {
         @Override
         public StructureLayoutBuilderParams deserialize(JsonParser parser, DeserializationContext context) throws JacksonException {
@@ -99,14 +102,29 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
         return context.readTreeAsValue(property, type);
     }
 
+    /**
+     * Stretch params along a given axis.
+     */
     public static class StretchAxisParams {
+        /**
+         * Position to use for stretching. This position will be repeated (or ommitted) according to wanted size.
+         */
         @JsonSetter(nulls = Nulls.FAIL)
         public int at;
+        /**
+         * Minimum number of repetitions (default 1)
+         */
         @JsonSetter(nulls = Nulls.SKIP)
         public int atLeast = 1;
+        /**
+         * Maximum number of repetitions (default infinite)
+         */
         @JsonSetter(nulls = Nulls.SKIP)
         public int atMost = Integer.MAX_VALUE;
 
+        /**
+         * Validates contents.
+         */
         public void validate() {
         if (at < 0)
             throw new IllegalArgumentException("Stretch position must be positive");
@@ -116,6 +134,14 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
             throw new IllegalArgumentException("Stretch at most must be greater or equals to stretch at least");
         }
 
+        /**
+         * Creates a {@link LayoutBuilder} stretching an underlying {@link PlaceableStructure} according to these parameters.
+         * @param structure Structure to stretch (used for checking validity of `at` value)
+         * @param builder Builder that may already stretch given structure in other axes
+         * @param axis Concerned axis
+         */
+        // TODO: Limit builder to stretch builders
+        // TODO: Create a class form Stretch Layout that gives the structure size.
         public LayoutBuilder create(PlaceableStructure structure, LayoutBuilder builder, Axis axis) throws UnbuildableException {
             if (at > structure.limits().max().coord(axis) || at < structure.limits().min().coord(axis))
                 throw new UnsupportedOperationException("\"at\" value (%d) is outside structure (%d to %d) for axis %s"

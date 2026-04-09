@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.parameters.utils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.ignfab.minalac.generator.utils.axis.Axis;
 
 /**
@@ -24,7 +25,7 @@ public enum AxisParams {
     Z(Axis.Z);
 
     /**
-     * Actual {@link Axis} associated to parameter
+     * Actual {@link Axis} associated to parameter.
      */
     public final Axis axis;
 
@@ -38,7 +39,7 @@ public enum AxisParams {
     }
 
     /**
-     * @return the corresponding {@link Axis}
+     * {@return the corresponding {@link Axis}}
      */
     public Axis create() {
         return axis;

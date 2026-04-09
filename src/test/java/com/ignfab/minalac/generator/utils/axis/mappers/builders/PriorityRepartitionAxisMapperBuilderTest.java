@@ -15,20 +15,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static com.ignfab.minalac.generator.utils.iterator.IteratorTester.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class PriorityRepartitionIndexMapperBuilderTest {
+public class PriorityRepartitionAxisMapperBuilderTest {
 
     @Test
     public void testMaxSizeUnderBuild() {
-        AxisMapperBuilder minSizeError = new PriorityRepartitionAxisMapperBuilder(
-            new AxisMapperBuilder[] {new TestingIndexMapperBuilder(2, 5), new TestingIndexMapperBuilder(0), new TestingIndexMapperBuilder(6, 7)},
-            new int[] {0, 0, 0}
+        AxisMapperBuilder minSizeError = assertDoesNotThrow(
+            () ->  new PriorityRepartitionAxisMapperBuilder(
+                new AxisMapperBuilder[] {new TestingAxisMapperBuilder(2, 5), new TestingAxisMapperBuilder(0), new TestingAxisMapperBuilder(6, 7)},
+                new int[] {0, 0, 0}
+            )
         );
         assertEquals(-1, minSizeError.maxSizeUnder(7));
         assertThrows(UnbuildableException.class, () -> minSizeError.build(7));
 
-        AxisMapperBuilder minZero = new PriorityRepartitionAxisMapperBuilder(
-            new AxisMapperBuilder[] {new TestingIndexMapperBuilder(0, 4), new TestingIndexMapperBuilder(0, 4)},
-            new int[] {0, 0}
+        AxisMapperBuilder minZero = assertDoesNotThrow(
+            () ->  new PriorityRepartitionAxisMapperBuilder(
+                new AxisMapperBuilder[] {new TestingAxisMapperBuilder(0, 4), new TestingAxisMapperBuilder(0, 4)},
+                new int[] {0, 0}
+            )
         );
 
         assertEquals(5, minZero.maxSizeUnder(5));
@@ -37,18 +41,22 @@ public class PriorityRepartitionIndexMapperBuilderTest {
         assertBrowsesAllOnce(List.of(2, 3), Arrays.stream(withMinZero.intervals()).iterator());
 
         // Same priority
-        AxisMapperBuilder samePrio = new PriorityRepartitionAxisMapperBuilder(
-            new AxisMapperBuilder[] {new TestingIndexMapperBuilder(2), new TestingIndexMapperBuilder(3)},
-            new int[] {0, 0}
+        AxisMapperBuilder samePrio = assertDoesNotThrow(
+            () ->  new PriorityRepartitionAxisMapperBuilder(
+                new AxisMapperBuilder[] {new TestingAxisMapperBuilder(2), new TestingAxisMapperBuilder(3)},
+                new int[] {0, 0}
+            )
         );
         assertEquals(5, samePrio.maxSizeUnder(6));
         AxisMapper withSamePrio = assertDoesNotThrow(() -> samePrio.build(5));
         assertArrayEquals(new int[] {2, 3}, withSamePrio.intervals());
 
         // Priority should take all possible after distribution of min
-        AxisMapperBuilder builderWithOnePrio = new PriorityRepartitionAxisMapperBuilder(
-            new AxisMapperBuilder[] {new TestingIndexMapperBuilder(0, 8), new TestingIndexMapperBuilder(2, 4)},
-            new int[] {1, 0}
+        AxisMapperBuilder builderWithOnePrio = assertDoesNotThrow(
+            () ->  new PriorityRepartitionAxisMapperBuilder(
+                new AxisMapperBuilder[] {new TestingAxisMapperBuilder(0, 8), new TestingAxisMapperBuilder(2, 4)},
+                new int[] {1, 0}
+            )
         );
 
         // No remainder for first one
@@ -75,17 +83,21 @@ public class PriorityRepartitionIndexMapperBuilderTest {
     public void testMinimumSize() {
         assertEquals(
             8,
-            new PriorityRepartitionAxisMapperBuilder(
-                new AxisMapperBuilder[] {new TestingIndexMapperBuilder(2, 5), new TestingIndexMapperBuilder(0), new TestingIndexMapperBuilder(6, 7)},
-                new int[] {0, 1, 0}
+            assertDoesNotThrow(
+                () ->  new PriorityRepartitionAxisMapperBuilder(
+                    new AxisMapperBuilder[] {new TestingAxisMapperBuilder(2, 5), new TestingAxisMapperBuilder(0), new TestingAxisMapperBuilder(6, 7)},
+                    new int[] {0, 1, 0}
+                )
             ).minimumSize()
         );
 
         assertEquals(
             0,
-            new PriorityRepartitionAxisMapperBuilder(
-                new AxisMapperBuilder[] {new TestingIndexMapperBuilder(0, 5), new TestingIndexMapperBuilder(0), new TestingIndexMapperBuilder(0, 4)},
-                new int[] {1, 0, 0}
+            assertDoesNotThrow(
+                () ->  new PriorityRepartitionAxisMapperBuilder(
+                    new AxisMapperBuilder[] {new TestingAxisMapperBuilder(0, 5), new TestingAxisMapperBuilder(0), new TestingAxisMapperBuilder(0, 4)},
+                    new int[] {1, 0, 0}
+                )
             ).minimumSize()
         );
     }
