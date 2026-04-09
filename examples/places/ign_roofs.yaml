@@ -1,0 +1,10 @@
+# I love Saint-Mandé
+worldName: Roofs - Saint-Mandé - IGN
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 48.845
+    longitude: 2.425
+  extentX: 200
+  extentY: 200
