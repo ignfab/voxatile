@@ -1,0 +1,33 @@
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+
+  setSpawn:
+    type: setSpawn
+    heightmap:
+      sum: [ ground, 16 ]
+    x: 30
+    y: 20
+
+  renderGround:
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - put: *voxel-grass
+          at: [ 0, 0, 0 ]
+        - put: *voxel-dirt
+          at: [ 0, 0, -3..-1 ]
+        - put: *voxel-stone
+          at: [ 0, 0, -20..-4 ]
+
+  oneBuilding:
+    type: renderRoofTest
+    roofType: hipped
+    height: height
+    altitude: ground-floor-altitude
+    place: default:sandstonebrick
+    applyF: true
+

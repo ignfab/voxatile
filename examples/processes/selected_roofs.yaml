@@ -108,7 +108,7 @@ forEachTile:
     wall: *voxel-stone
     window: *voxel-glass
 
-  renderResidentialRoof:
+  hBuilding:
     after: renderBuildings
     type: renderRoof
     roofType: hipped
@@ -116,7 +116,48 @@ forEachTile:
       type: buildings
       filter:
         metadata: identifiants_rnb
-        in: [XZB75CYSMVCQ, 6NFTV4Z6DP92, 18BYY8R7J1RE]
+        in: [XZB75CYSMVCQ]
     height: height
     altitude: ground-floor-altitude
-    place: default:stone
+    place: default:sandstonebrick
+
+  rectangleBuilding:
+    after: renderBuildings
+    type: renderRoof
+    roofType: hipped
+    models:
+      type: buildings
+      filter:
+        metadata: identifiants_rnb
+        in: [6NFTV4Z6DP92]
+    height: height
+    altitude: ground-floor-altitude
+    place: default:silver_sandstone
+
+  otherBuilding:
+    after: renderBuildings
+    type: renderRoof
+    roofType: hipped
+    models:
+      type: buildings
+      filter:
+        metadata: identifiants_rnb
+        in: [18BYY8R7J1RE]
+    height: height
+    altitude: ground-floor-altitude
+    place: default:mossycobble
+
+  squareBuilding:
+    after: renderBuildings
+    type: renderRoof
+    roofType: hipped
+    models:
+      type: buildings
+      filter:
+        metadata: identifiants_rnb
+        in: [ VR61GJWV7Y7Z ]
+    height: height
+    altitude: ground-floor-altitude
+    place: default:sandstonebrick
+    applyF: true
+
