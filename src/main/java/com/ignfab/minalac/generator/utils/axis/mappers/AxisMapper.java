@@ -15,14 +15,25 @@ public interface AxisMapper {
     Mapped map(int position);
 
     /**
-     * @return list of underlying intervals sizes.
+     *{@return list of underlying intervals sizes}
      */
     int[] intervals();
 
+
     /**
-     * @return size of the axis mapper.
+     * {@return minimum valid position for this axis mapper}
+     */
+    int min();
+
+    /**
+     * {@return size of the axis mapper}
      */
     int size();
+
+    default boolean contains(int position) {
+        int relative = position - min();
+        return relative >=0 && relative < size();
+    }
 
     /**
      * A mapped index.

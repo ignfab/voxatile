@@ -10,159 +10,94 @@ references:
   - &cornice-material default:desert_sandstone_block
   - &lintel-material default:sandstonebrick
   - &materials
-    with:
       "-": *base-material
       "+": *other-material
       "O": *borders-material
       "*": default:glass
       "=": *lintel-material
+      "|": default:fence_junglewood
   - &modern-wall default:clay
   - &modern-glass default:obsidian_glass
   - &modern-materials
     with:
       "O": *modern-wall
       "*": *modern-glass
-  - &facade1
+  - &facade
     - along: x
-      place:
+      concatenate:
         # Left corner
         - &corner
-          at: [ 0, 0, 0 ]
+          at: [ 0, -1..0, 0 ]
           put: *corner-material
           stretchX:
             at: 0
           stretchZ:
             at: 0
           priority: -1
+        # TODO
         - along: z
-          place:
-          # Ground floor
-          - along: x
-            priority: 1
-            place:
-              # Left ground windows
-              - along: x
-                atLeast: 0
-                repeat:
-                  << : *materials
-                  axes: [ z, x ]
-                  blueprint: [ "-O==O", "-O**O", "-O**O", "-O**O", "-O==O", "-O--O" ]
-                  stretchZ:
-                    at: 0
-              # Door
-              - << : *materials
-                axes: [ z, x ]
-                blueprint: [ "-O==O-", "-O  O-", "-O  O-", "-O  O-", "-O  O-", "-O  O-" ]
-                stretchZ:
-                  at: 0
-              # Right ground windows
-              - along: x
-                atLeast: 0
-                repeat:
-                  << : *materials
-                  axes: [ z, x ]
-                  blueprint: [ "O==O-", "O**O-", "O**O-", "O**O-", "O==O-", "O--O-" ]
-                  stretchZ:
-                    at: 0
-          # Cornice
-          - at: [ 0, 0, 0 ]
-            put: *cornice-material
-            stretchX:
-              at: 0
-          # Upper floors
-          - priority: 2
-            along: z
-            atLeast: 0
-            repeat:
-              along: x
-              place:
-                - at: [ 0, 0, 0..5 ]
-                  put: *other-material
-                - along: x
-                  repeat:
-                    << : *materials
-                    axes: [ z, x ]
-                    blueprint: [ "O==O+", "O**O+", "O**O+", "O**O+", "O==O+", "O--O+" ]
-          # Upper cornice
-          - at: [ 0, 0, 0 ]
-            put: *cornice-material
-            stretchX:
-              at: 0
-            stretchZ:
-              at: 0
-        # Right corner
-        - *corner
-    - at: [ 0, 0, 0 ]
-      put: *base-material
-      stretchX:
-        at: 0
-      stretchZ:
-        at: 0
-  - &facade2
-    - along: x
-      place:
-        # Left corner
-        - put: *modern-wall
-          at: [0, 0, 0]
-          stretchX:
-            at: 0
-          stretchZ:
-            at: 0
-        # Facade
-        - priority: 1
-          along: z
-          place:
+          concatenate:
             # Ground floor
-            - along: x
-              place:
-                # Left
-                - along: x
-                  repeat:
-                    << : *modern-materials
-                    axes: [z, x]
-                    blueprint: [ "O**", "O**", "O**", "OOO", "OOO"]
-                # Door
-                - << : *modern-materials
-                  axes: [z, x]
-                  blueprint: [ "OOOO", "O  O", "O  O", "O  O", "O  O" ]
-                # Right
-                - along: x
-                  repeat:
-                    << : *modern-materials
-                    axes: [z, x]
-                    blueprint: [ "**O", "**O", "**O", "OOO", "OOO" ]
-            # Upper floors
             - priority: 1
               along: x
-              place:
-                - put: *modern-wall
-                  at: [0, 0, 0 ]
-                  stretchZ:
-                    at: 0
-                - along: x
+              concatenate:
+                - atLeast: 0
+                  along: x
                   repeat:
-                    << : *modern-materials
-                    axes: x
-                    blueprint: "**O"
+                    axes: [ z, x ]
+                    blueprint: [ "-O==O", "-O**O", "-O**O", "-O**O", "-O==O", "-O--O" ]
+                    with : *materials
                     stretchZ:
                       at: 0
-            # Top
-            - put: *modern-wall
-              at: [0, 0, 0 ]
+                # Door
+                - axes: [ z, x ]
+                  blueprint: [ "-O==O-", "-O  O-", "-O  O-", "-O  O-", "-O  O-", "-O  O-" ]
+                  with : *materials
+                  stretchZ:
+                    at: 0
+                # Right ground windows
+                - along: x
+                  atLeast: 0
+                  repeat:
+                    axes: [ z, x ]
+                    blueprint: [ "O==O-", "O**O-", "O**O-", "O**O-", "O==O-", "O--O-" ]
+                    with: *materials
+                    stretchZ:
+                      at: 0
+            # Cornice
+            - at: [ 0, 0, 0 ]
+              put: *cornice-material
+              stretchX:
+                at: 0
+            # Upper floors
+            - priority: 2
+              along: z
+              atLeast: 0
+              repeat:
+                along: x
+                concatenate:
+                  - at: [ 0, 0, 0..5 ]
+                    put: *other-material
+                  - along: x
+                    repeat:
+                      axes: [ y, z, x ]
+                      blueprint:
+                        - [ "O==O+", "O**O+", "O**O+", "O**O+", "O==O+", "O--O+" ]
+                        - [ "     ", "     ", "     ", "|||| ", "==== ", "O  O " ]
+                      with : *materials
+                      # TODO: En inversant la profondeur, on peut s'éviter beaucoup d'offset (a priori, les façade vont être plus souvent saillantes)
+                      yOffset: -1
+            # Upper cornice
+            - at: [ 0, 0, 0 ]
+              put: *cornice-material
               stretchX:
                 at: 0
               stretchZ:
                 at: 0
-        # Left corner
-        - put: *modern-wall
-          at: [0, 0, 0]
-          stretchX:
-            at: 0
-          stretchZ:
-            at: 0
-    # Default
+        # Right corner
+        - *corner
     - at: [ 0, 0, 0 ]
-      put: *modern-wall
+      put: *base-material
       stretchX:
         at: 0
       stretchZ:
@@ -182,122 +117,77 @@ forEachTile:
         - put: *voxel-stone
           at: [0, 0, -20..-4]
 
-  renderFacadeTiny1:
+  renderBackground:
     type: debugFacade
-    build: *facade1
+    build:
+      - along: x
+        repeat:
+          along: z
+          repeat:
+            with:
+              O: wool:dark_grey
+              X: wool:grey
+            axes: [x, z]
+            blueprint: ["OX", "XO"]
     at:
-      x: -50
-      y: 50
+      x: -100
+      y: 60
       z: 1
     size:
-      x: 8
-      y: 1
-      z: 4
-
-  renderFacadeSmall1:
-    type: debugFacade
-    build: *facade1
-    at:
-      x: -40
-      y: 50
-      z: 1
-    size:
-      x: 11
-      y: 1
-      z: 9
-
-  renderFacadeMedium1:
-    type: debugFacade
-    build: *facade1
-    at:
-      x: -25
-      y: 50
-      z: 1
-    size:
-      x: 20
-      y: 1
-      z: 22
-
-  renderFacadeLarge1:
-    type: debugFacade
-    build: *facade1
-    at:
-      x: 0
-      y: 50
-      z: 1
-    size:
-      x: 32
-      y: 1
-      z: 30
-
-  renderFacadeHuge1:
-    type: debugFacade
-    build: *facade1
-    at:
-      x: 40
-      y: 50
-      z: 1
-    size:
-      x: 52
-      y: 1
-      z: 45
+      width: 250
+      height: 100
 
   renderFacadeTiny:
     type: debugFacade
-    build: *facade2
+    build: *facade
     at:
       x: -50
-      y: 100
+      y: 50
       z: 1
     size:
-      x: 8
-      y: 1
-      z: 4
+      width: 8
+      height: 4
 
-  renderFacadeSmall2:
+  renderFacadeSmall:
     type: debugFacade
-    build: *facade2
+    build: *facade
     at:
       x: -40
-      y: 100
+      y: 50
       z: 1
     size:
-      x: 11
-      y: 1
-      z: 9
+      width: 11
+      height: 9
 
-  renderFacadeMedium2:
+  renderFacadeMedium:
     type: debugFacade
-    build: *facade2
+    build: *facade
     at:
       x: -25
-      y: 100
+      y: 50
       z: 1
     size:
-      x: 20
-      y: 1
-      z: 22
+      width: 20
+      height: 22
 
-  renderFacadeLarge2:
+  renderFacadeLarge:
     type: debugFacade
-    build: *facade2
+    build: *facade
     at:
       x: 0
-      y: 100
+      y: 50
       z: 1
     size:
-      x: 32
-      y: 1
-      z: 30
+      width: 32
+      height: 30
 
-  renderFacadeHuge2:
+  renderFacadeHuge:
     type: debugFacade
-    build: *facade2
+    build: *facade
     at:
       x: 40
-      y: 100
+      y: 50
       z: 1
     size:
-      x: 52
-      y: 1
-      z: 45
+      width: 52
+      height: 45

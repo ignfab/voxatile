@@ -35,21 +35,25 @@ public class LayoutStructure implements Structure {
         this.axisX = axisX;
         this.axisY = axisY;
         this.axisZ = axisZ;
-        this.limits = new WorldBBox3d(structures[0][0][0].limits().min(), new WorldSize3d(
-            axisX.size(),
-            axisY.size(),
-            axisZ.size()
-        ));
-        // TODO : ou alors c'est tacite que 0,0,0 contient le point d'origine
+
+        this.limits = new WorldBBox3d(
+            new WorldCoords3d(axisX.min(), axisY.min(), axisZ.min()),
+            new WorldSize3d(axisX.size(), axisY.size(), axisZ.size())
+        );
     }
 
     @Override
     public Placeable get(int x, int y, int z) {
-        AxisMapper.Mapped aX = axisX.map(x);
-        AxisMapper.Mapped aY = axisY.map(y);
-        AxisMapper.Mapped aZ = axisZ.map(z);
-        return structures[aX.index()][aY.index()][aZ.index()]
-            .get(aX.position(), aY.position(), aZ.position());
+        if (axisX.contains(x) && axisY.contains(y) && axisZ.contains(z)) {
+            AxisMapper.Mapped aX = axisX.map(x);
+            AxisMapper.Mapped aY = axisY.map(y);
+            AxisMapper.Mapped aZ = axisZ.map(z);
+            return structures[aX.index()][aY.index()][aZ.index()]
+                .get(aX.position(), aY.position(), aZ.position());
+        }
+
+        // Return Nothing instead of raising an exception to be able to render unadjusted stuff
+        return Nothing.INSTANCE;
     }
 
     @Override
@@ -68,15 +72,15 @@ public class LayoutStructure implements Structure {
 
         AxisMapper axisX = axis == Axis.X ?
             new SizesAxisMapper(structures.stream().mapToInt(s -> s.limits().sizeX()).toArray()) :
-            new IdentityAxisMapper(limits.sizeX());
+            new IdentityAxisMapper(limits.minX(), limits.sizeX());
 
         AxisMapper axisY = axis == Axis.Y ?
             new SizesAxisMapper(structures.stream().mapToInt(s -> s.limits().sizeY()).toArray()) :
-            new IdentityAxisMapper(limits.sizeY());
+            new IdentityAxisMapper(limits.minY(), limits.sizeY());
 
         AxisMapper axisZ = axis == Axis.Z ?
             new SizesAxisMapper(structures.stream().mapToInt(s -> s.limits().sizeZ()).toArray()) :
-            new IdentityAxisMapper(limits.sizeZ());
+            new IdentityAxisMapper(limits.minZ(), limits.sizeZ());
 
         Structure[][][] structArray = new Structure
             [axis == Axis.X ? structures.size() : 1]

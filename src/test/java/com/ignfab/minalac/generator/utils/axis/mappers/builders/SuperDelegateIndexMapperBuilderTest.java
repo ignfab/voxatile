@@ -16,7 +16,7 @@ public class SuperDelegateIndexMapperBuilderTest {
     public void testMaxSizeUnder() {
         assertEquals(
             11,
-            new SuperDelegateAxisMapperBuilder(
+            new OverlayAxisMapperBuilder(
                 new TestingIndexMapperBuilder(10, 12),
                 new TestingIndexMapperBuilder(10, 11),
                 new TestingIndexMapperBuilder(10, 13)
@@ -25,7 +25,7 @@ public class SuperDelegateIndexMapperBuilderTest {
 
         assertEquals(
             0,
-            new SuperDelegateAxisMapperBuilder(
+            new OverlayAxisMapperBuilder(
                 new TestingIndexMapperBuilder(0, 15),
                 new TestingIndexMapperBuilder(0)
             ).maxSizeUnder(15)

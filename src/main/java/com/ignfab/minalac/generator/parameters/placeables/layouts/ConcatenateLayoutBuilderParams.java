@@ -16,6 +16,7 @@ import tools.jackson.databind.node.ObjectNode;
 
 import com.ignfab.minalac.generator.placeables.layouts.DefaultLayoutBuilder;
 import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
+import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.parameters.utils.AxisParams;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
@@ -33,31 +34,31 @@ import com.ignfab.minalac.generator.utils.random.Seed;
  */
 public class ConcatenateLayoutBuilderParams implements LayoutBuilderParams {
     @JsonSetter(nulls = Nulls.FAIL)
-    public List<PlaceParams> place;
+    public List<PlaceParams> concatenate;
 
     @JsonSetter(nulls = Nulls.FAIL)
     AxisParams along;
 
-    @ConstructorProperties({ "place", "along" })
-    public ConcatenateLayoutBuilderParams(List<PlaceParams> place, AxisParams along) {
-        this.place = place;
+    @ConstructorProperties({ "concatenate", "along" })
+    public ConcatenateLayoutBuilderParams(List<PlaceParams> concatenate, AxisParams along) {
+        this.concatenate = concatenate;
         this.along = along;
     }
 
     @Override
     public void validate() {
-        if (place.isEmpty())
+        if (concatenate.isEmpty())
             throw new IllegalArgumentException("Cannot be empty");
-        place.forEach(PlaceParams::validate);
+        concatenate.forEach(PlaceParams::validate);
     }
 
     @Override
-    public LayoutBuilder createBuilder(Seed seed) {
-        LayoutBuilder[] builders = new LayoutBuilder[place.size()];
-        int[] priorities = new int[place.size()];
-        for (int i = 0; i < place.size(); i++)  {
-            builders[i] = place.get(i).layout.createBuilder(seed);
-            priorities[i] = place.get(i).priority;
+    public LayoutBuilder createBuilder(Seed seed) throws UnbuildableException {
+        LayoutBuilder[] builders = new LayoutBuilder[concatenate.size()];
+        int[] priorities = new int[concatenate.size()];
+        for (int i = 0; i < concatenate.size(); i++)  {
+            builders[i] = concatenate.get(i).layout.createBuilder(seed);
+            priorities[i] = concatenate.get(i).priority;
         }
 
         return DefaultLayoutBuilder.priority(builders, along.create(), priorities);

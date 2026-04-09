@@ -88,7 +88,7 @@ public class RenderFacadeTask  extends ModelTask<Shape2dConvertibleModel> {
                     try {
                         structure = builder.build(
                             (int) Math.ceil(length),
-                            builder.axisY().minimumSize(),
+                            null,
                             height);
                         break;
                     } catch (UnbuildableException e) {}

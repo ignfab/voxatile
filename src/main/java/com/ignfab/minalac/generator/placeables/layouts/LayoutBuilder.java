@@ -19,7 +19,7 @@ public interface LayoutBuilder {
      *
      * @throws UnbuildableException if structure cannot be built
      */
-    Structure build(int sizeX, int sizeY, int sizeZ) throws UnbuildableException;
+    Structure build(Integer sizeX, Integer sizeY, Integer sizeZ) throws UnbuildableException;
 
     /**
      * @return X-axis mapper builder.
@@ -35,16 +35,4 @@ public interface LayoutBuilder {
      * @return Z-axis mapper builder.
      */
     AxisMapperBuilder axisZ();
-
-    /**
-     * Check if given size could be built
-     *
-     * @param sizeX Size along x-axis
-     * @param sizeY Size along y-axis
-     * @param sizeZ Size along z-axis
-     *
-     * @throws UnbuildableException if not buildable.
-     */
-    // Usage ?
-    void checkBuildable(int sizeX, int sizeY, int sizeZ) throws UnbuildableException;
 }

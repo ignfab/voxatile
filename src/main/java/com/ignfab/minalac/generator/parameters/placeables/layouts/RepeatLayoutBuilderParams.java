@@ -4,6 +4,7 @@ import java.beans.ConstructorProperties;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.parameters.utils.AxisParams;
 import com.ignfab.minalac.generator.placeables.layouts.DefaultLayoutBuilder;
 import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
@@ -44,7 +45,7 @@ public class RepeatLayoutBuilderParams implements LayoutBuilderParams{
     }
 
     @Override
-    public LayoutBuilder createBuilder(Seed seed) {
+    public LayoutBuilder createBuilder(Seed seed) throws UnbuildableException {
         return DefaultLayoutBuilder.repeat(
             repeat.createBuilder(seed),
             along.create(),

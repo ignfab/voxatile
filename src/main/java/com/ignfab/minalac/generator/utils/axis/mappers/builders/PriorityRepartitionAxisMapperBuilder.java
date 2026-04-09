@@ -2,7 +2,9 @@ package com.ignfab.minalac.generator.utils.axis.mappers.builders;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -10,20 +12,41 @@ import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
 import com.ignfab.minalac.generator.utils.axis.mappers.SizesAxisMapper;
 
+/**
+ * An {@link AxisMapperBuilder} that distributes space to undelying {@link AxisMapperBuilder} with priorities.
+ * <p>
+ * Origins of {@link AxisMapperBuilder} are ignored as they are placed according to {@code PriorityRepartitionAxisMapperBuilder} computations.
+ */
 public class PriorityRepartitionAxisMapperBuilder implements AxisMapperBuilder {
     private final AxisMapperBuilder[] builders;
     private final TreeMap<Integer, List<Integer>> priorities = new TreeMap<>(Collections.reverseOrder());
     private final int[] minLengths;
     private final int minimalSize;
 
-    public PriorityRepartitionAxisMapperBuilder(AxisMapperBuilder[] builders, int[] priorities) {
+    /**
+     * Creates a new {@code PriorityRepartitionAxisMapperBuilder}.
+     * <p>
+     * Underlying builders will be placed side by side. To fill total size, they will be resized according to priorities.
+     * Higher priority gets extra size first. If they can't fill the size, remaining will be given to lower priorities.
+     *
+     * @param builders underlying builders, must have the same lenght as {@code priorities}
+     * @param priorities corresponding priorities, must have the same lenght as {@code builders}
+     * @throws UnbuildableException if underlying builders are not adjustable
+     */
+    public PriorityRepartitionAxisMapperBuilder(AxisMapperBuilder[] builders, int[] priorities) throws UnbuildableException {
         if (builders.length != priorities.length)
             throw new IllegalArgumentException("Provide array must be same length");
-        this.builders = builders;
+
         int sum = 0;
         minLengths = new int[builders.length];
-        for (int i = 0; i < priorities.length; i++) {
+        this.builders = builders;
+
+        for (int i = 0; i < builders.length; i++) {
+            // Force underlying builders to fill underlying space
+            builders[i].makeAdjusted();
+            // Sort builder indexes by priorities
             this.priorities.computeIfAbsent(priorities[i], k -> new ArrayList<>()).add(i);
+
             minLengths[i] = builders[i].minimumSize();
             sum = sum + minLengths[i];
         }
@@ -36,8 +59,10 @@ public class PriorityRepartitionAxisMapperBuilder implements AxisMapperBuilder {
             throw new UnbuildableException("Requested size is not enough");
 
         DistributionResult result = compute(size);
+
         if (result.remainder != 0)
             throw new UnbuildableException("Could not distribute remainder");
+
         return new SizesAxisMapper(result.lengths);
     }
 
@@ -63,25 +88,55 @@ public class PriorityRepartitionAxisMapperBuilder implements AxisMapperBuilder {
         // We start with minimum size for everyone.
         int remaining = size - minimalSize;
         if (remaining == 0) return new DistributionResult(minLengths, 0);
-        int[] lengths = new int[minLengths.length];
+        int[] lengths = minLengths.clone();
 
         // Now we distribute remaining by prirority order
         for (Map.Entry<Integer, List<Integer>> priority: priorities.entrySet()) {
-            int count = priority.getValue().size();
+            List<Integer> candidates = new ArrayList<>(priority.getValue());
 
-            for (int index : priority.getValue()) {
-                int possible = builders[index].maxSizeUnder(minLengths[index] + Math.ceilDiv(remaining, count));
+            // Process all candidates with the same priority
+            while (remaining > 0 && candidates.size() > 0) {
+                // Starts with smallest candidate
+                candidates.sort(Comparator.comparingInt((value) -> lengths[value]));
 
-                // TODO: Check: possible could be negative?
+                int lastRemaining = remaining;
+                int count = candidates.size();
+                ListIterator<Integer> iter = candidates.listIterator();
+                while (iter.hasNext()) {
+                    int index = iter.next();
 
-                remaining += minLengths[index] - possible;
-                lengths[index] = possible;
-                count--;
+                    int possible = builders[index].maxSizeUnder(lengths[index] + Math.ceilDiv(remaining, count));
+
+                    if (possible > lengths[index]) {
+                        // Ok, candidates takes what we gave to him
+                        remaining += lengths[index] - possible;
+                        lengths[index] = possible;
+                    } else {
+                        // We can suspect this candidate is out of the race
+                        possible = builders[index].maxSizeUnder(lengths[index] + remaining);
+                        if (possible == lengths[index])
+                            // This one won't take anymore
+                            iter.remove();
+                    }
+                    count--;
+                }
+
+                // No progress... give up
+                if (remaining == lastRemaining)
+                    break;
+                // Job done !
+                if (remaining == 0)
+                    break;
             }
         }
         return new DistributionResult(lengths, remaining);
     }
 
     private record DistributionResult(int[] lengths, int remainder) {
+    }
+
+    @Override
+    public int origin() {
+        return 0;
     }
 }

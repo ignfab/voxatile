@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.layouts.LayoutBuilderParams;
@@ -67,7 +68,13 @@ public class RenderFacadeTaskParams extends TileTaskParams {
         return new RenderFacadeTask(
             models.create(),
             // TODO: should seed rather be given when building ?
-            builders.stream().map(builder -> builder.createBuilder(generation.seed())).collect(Collectors.toList()),
+            builders.stream().map(builder -> {
+                try {
+                    return builder.createBuilder(generation.seed());
+                } catch (UnbuildableException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }).collect(Collectors.toList()),
             height,
             altitude
         );

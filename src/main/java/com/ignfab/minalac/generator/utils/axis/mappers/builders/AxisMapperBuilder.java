@@ -9,14 +9,29 @@ import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
  * An {@code AxisMapperBuilder} builds {@link AxisMapper}s and gives information about their possible sizes.
  */
 public interface AxisMapperBuilder {
-    // TODO-10 : Doit lever une exception UnresizableStructureException ?
     /**
      * Creates an {@link AxisMapper} for the given size.
+     * <p>
+     * Resulting {@link AxisMapper} will not be offsetted (it will start at position 0)
      *
      * @param size wanted size for {@link AxisMapper}
      * @throws UnbuildableException if not able to build for this size.
      */
     AxisMapper build(int size) throws UnbuildableException;
+
+    /**
+     * Creates default {@link AxisMapper}.
+     * <p>
+     * Default {@link AxisMapper} will choose its size and may be offsetted (depending on underlying structure).
+     */
+    default AxisMapper build() {
+        try {
+            return build(minimumSize());
+        } catch (UnbuildableException e) {
+            // Should never happen as minimum size will always be ok
+            throw new Error("Should not occur", e);
+        }
+    }
 
     /**
      * Returns the greatest buildable size under given size.
@@ -34,4 +49,12 @@ public interface AxisMapperBuilder {
     // TODO-11 : Really ? Always positive or zero?
     // Should always be postive or equals to zero?
     int minimumSize();
+
+    /**
+     * @returns the starting point (usually 0 but may be different).
+     */
+    int origin();
+
+    default void makeAdjusted() throws UnbuildableException {};
+
 }

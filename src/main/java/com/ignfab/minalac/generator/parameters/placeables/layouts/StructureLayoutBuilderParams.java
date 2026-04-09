@@ -12,6 +12,7 @@ import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.annotation.JsonDeserialize;
 import tools.jackson.databind.node.ObjectNode;
 
+import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.placeables.layouts.DefaultLayoutBuilder;
@@ -60,7 +61,7 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
     }
 
     @Override
-    public LayoutBuilder createBuilder(Seed seed) {
+    public LayoutBuilder createBuilder(Seed seed) throws UnbuildableException {
         PlaceableStructure structure = this.structure.create(seed);
 
         LayoutBuilder builder = new StructureLayoutBuilder(structure);
@@ -115,9 +116,10 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
             throw new IllegalArgumentException("Stretch at most must be greater or equals to stretch at least");
         }
 
-        public LayoutBuilder create(PlaceableStructure structure, LayoutBuilder builder, Axis axis) {
+        public LayoutBuilder create(PlaceableStructure structure, LayoutBuilder builder, Axis axis) throws UnbuildableException {
             if (at > structure.limits().max().coord(axis) || at < structure.limits().min().coord(axis))
-                throw new UnsupportedOperationException("Not inside");
+                throw new UnsupportedOperationException("\"at\" value (%d) is outside structure (%d to %d) for axis %s"
+                    .formatted(at, structure.limits().min().coord(axis), structure.limits().max().coord(axis), axis));
 
             if (atLeast == 0 && structure.limits().sizeX() <= 1)
                 throw new UnsupportedOperationException("Forbidden to create empty builder"); // TODO: Check that

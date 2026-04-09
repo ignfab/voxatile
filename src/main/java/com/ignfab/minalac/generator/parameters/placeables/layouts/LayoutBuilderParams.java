@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.parameters.placeables.layouts;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
@@ -26,6 +27,7 @@ public interface LayoutBuilderParams {
      *
      * @param seed The random seed
      * @return created layout builder
+     * @throws UnbuildableException
      */
-    public LayoutBuilder createBuilder(Seed seed);
+    public LayoutBuilder createBuilder(Seed seed) throws UnbuildableException;
 }

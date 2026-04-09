@@ -5,10 +5,11 @@ import java.util.Arrays;
 import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
 import com.ignfab.minalac.generator.utils.axis.mappers.SizesAxisMapper;
+
 /**
  * An {@link AxisMapperBuilder} that repeats underlying {@link AxisMapperBuilder} as many times as possible.
  */
-public class EqualizerAxisMapperBuilder implements AxisMapperBuilder {
+public class RepeatAxisMapperBuilder implements AxisMapperBuilder {
     private final AxisMapperBuilder underlying;
     private final int minSize;
 
@@ -17,9 +18,11 @@ public class EqualizerAxisMapperBuilder implements AxisMapperBuilder {
      *
      * @param underlying Undelying {@link AxisMapperBuilder} to repeat
      * @param minOccur Minimum number of occurences
+     * @throws UnbuildableException
      */
-    public EqualizerAxisMapperBuilder(AxisMapperBuilder underlying, int minOccur) {
+    public RepeatAxisMapperBuilder(AxisMapperBuilder underlying, int minOccur) throws UnbuildableException {
         this.underlying = underlying;
+        underlying.makeAdjusted();
         minSize = underlying.minimumSize() * minOccur;
     }
 
@@ -78,6 +81,11 @@ public class EqualizerAxisMapperBuilder implements AxisMapperBuilder {
         return minSize;
     }
 
+    @Override
+    public int origin() {
+        return 0;
+    }
+
     // underlyingMin should be strictly positive
     // TODO-12 : Revoir cette partie : elle est testée à la louche
     private DistributionResult compute(int size, int underlyingMin) {
@@ -99,4 +107,5 @@ public class EqualizerAxisMapperBuilder implements AxisMapperBuilder {
 
     private record DistributionResult(int[] lengths, int remainder) {
     }
+
 }
