@@ -94,8 +94,13 @@ public record WorldCoords3d(int x, int y, int z) implements Positioned3d {
         return add(value.x, value.y, value.z);
     }
 
+    /**
+     * Returns one of {@code WorldCoords3d} component.
+     * @param axis component axis
+     * @return component value
+     */
     public int coord(Axis axis) {
-        return switch(axis) {
+        return switch (axis) {
             case X -> x;
             case Y -> y;
             case Z -> z;

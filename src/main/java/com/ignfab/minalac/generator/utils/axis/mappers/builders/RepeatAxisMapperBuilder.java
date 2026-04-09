@@ -5,21 +5,27 @@ import java.util.Arrays;
 import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
 import com.ignfab.minalac.generator.utils.axis.mappers.SizesAxisMapper;
+
 /**
  * An {@link AxisMapperBuilder} that repeats underlying {@link AxisMapperBuilder} as many times as possible.
  */
-public class EqualizerAxisMapperBuilder implements AxisMapperBuilder {
+public class RepeatAxisMapperBuilder implements AxisMapperBuilder {
     private final AxisMapperBuilder underlying;
     private final int minSize;
+    private final int maxOccur;
 
     /**
      * Creates a new {@code EqualizerAxisMapperBuilder}.
      *
      * @param underlying Undelying {@link AxisMapperBuilder} to repeat
      * @param minOccur Minimum number of occurences
+     * @param maxOccur Maximum number of occurences
+     * @throws UnbuildableException
      */
-    public EqualizerAxisMapperBuilder(AxisMapperBuilder underlying, int minOccur) {
+    public RepeatAxisMapperBuilder(AxisMapperBuilder underlying, int minOccur, int maxOccur) throws UnbuildableException {
+        this.maxOccur = maxOccur;
         this.underlying = underlying;
+        underlying.makeAdjusted();
         minSize = underlying.minimumSize() * minOccur;
     }
 
@@ -78,10 +84,15 @@ public class EqualizerAxisMapperBuilder implements AxisMapperBuilder {
         return minSize;
     }
 
+    @Override
+    public int origin() {
+        return 0;
+    }
+
     // underlyingMin should be strictly positive
     // TODO-12 : Revoir cette partie : elle est testée à la louche
     private DistributionResult compute(int size, int underlyingMin) {
-        int count = size / underlyingMin;
+        int count = Math.min(size / underlyingMin, maxOccur);
         int remaining = size % underlyingMin;
 
         int[] lengths = new int[count];
@@ -99,4 +110,5 @@ public class EqualizerAxisMapperBuilder implements AxisMapperBuilder {
 
     private record DistributionResult(int[] lengths, int remainder) {
     }
+
 }

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class LengthIndexMapperTest {
+public class SizesAxisMapperTest {
     @Test
     public void testConstructor() {
         assertThrows(IllegalArgumentException.class, () -> new SizesAxisMapper(2, 1, -5));

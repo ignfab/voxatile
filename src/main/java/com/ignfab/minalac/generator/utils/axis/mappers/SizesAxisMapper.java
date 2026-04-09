@@ -2,6 +2,9 @@ package com.ignfab.minalac.generator.utils.axis.mappers;
 
 /**
  * An {@link AxisMapper} that maps a position into a concatenation of intervals with given sizes.
+ * <p>
+ * {@code SizesAxisMapper} does not manage origins of underlying intervals.
+ * They would be moved anyway. So origin of this {@link AxisMapper} is always 0.
  */
 public class SizesAxisMapper implements AxisMapper {
     private final int size;
@@ -49,6 +52,11 @@ public class SizesAxisMapper implements AxisMapper {
     @Override
     public int[] intervals() {
         return intervals;
+    }
+
+    @Override
+    public int minimum() {
+        return 0;
     }
 
     @Override

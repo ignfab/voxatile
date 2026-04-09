@@ -3,35 +3,45 @@ package com.ignfab.minalac.generator.utils.axis.mappers;
 /**
  * An {@link AxisMapper} that does an identity mapping.
  * <p>
- * It maps any position into interval number 0, at the same position.
+ * It maps any position into interval number 0, at the same position (it keeps same origin as underlying interval)
  */
 public class IdentityAxisMapper implements AxisMapper {
+    private final int minimum;
     private final int size;
     private final int[] intervals;
 
     /**
      * Creates a new {@code IdentityIndexMapper}.
      *
-     * @param size Size of index mapper interval (interval starts at pos 0 for now)
+     * @param minimum Start position of the underlying interval
+     * @param size Size of the underlying (and so mapper) interval
      */
-    public IdentityAxisMapper(int size) {
+    public IdentityAxisMapper(int minimum, int size) {
         if (size < 0)
             throw new IllegalArgumentException("length can not be negative");
         this.size = size;
+        this.minimum = minimum;
+
+        // TODO: How offset influences intervals? (anyway we should loose offset as soon as we have several intervals)
+        // We should not use intervals if offset != 0
         intervals = (size == 0) ? new int[0] : new int[] { size };
     }
 
     @Override
-    public Mapped map(int coordinateValue) {
-        // TODO-3 : Faut t-il mettre un offset ou considerer que tous les IndexMapper commencent à zéro?
-        if (0 > coordinateValue || coordinateValue >= size)
-            throw new IndexOutOfBoundsException("Provided position is out of bounds");
-        return new Mapped(0, coordinateValue);
+    public Mapped map(int position) {
+        if (minimum > position || position >= minimum + size)
+            throw new IndexOutOfBoundsException("%s Provided position is out of bounds (position %d, min %d, size %d)".formatted(this, position, minimum, size));
+        return new Mapped(0, position);
     }
 
     @Override
     public int[] intervals() {
         return intervals;
+    }
+
+    @Override
+    public int minimum() {
+        return minimum;
     }
 
     @Override

@@ -7,15 +7,18 @@ import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
-import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.placeables.LayoutStructure;
 import com.ignfab.minalac.generator.placeables.Structure;
 import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
+import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.voxelization.shape2d.LineString2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Segment2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.iterator.IndexedPosition2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.ThickLinearIndexedVoxelizer2d;
 
+/**
+ * A {@link ModelTask} rendering facades from 2d shapes, using {@link LayoutBuilder}s.
+ */
 public class RenderFacadeTask  extends ModelTask<Shape2dConvertibleModel> {
 
     private final List<LayoutBuilder> builders;
@@ -23,6 +26,14 @@ public class RenderFacadeTask  extends ModelTask<Shape2dConvertibleModel> {
     private final String baseAltitudeMetadata;
     private final ThickLinearIndexedVoxelizer2d voxelizer;
 
+    /**
+     * Creates a new {@code RenderFacadeTask}.
+     *
+     * @param selection Selection of models to render
+     * @param builders Layout builder to use to render facades
+     * @param heightMetadata Name of metadata holding building height
+     * @param baseAltitudeMetadata Name of metadata holding building base altitude (altitude of walls bottom)
+     */
     public RenderFacadeTask(
         ModelSelection selection,
         List<LayoutBuilder> builders,
@@ -36,7 +47,7 @@ public class RenderFacadeTask  extends ModelTask<Shape2dConvertibleModel> {
 
         int thickness = 0;
         for (LayoutBuilder builder : builders)
-            thickness = Math.max(thickness, builder.axisY().minimumSize());
+            thickness = Math.max(thickness, builder.yAxis().minimumSize());
 
         voxelizer = new ThickLinearIndexedVoxelizer2d(thickness);
     }
@@ -60,14 +71,12 @@ public class RenderFacadeTask  extends ModelTask<Shape2dConvertibleModel> {
             double remain = 0.0;
 
             Segment2d previousSegment = null;
-            for (Segment2d segment: lineString.segments()) {
+            for (Segment2d segment : lineString.segments()) {
 
-                if (
-                    segment.length() > 2.0 &&
-                    previousSegment != null &&
-                    previousSegment.direction().dot(segment.direction()) < 0.5
+                if (segment.length() > 2.0 && previousSegment != null
+                    && previousSegment.direction().dot(segment.direction()) < 0.5
                 ) {
-                    int length = (int)Math.ceil(remain);
+                    int length = (int) Math.ceil(remain);
                     remain -= length;
                     lengths.add(length);
                 }
@@ -77,18 +86,18 @@ public class RenderFacadeTask  extends ModelTask<Shape2dConvertibleModel> {
 
             // Add last remaining part
             if (remain > 0.0)
-                lengths.add((int)Math.ceil(remain));
+                lengths.add((int) Math.ceil(remain));
 
             // Prepare final structure
             List<Structure> structures = new LinkedList<>();
-            for (int length: lengths) {
+            for (int length : lengths) {
                 Structure structure = null;
 
                 for (LayoutBuilder builder : builders) {
                     try {
                         structure = builder.build(
                             (int) Math.ceil(length),
-                            builder.axisY().minimumSize(),
+                            null,
                             height);
                         break;
                     } catch (UnbuildableException e) {}
@@ -105,7 +114,8 @@ public class RenderFacadeTask  extends ModelTask<Shape2dConvertibleModel> {
             Structure structure = LayoutStructure.concatenate(structures, Axis.X);
 
             // Draw structure along linestring
-            int x, y;
+            int x;
+            int y;
 
             for (IndexedPosition2d index : voxelizer.voxelize(lineString)) {
                 x = (int) Math.round(index.index());

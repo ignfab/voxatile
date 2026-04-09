@@ -16,8 +16,8 @@ public class StretcherIndexMapper implements AxisMapper {
     /**
      * Creates a new {@code AxisMapper}.
      *
-     * @param stretchablePosition Position where the underlying interval is stetched
-     * @param baseSize Size of underlying interval
+     * @param stretchablePosition Position where the underlying interval is stetched (must be in the underlying interval)
+     * @param baseSize Size of the underlying interval
      * @param size Stretched size (size of this mapper)
      */
     public StretcherIndexMapper(int stretchablePosition, int baseSize, int size) {
@@ -29,11 +29,12 @@ public class StretcherIndexMapper implements AxisMapper {
             throw new IllegalArgumentException("Can not be squeezed more than 1");
         if (stretchablePosition < 0 || stretchablePosition >= baseSize)
             throw new IllegalArgumentException("Stretchable coordinate out of base interval");
-        // TODO-6: stretchable coord doit être [0, lengthAtRest - 1] => Faire offset?
-        // Si ce test => Impossible de faire des structures vides (if (lengthAtRest == 0) return Collections.emptyList();)
+
         this.stretchablePosition = stretchablePosition;
         this.stretchSize = size - baseSize;
         this.size = size;
+
+        // TODO: See what to do for size = 0 (seems `if (size - baseSize < -1)` prevents that case)
         intervals = new int[]{ baseSize };
     }
 
@@ -49,6 +50,11 @@ public class StretcherIndexMapper implements AxisMapper {
     @Override
     public int[] intervals() {
         return intervals;
+    }
+
+    @Override
+    public int minimum() {
+        return 0;
     }
 
     @Override

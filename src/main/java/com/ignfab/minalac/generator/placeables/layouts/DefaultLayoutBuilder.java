@@ -3,51 +3,56 @@ package com.ignfab.minalac.generator.placeables.layouts;
 import java.util.Arrays;
 
 import com.ignfab.minalac.generator.exceptions.UnbuildableException;
-import com.ignfab.minalac.generator.placeables.Structure;
 import com.ignfab.minalac.generator.placeables.EmptyStructure;
 import com.ignfab.minalac.generator.placeables.LayoutStructure;
+import com.ignfab.minalac.generator.placeables.Structure;
 import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
-import com.ignfab.minalac.generator.utils.axis.mappers.builders.DelegateAxisMapperBuilder;
-import com.ignfab.minalac.generator.utils.axis.mappers.builders.EqualizerAxisMapperBuilder;
 import com.ignfab.minalac.generator.utils.axis.mappers.builders.AxisMapperBuilder;
+import com.ignfab.minalac.generator.utils.axis.mappers.builders.DelegateAxisMapperBuilder;
+import com.ignfab.minalac.generator.utils.axis.mappers.builders.OverlayAxisMapperBuilder;
 import com.ignfab.minalac.generator.utils.axis.mappers.builders.PriorityRepartitionAxisMapperBuilder;
+import com.ignfab.minalac.generator.utils.axis.mappers.builders.RepeatAxisMapperBuilder;
 import com.ignfab.minalac.generator.utils.axis.mappers.builders.StretcherAxisMapperBuilder;
-import com.ignfab.minalac.generator.utils.axis.mappers.builders.SuperDelegateAxisMapperBuilder;
 
 /**
  * A versatile implementation of {@link LayoutBuilder} based on a layout builder provider.
  */
 public class DefaultLayoutBuilder implements LayoutBuilder {
     private final LayoutBuilderProvider provider;
-    private final AxisMapperBuilder axisXBuilder;
-    private final AxisMapperBuilder axisYBuilder;
-    private final AxisMapperBuilder axisZBuilder;
+    private final AxisMapperBuilder xAxisBuilder;
+    private final AxisMapperBuilder yAxisBuilder;
+    private final AxisMapperBuilder zAxisBuilder;
 
     /**
      * Creates a new {@code DefaultAxisStructureBuilder} with only one, eventually repeated, structure builder.
+     *
+     * @param builder underlying unique builder
+     * @param xAxisBuilder axis builder for x-axis
+     * @param yAxisBuilder axis builder for y-axis
+     * @param zAxisBuilder axis builder for z-axis
      */
-    public DefaultLayoutBuilder(LayoutBuilder builder, AxisMapperBuilder axisXBuilder, AxisMapperBuilder axisYBuilder, AxisMapperBuilder axisZBuilder) {
-        this((x, y, z) -> builder, axisXBuilder, axisYBuilder, axisZBuilder);
+    public DefaultLayoutBuilder(LayoutBuilder builder, AxisMapperBuilder xAxisBuilder, AxisMapperBuilder yAxisBuilder, AxisMapperBuilder zAxisBuilder) {
+        // Could be optimized if builder is a DefaultLayoutBuilder, we could simply do:
+        // this.provider = builder.provider
+        // this.axis*Builder = combine axis*Builder over builder.axis*Builder (need a new method)
+        this((x, y, z) -> builder, xAxisBuilder, yAxisBuilder, zAxisBuilder);
     }
 
-    private DefaultLayoutBuilder(LayoutBuilderProvider provider, AxisMapperBuilder axisXBuilder, AxisMapperBuilder axisYBuilder, AxisMapperBuilder axisZBuilder) {
+    private DefaultLayoutBuilder(LayoutBuilderProvider provider, AxisMapperBuilder xAxisBuilder, AxisMapperBuilder yAxisBuilder, AxisMapperBuilder zAxisBuilder) {
         this.provider = provider;
-        this.axisXBuilder = axisXBuilder;
-        this.axisYBuilder = axisYBuilder;
-        this.axisZBuilder = axisZBuilder;
+        this.xAxisBuilder = xAxisBuilder;
+        this.yAxisBuilder = yAxisBuilder;
+        this.zAxisBuilder = zAxisBuilder;
     }
 
     @Override
-    public Structure build(int sizeX, int sizeY, int sizeZ) throws UnbuildableException {
-        AxisMapper axisX, axisY, axisZ;
-        axisX = axisXBuilder.build(sizeX);
-        axisY = axisYBuilder.build(sizeY);
-        axisZ = axisZBuilder.build(sizeZ);
+    public Structure build(Integer sizeX, Integer sizeY, Integer sizeZ) throws UnbuildableException {
+        AxisMapper axisX = sizeX == null ? xAxisBuilder.build() : xAxisBuilder.build(sizeX);
+        AxisMapper axisY = sizeY == null ? yAxisBuilder.build() : yAxisBuilder.build(sizeY);
+        AxisMapper axisZ = sizeZ == null ? zAxisBuilder.build() : zAxisBuilder.build(sizeZ);
 
-        if (axisX.intervals().length == 0 ||
-            axisY.intervals().length == 0 ||
-            axisZ.intervals().length == 0)
+        if (axisX.intervals().length == 0 || axisY.intervals().length == 0 || axisZ.intervals().length == 0)
         return EmptyStructure.INSTANCE;
 
         Structure[][][] structures = new Structure
@@ -68,34 +73,18 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
     }
 
     @Override
-    public void checkBuildable(int sizeX, int sizeY, int sizeZ) throws UnbuildableException {
-        if (sizeX <= 0)
-            throw new UnbuildableException(String.format("sizeX must be strictly positive (Asked : %d)", sizeX));
-        if (sizeY <= 0) {
-            throw new UnbuildableException(String.format("sizeY must be strictly positive (Asked : %d)", sizeY));
-        }if (sizeZ <= 0)
-            throw new UnbuildableException(String.format("sizeZ must be strictly positive (Asked : %d)", sizeZ));
-        if (axisX().maxSizeUnder(sizeX) != sizeX)
-            throw new UnbuildableException(String.format("Asked sizeX (%d) do not match the allowed (%d)", sizeX, axisX().maxSizeUnder(sizeX)));
-        if (axisY().maxSizeUnder(sizeY) != sizeY) {
-            throw new UnbuildableException(String.format("Asked sizeY (%d) do not match the allowed (%d)", sizeY, axisY().maxSizeUnder(sizeY)));
-        }if (axisZ().maxSizeUnder(sizeZ) != sizeZ)
-            throw new UnbuildableException(String.format("Asked sizeZ (%d) do not match the allowed (%d)", sizeZ, axisZ().maxSizeUnder(sizeZ)));
+    public AxisMapperBuilder xAxis() {
+        return xAxisBuilder;
     }
 
     @Override
-    public AxisMapperBuilder axisX() {
-        return axisXBuilder;
+    public AxisMapperBuilder yAxis() {
+        return yAxisBuilder;
     }
 
     @Override
-    public AxisMapperBuilder axisY() {
-        return axisYBuilder;
-    }
-
-    @Override
-    public AxisMapperBuilder axisZ() {
-        return axisZBuilder;
+    public AxisMapperBuilder zAxis() {
+        return zAxisBuilder;
     }
 
     /**
@@ -109,29 +98,41 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
      * @param stretchPosition where builder should be streched along axis
      * @param minStretch minimal stretching
      * @param maxStretch maximal stretching
+     * @return created {@link LayoutBuilder}
+     * @throws UnbuildableException if layout builder cannot be created
      */
-    public static LayoutBuilder stretch(LayoutBuilder builder, Axis axis, int stretchPosition, int minStretch, int maxStretch) {
+    public static LayoutBuilder stretch(LayoutBuilder builder, Axis axis, int stretchPosition, int minStretch, int maxStretch) throws UnbuildableException {
         return new DefaultLayoutBuilder(
             builder,
-            axis.x() ? new StretcherAxisMapperBuilder(builder.axisX(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.axisX()),
-            axis.y() ? new StretcherAxisMapperBuilder(builder.axisY(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.axisY()),
-            axis.z() ? new StretcherAxisMapperBuilder(builder.axisZ(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.axisZ())
+            // StretcherAxisMapperBuilder for chosen axis, DelegateAxisMapperBuilder for others
+            axis == Axis.X ? new StretcherAxisMapperBuilder(builder.xAxis(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.xAxis()),
+            axis == Axis.Y ? new StretcherAxisMapperBuilder(builder.yAxis(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.yAxis()),
+            axis == Axis.Z ? new StretcherAxisMapperBuilder(builder.zAxis(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.zAxis())
         );
     }
 
     /**
-     * Creates a new {@code AxisStructureBuilder} repeating an {@link LayoutBuilder} along an axis
+     * Creates a new {@code AxisStructureBuilder} repeating an {@link LayoutBuilder} along an axis.
      *
      * @param builder builder to repeat
      * @param axis axis of repetition
-     * @param minOccur minimal repetition (could be 0)
+     * @param minimum minimal number of repetitions (could be 0)
+     * @param maximum maximal number of repetitions
+     * @return created {@link LayoutBuilder}
+     * @throws UnbuildableException if layout builder cannot be created
      */
-    public static LayoutBuilder repeat(LayoutBuilder builder, Axis axis, int minOccur) {
+    public static LayoutBuilder repeat(LayoutBuilder builder, Axis axis, int minimum, int maximum) throws UnbuildableException {
+        if (minimum < 0)
+            throw new IllegalArgumentException("minimum must be positive or zero");
+        if (minimum > maximum)
+            throw new IllegalArgumentException("minimum must be less than maximum");
+
         return new DefaultLayoutBuilder(
             builder,
-            axis.x() ? new EqualizerAxisMapperBuilder(builder.axisX(), minOccur) : new DelegateAxisMapperBuilder(builder.axisX()),
-            axis.y() ? new EqualizerAxisMapperBuilder(builder.axisY(), minOccur) : new DelegateAxisMapperBuilder(builder.axisY()),
-            axis.z() ? new EqualizerAxisMapperBuilder(builder.axisZ(), minOccur) : new DelegateAxisMapperBuilder(builder.axisZ())
+            // RepeatAxisMapperBuilder for chosen axis, DelegateAxisMapperBuilder for others
+            axis == Axis.X ? new RepeatAxisMapperBuilder(builder.xAxis(), minimum, maximum) : new DelegateAxisMapperBuilder(builder.xAxis()),
+            axis == Axis.Y ? new RepeatAxisMapperBuilder(builder.yAxis(), minimum, maximum) : new DelegateAxisMapperBuilder(builder.yAxis()),
+            axis == Axis.Z ? new RepeatAxisMapperBuilder(builder.zAxis(), minimum, maximum) : new DelegateAxisMapperBuilder(builder.zAxis())
         );
     }
 
@@ -141,24 +142,29 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
      * @param builders builders to concatenate
      * @param axis axis of concatenation
      * @param priorities priorities for each builders (must have same length as {@code builders})
+     * @return created {@link LayoutBuilder}
+     * @throws UnbuildableException if layout builder cannot be created
      */
-    public static LayoutBuilder priority(LayoutBuilder[] builders, Axis axis, int[] priorities){
+    public static LayoutBuilder priority(LayoutBuilder[] builders, Axis axis, int[] priorities) throws UnbuildableException {
         if (builders.length == 0 || builders.length != priorities.length)
             throw new RuntimeException("tab length do not match");
-        AxisMapperBuilder[] tabX = Arrays.stream(builders).map(LayoutBuilder::axisX).toArray(AxisMapperBuilder[]::new);
-        AxisMapperBuilder[] tabY = Arrays.stream(builders).map(LayoutBuilder::axisY).toArray(AxisMapperBuilder[]::new);
-        AxisMapperBuilder[] tabZ = Arrays.stream(builders).map(LayoutBuilder::axisZ).toArray(AxisMapperBuilder[]::new);
 
+        // Separate in three axis arrays the axes from each builder.
+        AxisMapperBuilder[] tabX = Arrays.stream(builders).map(LayoutBuilder::xAxis).toArray(AxisMapperBuilder[]::new);
+        AxisMapperBuilder[] tabY = Arrays.stream(builders).map(LayoutBuilder::yAxis).toArray(AxisMapperBuilder[]::new);
+        AxisMapperBuilder[] tabZ = Arrays.stream(builders).map(LayoutBuilder::zAxis).toArray(AxisMapperBuilder[]::new);
 
         return new DefaultLayoutBuilder(
+            // A LayoutBuilderProvider that maps `builders` argument array to the chosen axis:
             switch (axis) {
-                case X -> (x, y, z) -> { return builders[x]; };
-                case Y -> (x, y, z) -> { return builders[y]; };
-                case Z -> (x, y, z) -> { return builders[z]; };
+                case X -> (x, y, z) -> builders[x];
+                case Y -> (x, y, z) -> builders[y];
+                case Z -> (x, y, z) -> builders[z];
             },
-            axis.x() ? new PriorityRepartitionAxisMapperBuilder(tabX, priorities) : new SuperDelegateAxisMapperBuilder(tabX),
-            axis.y() ? new PriorityRepartitionAxisMapperBuilder(tabY, priorities) : new SuperDelegateAxisMapperBuilder(tabY),
-            axis.z() ? new PriorityRepartitionAxisMapperBuilder(tabZ, priorities) : new SuperDelegateAxisMapperBuilder(tabZ)
+            // PriorityRepartitionAxisMapperBuilder for chosen axis, SuperDelegateAxisMapperBuilder for others
+            axis == Axis.X ? new PriorityRepartitionAxisMapperBuilder(tabX, priorities) : new OverlayAxisMapperBuilder(tabX),
+            axis == Axis.Y ? new PriorityRepartitionAxisMapperBuilder(tabY, priorities) : new OverlayAxisMapperBuilder(tabY),
+            axis == Axis.Z ? new PriorityRepartitionAxisMapperBuilder(tabZ, priorities) : new OverlayAxisMapperBuilder(tabZ)
         );
     }
 

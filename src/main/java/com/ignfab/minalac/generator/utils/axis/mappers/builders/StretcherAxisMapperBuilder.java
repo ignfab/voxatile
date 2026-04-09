@@ -5,7 +5,7 @@ import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
 import com.ignfab.minalac.generator.utils.axis.mappers.StretcherIndexMapper;
 
 /**
- * Builder for an {@link AxisMapper} that stretches an interval.
+ * Builder for an {@link AxisMapper} that stretches an interval at a given coordinate.
  */
 public class StretcherAxisMapperBuilder implements AxisMapperBuilder {
     private final AxisMapperBuilder underlying;
@@ -13,8 +13,18 @@ public class StretcherAxisMapperBuilder implements AxisMapperBuilder {
     private final int minSize;
     private final int maxSize;
 
-    public StretcherAxisMapperBuilder(AxisMapperBuilder underlying, int stretchableCoord, int minRepetition, int maxRepetition) {
+    /**
+     * Creates a new {@code StretcherAxisMapperBuilder}.
+     *
+     * @param underlying {@link AxisMapperBuilder} to stretch
+     * @param stretchableCoord coordinate where to stretch {@code underlying}
+     * @param minRepetition minimum possible repetitions of stretchable coordinate
+     * @param maxRepetition maximum possible repetitions of stretchable coordinate
+     * @throws UnbuildableException if underlying builder is not adjustable
+     */
+    public StretcherAxisMapperBuilder(AxisMapperBuilder underlying, int stretchableCoord, int minRepetition, int maxRepetition) throws UnbuildableException {
         this.underlying = underlying;
+        underlying.makeAdjusted();
         this.stretchableCoord = stretchableCoord;
         int underlyingMin = underlying.minimumSize();
         // Voir TODO-12 : le questionnement semble similaire
@@ -35,6 +45,7 @@ public class StretcherAxisMapperBuilder implements AxisMapperBuilder {
             throw new UnbuildableException("Not enough space");
         if (size > maxSize)
             throw new UnbuildableException("Requested size is too large");
+        //TODO: MISSING ORIGIN
         return new StretcherIndexMapper(stretchableCoord, underlying.minimumSize(), size);
     }
 
@@ -48,5 +59,10 @@ public class StretcherAxisMapperBuilder implements AxisMapperBuilder {
     @Override
     public int minimumSize() {
         return minSize;
+    }
+
+    @Override
+    public int origin() {
+        return 0;
     }
 }

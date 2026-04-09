@@ -3,8 +3,16 @@ package com.ignfab.minalac.generator.placeables;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
-public class EmptyStructure implements Structure {
+/**
+ * A structure containing nothing.
+ * <p>
+ * This is a singleton class, always use {@code EmptyStructure.INSTANCE}.
+ */
+public final class EmptyStructure implements Structure {
 
+    /**
+     * Singleton instance.
+     */
     public static final EmptyStructure INSTANCE = new EmptyStructure();
 
     private EmptyStructure() {};

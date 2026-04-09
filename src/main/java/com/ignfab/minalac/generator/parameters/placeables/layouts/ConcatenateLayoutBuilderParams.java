@@ -14,13 +14,14 @@ import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.annotation.JsonDeserialize;
 import tools.jackson.databind.node.ObjectNode;
 
+import com.ignfab.minalac.generator.exceptions.UnbuildableException;
+import com.ignfab.minalac.generator.parameters.utils.AxisParams;
 import com.ignfab.minalac.generator.placeables.layouts.DefaultLayoutBuilder;
 import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
-import com.ignfab.minalac.generator.parameters.utils.AxisParams;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
 /**
- * Parameters for a {@link LayoutBuilder} places different layouts along an axis
+ * Parameters for a {@link LayoutBuilder} concatenates different layouts along an axis
  * <p>
  * Usage example:
  * <pre>
@@ -32,57 +33,87 @@ import com.ignfab.minalac.generator.utils.random.Seed;
  * </pre>
  */
 public class ConcatenateLayoutBuilderParams implements LayoutBuilderParams {
+    /**
+     * List of layouts to concatenate.
+     */
     @JsonSetter(nulls = Nulls.FAIL)
-    public List<PlaceParams> place;
+    public List<ConcatenateParams> concatenate;
 
+    /**
+     * Axis along which layouts are concatenated.
+     */
     @JsonSetter(nulls = Nulls.FAIL)
     AxisParams along;
 
-    @ConstructorProperties({ "place", "along" })
-    public ConcatenateLayoutBuilderParams(List<PlaceParams> place, AxisParams along) {
-        this.place = place;
+    /**
+     * Creates a new {@code ConcatenateLayoutBuilderParams} out of mandatory parameters.
+     * @param concatenate list of layouts to concatenate
+     * @param along axis along which concatenate layouts
+     */
+    @ConstructorProperties({ "concatenate", "along" })
+    public ConcatenateLayoutBuilderParams(List<ConcatenateParams> concatenate, AxisParams along) {
+        this.concatenate = concatenate;
         this.along = along;
     }
 
     @Override
     public void validate() {
-        if (place.isEmpty())
+        if (concatenate.isEmpty())
             throw new IllegalArgumentException("Cannot be empty");
-        place.forEach(PlaceParams::validate);
+        concatenate.forEach(ConcatenateParams::validate);
     }
 
     @Override
-    public LayoutBuilder createBuilder(Seed seed) {
-        LayoutBuilder[] builders = new LayoutBuilder[place.size()];
-        int[] priorities = new int[place.size()];
-        for (int i = 0; i < place.size(); i++)  {
-            builders[i] = place.get(i).layout.createBuilder(seed);
-            priorities[i] = place.get(i).priority;
+    public LayoutBuilder createBuilder(Seed seed) throws UnbuildableException {
+        LayoutBuilder[] builders = new LayoutBuilder[concatenate.size()];
+        int[] priorities = new int[concatenate.size()];
+        for (int i = 0; i < concatenate.size(); i++)  {
+            builders[i] = concatenate.get(i).layout.createBuilder(seed);
+            priorities[i] = concatenate.get(i).priority;
         }
 
         return DefaultLayoutBuilder.priority(builders, along.create(), priorities);
     }
 
-    @JsonDeserialize(using = PlaceParams.Deserializer.class)
-    public static final class PlaceParams {
+    /**
+     * Parameters for each concatenated layout.
+     * <p>
+     * This is basically a {@link LayoutBuilderParams} with an eventual extra {@code priority} field.
+     */
+    @JsonDeserialize(using = ConcatenateParams.Deserializer.class)
+    public static final class ConcatenateParams {
+        /**
+         * Concatenated {@link LayoutBuilderParams}.
+         */
         @JsonSetter(nulls = Nulls.FAIL)
         public LayoutBuilderParams layout;
 
+        /**
+         * Priority for space repartition.
+         */
         @JsonSetter(nulls = Nulls.SKIP)
         public int priority = 0;
 
+        /**
+         * Validates parameters.
+         */
         public void validate() {
             layout.validate();
         }
 
-        public static class Deserializer extends ValueDeserializer<PlaceParams> {
+        /**
+         * Custom deserializer for {@code ConcatenateParams}.
+         * <p>
+         * This deserializer will take care of {@code priority} field and use all other fields to deserialize into {@code layout}.
+         */
+        public static class Deserializer extends ValueDeserializer<ConcatenateParams> {
 
             @Override
-            public PlaceParams deserialize(JsonParser parser, DeserializationContext context) throws JacksonException {
+            public ConcatenateParams deserialize(JsonParser parser, DeserializationContext context) throws JacksonException {
                 JsonNode node = parser.readValueAsTree();
 
                 if (node instanceof ObjectNode objectNode) {
-                    PlaceParams params = new PlaceParams();
+                    ConcatenateParams params = new ConcatenateParams();
 
                     JsonNode priorityNode = objectNode.get("priority");
                     if (priorityNode != null) {
