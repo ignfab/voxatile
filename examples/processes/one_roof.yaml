@@ -24,7 +24,7 @@ forEachTile:
           at: [ 0, 0, -20..-4 ]
 
   oneBuilding:
-    type: renderRoofTest
+    type: playgroundRoof
     roofType: hipped
     height: height
     altitude: ground-floor-altitude

@@ -6,7 +6,6 @@ import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Segment2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Shape2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.Shape2dVoxelizer;
@@ -27,8 +26,6 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
     private final String altitudeMetadata;
     private final String heightMetadata;
 
-    private boolean applyF = false;
-
     private final Shape2dVoxelizer voxelizer = new SurfaceVoxelizer2d();
 
     /**
@@ -39,13 +36,12 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
      * @param inside What to place inside geometries
      * @param borders What to place on geometries borders
      */
-    public RenderRoofTask(ModelSelection selection, RoofType type, String altitudeMetadata, String heightMetadata, Placeable placeable, boolean applyF) {
+    public RenderRoofTask(ModelSelection selection, RoofType type, String altitudeMetadata, String heightMetadata, Placeable placeable) {
         super(Shape2dConvertibleModel.class, selection);
         this.type = type;
         this.placeable = placeable;
         this.altitudeMetadata = altitudeMetadata;
         this.heightMetadata = heightMetadata;
-        this.applyF = applyF;
     }
 
     private void drawFlat(Shape2d shape, GenerationTile tile, int altitude) {
@@ -55,37 +51,11 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
     }
 
     private void drawHipped(Shape2d shape, GenerationTile tile, int altitude, double slope) {
-        /// Ajout Barycentre
-        int xG = 0;
-        int yG = 0;
-        int n = 0;
-        for (Segment2d segment: Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
-            xG = xG + segment.start().x();
-            yG = yG + segment.start().y();
-            n++;
-        }
-        WorldCoords2d barycenter = new WorldCoords2d(xG / n, yG / n);
-
-        double max = Double.MAX_VALUE;
-        for (Segment2d segment: Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
-            double distBary = Math.abs(segment.signedDistanceTo(barycenter));
-            if (max > distBary)
-                max = distBary;
-        }
-
-        if (applyF) {
-            System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA : " + max);
-        }
-        //// Fin ajout
-
         for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(shape))) {
             int x = voxel.coords().x();
             int y = voxel.coords().y();
             Double distance = null;
-            Double maxDistance = 0.0;
-
             for (Segment2d segment: Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
-
                 double index = segment.nearestPointIndex(x, y);
                 double extra = 0;
                 double d;
@@ -100,36 +70,12 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
                     d = d * d;
                 }
 
-                if (d >= (extra * extra) && (distance == null || distance > d)) {
+                if (d >= (extra * extra) && (distance == null || distance > d))
                     distance = d;
-                    maxDistance = Math.max(distance, maxDistance);
-                }
             }
-
-            /// Modification
-            if (distance != null) {
-                distance = Math.sqrt(distance);
-                maxDistance = Math.sqrt(maxDistance);
-                if (applyF) {
-                    System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB : " + maxDistance);
-                }
-                double value;
-                int iMax = 0;
-                if (applyF) {
-                    value = f(distance, maxDistance);
-                    iMax = 0;
-                } else {
-                    value = slope * distance;
-                }
-                int pValue = altitude + (int) Math.round(value);
-                for (int i = 0; i <= iMax; i ++)
-                    placeable.place(tile.voxels(), x, y, pValue - i);
-            }
+            if (distance != null)
+                placeable.place(tile.voxels(), x, y, altitude + (int) Math.round(slope * Math.sqrt(distance)));
         }
-    }
-
-    private static double f(double d, double max) {
-        return max * (1 - Math.pow(1 - (d / max), 2));
     }
 
     @Override
@@ -151,7 +97,7 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
                 drawFlat(shape, tile, altitude);
                 break;
             case HIPPED:
-                drawHipped(shape, tile, altitude, 1);
+                drawHipped(shape, tile, altitude, 1.0);
                 break;
             default:
                 break;

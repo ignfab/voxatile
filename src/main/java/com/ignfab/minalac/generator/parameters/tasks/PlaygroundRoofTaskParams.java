@@ -7,13 +7,12 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.tasks.RenderRoofTask.RoofType;
-import com.ignfab.minalac.generator.tasks.RenderRoofTest;
+import com.ignfab.minalac.generator.tasks.PlaygroundRoofTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
 
-public class RenderRoofTestParams extends TileTaskParams {
+public class PlaygroundRoofTaskParams extends TileTaskParams {
 
     public enum RoofTypeParams {
 
@@ -54,7 +53,7 @@ public class RenderRoofTestParams extends TileTaskParams {
     public boolean applyF = false;
 
     @ConstructorProperties({"place", "roofType", "altitude", "height"})
-    public RenderRoofTestParams(PlaceableParams place, RoofTypeParams roofType, String altitude, String height) {
+    public PlaygroundRoofTaskParams(PlaceableParams place, RoofTypeParams roofType, String altitude, String height) {
         this.place = place;
         this.roofType = roofType;
         this.altitude = altitude;
@@ -72,7 +71,7 @@ public class RenderRoofTestParams extends TileTaskParams {
 
     @Override
     public TileTask create(Generation generation) {
-        return new RenderRoofTest(
+        return new PlaygroundRoofTask(
             roofType.create(),
             altitude,
             height,

@@ -159,5 +159,4 @@ forEachTile:
     height: height
     altitude: ground-floor-altitude
     place: default:sandstonebrick
-    applyF: true
 

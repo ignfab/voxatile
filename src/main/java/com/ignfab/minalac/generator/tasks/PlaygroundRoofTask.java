@@ -13,7 +13,7 @@ import com.ignfab.minalac.generator.voxelization.shape2d.Shape2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.Shape2dVoxelizer;
 import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.SurfaceVoxelizer2d;
 
-public class RenderRoofTest extends ModelTask<Shape2dConvertibleModel> {
+public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
     private final Placeable placeable;
     private final RenderRoofTask.RoofType type;
     private final String altitudeMetadata;
@@ -22,7 +22,7 @@ public class RenderRoofTest extends ModelTask<Shape2dConvertibleModel> {
 
     private boolean applyF = false;
 
-    public RenderRoofTest(RenderRoofTask.RoofType type, String altitudeMetadata, String heightMetadata, Placeable placeable, boolean applyF) {
+    public PlaygroundRoofTask(RenderRoofTask.RoofType type, String altitudeMetadata, String heightMetadata, Placeable placeable, boolean applyF) {
         super(Shape2dConvertibleModel.class, null);
         this.type = type;
         this.placeable = placeable;
@@ -140,6 +140,7 @@ public class RenderRoofTest extends ModelTask<Shape2dConvertibleModel> {
         Shape2d shape = testingShapeBigRectangle().toShape2d();
 
         drawMansard(shape, tile, altitude);
+        //oldDrawHipped(shape, tile, altitude, 1);
     }
 
     @Override

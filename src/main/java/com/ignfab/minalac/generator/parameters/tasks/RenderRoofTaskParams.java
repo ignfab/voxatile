@@ -58,8 +58,6 @@ public class RenderRoofTaskParams extends TileTaskParams {
     @JsonSetter(nulls = Nulls.FAIL)
     RoofTypeParams roofType;
 
-    public boolean applyF = false;
-
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
@@ -92,8 +90,7 @@ public class RenderRoofTaskParams extends TileTaskParams {
             roofType.create(),
             altitude,
             height,
-            place.create(generation.seed()),
-            applyF
+            place.create(generation.seed())
         );
     }
 }
