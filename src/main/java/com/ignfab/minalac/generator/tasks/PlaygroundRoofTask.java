@@ -5,7 +5,10 @@ import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
+import com.ignfab.minalac.generator.utils.world2d.Vector2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
+import com.ignfab.minalac.generator.utils.world2d.WorldSize2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.LineString2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LinearRing2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Polygon2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Segment2d;
@@ -31,31 +34,17 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
         this.applyF = applyF;
     }
 
-    private static Shape2d testingShapeRectangle() {
+    private static Shape2d testingShapeRectangle(WorldCoords2d start, WorldSize2d size) {
         return new Polygon2d(LinearRing2d.fromPoints(
-            new WorldCoords2d(5, 5),
-            new WorldCoords2d(20, 5),
-            new WorldCoords2d(20, -15),
-            new WorldCoords2d(5, -15))
-        );
+            start,
+            new WorldCoords2d(start.x(), start.y() + size.y()),
+            new WorldCoords2d(start.x() + size.x(), start.y() + size.y()),
+            new WorldCoords2d(start.x() + size.x(), start.y())
+        ));
     }
 
-    private static Shape2d testingShapeBigRectangle() {
-        return new Polygon2d(LinearRing2d.fromPoints(
-            new WorldCoords2d(5, 5),
-            new WorldCoords2d(55, 5),
-            new WorldCoords2d(55, -25),
-            new WorldCoords2d(5, -25))
-        );
-    }
-
-    private static Shape2d testingShapeSquare() {
-        return new Polygon2d(LinearRing2d.fromPoints(
-            new WorldCoords2d(5, 5),
-            new WorldCoords2d(15, 5),
-            new WorldCoords2d(15, -5),
-            new WorldCoords2d(5, -5))
-        );
+    private static Shape2d testingShapeRectangle(int xS, int yS, WorldSize2d size) {
+        return testingShapeRectangle(new WorldCoords2d(xS, yS), size);
     }
 
     private void drawMansard(Shape2d shape, GenerationTile tile, int altitude) {
@@ -63,7 +52,7 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
         int xG = 0;
         int yG = 0;
         int n = 0;
-        for (Segment2d segment: Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
+        for (Segment2d segment : Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
             xG = xG + segment.start().x();
             yG = yG + segment.start().y();
             n++;
@@ -71,7 +60,7 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
         WorldCoords2d barycenter = new WorldCoords2d(xG / n, yG / n);
 
         double minDistanceToSegmentFromBarycenter = Double.MAX_VALUE;
-        for (Segment2d segment: Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
+        for (Segment2d segment : Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
             double d = Math.abs(segment.signedDistanceTo(barycenter));
             minDistanceToSegmentFromBarycenter = Math.min(d, minDistanceToSegmentFromBarycenter);
         }
@@ -82,7 +71,7 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
             int y = voxel.coords().y();
             Double distance = null;
 
-            for (Segment2d segment: Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
+            for (Segment2d segment : Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
 
                 double index = segment.nearestPointIndex(x, y);
                 double extra = 0;
@@ -108,7 +97,7 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
                 distance = Math.sqrt(distance);
                 double value;
 
-                value = ff(distance, minDistanceToSegmentFromBarycenter * 0.5, 2.0, 1);
+                value = doubleSlopeF(distance, minDistanceToSegmentFromBarycenter * 0.5, 2.0, 1);
 
                 int pValue = altitude + (int) Math.round(value);
                 while (pValue > altitude) {
@@ -119,11 +108,52 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
         }
     }
 
+    private void drawGabled(Shape2d shape, GenerationTile tile, int altitude) {
+        int xG = 0;
+        int yG = 0;
+        int n = 0;
+        for (Segment2d segment : Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
+            xG = xG + segment.start().x();
+            yG = yG + segment.start().y();
+            n++;
+        }
+        WorldCoords2d barycenter = new WorldCoords2d(xG / n, yG / n);
+
+        Segment2d min = null;
+        for (Segment2d seg : Iterables.flatMap(shape.lineStrings(), LineString2d::segments)) {
+            if (min == null)
+                min = seg;
+            else if (seg.length() < min.length())
+                min = seg;
+        }
+
+        Vector2d v = min.normal().multiply(10).add(new Vector2d(barycenter.x(), barycenter.y()));
+        WorldCoords2d end = new WorldCoords2d((int) v.x(), (int) v.y());
+
+        Segment2d faite = new Segment2d(barycenter, end);
+
+        Segment2d opp = null;
+        for (Segment2d seg : Iterables.flatMap(shape.lineStrings(), LineString2d::segments)) {
+            if (!seg.equals(min) && Math.abs(seg.direction().dot(faite.direction())) < 0.2)
+                opp = seg;
+        }
+
+        for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(shape))) {
+            int x = voxel.coords().x();
+            int y = voxel.coords().y();
+
+            // TODO: A revoir (plein de supposition faites sur la géometrie)
+            int d = (int) (opp.length() - Math.abs(faite.nearestPointIndex(x, y)));
+
+            placeable.place(tile.voxels(), x, y, altitude + d);
+        }
+    }
+
     private static double f(double d, double max) {
         return max * (1 - Math.pow(1 - (d / max), 2));
     }
 
-    private static double ff(double distance, double seuil, double slope1, double slope2) {
+    private static double doubleSlopeF(double distance, double seuil, double slope1, double slope2) {
         double value;
         if (distance < seuil)
             value = slope1 * distance;
@@ -132,15 +162,24 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
         return value;
     }
 
+    private static double curveItF(double distance, double slope) {
+        if (slope != 1)
+            throw new UnsupportedOperationException("tmp");
+        // int[] tab = {1, 3, 3, 5, 6, 8, 8, 9, 9, 12, 13, 13, 14, 15, 15, 15};
+        int[] tab = {1, 5, 5, 6, 6, 6, 8, 8, 10, 12, 14, 14, 14, 15, 15, 15};
+        return tab[(int) distance];
+    }
+
 
     @Override
     public void run(GenerationTile tile) {
         int altitude = 5;
 
-        Shape2d shape = testingShapeBigRectangle().toShape2d();
+        WorldSize2d size = new WorldSize2d(50, 30);
 
-        drawMansard(shape, tile, altitude);
-        //oldDrawHipped(shape, tile, altitude, 1);
+        drawMansard(testingShapeRectangle(5, 0, size), tile, altitude);
+        drawHipped(testingShapeRectangle(5, 40, size), tile, altitude, 1);
+        drawGabled(testingShapeRectangle(5, 80, size), tile, altitude);
     }
 
     @Override
@@ -148,37 +187,12 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    private void oldDrawHipped(Shape2d shape, GenerationTile tile, int altitude, double slope) {
-        /// Ajout Barycentre
-        int xG = 0;
-        int yG = 0;
-        int n = 0;
-        for (Segment2d segment: Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
-            xG = xG + segment.start().x();
-            yG = yG + segment.start().y();
-            n++;
-        }
-        WorldCoords2d barycenter = new WorldCoords2d(xG / n, yG / n);
-
-        double max = Double.MAX_VALUE;
-        for (Segment2d segment: Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
-            double distBary = Math.abs(segment.signedDistanceTo(barycenter));
-            if (max > distBary)
-                max = distBary;
-        }
-
-        if (applyF) {
-            System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA : " + max);
-        }
-        //// Fin ajout
-
+    private void drawHipped(Shape2d shape, GenerationTile tile, int altitude, double slope) {
         for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(shape))) {
             int x = voxel.coords().x();
             int y = voxel.coords().y();
             Double distance = null;
-
-            for (Segment2d segment: Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
-
+            for (Segment2d segment : Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
                 double index = segment.nearestPointIndex(x, y);
                 double extra = 0;
                 double d;
@@ -193,27 +207,22 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
                     d = d * d;
                 }
 
-                if (d >= (extra * extra) && (distance == null || distance > d)) {
+                if (d >= (extra * extra) && (distance == null || distance > d))
                     distance = d;
-                    max = segment.signedDistanceTo(barycenter);
-                    max = max * max;
-                }
             }
-
-            /// Modification
             if (distance != null) {
                 distance = Math.sqrt(distance);
                 double value;
-                int iMax = 0;
-                if (applyF) {
-                    value = f(distance, Math.sqrt(max));
-                    iMax = 0;
-                } else {
-                    value = slope * distance;
-                }
+
+                // TODO: apply formule circle
+                // value = curveItF(distance,slope);
+                value = distance * slope;
+
                 int pValue = altitude + (int) Math.round(value);
-                for (int i = 0; i <= iMax; i ++)
-                    placeable.place(tile.voxels(), x, y, pValue - i);
+                while (pValue > altitude) {
+                    placeable.place(tile.voxels(), x, y, pValue);
+                    pValue--;
+                }
             }
         }
     }

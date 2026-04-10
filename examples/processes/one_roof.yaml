@@ -7,9 +7,9 @@ forEachTile:
   setSpawn:
     type: setSpawn
     heightmap:
-      sum: [ ground, 16 ]
-    x: 30
-    y: 20
+      sum: [ ground, 38 ]
+    x: 80
+    y: 34
 
   renderGround:
     type: renderHeightmap
