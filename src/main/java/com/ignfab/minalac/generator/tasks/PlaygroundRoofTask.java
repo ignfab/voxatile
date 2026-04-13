@@ -113,7 +113,7 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
         }
     }
 
-    private void drawGabled(Shape2d shape, GenerationTile tile, int altitude) {
+    private void drawGabled(Shape2d shape, GenerationTile tile, int altitude, double slope) {
         int xG = 0;
         int yG = 0;
         int n = 0;
@@ -125,32 +125,41 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
         WorldCoords2d barycenter = new WorldCoords2d(xG / n, yG / n);
 
         Segment2d min = null;
+        Segment2d max = null;
         for (Segment2d seg : Iterables.flatMap(shape.lineStrings(), LineString2d::segments)) {
             if (min == null)
                 min = seg;
-            else if (seg.length() < min.length())
+            else if (seg.length() <= min.length())
                 min = seg;
+            if (max == null)
+                max = seg;
+            else if (seg.length() > max.length())
+                max = seg;
         }
 
-        Vector2d v = min.normal().multiply(10).add(new Vector2d(barycenter.x(), barycenter.y()));
-        WorldCoords2d end = new WorldCoords2d((int) v.x(), (int) v.y());
+        Vector2d baryVector = new Vector2d(barycenter.x(), barycenter.y());
 
-        Segment2d faite = new Segment2d(barycenter, end);
+        Segment2d faiteParallelGrand = new Segment2d(barycenter, min.normal().multiply(10).add(baryVector).round());
+        Segment2d faiteParallelPetit = new Segment2d(barycenter, max.normal().multiply(10).add(baryVector).round());
 
-        Segment2d opp = null;
-        for (Segment2d seg : Iterables.flatMap(shape.lineStrings(), LineString2d::segments)) {
-            if (!seg.equals(min) && Math.abs(seg.direction().dot(faite.direction())) < 0.2)
-                opp = seg;
-        }
+        boolean faitSuivantLePlusGrand = true;
 
         for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(shape))) {
             int x = voxel.coords().x();
             int y = voxel.coords().y();
 
             // TODO: A revoir (plein de supposition faites sur la géometrie)
-            int d = (int) (opp.length() - Math.abs(faite.nearestPointIndex(x, y)));
-
-            placeable.place(tile.voxels(), x, y, altitude + d);
+            double distance;
+            if (faitSuivantLePlusGrand == true) {
+                distance = (min.length() / 2) - Math.abs(faiteParallelGrand.signedDistanceTo(x, y));
+            }
+            else
+                distance = (max.length() / 2) - Math.abs(faiteParallelPetit.signedDistanceTo(x, y));
+            int pValue = altitude + (int) (distance * slope);
+            while (pValue > altitude) {
+                placeable.place(tile.voxels(), x, y, pValue);
+                pValue--;
+            }
         }
     }
 
@@ -184,11 +193,11 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
     public void run(GenerationTile tile) {
         int altitude = 5;
 
-        WorldSize2d size = new WorldSize2d(50, 30);
+        WorldSize2d size = new WorldSize2d(90, 30);
 
         drawMansard(testingShapeRectangle(5, 0, size), tile, altitude);
         drawHipped(testingShapeRectangle(5, 40, size), tile, altitude, 1.75);
-        drawGabled(testingShapeRectangle(5, 80, size), tile, altitude);
+        drawGabled(testingShapeRectangle(5, 80, size), tile, altitude, 2.0);
     }
 
     @Override
@@ -249,5 +258,20 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
                 }
             }
         }
+    }
+
+    public static void main(String[] args) {
+        /*
+        Segment2d[start=WorldCoords2d[x=50, y=95], end=WorldCoords2d[x=50, y=85]]
+5, 85, 5
+6, 85, 5
+7, 85, 5
+8, 85, 5
+9, 85, 5
+         */
+
+        Segment2d test = new Segment2d(new WorldCoords2d(50, 95), new WorldCoords2d(50, 85));
+        test.nearestPointIndex(5, 85);
+        System.out.println(test.signedDistanceTo(5, 85));
     }
 }
