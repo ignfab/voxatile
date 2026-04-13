@@ -154,10 +154,6 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
         }
     }
 
-    private static double f(double d, double max) {
-        return max * (1 - Math.pow(1 - (d / max), 2));
-    }
-
     private static double doubleSlopeF(double distance, double seuil, double slope1, double slope2) {
         double value;
         if (distance < seuil)
@@ -170,12 +166,6 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
     private static double distanceToCircle(double distance, double slope, double max) {
         if (slope != 1)
             throw new UnsupportedOperationException("tmp");
-        /*
-        // int[] tab = {1, 3, 3, 5, 6, 8, 8, 9, 9, 12, 13, 13, 14, 15, 15, 15};
-        int[] tab = {1, 5, 5, 6, 6, 6, 8, 8, 10, 12, 14, 14, 14, 15, 15, 15};
-        return tab[(int) distance];
-
-         */
         double r = max - distance;
         return Math.sqrt(max * max - r * r);
     }
@@ -196,9 +186,9 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
 
         WorldSize2d size = new WorldSize2d(50, 30);
 
-        //drawMansard(testingShapeRectangle(5, 0, size), tile, altitude);
-        drawHipped(testingShapeRectangle(5, 40, new WorldSize2d(68, 100)), tile, altitude, 1.75);
-        //drawGabled(testingShapeRectangle(5, 80, size), tile, altitude);
+        drawMansard(testingShapeRectangle(5, 0, size), tile, altitude);
+        drawHipped(testingShapeRectangle(5, 40, size), tile, altitude, 1.75);
+        drawGabled(testingShapeRectangle(5, 80, size), tile, altitude);
     }
 
     @Override
@@ -224,7 +214,6 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
             minDistanceToSegmentFromBarycenter = Math.min(d, minDistanceToSegmentFromBarycenter);
         }
         //// Fin ajout
-        Set<Double> debug = new HashSet<>();
         for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(shape))) {
             int x = voxel.coords().x();
             int y = voxel.coords().y();
@@ -251,13 +240,7 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
                 distance = Math.sqrt(distance);
                 double value;
 
-                debug.add(distance);
-
-                // TODO: apply formule circle
-                //if (true)
-                //    throw new RuntimeException(" : " + minDistanceToSegmentFromBarycenter);
                 value = distanceToEllipse(distance, slope, minDistanceToSegmentFromBarycenter);
-                // value = distance * slope;
 
                 int pValue = altitude + (int) Math.round(value);
                 while (pValue > altitude) {
@@ -265,10 +248,6 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
                     pValue--;
                 }
             }
-        }
-        if (false) {
-            System.out.println(debug);
-            throw new RuntimeException();
         }
     }
 }
