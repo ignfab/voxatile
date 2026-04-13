@@ -1,5 +1,10 @@
 package com.ignfab.minalac.generator.tasks;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.locationtech.jts.algorithm.Distance;
+
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
 import com.ignfab.minalac.generator.placeables.Placeable;
@@ -162,12 +167,26 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
         return value;
     }
 
-    private static double curveItF(double distance, double slope) {
+    private static double distanceToCircle(double distance, double slope, double max) {
         if (slope != 1)
             throw new UnsupportedOperationException("tmp");
+        /*
         // int[] tab = {1, 3, 3, 5, 6, 8, 8, 9, 9, 12, 13, 13, 14, 15, 15, 15};
         int[] tab = {1, 5, 5, 6, 6, 6, 8, 8, 10, 12, 14, 14, 14, 15, 15, 15};
         return tab[(int) distance];
+
+         */
+        double r = max - distance;
+        return Math.sqrt(max * max - r * r);
+    }
+
+    private static double distanceToEllipse(double distance, double slope, double max) {
+        if ( slope <= 0)
+            throw new UnsupportedOperationException("Slope can't be negative");
+        double u = distance - max;
+        // double b_ellipse = slope * max;
+        // See written notes
+        return Math.sqrt(slope * slope * (max * max - u * u));
     }
 
 
@@ -177,9 +196,9 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
 
         WorldSize2d size = new WorldSize2d(50, 30);
 
-        drawMansard(testingShapeRectangle(5, 0, size), tile, altitude);
-        drawHipped(testingShapeRectangle(5, 40, size), tile, altitude, 1);
-        drawGabled(testingShapeRectangle(5, 80, size), tile, altitude);
+        //drawMansard(testingShapeRectangle(5, 0, size), tile, altitude);
+        drawHipped(testingShapeRectangle(5, 40, new WorldSize2d(68, 100)), tile, altitude, 1.75);
+        //drawGabled(testingShapeRectangle(5, 80, size), tile, altitude);
     }
 
     @Override
@@ -188,6 +207,24 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
     }
 
     private void drawHipped(Shape2d shape, GenerationTile tile, int altitude, double slope) {
+        /// Ajout Barycentre
+        int xG = 0;
+        int yG = 0;
+        int n = 0;
+        for (Segment2d segment : Iterables.flatMap(shape.lineStrings(), LineString2d::segments)) {
+            xG = xG + segment.start().x();
+            yG = yG + segment.start().y();
+            n++;
+        }
+        WorldCoords2d barycenter = new WorldCoords2d(xG / n, yG / n);
+
+        double minDistanceToSegmentFromBarycenter = Double.MAX_VALUE;
+        for (Segment2d segment : Iterables.flatMap(shape.lineStrings(), LineString2d::segments)) {
+            double d = Math.abs(segment.signedDistanceTo(barycenter));
+            minDistanceToSegmentFromBarycenter = Math.min(d, minDistanceToSegmentFromBarycenter);
+        }
+        //// Fin ajout
+        Set<Double> debug = new HashSet<>();
         for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(shape))) {
             int x = voxel.coords().x();
             int y = voxel.coords().y();
@@ -214,9 +251,13 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
                 distance = Math.sqrt(distance);
                 double value;
 
+                debug.add(distance);
+
                 // TODO: apply formule circle
-                // value = curveItF(distance,slope);
-                value = distance * slope;
+                //if (true)
+                //    throw new RuntimeException(" : " + minDistanceToSegmentFromBarycenter);
+                value = distanceToEllipse(distance, slope, minDistanceToSegmentFromBarycenter);
+                // value = distance * slope;
 
                 int pValue = altitude + (int) Math.round(value);
                 while (pValue > altitude) {
@@ -224,6 +265,10 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
                     pValue--;
                 }
             }
+        }
+        if (false) {
+            System.out.println(debug);
+            throw new RuntimeException();
         }
     }
 }
