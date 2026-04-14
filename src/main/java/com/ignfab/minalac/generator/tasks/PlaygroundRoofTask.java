@@ -1,9 +1,6 @@
 package com.ignfab.minalac.generator.tasks;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.locationtech.jts.algorithm.Distance;
+import org.geotools.geometry.jts.JTS;
 
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
@@ -50,6 +47,17 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
 
     private static Shape2d testingShapeRectangle(int xS, int yS, WorldSize2d size) {
         return testingShapeRectangle(new WorldCoords2d(xS, yS), size);
+    }
+
+    private static Shape2d testingPolygonShape() {
+        return new Polygon2d(LinearRing2d.fromPoints(
+            new WorldCoords2d(15, 47),
+            new WorldCoords2d(80, 50),
+            new WorldCoords2d(89, 34),
+            new WorldCoords2d(32, 36),
+            new WorldCoords2d(34, 11),
+            new WorldCoords2d(5, 12)
+        ));
     }
 
     private void drawMansard(Shape2d shape, GenerationTile tile, int altitude) {
@@ -155,6 +163,8 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
             }
             else
                 distance = (max.length() / 2) - Math.abs(faiteParallelPetit.signedDistanceTo(x, y));
+
+            // int pValue = altitude + (int) distanceToEllipse(distance, slope, min.length() / 2.0);
             int pValue = altitude + (int) (distance * slope);
             while (pValue > altitude) {
                 placeable.place(tile.voxels(), x, y, pValue);
@@ -193,11 +203,14 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
     public void run(GenerationTile tile) {
         int altitude = 5;
 
+        /*
         WorldSize2d size = new WorldSize2d(90, 30);
 
         drawMansard(testingShapeRectangle(5, 0, size), tile, altitude);
         drawHipped(testingShapeRectangle(5, 40, size), tile, altitude, 1.75);
-        drawGabled(testingShapeRectangle(5, 80, size), tile, altitude, 2.0);
+        drawGabled(testingShapeRectangle(5, 80, size), tile, altitude, 2.0);*/
+
+        drawHipped(testingPolygonShape(), tile, altitude, 1.0);
     }
 
     @Override
@@ -207,6 +220,7 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
 
     private void drawHipped(Shape2d shape, GenerationTile tile, int altitude, double slope) {
         /// Ajout Barycentre
+
         int xG = 0;
         int yG = 0;
         int n = 0;
@@ -249,7 +263,8 @@ public class PlaygroundRoofTask extends ModelTask<Shape2dConvertibleModel> {
                 distance = Math.sqrt(distance);
                 double value;
 
-                value = distanceToEllipse(distance, slope, minDistanceToSegmentFromBarycenter);
+                // value = distanceToEllipse(distance, slope, minDistanceToSegmentFromBarycenter);
+                value = distance;
 
                 int pValue = altitude + (int) Math.round(value);
                 while (pValue > altitude) {
