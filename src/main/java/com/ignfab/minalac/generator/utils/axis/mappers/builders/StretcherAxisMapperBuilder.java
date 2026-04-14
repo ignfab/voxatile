@@ -24,7 +24,6 @@ public class StretcherAxisMapperBuilder implements AxisMapperBuilder {
      */
     public StretcherAxisMapperBuilder(AxisMapperBuilder underlying, int stretchableCoord, int minRepetition, int maxRepetition) throws UnbuildableException {
         this.underlying = underlying;
-        underlying.makeAdjusted();
         this.stretchableCoord = stretchableCoord;
         int underlyingMin = underlying.minimumSize();
         // Voir TODO-12 : le questionnement semble similaire

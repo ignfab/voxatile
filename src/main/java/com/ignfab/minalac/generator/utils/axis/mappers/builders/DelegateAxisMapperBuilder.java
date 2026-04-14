@@ -9,7 +9,6 @@ import com.ignfab.minalac.generator.utils.axis.mappers.IdentityAxisMapper;
  */
 public class DelegateAxisMapperBuilder implements AxisMapperBuilder {
     private final AxisMapperBuilder delegatee;
-    private boolean adjusted = false;
 
     /**
      * Creates a new {@code DelegateAxisMapperBuilder} for a given {@link AxisMapperBuilder}.
@@ -22,7 +21,7 @@ public class DelegateAxisMapperBuilder implements AxisMapperBuilder {
 
     @Override
     public AxisMapper build(int size) throws UnbuildableException {
-        if (adjusted ? (delegatee.maxSizeUnder(size) != size) : (delegatee.maxSizeUnder(size) > size))
+        if (delegatee.maxSizeUnder(size) > size)
             throw new UnbuildableException("Builder could not fit size=%d (Builder is %s)".formatted(size, delegatee));
         return new IdentityAxisMapper(delegatee.origin(), size);
     }
@@ -40,11 +39,5 @@ public class DelegateAxisMapperBuilder implements AxisMapperBuilder {
     @Override
     public int origin() {
         return delegatee.origin();
-    }
-
-    @Override
-    public void makeAdjusted() throws UnbuildableException {
-        delegatee.makeAdjusted();
-        adjusted = true;
     }
 }

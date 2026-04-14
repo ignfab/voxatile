@@ -26,6 +26,13 @@ public interface AxisMapper {
     int minimum();
 
     /**
+     * {@return maximum valid position for this axis mapper}
+     */
+    default int maximum() {
+        return minimum() + size() - 1;
+    };
+
+    /**
      * {@return size of the axis mapper}
      */
     int size();
@@ -37,8 +44,7 @@ public interface AxisMapper {
      * @return true if position could be mapped
      */
     default boolean contains(int position) {
-        int relative = position - minimum();
-        return relative >= 0 && relative < size();
+        return position >= minimum() && position <= maximum();
     }
 
     /**

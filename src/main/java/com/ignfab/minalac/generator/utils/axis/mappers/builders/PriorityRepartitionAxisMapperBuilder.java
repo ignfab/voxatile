@@ -42,8 +42,6 @@ public class PriorityRepartitionAxisMapperBuilder implements AxisMapperBuilder {
         this.builders = builders;
 
         for (int i = 0; i < builders.length; i++) {
-            // Force underlying builders to fill underlying space
-            builders[i].makeAdjusted();
             // Sort builder indexes by priorities
             this.priorities.computeIfAbsent(priorities[i], k -> new ArrayList<>()).add(i);
 

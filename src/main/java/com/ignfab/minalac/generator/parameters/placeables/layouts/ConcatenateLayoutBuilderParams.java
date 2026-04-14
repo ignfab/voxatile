@@ -1,8 +1,11 @@
 package com.ignfab.minalac.generator.parameters.placeables.layouts;
 
 import java.beans.ConstructorProperties;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import tools.jackson.core.JacksonException;
@@ -18,6 +21,7 @@ import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.parameters.utils.AxisParams;
 import com.ignfab.minalac.generator.placeables.layouts.DefaultLayoutBuilder;
 import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
+import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
 /**
@@ -46,6 +50,13 @@ public class ConcatenateLayoutBuilderParams implements LayoutBuilderParams {
     AxisParams along;
 
     /**
+     * Axes along which layouts are adjusted.
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+    List<AxisParams> adjust;
+
+    /**
      * Creates a new {@code ConcatenateLayoutBuilderParams} out of mandatory parameters.
      * @param concatenate list of layouts to concatenate
      * @param along axis along which concatenate layouts
@@ -72,7 +83,11 @@ public class ConcatenateLayoutBuilderParams implements LayoutBuilderParams {
             priorities[i] = concatenate.get(i).priority;
         }
 
-        return DefaultLayoutBuilder.priority(builders, along.create(), priorities);
+        List<Axis> adjustAxes = adjust == null
+            ? Collections.emptyList()
+            : adjust.stream().map(AxisParams::create).collect(Collectors.toList());
+
+        return DefaultLayoutBuilder.concat(builders, along.create(), priorities, adjustAxes);
     }
 
     /**

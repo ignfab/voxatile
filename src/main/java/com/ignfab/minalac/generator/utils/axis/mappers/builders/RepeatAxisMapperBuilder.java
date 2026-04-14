@@ -25,7 +25,6 @@ public class RepeatAxisMapperBuilder implements AxisMapperBuilder {
     public RepeatAxisMapperBuilder(AxisMapperBuilder underlying, int minOccur, int maxOccur) throws UnbuildableException {
         this.maxOccur = maxOccur;
         this.underlying = underlying;
-        underlying.makeAdjusted();
         minSize = underlying.minimumSize() * minOccur;
     }
 

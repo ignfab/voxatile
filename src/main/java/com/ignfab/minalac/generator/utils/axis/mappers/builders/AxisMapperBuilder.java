@@ -21,22 +21,6 @@ public interface AxisMapperBuilder {
     AxisMapper build(int size) throws UnbuildableException;
 
     /**
-     * Creates default {@link AxisMapper}.
-     * <p>
-     * Default {@link AxisMapper} will choose its size and may be offsetted (depending on underlying structure).
-     *
-     * @return default {@link AxisMapper}
-     */
-    default AxisMapper build() {
-        try {
-            return build(minimumSize());
-        } catch (UnbuildableException e) {
-            // Should never happen as minimum size will always be ok
-            throw new Error("Should not occur", e);
-        }
-    }
-
-    /**
      * Returns the greatest buildable size under given size.
      * <p>
      * Not all sizes are suitable for building. This methods will provide information about what is possible.
@@ -55,16 +39,4 @@ public interface AxisMapperBuilder {
      * {@return the starting point (usually 0 but may be different)}
      */
     int origin();
-
-    /**
-     * TODO: ICI FAUT REFLECHIR
-     * @param toto
-     * <p>
-     *
-     * Makes this {@code AxisMapperBuilder} adjusted.
-     * <p>
-     * Adjusted means: starts at 0 and will have no underlying holes.
-     */
-    default void makeAdjusted() throws UnbuildableException {};
-
 }

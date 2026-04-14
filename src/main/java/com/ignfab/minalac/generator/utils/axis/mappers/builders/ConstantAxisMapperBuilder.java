@@ -3,7 +3,6 @@ package com.ignfab.minalac.generator.utils.axis.mappers.builders;
 import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
 import com.ignfab.minalac.generator.utils.axis.mappers.IdentityAxisMapper;
-import com.ignfab.minalac.generator.utils.axis.mappers.OffsetAxisMapper;
 
 /**
  * An {@link AxisMapperBuilder} for a constant size.
@@ -11,7 +10,6 @@ import com.ignfab.minalac.generator.utils.axis.mappers.OffsetAxisMapper;
 public class ConstantAxisMapperBuilder implements AxisMapperBuilder {
     private final int size;
     private final int origin;
-    private boolean adjusted = false;
 
     /**
      * Creates a new {@code ConstantAxisMapperBuilder}.
@@ -28,9 +26,7 @@ public class ConstantAxisMapperBuilder implements AxisMapperBuilder {
     public AxisMapper build(int size) throws UnbuildableException {
         if (size != this.size)
             throw new UnbuildableException("Requested size isn't equal to the intrinsic size");
-        return adjusted
-            ? new OffsetAxisMapper(origin, size)
-            : new IdentityAxisMapper(origin, size);
+        return new IdentityAxisMapper(origin, size);
     }
 
     @Override
@@ -45,11 +41,6 @@ public class ConstantAxisMapperBuilder implements AxisMapperBuilder {
 
     @Override
     public int origin() {
-        return adjusted ? 0 : origin;
-    }
-
-    @Override
-    public void makeAdjusted() throws UnbuildableException {
-        adjusted = true;
+        return origin;
     }
 }

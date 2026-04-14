@@ -35,25 +35,26 @@ public class DebugLayoutTask implements TileTask {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.sizeZ = sizeZ;
-
-        // We need to adjust builder on axis for which a size is asked.
-        // TODO: Check that --> Could be made if build(dim)?
-        for (LayoutBuilder builder : builders) {
-            if (sizeX != null) builder.xAxis().makeAdjusted();
-            if (sizeY != null) builder.yAxis().makeAdjusted();
-            if (sizeZ != null) builder.zAxis().makeAdjusted();
-        }
     }
 
     @Override
     public void run(GenerationTile tile) {
         Structure structure = null;
+        int number = 0;
 
         for (LayoutBuilder builder : builders) {
+            number++;
+            int x = this.sizeX != null ? this.sizeX : builder.xAxis().minimumSize();
+            int y = this.sizeY != null ? this.sizeY : builder.yAxis().minimumSize();
+            int z = this.sizeZ != null ? this.sizeZ : builder.zAxis().minimumSize();
+            System.out.println("Builder #%d buid(%d, %d, %d)".formatted(number,x, y, z));
             try {
-                structure = builder.build(sizeX, sizeY, sizeZ);
+                structure = builder.build(x, y, z);
                 break;
-            } catch (UnbuildableException e) {}
+            } catch (UnbuildableException e) {
+                System.out.println("Failed:");
+                e.printStackTrace();
+            }
         }
 
         if (structure == null) {
@@ -61,7 +62,7 @@ public class DebugLayoutTask implements TileTask {
             System.out.println("Could not build facade structure");
             return;
         }
-
+System.out.println(structure.limits());
         structure.place(tile.voxels(), position.x(), position.y(), position.z());
     }
 }

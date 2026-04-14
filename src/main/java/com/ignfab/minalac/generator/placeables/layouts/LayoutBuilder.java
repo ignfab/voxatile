@@ -19,7 +19,7 @@ public interface LayoutBuilder {
      *
      * @throws UnbuildableException if structure cannot be built
      */
-    Structure build(Integer sizeX, Integer sizeY, Integer sizeZ) throws UnbuildableException;
+    Structure build(int sizeX, int sizeY, int sizeZ) throws UnbuildableException;
 
     /**
      * @return X-axis mapper builder.

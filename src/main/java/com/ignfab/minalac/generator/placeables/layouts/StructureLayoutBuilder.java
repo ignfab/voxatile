@@ -28,7 +28,7 @@ public class StructureLayoutBuilder implements LayoutBuilder {
     }
 
     @Override
-    public Structure build(Integer sizeX, Integer sizeY, Integer sizeZ) {
+    public Structure build(int sizeX, int sizeY, int sizeZ) {
         // checkResizability(sizeX, sizeY, sizeZ);
         // TODO: Apply translation
         return structure;
