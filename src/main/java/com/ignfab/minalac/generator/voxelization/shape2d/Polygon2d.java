@@ -14,7 +14,8 @@ import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
  */
 
 public class Polygon2d implements Shape2d {
-    private final LinearRing2d shell;
+    // TODO: Temporaire : à enlever
+    public final LinearRing2d shell;
     private final Collection<LinearRing2d> holes;
 
     /**

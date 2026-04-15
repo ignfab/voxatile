@@ -48,6 +48,7 @@ import com.ignfab.minalac.generator.parameters.tasks.RenderRoofTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.PlaygroundRoofTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderSurfacesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.SetSpawnTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.Surfer2PlaygroundTaskParams;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
@@ -112,6 +113,7 @@ public final class MinalacGenerator {
         parser.registerParams("renderLines", RenderLinesTaskParams.class);
         parser.registerParams("renderRoof", RenderRoofTaskParams.class);
         parser.registerParams("playgroundRoof", PlaygroundRoofTaskParams.class);
+        parser.registerParams("surfer2Playground", Surfer2PlaygroundTaskParams.class);
         parser.registerParams("renderSurfaces", RenderSurfacesTaskParams.class);
         parser.registerParams("setSpawn", SetSpawnTaskParams.class);
 

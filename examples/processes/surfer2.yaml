@@ -1,0 +1,38 @@
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+
+  polygonOne:
+    after: renderGround
+    type: surfer2Playground
+    polygon: one
+    surface:
+      placeable: wool:white
+      at:
+        sum: [ ground, 0 ]
+    line:
+      placeable: wool:pink
+      at:
+        sum: [ ground, 1 ]
+
+  setSpawn:
+    after: renderGround
+    type: setSpawn
+    heightmap:
+      sum: [ ground, 45 ]
+    x: 16
+    y: 10
+
+  renderGround:
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - put: *voxel-grass
+          at: [ 0, 0, 0 ]
+        - put: *voxel-dirt
+          at: [ 0, 0, -3..-1 ]
+        - put: *voxel-stone
+          at: [ 0, 0, -20..-4 ]

@@ -170,4 +170,9 @@ public record Vector2d(double x, double y) {
     public int hashCode() {
         return 31 * Double.hashCode(x) + Double.hashCode(y);
     }
+
+    public Vector2d normalize() {
+        double norm = this.length();
+        return new Vector2d(x / norm, y / norm);
+    }
 }

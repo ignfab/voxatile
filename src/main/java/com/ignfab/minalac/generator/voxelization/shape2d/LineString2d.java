@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -56,7 +57,8 @@ public class LineString2d implements Shape2d {
     }
 
     protected LineString2d(List<WorldCoords2d> points) {
-        this.points = new HashSet<>();
+        // TODO: A été changer voir si on fait plus propre
+        this.points = new LinkedHashSet<>();
         segments = new ArrayList<>();
 
         WorldCoords2d p1 = points.get(0);
