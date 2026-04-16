@@ -11,6 +11,7 @@ import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.tasks.playground.PSLG;
+import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.Vector2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
@@ -48,42 +49,77 @@ public class Surfer2PlaygroundTask implements TileTask {
             surfaceVoxel.place(tile.voxels(), x, y, ground.get(x, y));
         }
 
-        // Shape2dConvertible convertible = new
-        // TODO :
-        // Faire interface seg vers shape convertible
+
         ReadableHeightmap lineHeight = tile.heightmap(atLine);
+        /*
         PSLG pslg = PSLG.fromLinearRing(polygon.shell);
         List<LineString2d> allLines = pslg.bisectorLineStrings();
-        System.out.println(pslg);
         for (LineString2d line : allLines) {
             for (Positioned2d voxel : tile.limits().to2d().filterInside(lineVoxelizer2d.voxelize(line))) {
                 int x = voxel.coords().x();
                 int y = voxel.coords().y();
                 lineVoxel.place(tile.voxels(), x, y, lineHeight.get(x, y));
             }
+        }*/
+        List<LineString2d> skeleton = PolygonStore.TESTING.skeleton(polygonName);
+        List<Segment2d> edgeSegments = polygon.tmp_segmentsAsList();
+        List<Segment2d> skeletonSegments = lineStringToSegment(skeleton);
+        for (Positioned2d voxel : tile.limits().to2d().filterInside(surfaceVoxelizer.voxelize(polygon))) {
+            int x = voxel.coords().x();
+            int y = voxel.coords().y();
+
+            double localMax = localMaximum(x, y, edgeSegments, skeletonSegments); // TODO
+            double distanceToSkeleton = minDistance(x, y, skeletonSegments);
+            double height = localMax - distanceToSkeleton;
+            height = distanceToSkeleton;
+
+            int altitude = (int) height + lineHeight.get(x, y);
+            lineVoxel.place(tile.voxels(), x, y, altitude);
         }
+
     }
 
-    private LineString2d segToshape(Segment2d s) {
-        System.out.println(s);
-        return LineString2d.fromPoints(s.start(), s.end());
+    private static double minDistance(int x, int y, List<Segment2d> segments) {
+        double distance = Double.MAX_VALUE;
+        for (Segment2d segment : segments) {
+            // double d = Math.abs(segment.signedDistanceTo(x, y));
+            double d = segment.tmp_distance(x, y);
+            if (distance > d)
+                distance = d;
+        }
+        return distance;
     }
 
-    private List<Segment2d> bisectrice(Polygon2d polygon) {
-        Segment2d seg1, seg2;
-        List<Segment2d> seg = new ArrayList<>();
-        for (Segment2d s : polygon.segments()) {
-            seg.add(s);
+    private static double localMaximum(int x, int y, List<Segment2d> edges, List<Segment2d> skeletons) {
+        // Bourrin
+
+        // Trouver segment du squelette le plus proche
+        double distance = Double.MAX_VALUE;
+        Segment2d closestSkeleton = null;
+        for (Segment2d segment : skeletons) {
+            double d = segment.tmp_distance(x, y);
+            // double d = Math.abs(segment.signedDistanceTo(x, y));
+            if (distance > d) {
+                distance = d;
+                closestSkeleton = segment;
+            }
         }
-        seg1 = seg.get(0);
-        seg2 = seg.get(1);
-        Vector2d a = seg1.direction();
-        Vector2d b = seg2.direction();
-        Vector2d r = a.add(b);
-        Segment2d bisectrice = Utils.createSegment(seg1.start().toVector(), r);
-        List<Segment2d> bissec = new ArrayList<>();
-        bissec.add(bisectrice);
-        return bissec;
+
+        double t = closestSkeleton.nearestPointIndex(x, y) / closestSkeleton.length();
+        WorldCoords2d a = new Vector2d(
+            closestSkeleton.start().x() + t * closestSkeleton.direction().x(),
+            closestSkeleton.start().y() + t * closestSkeleton.direction().y()
+        ).round();
+
+        return minDistance(a.x(), a.x(), edges);
+    }
+
+    private static List<Segment2d> lineStringToSegment(List<LineString2d> lineStrings) {
+        List<Segment2d> segments = new ArrayList<>();
+        for (LineString2d l : lineStrings)
+            for (Segment2d s : l.segments())
+                segments.add(s);
+        return segments;
     }
 
     private static class Utils {
@@ -95,7 +131,7 @@ public class Surfer2PlaygroundTask implements TileTask {
 
     private static class PolygonStore {
         private final HashMap<String, Polygon2d> store = new HashMap<>();
-        private final HashMap<String, Collection<Segment2d>> skeleton = new HashMap<>();
+        private final HashMap<String, List<LineString2d>> skeleton = new HashMap<>();
         public static PolygonStore TESTING = new PolygonStore();
 
         private PolygonStore() {
@@ -117,24 +153,24 @@ public class Surfer2PlaygroundTask implements TileTask {
                     new WorldCoords2d(40, -4),
                     new WorldCoords2d(0, -4)
                 )));
-            ArrayList<Segment2d> oneSkeleton = new ArrayList<>();
-            oneSkeleton.add(new Segment2d(
+            ArrayList<LineString2d> oneSkeleton = new ArrayList<>();
+            oneSkeleton.add(LineString2d.fromPoints(
                 new WorldCoords2d(10, 45),
                 new WorldCoords2d(20, 33)
             ));
-            oneSkeleton.add(new Segment2d(
+            oneSkeleton.add(LineString2d.fromPoints(
                 new WorldCoords2d(30, 45),
                 new WorldCoords2d(20, 33)
             ));
-            oneSkeleton.add(new Segment2d(
+            oneSkeleton.add(LineString2d.fromPoints(
                 new WorldCoords2d(20, 33),
                 new WorldCoords2d(20, 12)
             ));
-            oneSkeleton.add(new Segment2d(
+            oneSkeleton.add(LineString2d.fromPoints(
                 new WorldCoords2d(0, -4),
                 new WorldCoords2d(20, 12)
             ));
-            oneSkeleton.add(new Segment2d(
+            oneSkeleton.add(LineString2d.fromPoints(
                 new WorldCoords2d(40, -4),
                 new WorldCoords2d(20, 12)
             ));
@@ -150,10 +186,17 @@ public class Surfer2PlaygroundTask implements TileTask {
             return store.get(name);
         }
 
-        public Collection<Segment2d> skeleton(String name) {
+        public List<LineString2d> skeleton(String name) {
             if (!skeleton.containsKey(name))
                 throw new IllegalArgumentException(name + " does not exist.");
             return skeleton.get(name);
+        }
+
+        public static void main(String[] args) {
+            Segment2d s = new Segment2d(new WorldCoords2d(20, 33),
+                new WorldCoords2d(20, 12));
+            double a = s.tmp_distance(20, 0);
+            System.out.println(a);
         }
     }
 }

@@ -46,7 +46,6 @@ public class PSLG {
     public List<LineString2d> bisectorLineStrings() {
         List<LineString2d> lines = new ArrayList<>();
         computeBisector();
-        System.out.println(vertices);
         for (Vertex v : vertices) {
             Vector2d currentBisector = v.bisector;
             if (currentBisector != null) {

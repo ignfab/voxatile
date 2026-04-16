@@ -183,4 +183,13 @@ public class Segment2d implements Bounded2d {
         Segment2d that = (Segment2d) o;
         return start.equals(that.start) && end.equals(that.end);
     }
+
+    public double tmp_distance(double x, double y) {
+        double t = nearestPointIndex((int) x, (int) y);
+        if (t < 0 || t > length) {
+            // TODO: !!!
+            return 5_000;
+        }
+        return Math.abs(signedDistanceTo(x, y));
+    }
 }

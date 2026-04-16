@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.voxelization.shape2d;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
@@ -71,5 +72,12 @@ public class Polygon2d implements Shape2d {
     @Override
     public Iterable<Polygon2d> polygons() {
         return Iterables.singleton(this);
+    }
+
+    public List<Segment2d> tmp_segmentsAsList() {
+        List<Segment2d> asList = new ArrayList<>();
+        for (Segment2d s : segments())
+            asList.add(s);
+        return asList;
     }
 }
