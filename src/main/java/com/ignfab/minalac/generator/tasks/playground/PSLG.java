@@ -20,9 +20,7 @@ public class PSLG {
     public static PSLG fromLinearRing(LinearRing2d r) {
         List<Vertex> vertices = new ArrayList<>();
         List<Edge> edges = new ArrayList<>();
-        System.out.println(r);
         LinearRing2d ring = r.toClockwise();
-        System.out.println(ring);
         for (Point2d point : ring.points()) {
             vertices.add(new Vertex(point.coords().toVector()));
         }
@@ -39,31 +37,21 @@ public class PSLG {
     private void computeBisector() {
         int n = vertices.size();
         for (int i = 0; i < n; i++) {
-            Vertex currentVertex = vertices.get(i);
             Vector2d current = edges.get(i).direction;
             Vector2d previous = edges.get(Math.floorMod(i - 1, n)).direction;
-            System.out.println(i + "," +  current + ", " + previous);
-            Vector2d bisector = previous.opposite().add(current);
-            vertices.get(i).bisector = bisector;
+            vertices.get(i).bisector = previous.opposite().add(current);
         }
     }
 
-    public List<LineString2d> bisectorSegments() {
+    public List<LineString2d> bisectorLineStrings() {
         List<LineString2d> lines = new ArrayList<>();
         computeBisector();
         System.out.println(vertices);
         for (Vertex v : vertices) {
             Vector2d currentBisector = v.bisector;
             if (currentBisector != null) {
-                // TODO à modifier: il faudra un truc pour lignes
-                System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-                System.out.println(v.position + " | " + currentBisector.multiply(-20));
-                System.out.println(v.position + " | " + currentBisector.multiply(20));
                 Vector2d start = v.position.add(currentBisector.multiply(-200));
                 Vector2d end = v.position.add(currentBisector.multiply(200));
-                System.out.println(start);
-                System.out.println(end);
-                System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
                 lines.add(
                     LineString2d.fromPoints(start.round(), end.round())
                 );
@@ -72,7 +60,7 @@ public class PSLG {
         return lines;
     }
 
-    public List<LineString2d> edgeSegments() {
+    public List<LineString2d> edgeLineStrings() {
         List<LineString2d> lines = new ArrayList<>();
         for (Edge edge : edges) {
             LineString2d current = LineString2d.fromPoints(edge.start.position.round(), edge.end.position.round());

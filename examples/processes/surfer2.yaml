@@ -7,7 +7,7 @@ forEachTile:
   polygonOne:
     after: renderGround
     type: surfer2Playground
-    polygon: one
+    polygon: test
     surface:
       placeable: wool:white
       at:

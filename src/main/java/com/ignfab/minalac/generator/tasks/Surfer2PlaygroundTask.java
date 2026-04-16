@@ -1,6 +1,8 @@
 package com.ignfab.minalac.generator.tasks;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -51,7 +53,7 @@ public class Surfer2PlaygroundTask implements TileTask {
         // Faire interface seg vers shape convertible
         ReadableHeightmap lineHeight = tile.heightmap(atLine);
         PSLG pslg = PSLG.fromLinearRing(polygon.shell);
-        List<LineString2d> allLines = pslg.bisectorSegments();
+        List<LineString2d> allLines = pslg.bisectorLineStrings();
         System.out.println(pslg);
         for (LineString2d line : allLines) {
             for (Positioned2d voxel : tile.limits().to2d().filterInside(lineVoxelizer2d.voxelize(line))) {
@@ -93,6 +95,7 @@ public class Surfer2PlaygroundTask implements TileTask {
 
     private static class PolygonStore {
         private final HashMap<String, Polygon2d> store = new HashMap<>();
+        private final HashMap<String, Collection<Segment2d>> skeleton = new HashMap<>();
         public static PolygonStore TESTING = new PolygonStore();
 
         private PolygonStore() {
@@ -114,12 +117,43 @@ public class Surfer2PlaygroundTask implements TileTask {
                     new WorldCoords2d(40, -4),
                     new WorldCoords2d(0, -4)
                 )));
+            ArrayList<Segment2d> oneSkeleton = new ArrayList<>();
+            oneSkeleton.add(new Segment2d(
+                new WorldCoords2d(10, 45),
+                new WorldCoords2d(20, 33)
+            ));
+            oneSkeleton.add(new Segment2d(
+                new WorldCoords2d(30, 45),
+                new WorldCoords2d(20, 33)
+            ));
+            oneSkeleton.add(new Segment2d(
+                new WorldCoords2d(20, 33),
+                new WorldCoords2d(20, 12)
+            ));
+            oneSkeleton.add(new Segment2d(
+                new WorldCoords2d(0, -4),
+                new WorldCoords2d(20, 12)
+            ));
+            oneSkeleton.add(new Segment2d(
+                new WorldCoords2d(40, -4),
+                new WorldCoords2d(20, 12)
+            ));
+            skeleton.put(
+                "one",
+                oneSkeleton
+            );
         }
 
         public Polygon2d polygon(String name) {
             if (!store.containsKey(name))
                 throw new IllegalArgumentException(name + " does not exist.");
             return store.get(name);
+        }
+
+        public Collection<Segment2d> skeleton(String name) {
+            if (!skeleton.containsKey(name))
+                throw new IllegalArgumentException(name + " does not exist.");
+            return skeleton.get(name);
         }
     }
 }
