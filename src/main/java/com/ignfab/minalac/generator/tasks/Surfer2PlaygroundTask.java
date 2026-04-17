@@ -51,6 +51,7 @@ public class Surfer2PlaygroundTask implements TileTask {
 
 
         ReadableHeightmap lineHeight = tile.heightmap(atLine);
+        /// Médiatrice
         /*
         PSLG pslg = PSLG.fromLinearRing(polygon.shell);
         List<LineString2d> allLines = pslg.bisectorLineStrings();
@@ -61,6 +62,8 @@ public class Surfer2PlaygroundTask implements TileTask {
                 lineVoxel.place(tile.voxels(), x, y, lineHeight.get(x, y));
             }
         }*/
+        /// Test rendu v1
+        /*
         List<LineString2d> skeleton = PolygonStore.TESTING.skeleton(polygonName);
         List<Segment2d> edgeSegments = polygon.tmp_segmentsAsList();
         List<Segment2d> skeletonSegments = lineStringToSegment(skeleton);
@@ -75,6 +78,18 @@ public class Surfer2PlaygroundTask implements TileTask {
 
             int altitude = (int) height + lineHeight.get(x, y);
             lineVoxel.place(tile.voxels(), x, y, altitude);
+        }*/
+        /// Test rendu v2
+        List<Face> faces = PolygonStore.TESTING.face(polygonName);
+        for (Face face : faces) {
+            for (Positioned2d voxel : surfaceVoxelizer.voxelize(face.face)) {
+                int x = voxel.coords().x();
+                int y = voxel.coords().y();
+                double distance = face.distanceToEdge(x, y);
+
+                int altitude = (int) distance + lineHeight.get(x, y);
+                lineVoxel.place(tile.voxels(), x, y, altitude);
+            }
         }
 
     }
@@ -132,6 +147,7 @@ public class Surfer2PlaygroundTask implements TileTask {
     private static class PolygonStore {
         private final HashMap<String, Polygon2d> store = new HashMap<>();
         private final HashMap<String, List<LineString2d>> skeleton = new HashMap<>();
+        private final HashMap<String, List<Face>> face = new HashMap<>();
         public static PolygonStore TESTING = new PolygonStore();
 
         private PolygonStore() {
@@ -178,6 +194,59 @@ public class Surfer2PlaygroundTask implements TileTask {
                 "one",
                 oneSkeleton
             );
+
+            List<Face> faceOne = new ArrayList<>();
+            faceOne.add(new Face(
+                new Polygon2d(
+                    LinearRing2d.fromPoints(
+                        new WorldCoords2d(10, 45),
+                        new WorldCoords2d(30, 45),
+                        new WorldCoords2d(20, 33)
+                    )),
+                new Segment2d(
+                    new WorldCoords2d(10, 45),
+                    new WorldCoords2d(30, 45)
+                )));
+            faceOne.add(new Face(
+                new Polygon2d(
+                    LinearRing2d.fromPoints(
+                        new WorldCoords2d(30, 45),
+                        new WorldCoords2d(40, -4),
+                        new WorldCoords2d(20,12),
+                        new WorldCoords2d(20,33)
+                    )),
+                new Segment2d(
+                    new WorldCoords2d(30, 45),
+                    new WorldCoords2d(40, -4)
+                )));
+            faceOne.add(new Face(
+                new Polygon2d(
+                    LinearRing2d.fromPoints(
+                        new WorldCoords2d(40, -4),
+                        new WorldCoords2d(0, -4),
+                        new WorldCoords2d(20, 12)
+                    )),
+                new Segment2d(
+                    new WorldCoords2d(40, -4),
+                    new WorldCoords2d(0, -4)
+                )));
+            faceOne.add(new Face(
+                new Polygon2d(
+                    LinearRing2d.fromPoints(
+                        new WorldCoords2d(0, -4),
+                        new WorldCoords2d(10, 45),
+                        new WorldCoords2d(20, 33),
+                        new WorldCoords2d(20, 12)
+                    )),
+                new Segment2d(
+                    new WorldCoords2d(0, -4),
+                    new WorldCoords2d(10, 45)
+                )));
+
+            face.put(
+                "one",
+                faceOne
+            );
         }
 
         public Polygon2d polygon(String name) {
@@ -192,6 +261,12 @@ public class Surfer2PlaygroundTask implements TileTask {
             return skeleton.get(name);
         }
 
+        public List<Face> face(String name) {
+            if (!face.containsKey(name))
+                throw new IllegalArgumentException(name + " does not exist.");
+            return face.get(name);
+        }
+
         public static void main(String[] args) {
             Segment2d s = new Segment2d(new WorldCoords2d(20, 33),
                 new WorldCoords2d(20, 12));
@@ -199,4 +274,10 @@ public class Surfer2PlaygroundTask implements TileTask {
             System.out.println(a);
         }
     }
+
+    private record Face(Polygon2d face, Segment2d edge){
+        double distanceToEdge(int x, int y) {
+            return Math.abs(edge.signedDistanceTo(x, y));
+        }
+    };
 }

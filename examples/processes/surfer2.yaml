@@ -11,11 +11,11 @@ forEachTile:
     surface:
       placeable: wool:white
       at:
-        sum: [ ground, 0 ]
+        sum: [ ground, 5 ]
     line:
       placeable: wool:pink
       at:
-        sum: [ ground, 1 ]
+        sum: [ ground, 10 ]
 
   setSpawn:
     after: renderGround
