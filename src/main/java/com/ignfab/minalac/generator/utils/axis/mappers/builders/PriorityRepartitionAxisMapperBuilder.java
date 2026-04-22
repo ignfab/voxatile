@@ -103,7 +103,8 @@ public class PriorityRepartitionAxisMapperBuilder implements AxisMapperBuilder {
                 while (iter.hasNext()) {
                     int index = iter.next();
 
-                    int possible = builders[index].maxSizeUnder(lengths[index] + Math.ceilDiv(remaining, count));
+                    // int possible = builders[index].maxSizeUnder(lengths[index] + Math.ceilDiv(remaining, count));
+                    int possible = builders[index].maxSizeUnder(lengths[index] + (remaining + count - 1) / count);
 
                     if (possible > lengths[index]) {
                         // Ok, candidates takes what we gave to him

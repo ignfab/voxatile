@@ -98,7 +98,8 @@ public class RepeatAxisMapperBuilder implements AxisMapperBuilder {
         Arrays.fill(lengths, underlyingMin);
 
         for (int index = 0; index < count; index++) {
-            int possible = underlying.maxSizeUnder(underlyingMin + Math.ceilDiv(remaining, count));
+            // int possible = underlying.maxSizeUnder(underlyingMin + Math.ceilDiv(remaining, count));
+            int possible = underlying.maxSizeUnder(underlyingMin + (remaining + count - 1) / count);
             remaining += lengths[index] - possible;
             lengths[index] = possible;
             count--;
