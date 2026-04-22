@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.tasks.RenderBuildingsTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
@@ -13,7 +14,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for creating a {@link RenderBuildingsTask}.
  */
-public class RenderBuildingsTaskParams extends ModelTaskParams {
+public class RenderBuildingsTaskParams extends SimpleModelTaskParams {
 
     /**
      * {@code Placeable} used to render the roof of the models (required).
@@ -61,9 +62,9 @@ public class RenderBuildingsTaskParams extends ModelTaskParams {
     }
 
     @Override
-    public TileTask create(Generation generation) {
+    public TileTask create(Generation generation, ModelSelection models) {
         return new RenderBuildingsTask(
-            models.create(),
+            models,
             roof.create(generation.seed()),
             wall.create(generation.seed()),
             window.create(generation.seed())

@@ -14,7 +14,7 @@ import com.ignfab.minalac.generator.tasks.ModelTask;
 /**
  * A TileTaskParams class for testing purposes.
  */
-public class TestingTaskParams extends ModelTaskParams {
+public class TestingTaskParams extends SimpleModelTaskParams {
 
     /**
      * A valid task params for tests.
@@ -65,8 +65,8 @@ public class TestingTaskParams extends ModelTaskParams {
     }
 
     @Override
-    public Task create(Generation generation) {
-        return new Task(models.create());
+    public Task create(Generation generation, ModelSelection models) {
+        return new Task(models);
     }
 
     /**

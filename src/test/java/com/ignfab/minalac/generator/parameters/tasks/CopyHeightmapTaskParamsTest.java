@@ -41,7 +41,7 @@ public class CopyHeightmapTaskParamsTest {
         assertEquals("ground", params.to.stored);
 
         assertDoesNotThrow(params::validate);
-        assertDoesNotThrow(() -> params.create(generation));
+        assertDoesNotThrow(() -> params.create(generation, params.models().create()));
 
         assertDoesNotThrow(
             () -> ParamsTester.deserialize(

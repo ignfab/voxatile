@@ -1,12 +1,9 @@
 package com.ignfab.minalac.generator.parameters.models;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.models.ModelSelection;
-import com.ignfab.minalac.generator.parameters.models.filters.ModelFilterAndParams;
 import com.ignfab.minalac.generator.parameters.models.filters.ModelFilterParams;
 
 /**
@@ -33,7 +30,7 @@ public class ModelSelectionParams {
      *
      * @param params other selection params
      */
-    public void narrowDown(ModelSelectionParams params) {
+    /*public void narrowDown(ModelSelectionParams params) {
         if (type != null && params.type != null && !type.equals(params.type))
             throw new IllegalArgumentException("Model selection cannot have two different model types (it would select nothing)");
 
@@ -42,6 +39,16 @@ public class ModelSelectionParams {
 
         if (params.filter != null)
             filter = filter == null ? params.filter : new ModelFilterAndParams(List.of(filter, params.filter));
+    }*/
+
+    public ModelSelectionParams inheriting(ModelSelectionParams inherited) {
+        if (type != null && inherited.type != null && !type.equals(inherited.type))
+            throw new IllegalArgumentException("Model selection cannot have two different model types (it would select nothing)");
+
+        ModelSelectionParams result = new ModelSelectionParams();
+        result.type = type == null ? inherited.type : type;
+        result.filter = ModelFilterParams.and(filter, inherited.filter);
+        return result;
     }
 
     /**

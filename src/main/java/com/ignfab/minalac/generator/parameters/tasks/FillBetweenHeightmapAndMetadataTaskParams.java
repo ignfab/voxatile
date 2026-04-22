@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.placeables.NothingParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
@@ -15,7 +16,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for creating a {@link FillBetweenHeightmapAndMetadataTask}.
  */
-public class FillBetweenHeightmapAndMetadataTaskParams extends ModelTaskParams {
+public class FillBetweenHeightmapAndMetadataTaskParams extends SimpleModelTaskParams {
     /**
      * {@code ReadableHeightmap} to use (required).
      */
@@ -68,9 +69,9 @@ public class FillBetweenHeightmapAndMetadataTaskParams extends ModelTaskParams {
     }
 
     @Override
-    public TileTask create(Generation generation) {
+    public TileTask create(Generation generation, ModelSelection models) {
         return new FillBetweenHeightmapAndMetadataTask(
-            models.create(),
+            models,
             heightmap.create(generation.heightmaps()),
             altitudeMetadata,
             placeAbove.create(generation.seed()),

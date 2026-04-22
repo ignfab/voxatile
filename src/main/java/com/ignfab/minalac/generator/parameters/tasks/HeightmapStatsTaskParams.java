@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.tasks.HeightmapStatsTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
@@ -15,7 +16,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for creating a {@link HeightmapStatsTask}.
  */
-public class HeightmapStatsTaskParams extends ModelTaskParams {
+public class HeightmapStatsTaskParams extends SimpleModelTaskParams {
     /**
      * {@link ReadableHeightmap} used to compute statistics (required).
      */
@@ -77,9 +78,9 @@ public class HeightmapStatsTaskParams extends ModelTaskParams {
     }
 
     @Override
-    public TileTask create(Generation generation) {
+    public TileTask create(Generation generation, ModelSelection models) {
         return new HeightmapStatsTask(
-            models.create(),
+            models,
             heightmap.create(generation.heightmaps()),
             compute.minimum,
             compute.maximum

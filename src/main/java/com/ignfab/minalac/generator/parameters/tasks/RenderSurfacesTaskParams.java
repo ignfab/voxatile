@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.tasks.RenderSurfacesTask;
@@ -14,7 +15,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for creating a {@link RenderSurfacesTask}.
  */
-public class RenderSurfacesTaskParams extends ModelTaskParams {
+public class RenderSurfacesTaskParams extends SimpleModelTaskParams {
     /**
      * Heightmap to render on (required).
      */
@@ -46,9 +47,9 @@ public class RenderSurfacesTaskParams extends ModelTaskParams {
     }
 
     @Override
-    public TileTask create(Generation generation) {
+    public TileTask create(Generation generation, ModelSelection models) {
         return new RenderSurfacesTask(
-            models.create(),
+            models,
             heightmap.create(generation.heightmaps()),
             place.create(generation.seed())
         );

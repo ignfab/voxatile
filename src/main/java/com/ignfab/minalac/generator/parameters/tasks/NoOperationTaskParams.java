@@ -7,7 +7,7 @@ import com.ignfab.minalac.generator.utils.execution.Task;
 /**
  * Parameters for a {@link NoOperationTask}.
  */
-public class NoOperationTaskParams extends TaskParams {
+public class NoOperationTaskParams extends SimpleTaskParams {
     @Override
     public Task create(Generation generation) {
          return NoOperationTask.instance();

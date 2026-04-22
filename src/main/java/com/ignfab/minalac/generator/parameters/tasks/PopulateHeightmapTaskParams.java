@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
 import com.ignfab.minalac.generator.tasks.PopulateHeightmapTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
@@ -13,7 +14,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for creating a {@link PopulateHeightmapTask}.
  */
-public class PopulateHeightmapTaskParams extends ModelTaskParams {
+public class PopulateHeightmapTaskParams extends SimpleModelTaskParams {
     /**
      * The name of the heightmap to use (required).
      */
@@ -37,9 +38,9 @@ public class PopulateHeightmapTaskParams extends ModelTaskParams {
     }
 
     @Override
-    public TileTask create(Generation generation) {
+    public TileTask create(Generation generation, ModelSelection models) {
         return new PopulateHeightmapTask(
-            models.create(),
+            models,
             heightmap.create(generation.heightmaps())
         );
     }

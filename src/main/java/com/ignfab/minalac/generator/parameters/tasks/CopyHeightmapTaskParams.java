@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
 import com.ignfab.minalac.generator.tasks.CopyHeightmapTask;
@@ -14,7 +15,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for creating a {@link CopyHeightmapTask}.
  */
-public class CopyHeightmapTaskParams extends ModelTaskParams {
+public class CopyHeightmapTaskParams extends SimpleModelTaskParams {
     /**
      * The copied heightmap (required).
      */
@@ -47,9 +48,9 @@ public class CopyHeightmapTaskParams extends ModelTaskParams {
     }
 
     @Override
-    public TileTask create(Generation generation) {
+    public TileTask create(Generation generation, ModelSelection models) {
         return new CopyHeightmapTask(
-            models.create(),
+            models,
             from.create(generation.heightmaps()),
             to.create(generation.heightmaps())
         );

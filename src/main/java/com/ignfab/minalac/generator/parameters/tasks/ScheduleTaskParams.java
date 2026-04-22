@@ -1,10 +1,9 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
 import java.beans.ConstructorProperties;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,6 +11,9 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.parameters.ScheduleParams;
+import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
+import com.ignfab.minalac.generator.tasks.NoOperationTask;
 
 /**
  * Parameters for a task running other tasks, parallelized, with dependencies between them (like in a schedule).
@@ -60,7 +62,7 @@ public class ScheduleTaskParams extends CompositeTaskParams {
         });
     }
 
-    @Override
+    /*@Override
     public Map<String, TaskParams> flatten(String parentName) {
 
         // Resulting task params indexed by name
@@ -89,5 +91,22 @@ public class ScheduleTaskParams extends CompositeTaskParams {
         result.put(parentName, endTask);
 
         return result;
+    }*/
+
+    @Override
+    public void populate(ScheduleParams.Tasks tasks, String fqn, ScheduleParams.DependencyResolver resolver, Set<ScheduleParams.TaskInfo> additionalDependencies, ModelSelectionParams inheritedModels) {
+        ScheduleParams.DependencyResolver namespacedResolver = resolver.namespaced(fqn);
+        ScheduleParams.DependencyResolver subResolver = resolver.onlyInside(using).fallback(namespacedResolver);
+
+        Set<ScheduleParams.TaskInfo> addDeps = new HashSet<>(additionalDependencies);
+        after.stream().map(resolver::required).forEach(addDeps::add);
+
+        this.tasks.forEach((name, task) -> task.populate(tasks, fqn + SEPARATOR + name, subResolver, addDeps, models.inheriting(inheritedModels)));
+
+        tasks.add(new ScheduleParams.TaskInfo(
+            fqn,
+            generation -> NoOperationTask.instance(),
+            this.tasks.keySet().stream().map(namespacedResolver::required).collect(Collectors.toSet())
+        ));
     }
 }

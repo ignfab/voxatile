@@ -1,15 +1,15 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
-import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.PolymorphicParams;
+import com.ignfab.minalac.generator.parameters.ScheduleParams;
+import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.utils.execution.Task;
 
 /**
@@ -34,7 +34,15 @@ public abstract class TaskParams extends PolymorphicParams {
      * @param generation the generation context.
      * @return the corresponding task
      */
-    public abstract Task create(Generation generation);
+    //public abstract Task create(Generation generation);
+
+    public abstract void populate(
+        ScheduleParams.Tasks tasks,
+        String fqn,
+        ScheduleParams.DependencyResolver resolver,
+        Set<ScheduleParams.TaskInfo> additionalDependencies,
+        ModelSelectionParams inheritedModels
+    );
 
     /**
      * Returns a flattened schedule of all subtask, including descendants.
@@ -47,14 +55,14 @@ public abstract class TaskParams extends PolymorphicParams {
      *
      * @return All subtasks indexed by their name
      */
-    public Map<String, TaskParams> flatten(String name) {
+    /*public Map<String, TaskParams> flatten(String name) {
         return Map.of(name, this);
-    }
+    }*/
 
     /**
      * Separator used to build subtask names.
      */
-    protected static final String SEPARATOR = ":";
+    public static final String SEPARATOR = ":";
 
     /**
      * Validates a name for a task.

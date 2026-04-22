@@ -36,7 +36,7 @@ public class PopulateHeightmapTaskParamsTest {
         assertEquals("ground", params.heightmap.stored);
 
         assertDoesNotThrow(params::validate);
-        assertDoesNotThrow(() -> params.create(generation));
+        assertDoesNotThrow(() -> params.create(generation, params.models().create()));
 
         assertThrows(
             JacksonException.class,

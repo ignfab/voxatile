@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.parameters.models.filters;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -34,4 +35,12 @@ public abstract class ModelFilterParams {
      * @return the resulting predicate.
      */
     public abstract Predicate<Model> create();
+
+    public static ModelFilterParams and(ModelFilterParams a, ModelFilterParams b) {
+        if (a == null)
+            return b;
+        if (b == null)
+            return a;
+        return new ModelFilterAndParams(List.of(a, b));
+    }
 }

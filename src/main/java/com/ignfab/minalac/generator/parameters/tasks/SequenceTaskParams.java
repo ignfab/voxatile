@@ -1,9 +1,8 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
 import java.beans.ConstructorProperties;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,6 +10,9 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.parameters.ScheduleParams;
+import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
+import com.ignfab.minalac.generator.tasks.NoOperationTask;
 
 /**
  * Parameters for a task running other tasks one by one in sequence.
@@ -50,7 +52,7 @@ public class SequenceTaskParams extends CompositeTaskParams {
         });
     }
 
-    @Override
+    /*@Override
     public Map<String, TaskParams> flatten(String parentName) {
         // Resulting task params indexed by name
         Map<String, TaskParams> result = new HashMap<>();
@@ -75,5 +77,26 @@ public class SequenceTaskParams extends CompositeTaskParams {
         result.put(parentName, endTask);
 
         return result;
+    }*/
+
+    @Override
+    public void populate(ScheduleParams.Tasks tasks, String fqn, ScheduleParams.DependencyResolver resolver, Set<ScheduleParams.TaskInfo> additionalDependencies, ModelSelectionParams inheritedModels) {
+        ScheduleParams.DependencyResolver usingResolver = resolver.onlyInside(using);
+        int index = 0;
+        for (TaskParams task : this.tasks) {
+            Set<ScheduleParams.TaskInfo> addDeps = new HashSet<>(additionalDependencies);
+            if (index == 0)
+                after.stream().map(resolver::required).forEach(addDeps::add);
+            else
+                addDeps.add(resolver.required(fqn + SEPARATOR + index));
+            index++;
+            task.populate(tasks, fqn + SEPARATOR + index, usingResolver, addDeps, models.inheriting(inheritedModels));
+        }
+
+        tasks.add(new ScheduleParams.TaskInfo(
+            fqn,
+            generation -> NoOperationTask.instance(),
+            Set.of(resolver.required(fqn + SEPARATOR + index))
+        ));
     }
 }

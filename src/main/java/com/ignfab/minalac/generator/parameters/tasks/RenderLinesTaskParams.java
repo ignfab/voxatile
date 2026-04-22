@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
 import com.ignfab.minalac.generator.tasks.RenderLinesTask;
@@ -14,7 +15,7 @@ import com.ignfab.minalac.generator.tasks.TileTask;
 /**
  * Parameters for {@link RenderLinesTask}.
  */
-public class RenderLinesTaskParams extends ModelTaskParams {
+public class RenderLinesTaskParams extends SimpleModelTaskParams {
     /**
      * Structure to place and repeat along lines (required).
      */
@@ -46,9 +47,9 @@ public class RenderLinesTaskParams extends ModelTaskParams {
     }
 
     @Override
-    public TileTask create(Generation generation) {
+    public TileTask create(Generation generation, ModelSelection models) {
         return new RenderLinesTask(
-            models.create(),
+            models,
             structure.create(generation.seed()),
             renderOnlyWhenAbove == null ? null : renderOnlyWhenAbove.create(generation.heightmaps())
         );
