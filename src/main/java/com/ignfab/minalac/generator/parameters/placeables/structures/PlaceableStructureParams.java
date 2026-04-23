@@ -44,7 +44,9 @@ public final class PlaceableStructureParams extends PlaceableParams {
         for (Variant param : params)
             param.apply(seed, structureBuilder);
 
-        return structureBuilder.build();
+        PlaceableStructure s  = structureBuilder.build();
+        System.out.println(s.limits());
+        return s;
     }
 
     /**

@@ -1,0 +1,111 @@
+#
+# This is a tool for working out facades
+#
+# It will work only on Minetest/Luanti for now but may be easily adapted to other games.
+#
+# Put your facade params to test in `&facade` anchor and launch generation.
+#
+# Samples of your facade, with various sizes, will be placed in resulting world.
+#
+
+# TODO:
+# - move that outside of processes and add area information to make it stand alone.
+
+references:
+  - &corner-material default:desert_sandstone_block
+  - &base-material default:sandstone
+  - &other-material default:desert_stone
+  - &borders-material default:desert_sandstone_block
+  - &cornice-material default:desert_sandstone_block
+  - &lintel-material default:sandstonebrick
+  - &materials
+      "-": *base-material
+      "+": *other-material
+      "O": *borders-material
+      "*": default:glass
+      "=": *lintel-material
+      "|": default:fence_junglewood
+  - &other-materials
+     "r": wool:red
+     "v": wool:green
+     "b": wool:blue
+  - &stretch-xyz
+    at : [0, 0, 0]
+    put: wool:white
+    stretchX:
+      at: 0
+    stretchY:
+      at: 0
+    stretchZ:
+      at: 0
+  - &stretch-x-only
+    axes: [ y, z, x ]
+    blueprint:
+      - - "vvr"
+        - "vvv"
+        - "vbv"
+        - "vvv"
+        - "rvv"
+      - - "   "
+        - "   "
+        - " b "
+        - "   "
+        - "   "
+    with: *other-materials
+    stretchX:
+      at: 1
+    yOffset: -1
+  - &repeat-x-only
+    repeat:
+      axes: [ y, z, x ]
+      blueprint:
+        - - "rrb"
+          - "rrr"
+          - "rvr"
+          - "rrr"
+          - "brr"
+        - - "   "
+          - "   "
+          - " v "
+          - "   "
+          - "   "
+        - - "   "
+          - "   "
+          - " v "
+          - "   "
+          - "   "
+        - - "   "
+          - "   "
+          - " v "
+          - "   "
+          - "   "
+      with: *other-materials
+      yOffset: -3
+    along: x
+  - &builder-0-concat
+    concatenate:
+      - *repeat-x-only
+      - *stretch-x-only
+      - *stretch-xyz
+    along: x
+  - &list-builders
+    - *builder-0-concat
+
+forEachTile:
+
+  renderGround:
+    type: renderHeightmap
+    at: 0
+    place: default:stone
+
+  renderFacadeTiny:
+    type: debugLayout
+    build: *list-builders
+    at:
+      x: 0
+      y: 0
+      z: 0
+    size:
+      x: 20
+      z: 5
+      y: 10
