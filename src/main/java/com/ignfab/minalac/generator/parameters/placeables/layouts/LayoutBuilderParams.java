@@ -14,7 +14,10 @@ import com.ignfab.minalac.generator.utils.random.Seed;
 @JsonSubTypes({
     @JsonSubTypes.Type(ConcatenateLayoutBuilderParams.class),
     @JsonSubTypes.Type(RepeatLayoutBuilderParams.class),
-    @JsonSubTypes.Type(StructureLayoutBuilderParams.class)
+    @JsonSubTypes.Type(StructureLayoutBuilderParams.class),
+    // TODO-Z : Testing new syntax
+    @JsonSubTypes.Type(POCAlignLayoutBuilderParams.class),
+    @JsonSubTypes.Type(POCRepeatLayoutBuilderParams.class)
 })
 public interface LayoutBuilderParams {
 
