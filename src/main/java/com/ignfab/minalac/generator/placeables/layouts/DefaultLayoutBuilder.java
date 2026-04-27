@@ -55,7 +55,7 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
         AxisMapper axisZ = zAxisBuilder.build(sizeZ);
 
         if (axisX.intervals().length == 0 || axisY.intervals().length == 0 || axisZ.intervals().length == 0)
-        return EmptyStructure.INSTANCE;
+            return EmptyStructure.INSTANCE;
 
         Structure[][][] structures = new Structure
             [axisX.intervals().length]
@@ -111,6 +111,15 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
             axis == Axis.Y ? new StretcherAxisMapperBuilder(builder.yAxis(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.yAxis()),
             axis == Axis.Z ? new StretcherAxisMapperBuilder(builder.zAxis(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.zAxis())
         );
+        // TODO-Z : Bourrin, comprendre pourquoi remplacement de Delegate par Keep ne marche pas
+        /*
+        return new DefaultLayoutBuilder(
+            builder,
+            // StretcherAxisMapperBuilder for chosen axis, DelegateAxisMapperBuilder for others
+            axis == Axis.X ? new StretcherAxisMapperBuilder(builder.xAxis(), stretchPosition, minStretch, maxStretch) : new KeepAxisMapperBuilder(builder.xAxis()),
+            axis == Axis.Y ? new StretcherAxisMapperBuilder(builder.yAxis(), stretchPosition, minStretch, maxStretch) : new KeepAxisMapperBuilder(builder.yAxis()),
+            axis == Axis.Z ? new StretcherAxisMapperBuilder(builder.zAxis(), stretchPosition, minStretch, maxStretch) : new KeepAxisMapperBuilder(builder.zAxis())
+        );*/
     }
 
     /**
@@ -129,12 +138,22 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
         if (minimum > maximum)
             throw new IllegalArgumentException("minimum must be less than maximum");
 
+        // TODO-Z: A priori le remplacement de Delegate par Keep ça marche, à vérifier en détail
+
+        /*
         return new DefaultLayoutBuilder(
             builder,
             // RepeatAxisMapperBuilder for chosen axis, DelegateAxisMapperBuilder for others
             axis == Axis.X ? new RepeatAxisMapperBuilder(builder.xAxis(), minimum, maximum) : new DelegateAxisMapperBuilder(builder.xAxis()),
             axis == Axis.Y ? new RepeatAxisMapperBuilder(builder.yAxis(), minimum, maximum) : new DelegateAxisMapperBuilder(builder.yAxis()),
             axis == Axis.Z ? new RepeatAxisMapperBuilder(builder.zAxis(), minimum, maximum) : new DelegateAxisMapperBuilder(builder.zAxis())
+        );
+        */
+        return new DefaultLayoutBuilder(
+            builder,
+            axis == Axis.X ? new RepeatAxisMapperBuilder(builder.xAxis(), minimum, maximum) :  new KeepAxisMapperBuilder(builder.xAxis()),
+            axis == Axis.Y ? new RepeatAxisMapperBuilder(builder.yAxis(), minimum, maximum) :  new KeepAxisMapperBuilder(builder.yAxis()),
+            axis == Axis.Z ? new RepeatAxisMapperBuilder(builder.zAxis(), minimum, maximum) :  new KeepAxisMapperBuilder(builder.zAxis())
         );
     }
 
@@ -157,13 +176,18 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
         AxisMapperBuilder[] tabY = Arrays.stream(builders).map(LayoutBuilder::yAxis).toArray(AxisMapperBuilder[]::new);
         AxisMapperBuilder[] tabZ = Arrays.stream(builders).map(LayoutBuilder::zAxis).toArray(AxisMapperBuilder[]::new);
 
+
+        // Note: OverlayAxisMapperBuilder est devenu AdjustAxisMapperBuilder (Aussi KeepAxisMapperBuilder d'une certaine manière). C'était dans le overlay qu'il y avait le code smell.
+        // TODO-Z : IntelliJ rouge alors que pas besoin.
+        LayoutBuilderProvider provider = switch (axis) {
+            case X -> (x, y, z) -> builders[x];
+            case Y -> (x, y, z) -> builders[y];
+            case Z -> (x, y, z) -> builders[z];
+        };
+
         return new DefaultLayoutBuilder(
             // A LayoutBuilderProvider that maps `builders` argument array to the chosen axis:
-            switch (axis) {
-                case X -> (x, y, z) -> builders[x];
-                case Y -> (x, y, z) -> builders[y];
-                case Z -> (x, y, z) -> builders[z];
-            },
+            provider,
             // PriorityRepartitionAxisMapperBuilder for chosen axis, KeepAxisMapperBuilder or AdjustAxisMapperBuilder for others
             axis == Axis.X ? new PriorityRepartitionAxisMapperBuilder(tabX, priorities)
                 : adjusted.contains(Axis.X) ? new AdjustAxisMapperBuilder(tabX) : new KeepAxisMapperBuilder(tabX),
