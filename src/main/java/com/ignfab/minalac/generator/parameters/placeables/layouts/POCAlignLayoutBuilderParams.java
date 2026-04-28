@@ -67,6 +67,8 @@ public abstract class POCAlignLayoutBuilderParams implements LayoutBuilderParams
         for (int i = 0; i < align.size(); i++)  {
             builders[i] = align.get(i).layout.createBuilder(seed);
             priorities[i] = align.get(i).priority;
+            //System.out.println(builders[i]);
+            //System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAA");
         }
 
         List<Axis> adjustAxes = adjust == null

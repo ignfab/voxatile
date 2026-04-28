@@ -25,6 +25,8 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
     private final AxisMapperBuilder xAxisBuilder;
     private final AxisMapperBuilder yAxisBuilder;
     private final AxisMapperBuilder zAxisBuilder;
+    private final int number;
+    private static int count = 0;
 
     /**
      * Creates a new {@code DefaultAxisStructureBuilder} with only one, eventually repeated, structure builder.
@@ -46,6 +48,8 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
         this.xAxisBuilder = xAxisBuilder;
         this.yAxisBuilder = yAxisBuilder;
         this.zAxisBuilder = zAxisBuilder;
+        number = count;
+        count++;
     }
 
     @Override
@@ -140,7 +144,6 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
 
         // TODO-Z: A priori le remplacement de Delegate par Keep ça marche, à vérifier en détail
 
-        /*
         return new DefaultLayoutBuilder(
             builder,
             // RepeatAxisMapperBuilder for chosen axis, DelegateAxisMapperBuilder for others
@@ -148,13 +151,13 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
             axis == Axis.Y ? new RepeatAxisMapperBuilder(builder.yAxis(), minimum, maximum) : new DelegateAxisMapperBuilder(builder.yAxis()),
             axis == Axis.Z ? new RepeatAxisMapperBuilder(builder.zAxis(), minimum, maximum) : new DelegateAxisMapperBuilder(builder.zAxis())
         );
-        */
+        /*
         return new DefaultLayoutBuilder(
             builder,
             axis == Axis.X ? new RepeatAxisMapperBuilder(builder.xAxis(), minimum, maximum) :  new KeepAxisMapperBuilder(builder.xAxis()),
             axis == Axis.Y ? new RepeatAxisMapperBuilder(builder.yAxis(), minimum, maximum) :  new KeepAxisMapperBuilder(builder.yAxis()),
             axis == Axis.Z ? new RepeatAxisMapperBuilder(builder.zAxis(), minimum, maximum) :  new KeepAxisMapperBuilder(builder.zAxis())
-        );
+        );*/
     }
 
 

@@ -1,0 +1,96 @@
+format: minetest
+
+
+# I love Saint-Mandé
+worldName: Test Facade
+verticalScale: 0.5
+horizontalScale: 0.5
+area:
+  center:
+    latitude: 48.845
+    longitude: 2.425
+  extentX: 500
+  extentY: 500
+
+#
+# This is a tool for working out facades
+#
+# It will work only on Minetest/Luanti for now but may be easily adapted to other games.
+#
+# Put your facade params to test in `&facade` anchor and launch generation.
+#
+# Samples of your facade, with various sizes, will be placed in resulting world.
+#
+
+# TODO:
+# - move that outside of processes and add area information to make it stand alone.
+
+#references:
+#  - &facade
+#    - xAlign:
+#        # Left corner
+#        - along: z
+#          atLeast: 10
+#          repeat:
+#            atLeast: 3
+#            along: x
+#            repeat:
+#              at: [ 0, -1..1, 0 ]
+#              put: wool:red
+#          priority: -1
+#        # Right corner
+#        - along: z
+#          atLeast: 4
+#          repeat:
+#            atLeast: 2
+#            along: x
+#            repeat:
+#              at: [ 0, 0, 0 ]
+#              put: wool:green
+#          priority: -1
+#    - at: [ 0, 0, 0 ]
+#      put: wool:white
+#      stretchX:
+#        at: 0
+#      stretchZ:
+#        at: 0
+
+references:
+  - &facade
+    - yAlignZ:
+      - along: z
+        atLeast: 1
+        repeat:
+          along: z
+          atLeast: 10
+          atMost: 10
+          repeat:
+            at: [ 0, -1..1, 0 ]
+            put: wool:red
+  - &facade2
+    - yAlignZ:
+        - along: z
+          atLeast: 10
+          repeat:
+            at: [ 0, -1..1, 0 ]
+            put: wool:red
+
+
+forEachTile:
+
+  renderGround:
+    type: renderHeightmap
+    at: 0
+    place: default:stone
+
+  renderFacadeLarge:
+    type: debugLayout
+    build: *facade
+    at:
+      x: 0
+      y: 50
+      z: 1
+    size:
+      x: 12
+      y: 3
+      z: 15

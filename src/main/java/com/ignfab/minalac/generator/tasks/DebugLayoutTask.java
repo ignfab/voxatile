@@ -47,6 +47,9 @@ public class DebugLayoutTask implements TileTask {
             int x = this.sizeX != null ? this.sizeX : builder.xAxis().minimumSize();
             int y = this.sizeY != null ? this.sizeY : builder.yAxis().minimumSize();
             int z = this.sizeZ != null ? this.sizeZ : builder.zAxis().minimumSize();
+            System.out.println(builder.xAxis() + ", " + builder.xAxis().minimumSize() + ", " + builder.xAxis().maxSizeUnder(x));
+            System.out.println(builder.yAxis() + ", " + builder.yAxis().minimumSize() + ", " + builder.yAxis().maxSizeUnder(y));
+            System.out.println(builder.zAxis() + ", " + builder.zAxis().minimumSize() + ", " + builder.zAxis().maxSizeUnder(z));
             System.out.println("Builder #%d buid(%d, %d, %d)".formatted(number,x, y, z));
             try {
                 structure = builder.build(x, y, z);
@@ -62,7 +65,7 @@ public class DebugLayoutTask implements TileTask {
             System.out.println("Could not build facade structure");
             return;
         }
-System.out.println(structure.limits());
+        System.out.println(structure.limits());
         structure.place(tile.voxels(), position.x(), position.y(), position.z());
     }
 }
