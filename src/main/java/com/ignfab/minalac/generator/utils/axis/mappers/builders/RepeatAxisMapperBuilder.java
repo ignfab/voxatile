@@ -88,19 +88,23 @@ public class RepeatAxisMapperBuilder implements AxisMapperBuilder {
         return 0;
     }
 
-    // underlyingMin should be strictly positive
-    // TODO-12 : Revoir cette partie : elle est testée à la louche
+    // TODO-Z: Clarifier comment ça marche pour des cas tordus, par exemple tailles non continues 2, 12
     private DistributionResult compute(int size, int underlyingMin) {
+        // TODO-Z: Prendre en compte les tailles mins de 0
+        if (underlyingMin <= 0)
+            throw new UnsupportedOperationException("Can not repeat a layout that has a minimal size equal or bellow zero");
         int count = Math.min(size / underlyingMin, maxOccur);
-        int remaining = size % underlyingMin;
+        // Modulo not used since maxOccur can be bellow (size / underlyingMin)
+        int remaining = size - count * underlyingMin;
 
         int[] lengths = new int[count];
         Arrays.fill(lengths, underlyingMin);
 
-        for (int index = 0; index < count; index++) {
-            // int possible = underlying.maxSizeUnder(underlyingMin + Math.ceilDiv(remaining, count));
+        for (int index = 0; index < lengths.length; index++) {
+            // Math.ceilDiv not available in Java 17
             int possible = underlying.maxSizeUnder(underlyingMin + (remaining + count - 1) / count);
-            remaining += lengths[index] - possible;
+            // (lengths[index] - possible) = distributedRemaining
+            remaining =  remaining + lengths[index] - possible;
             lengths[index] = possible;
             count--;
         }

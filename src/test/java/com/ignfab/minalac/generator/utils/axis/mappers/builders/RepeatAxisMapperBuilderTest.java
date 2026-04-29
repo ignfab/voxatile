@@ -6,8 +6,6 @@ import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO: Test maximum occurences
-
 public class RepeatAxisMapperBuilderTest {
     @Test
     public void testBuild() {
@@ -20,9 +18,7 @@ public class RepeatAxisMapperBuilderTest {
         assertEquals(6, assertDoesNotThrow(
             () ->  new RepeatAxisMapperBuilder(new TestingAxisMapperBuilder(3), 2, Integer.MAX_VALUE).maxSizeUnder(6))
         );
-        assertEquals(9, assertDoesNotThrow(
-            () ->  new RepeatAxisMapperBuilder(new TestingAxisMapperBuilder(3), 2, Integer.MAX_VALUE).maxSizeUnder(10))
-        );
+
 
         assertEquals(-1, assertDoesNotThrow(
             () ->  new RepeatAxisMapperBuilder(new TestingAxisMapperBuilder(3), 2, Integer.MAX_VALUE).maxSizeUnder(5))
@@ -42,8 +38,29 @@ public class RepeatAxisMapperBuilderTest {
             () ->  new RepeatAxisMapperBuilder(new TestingAxisMapperBuilder(3, 4), 2, Integer.MAX_VALUE).maxSizeUnder(10))
         );
 
-        // TODO-12 : Lié au 12. Mais pose d'autre problemes
-        // assertEquals(5, new EqualizerIndexMapperBuilder(new TestingIndexMapperBuilder(0, 3), 1).maxSizeUnder(5));
+        // TODO: Continue tests maximum occurences
+
+        // Unresizable underlying structure
+        // Max under 25 is 2 * 7 = 14
+        assertEquals(14, assertDoesNotThrow(
+            () -> new RepeatAxisMapperBuilder(new TestingAxisMapperBuilder(7, 7), 2, 2).maxSizeUnder(25))
+        );
+        // Max under 14 is 2 * 7 = 14
+        assertEquals(14, assertDoesNotThrow(
+            () -> new RepeatAxisMapperBuilder(new TestingAxisMapperBuilder(7, 7), 2, 2).maxSizeUnder(14))
+        );
+
+        // Resizable underlying structure (Can take any size from 2 to 8)
+        // Max under 30 is max([2, 8]) * maxOccurences (3 here) -> 8 * 3 = 24
+        assertEquals(24, assertDoesNotThrow(
+            () -> new RepeatAxisMapperBuilder(new TestingAxisMapperBuilder(2, 8), 2, 3).maxSizeUnder(30))
+        );
+
+        // TODO-N-12: Revenir sur ça (Ca peut devenir compliqué car deux sources de variations de taille)
+        // Ca serait bien d'avoir un TestingAxisBuilder prenant une liste de tailles possibles
+        // Par exemple, taille possible de 6 et 8 avec minOccur de 2 et maxOccur de 3, on aurait maxUnder(25/24) = 24 et maxUnder(23) = 22
+
+
     }
 
     @Test
