@@ -31,6 +31,7 @@ public class StructureLayoutBuilder implements LayoutBuilder {
     public Structure build(int sizeX, int sizeY, int sizeZ) {
         // checkResizability(sizeX, sizeY, sizeZ);
         // TODO: Apply translation
+        xAxisBuilder.origin();
         return structure;
     }
 

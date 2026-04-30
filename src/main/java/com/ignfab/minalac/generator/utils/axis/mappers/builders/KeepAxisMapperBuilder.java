@@ -32,18 +32,6 @@ public class KeepAxisMapperBuilder implements AxisMapperBuilder {
         }
     }
 
-    public static void main(String[] args) throws UnbuildableException {
-        AxisMapperBuilder under = new RepeatAxisMapperBuilder(new ConstantAxisMapperBuilder(1, 0), 10, 10);
-        /*
-        AxisMapperBuilder underBis = new RepeatAxisMapperBuilder(under, 1, 9999);
-        AdjustAxisMapperBuilder a = new AdjustAxisMapperBuilder(underBis);
-        System.out.println(a.maxSizeUnder(15));
-        System.out.println(underBis.maxSizeUnder(15));*/
-        System.out.println(under.maxSizeUnder(30));
-
-        System.out.println("****");
-    }
-
     @Override
     public AxisMapper build(int size) throws UnbuildableException {
         if (size < 0)

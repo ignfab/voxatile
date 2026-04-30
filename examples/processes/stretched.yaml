@@ -1,0 +1,35 @@
+format: minetest
+
+worldName: Stretched
+verticalScale: 1
+horizontalScale: 1
+area:
+  center:
+    latitude: 48.845
+    longitude: 2.425
+  extentX: 500
+  extentY: 500
+
+references:
+  - &facade
+    - at: [ -5..5, 0, 0 ]
+      put: wool:green
+      stretchX:
+        at: 0
+
+forEachTile:
+
+  renderGround:
+    type: renderHeightmap
+    at: 0
+    place: default:stone
+
+  renderFacadeLarge:
+    type: debugLayout
+    build: *facade
+    at:
+      x: 0
+      y: 50
+      z: 1
+    size:
+      x: 32

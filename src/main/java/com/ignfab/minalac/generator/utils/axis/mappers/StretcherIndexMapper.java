@@ -25,7 +25,7 @@ public class StretcherIndexMapper implements AxisMapper {
             throw new IllegalArgumentException("Base size can not be negative or zero");
         if (size < 0)
             throw new IllegalArgumentException("Size can not be negative");
-        if (size - baseSize < -1)
+        if (size - baseSize < - 1)
             throw new IllegalArgumentException("Can not be squeezed more than 1");
         if (stretchablePosition < 0 || stretchablePosition >= baseSize)
             throw new IllegalArgumentException("Stretchable coordinate out of base interval");
