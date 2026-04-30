@@ -44,8 +44,7 @@ public class StretcherAxisMapperBuilder implements AxisMapperBuilder {
             throw new UnbuildableException("Not enough space");
         if (size > maxSize)
             throw new UnbuildableException("Requested size is too large");
-        //TODO: MISSING ORIGIN
-        return new StretcherIndexMapper(stretchableCoord, underlying.minimumSize(), size);
+        return new StretcherIndexMapper(underlying.origin(), stretchableCoord, underlying.minimumSize(), size);
     }
 
     @Override
@@ -62,6 +61,6 @@ public class StretcherAxisMapperBuilder implements AxisMapperBuilder {
 
     @Override
     public int origin() {
-        return 0;
+        return underlying.origin();
     }
 }

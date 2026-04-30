@@ -12,10 +12,17 @@ area:
 
 references:
   - &facade
-    - at: [ -5..5, 0, 0 ]
-      put: wool:green
-      stretchX:
-        at: 0
+    axes: x
+    blueprint: "rvb"
+    with:
+      "r": wool:red
+      "v": wool:green
+      "b": wool:blue
+#    - at: [ -5..5, 0, 0 ]
+#      put: wool:green
+    xOffset: -3
+    stretchX:
+      at: -3
 
 forEachTile:
 
