@@ -3,6 +3,8 @@ heightmaps:
     default: 0
   water:
     default: 0
+  snowfields:
+    default: 0
 
 forEachTile:
 
@@ -54,9 +56,9 @@ forEachTile:
     processor:
       type: geoToolsVector
 
-  fetchWater:
+  fetchHydrographic:
     type: fetchData
-    modelType: water
+    modelType: hydrographic
     provider:
       type: wfs
       url: https://data.geopf.fr/wfs/wfs
@@ -91,11 +93,15 @@ forEachTile:
 
   flattenWater:
     after:
-      - fetchWater
+      - fetchHydrographic
       - setAltitude
     type: copyHeightmap
     models:
-      type: water
+      type: hydrographic
+      filter:
+        not:
+          metadata: nature
+          equals: "Glacier, névé"
     from:
       localMin: ground
       range: 9
@@ -187,18 +193,37 @@ forEachTile:
           place: *forest-tree2
 
   populateWaterPresence:
-    after: fetchWater
+    after: fetchHydrographic
     type: copyHeightmap
     models:
-      type: water
+      type: hydrographic
+      filter:
+        not:
+          metadata: nature
+          equals: "Glacier, névé"
     from: 1
     to: water
+
+  populateSnowfieldsPresence:
+    after: fetchHydrographic
+    type: copyHeightmap
+    models:
+      type: hydrographic
+      filter:
+        metadata: nature
+        equals: "Glacier, névé"
+    from: 1
+    to: snowfields
 
   computeWaterDepth:
     after: populateWaterPresence
     type: copyHeightmap
     models:
-      type: water
+      type: hydrographic
+      filter:
+        not:
+          metadata: nature
+          equals: "Glacier, névé"
     from:
       remap:
         manhattan: water
@@ -234,6 +259,21 @@ forEachTile:
         # This a dirt fix to remove vegetation on water
         - put: *voxel-air
           at: [ 0, 0, 1..12 ]
+
+  renderSnowfields:
+    after:
+      - renderGround
+    type: renderHeightmap
+    minimum:
+      sum:
+        - ground
+        - 1
+        - product: [ -5, snowfields ]
+    maximum: ground
+    place:
+      structure:
+        - put: *voxel-snowfields
+          at: [ 0, 0, 0 ]
 
   path:
     after:

@@ -1,0 +1,10 @@
+# La Meije is a mountain in the Massif des Écrins range.
+worldName: La Meije - Massif des Écrins range
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 45.005
+    longitude: 6.308
+  extentX: 2000
+  extentY: 2000
