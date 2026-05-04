@@ -44,7 +44,8 @@ public class Generation {
     private final VoxelWorld world;
     private final HeightmapDeclarationStore heightmaps = new HeightmapDeclarationStore();
 
-    private final Scheduler scheduler = new Scheduler();
+    private final Scheduler forEachTileScheduler = new Scheduler();
+    private final Scheduler afterAllTilesScheduler = new Scheduler();
 
     private final int maxTileSize;
     private final Collection<WorldBBox2d> tiles;
@@ -134,10 +135,17 @@ public class Generation {
     }
 
     /**
-     * {@return the generation scheduler}
+     * {@return the "for each tile" generation scheduler}
      */
-    public Scheduler scheduler() {
-        return scheduler;
+    public Scheduler forEachTileScheduler() {
+        return forEachTileScheduler;
+    }
+
+    /**
+     * {@return the "after all tiles" generation scheduler}
+     */
+    public Scheduler afterAllTilesScheduler() {
+        return afterAllTilesScheduler;
     }
 
     /**

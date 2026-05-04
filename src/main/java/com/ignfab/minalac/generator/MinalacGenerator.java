@@ -72,6 +72,7 @@ public final class MinalacGenerator {
      *
      * @param args command line arguments
      */
+    @SuppressWarnings("checkstyle:MethodLength")
     public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException, TimeoutException, GenerationFailedException {
         // Execution duration start
         Instant start = Instant.now();
@@ -113,7 +114,6 @@ public final class MinalacGenerator {
 
         // Generation parsing
         ParamsParser parser = new ParamsParser();
-
 
         // TODO: Static method that provides a ParamsParser with all default renderers
         // If those name values are modified, update the documentation accordingly
@@ -190,7 +190,7 @@ public final class MinalacGenerator {
                 // Generate tile
                 Instant tileGenerationStart = Instant.now();
 
-                generation.scheduler().run(5, TimeUnit.MINUTES);
+                generation.forEachTileScheduler().run(5, TimeUnit.MINUTES);
                 Duration tileGenerationDuration = Duration.between(tileGenerationStart, Instant.now());
 
                 generatingDuration = generatingDuration.plus(tileGenerationDuration);
@@ -205,13 +205,21 @@ public final class MinalacGenerator {
                 System.out.printf("Tile %s saved in %ds.%n", tileString, tileSavingDuration.toSeconds());
             }
         } finally {
-            generation.scheduler().shutdown();
+            generation.forEachTileScheduler().shutdown();
         }
 
         System.out.printf("%nAll %d tiles generated and saved.%nSpent %ds generating and %ds saving.%n", numberOfTiles, generatingDuration.toSeconds(), mapSavingDuration.toSeconds());
 
-        Instant finalizationStart = Instant.now();
+        try {
+            Instant afterAllTilesStart = Instant.now();
+            generation.afterAllTilesScheduler().run(5, TimeUnit.MINUTES);
+            Duration afterAllTilesDuration = Duration.between(afterAllTilesStart, Instant.now());
+            System.out.printf("Tasks executed after all tiles took %ds.%n", afterAllTilesDuration.toSeconds());
+        } finally {
+            generation.afterAllTilesScheduler().shutdown();
+        }
 
+        Instant finalizationStart = Instant.now();
         generation.world().finalizeAndSave();
         System.out.printf("Generation finalization took %ds.%n", Duration.between(finalizationStart, Instant.now()).toSeconds());
         System.out.printf("Total: %ds.%nDone.%n", Duration.between(start, Instant.now()).toSeconds());
