@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.parameters;
 
+import java.awt.Color;
+
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.StreamReadFeature;
 import tools.jackson.databind.DeserializationFeature;
@@ -42,7 +44,10 @@ public final class ParamsTester {
         builder.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
         builder.enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION);
 
-        builder.addModule(new ParamsParser.MinalacParserModule());
+        SimpleModule module = new SimpleModule("ParamsTesterModule");
+        module.addDeserializer(Color.class, new ColorDeserializer());
+        module.setDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
+        builder.addModule(module);
 
         format.registerPlaceableDeserializer(builder);
 

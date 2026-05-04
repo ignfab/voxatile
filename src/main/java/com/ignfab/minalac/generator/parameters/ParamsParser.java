@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.parameters;
 
+import java.awt.Color;
+
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.StreamReadFeature;
 import tools.jackson.databind.DeserializationFeature;
@@ -43,6 +45,8 @@ public class ParamsParser {
         MinalacParserModule module = new MinalacParserModule();
         // TODO OutputFormat handling might be relocated to the MinalacParserModule (not sure)
         module.addDeserializer(OutputFormat.class, formatDeserializer);
+        module.addDeserializer(Color.class, new ColorDeserializer());
+        module.setDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
         mapperBuilder.addModule(module);
 
         YAMLMapper mapper = mapperBuilder.build();
