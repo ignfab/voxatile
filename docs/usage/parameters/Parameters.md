@@ -111,29 +111,17 @@ forEachTile:
 - `heightmaps`: [Heightmaps](Heightmaps.md) used for the generation
   - _`<name>`_: Unique name of the heightmap
       - `default`: Default value for all heightmap cells (integer or one of `minimal`, `min`, `maximal` or `max`)
-- `forEachTile`: [Tasks](TileTasks.md) to perform for each generation tile
+- `forEachTile`: [Tile tasks](TileTasks.md) to perform for each generation tile
   - _`<name>`_: Unique name of the task
     - `after`: List of [dependencies](#dependencies) (optional)
     - `type` (str): Tile task [type](TileTasks.md)
     - Additional parameters specific to the given [type](TileTasks.md)
+- `afterAllTiles`: [Tasks](Tasks.md) to perform after all generation tiles finished
+  - _`<name>`_: Unique name of the task
+    - `after`: List of [dependencies](#dependencies) (optional)
+    - `type` (str): Task [type](Tasks.md)
+    - Additional parameters specific to the given [type](Tasks.md)
 
 ## References
 
 YAML references are processed by the generator. They can be defined anywhere in parameters. A `references` field is available at root to put references not going anywhere else.
-
-## Dependencies
-
-Dependencies allow to control execution order of tasks. Optional `after` field lists names of every other tasks that should run before the task it belongs to.
-
-For example, if we want `renderBuildings` to run after `fetchBuildings` and `renderAltitude` tasks, we write:
-```yaml
-forEachTile:
-  renderBuildings:
-    after:
-      - fetchBuildings
-      - renderAltitude
-    ...
-```
-
-**BEWARE** : For now, `after` values are not checked. Bad configurations may induce deadlock that will make generation fail.
-

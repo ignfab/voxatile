@@ -99,6 +99,12 @@ public class GenerationParams {
     public ScheduleParams forEachTile = new ScheduleParams();
 
     /**
+     * Description of the schedule that will run after all tiles.
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public ScheduleParams afterAllTiles = new ScheduleParams();
+
+    /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
      * @param area the area of generation.
@@ -136,6 +142,7 @@ public class GenerationParams {
             params.validate();
 
         forEachTile.validate();
+        afterAllTiles.validate();
     }
 
     /**
@@ -182,7 +189,9 @@ public class GenerationParams {
         );
 
         // ForEachTile scheduling
-        forEachTile.populate(generation, generation.scheduler());
+        forEachTile.populate(generation, generation.forEachTileScheduler());
+        // AfterAllTiles scheduling
+        afterAllTiles.populate(generation, generation.afterAllTilesScheduler());
 
         return generation;
     }
