@@ -1,5 +1,7 @@
 package fr.ign.voxatile.core.parameters;
 
+import java.awt.Color;
+
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.StreamReadFeature;
 import tools.jackson.databind.DeserializationFeature;
