@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.utils.world3d;
 
+import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.utils.world2d.WorldSize2d;
 
 /**
@@ -55,5 +56,13 @@ public record WorldSize3d(int x, int y, int z) {
      */
     public WorldSize2d to2d() {
         return new WorldSize2d(this);
+    }
+
+    public int coord(Axis axis) {
+        return switch (axis) {
+            case X -> x;
+            case Y -> y;
+            case Z -> z;
+        };
     }
 }

@@ -1,8 +1,11 @@
 package com.ignfab.minalac.generator.placeables.layouts;
 
+import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.placeables.Structure;
+import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.utils.axis.mappers.builders.AxisMapperBuilder;
 import com.ignfab.minalac.generator.utils.axis.mappers.builders.ConstantAxisMapperBuilder;
+import com.ignfab.minalac.generator.utils.axis.mappers.builders.StretcherAxisMapperBuilder;
 
 /**
  * A {@link LayoutBuilder} derived from a {@link Structure}.
@@ -27,11 +30,15 @@ public class StructureLayoutBuilder implements LayoutBuilder {
         this.zAxisBuilder = new ConstantAxisMapperBuilder(structure.limits().sizeZ(), structure.limits().minZ());
     }
 
+    private StructureLayoutBuilder(Structure structure, AxisMapperBuilder xAxisBuilder, AxisMapperBuilder yAxisBuilder, AxisMapperBuilder zAxisBuilder) {
+        this.structure = structure;
+        this.xAxisBuilder = xAxisBuilder;
+        this.yAxisBuilder = yAxisBuilder;
+        this.zAxisBuilder = zAxisBuilder;
+    }
+
     @Override
     public Structure build(int sizeX, int sizeY, int sizeZ) {
-        // checkResizability(sizeX, sizeY, sizeZ);
-        // TODO: Apply translation
-        xAxisBuilder.origin();
         return structure;
     }
 
@@ -48,5 +55,35 @@ public class StructureLayoutBuilder implements LayoutBuilder {
     @Override
     public AxisMapperBuilder zAxis() {
         return zAxisBuilder;
+    }
+
+    public StructureLayoutBuilder stretch(Axis axis, int stretchPosition, int minStretch, int maxStretch) throws UnbuildableException {
+        return switch (axis) {
+            case X ->
+                new StructureLayoutBuilder(
+                    this.structure,
+                    new StretcherAxisMapperBuilder(this.xAxisBuilder, stretchPosition, minStretch, maxStretch),
+                    this.yAxisBuilder,
+                    this.zAxisBuilder
+                );
+            case Y ->
+                new StructureLayoutBuilder(
+                    this.structure,
+                    this.xAxisBuilder,
+                    new StretcherAxisMapperBuilder(this.yAxisBuilder, stretchPosition, minStretch, maxStretch),
+                    this.zAxisBuilder
+                );
+            case Z ->
+                new StructureLayoutBuilder(
+                    this.structure,
+                    this.xAxisBuilder,
+                    this.yAxisBuilder,
+                    new StretcherAxisMapperBuilder(this.zAxisBuilder, stretchPosition, minStretch, maxStretch)
+                );
+        };
+    }
+
+    private AxisMapperBuilder foo(Axis axis, int stretchPosition, int minStretch, int maxStretch) throws UnbuildableException {
+        return null;
     }
 }

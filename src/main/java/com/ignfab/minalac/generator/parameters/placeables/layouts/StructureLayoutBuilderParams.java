@@ -16,6 +16,7 @@ import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.placeables.layouts.DefaultLayoutBuilder;
+import com.ignfab.minalac.generator.placeables.layouts.FooStructureBuilder;
 import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
 import com.ignfab.minalac.generator.placeables.layouts.StructureLayoutBuilder;
 import com.ignfab.minalac.generator.utils.axis.Axis;
@@ -64,6 +65,7 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
     public LayoutBuilder createBuilder(Seed seed) throws UnbuildableException {
         PlaceableStructure structure = this.structure.create(seed);
 
+        /*
         LayoutBuilder builder = new StructureLayoutBuilder(structure);
         if (stretchX != null)
             builder = stretchX.create(structure, builder, Axis.X);
@@ -71,7 +73,19 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
             builder = stretchY.create(structure, builder, Axis.Y);
         if (stretchZ != null)
             builder = stretchZ.create(structure, builder, Axis.Z);
-        return builder;
+
+         */
+        FooStructureBuilder.StretchAxis x = null;
+        FooStructureBuilder.StretchAxis y = null;
+        FooStructureBuilder.StretchAxis z = null;
+        if (stretchX != null)
+            x = new FooStructureBuilder.StretchAxis(Axis.X, stretchX.at, stretchX.atLeast, stretchX.at);
+        if (stretchY != null)
+            y = new FooStructureBuilder.StretchAxis(Axis.Y, stretchY.at, stretchY.atLeast, stretchY.at);
+        if (stretchZ != null)
+            z = new FooStructureBuilder.StretchAxis(Axis.Z, stretchZ.at, stretchZ.atLeast, stretchZ.at);
+
+        return new FooStructureBuilder(structure, x, y, z);
     }
 
     /**
