@@ -1,6 +1,7 @@
 format: minecraft
 references:
   - &voxel-stone minecraft:stone
+  - &voxel-snowfields minecraft:snow_block
   - &voxel-dirt minecraft:dirt
   - &voxel-cobble minecraft:cobblestone
   - &voxel-empty minecraft:air

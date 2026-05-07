@@ -1,6 +1,7 @@
 format: minetest
 references:
   - &voxel-stone default:stone
+  - &voxel-snowfields default:snowblock
   - &voxel-dirt default:dirt
   - &voxel-cobble default:cobble
   - &voxel-empty default:air
