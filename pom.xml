@@ -42,13 +42,6 @@
             <id>slimjars</id>
             <url>https://mvn.slimjars.com</url>
         </repository>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/ignfab/nbt</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -130,9 +123,9 @@
         </dependency>
         <!-- Minecraft NBT file format -->
         <dependency>
-            <groupId>io.github.ensgijs</groupId>
-            <artifactId>ens-nbt</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <groupId>io.github.ens-gijs.nbt</groupId>
+            <artifactId>nbt-mca</artifactId>
+            <version>0.2.0</version>
             <scope>compile</scope>
         </dependency>
         <!-- Jackson (Yaml/Json deserialization) -->
