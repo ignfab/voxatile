@@ -3,47 +3,49 @@ package com.ignfab.minalac.generator.placeables.layouts;
 import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.placeables.EmptyStructure;
 import com.ignfab.minalac.generator.placeables.LayoutStructure;
+import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.placeables.Structure;
 import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
 import com.ignfab.minalac.generator.utils.axis.mappers.builders.AxisMapperBuilder;
 import com.ignfab.minalac.generator.utils.axis.mappers.builders.ConstantAxisMapperBuilder;
+import com.ignfab.minalac.generator.utils.axis.mappers.builders.DelegateAxisMapperBuilder;
 import com.ignfab.minalac.generator.utils.axis.mappers.builders.StretcherAxisMapperBuilder;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
+// TODO-Z: There is probably a better way to do it. This is to lock stretchable ability to only PlaceableStructure.
+//  Since choice is uncertain, there is redundancy with DefaultLayoutBuilder.
 public class FooStructureBuilder implements LayoutBuilder {
     private final Structure structure;
-    private AxisMapperBuilder xAxisBuilder;
-    private AxisMapperBuilder yAxisBuilder;
-    private AxisMapperBuilder zAxisBuilder;
+    private final AxisMapperBuilder xAxisBuilder;
+    private final AxisMapperBuilder yAxisBuilder;
+    private final AxisMapperBuilder zAxisBuilder;
 
-    public FooStructureBuilder(Structure structure, StretchAxis axisX, StretchAxis axisY, StretchAxis axisZ) throws UnbuildableException {
+    public FooStructureBuilder(PlaceableStructure structure, StretchAxis axisX, StretchAxis axisY, StretchAxis axisZ) throws UnbuildableException {
         this.structure = structure;
         AxisMapperBuilder xBase = new ConstantAxisMapperBuilder(structure.limits().sizeX(), structure.limits().minX());
         AxisMapperBuilder yBase = new ConstantAxisMapperBuilder(structure.limits().sizeY(), structure.limits().minY());
         AxisMapperBuilder zBase = new ConstantAxisMapperBuilder(structure.limits().sizeZ(), structure.limits().minZ());
 
-        xAxisBuilder = axisX == null ? xBase : foo(structure.limits(), xBase, axisX);
-        yAxisBuilder = axisY == null ? yBase : foo(structure.limits(), yBase, axisY);
-        zAxisBuilder = axisZ == null ? zBase : foo(structure.limits(), zBase, axisZ);
-
-
+        xAxisBuilder = axisX == null ? new DelegateAxisMapperBuilder(xBase) : createAndCheck(structure.limits(), xBase, axisX);
+        yAxisBuilder = axisY == null ? new DelegateAxisMapperBuilder(yBase) : createAndCheck(structure.limits(), yBase, axisY);
+        zAxisBuilder = axisZ == null ? new DelegateAxisMapperBuilder(zBase) : createAndCheck(structure.limits(), zBase, axisZ);
     }
 
-    private AxisMapperBuilder foo(WorldBBox3d limits, AxisMapperBuilder base, StretchAxis axis) throws UnbuildableException {
-        // TODO: Check copy paste
+    private AxisMapperBuilder createAndCheck(WorldBBox3d limits, AxisMapperBuilder base, StretchAxis axis) throws UnbuildableException {
         if (axis.stretchPosition > limits.max().coord(axis.axis) || axis.stretchPosition < limits.min().coord(axis.axis))
-            throw new UnsupportedOperationException("\"at\" value (%d) is outside structure (%d to %d) for axis %s"
+            throw new UnbuildableException("\"at\" value (%d) is outside structure (%d to %d) for axis %s"
                 .formatted(axis.stretchPosition, limits.min().coord(axis.axis), limits.max().coord(axis.axis), axis.axis));
 
         if (axis.minStretch == 0 && limits.size().coord(axis.axis) <= 1)
-            throw new UnsupportedOperationException("Forbidden to create empty builder");
+            throw new UnbuildableException("Forbidden to create empty builder");
 
         return new StretcherAxisMapperBuilder(base, axis.stretchPosition, axis.minStretch, axis.maxStretch);
     }
 
     @Override
     public Structure build(int sizeX, int sizeY, int sizeZ) throws UnbuildableException {
+        // TODO-Z: For now, redondant with DefaultLayoutStructure
         AxisMapper axisX = xAxisBuilder.build(sizeX);
         AxisMapper axisY = yAxisBuilder.build(sizeY);
         AxisMapper axisZ = zAxisBuilder.build(sizeZ);
@@ -51,7 +53,6 @@ public class FooStructureBuilder implements LayoutBuilder {
         if (axisX.intervals().length == 0 || axisY.intervals().length == 0 || axisZ.intervals().length == 0)
             return EmptyStructure.INSTANCE;
 
-        // xisX.intervals().length should always be 1 (For constant & stretched)
         Structure[][][] structures = new Structure[1][1][1];
         structures[0][0][0] = structure;
 

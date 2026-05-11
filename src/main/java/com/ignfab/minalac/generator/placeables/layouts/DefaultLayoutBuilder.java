@@ -25,8 +25,6 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
     private final AxisMapperBuilder xAxisBuilder;
     private final AxisMapperBuilder yAxisBuilder;
     private final AxisMapperBuilder zAxisBuilder;
-    private final int number;
-    private static int count = 0;
 
     /**
      * Creates a new {@code DefaultAxisStructureBuilder} with only one, eventually repeated, structure builder.
@@ -48,8 +46,6 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
         this.xAxisBuilder = xAxisBuilder;
         this.yAxisBuilder = yAxisBuilder;
         this.zAxisBuilder = zAxisBuilder;
-        number = count;
-        count++;
     }
 
     @Override
@@ -107,15 +103,15 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
      * @return created {@link LayoutBuilder}
      * @throws UnbuildableException if layout builder cannot be created
      */
-    public static LayoutBuilder stretch(LayoutBuilder builder, Axis axis, int stretchPosition, int minStretch, int maxStretch) throws UnbuildableException {
-        return new DefaultLayoutBuilder(
-            builder,
-            // StretcherAxisMapperBuilder for chosen axis, DelegateAxisMapperBuilder for others
-            axis == Axis.X ? new StretcherAxisMapperBuilder(builder.xAxis(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.xAxis()),
-            axis == Axis.Y ? new StretcherAxisMapperBuilder(builder.yAxis(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.yAxis()),
-            axis == Axis.Z ? new StretcherAxisMapperBuilder(builder.zAxis(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.zAxis())
-        );
-    }
+//    public static LayoutBuilder stretch(LayoutBuilder builder, Axis axis, int stretchPosition, int minStretch, int maxStretch) throws UnbuildableException {
+//        return new DefaultLayoutBuilder(
+//            builder,
+//            // StretcherAxisMapperBuilder for chosen axis, DelegateAxisMapperBuilder for others
+//            axis == Axis.X ? new StretcherAxisMapperBuilder(builder.xAxis(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.xAxis()),
+//            axis == Axis.Y ? new StretcherAxisMapperBuilder(builder.yAxis(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.yAxis()),
+//            axis == Axis.Z ? new StretcherAxisMapperBuilder(builder.zAxis(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.zAxis())
+//        );
+//    }
 
     /**
      * Creates a new {@code AxisStructureBuilder} repeating an {@link LayoutBuilder} along an axis.

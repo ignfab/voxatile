@@ -18,7 +18,6 @@ import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.placeables.layouts.DefaultLayoutBuilder;
 import com.ignfab.minalac.generator.placeables.layouts.FooStructureBuilder;
 import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
-import com.ignfab.minalac.generator.placeables.layouts.StructureLayoutBuilder;
 import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
@@ -79,11 +78,11 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
         FooStructureBuilder.StretchAxis y = null;
         FooStructureBuilder.StretchAxis z = null;
         if (stretchX != null)
-            x = new FooStructureBuilder.StretchAxis(Axis.X, stretchX.at, stretchX.atLeast, stretchX.at);
+            x = new FooStructureBuilder.StretchAxis(Axis.X, stretchX.at, stretchX.atLeast, stretchX.atMost);
         if (stretchY != null)
-            y = new FooStructureBuilder.StretchAxis(Axis.Y, stretchY.at, stretchY.atLeast, stretchY.at);
+            y = new FooStructureBuilder.StretchAxis(Axis.Y, stretchY.at, stretchY.atLeast, stretchY.atMost);
         if (stretchZ != null)
-            z = new FooStructureBuilder.StretchAxis(Axis.Z, stretchZ.at, stretchZ.atLeast, stretchZ.at);
+            z = new FooStructureBuilder.StretchAxis(Axis.Z, stretchZ.at, stretchZ.atLeast, stretchZ.atMost);
 
         return new FooStructureBuilder(structure, x, y, z);
     }
@@ -157,14 +156,14 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
          */
         // TODO: Limit builder to stretch builders
         // TODO: Create a class form Stretch Layout that gives the structure size.
-        public LayoutBuilder create(PlaceableStructure structure, LayoutBuilder builder, Axis axis) throws UnbuildableException {
-            if (at > structure.limits().max().coord(axis) || at < structure.limits().min().coord(axis))
-                throw new UnsupportedOperationException("\"at\" value (%d) is outside structure (%d to %d) for axis %s"
-                    .formatted(at, structure.limits().min().coord(axis), structure.limits().max().coord(axis), axis));
-
-            if (atLeast == 0 && structure.limits().sizeX() <= 1)
-                throw new UnsupportedOperationException("Forbidden to create empty builder"); // TODO: Check that
-            return DefaultLayoutBuilder.stretch(builder, axis, at, atLeast, atMost);
-        }
+//        public LayoutBuilder create(PlaceableStructure structure, LayoutBuilder builder, Axis axis) throws UnbuildableException {
+//            if (at > structure.limits().max().coord(axis) || at < structure.limits().min().coord(axis))
+//                throw new UnsupportedOperationException("\"at\" value (%d) is outside structure (%d to %d) for axis %s"
+//                    .formatted(at, structure.limits().min().coord(axis), structure.limits().max().coord(axis), axis));
+//
+//            if (atLeast == 0 && structure.limits().sizeX() <= 1)
+//                throw new UnsupportedOperationException("Forbidden to create empty builder"); // TODO: Check that
+//            return DefaultLayoutBuilder.stretch(builder, axis, at, atLeast, atMost);
+//        }
     }
 }
