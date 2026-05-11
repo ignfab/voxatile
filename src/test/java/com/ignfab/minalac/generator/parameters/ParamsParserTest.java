@@ -20,6 +20,8 @@ public class ParamsParserTest {
           extentY: 2500
           angle: 30
         format: testing
+        dummy:
+          c: str
         """;
 
     private ParamsParser newParser() {
@@ -40,7 +42,8 @@ public class ParamsParserTest {
                 "extentX": 500,
                 "extentY": 2500
               },
-              "format": "testing"
+              "format": "testing",
+              "dummy": { "c": "str" }
             }
             """
         ), "Should be able to parse JSON format");
@@ -80,7 +83,12 @@ public class ParamsParserTest {
 
     @Test
     public void testParseMissingRequiredField() {
-        assertThrows(ParseException.class, () -> newParser().parse("format: testing"), "Absence of the area field should throw an exception");
+        assertThrows(ParseException.class, () -> newParser().parse("""
+            format: testing
+            dummy:
+              c: str
+            """
+        ), "Absence of the area field should throw an exception");
 
         assertThrows(ParseException.class, () -> newParser().parse("""
             area:
@@ -89,6 +97,8 @@ public class ParamsParserTest {
               extentX: 500
               extentY: 2500
             format: testing
+            dummy:
+              c: str
             """
         ), "Absence of the latitude field should throw an exception");
 
@@ -99,6 +109,8 @@ public class ParamsParserTest {
               extentX: 500
               extentY: 2500
             format: testing
+            dummy:
+              c: str
             """
         ), "Absence of the longitude field should throw an exception");
 
@@ -109,6 +121,8 @@ public class ParamsParserTest {
                 longitude: 2.4
               extentY: 2500
             format: testing
+            dummy:
+              c: str
             """
         ), "Absence of the extentX field should throw an exception");
 
@@ -119,6 +133,8 @@ public class ParamsParserTest {
                 longitude: 2.4
               extentX: 500
             format: testing
+            dummy:
+              c: str
             """
         ), "Absence of the extentY field should throw an exception");
 
@@ -129,6 +145,8 @@ public class ParamsParserTest {
                 longitude: 2.4
               extentX: 500
               extentY: 2500
+            dummy:
+              c: str
             """
         ), "Absence of the format field should throw an exception");
     }
@@ -147,12 +165,16 @@ public class ParamsParserTest {
               - &format testing
             area: *area
             format: *format
+            dummy:
+              c: str
             """
         ), "Anchors should be resolved");
 
         assertThrows(ParseException.class, () -> newParser().parse("""
             area: *area
             format: *format
+            dummy:
+              c: str
             """
         ), "Unresolved anchors should throw an exception");
 
