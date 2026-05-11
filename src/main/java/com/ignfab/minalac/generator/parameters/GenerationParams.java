@@ -35,6 +35,12 @@ import com.ignfab.minalac.generator.world.VoxelWorld;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GenerationParams {
     /**
+     * Dummy params.
+     */
+    @JsonSetter(nulls = Nulls.FAIL)
+    public DummyParams dummy;
+
+    /**
      * World name.
      */
     @JsonSetter(nulls = Nulls.SKIP)
@@ -109,11 +115,14 @@ public class GenerationParams {
      *
      * @param area the area of generation.
      * @param format the format of the game.
+     * @param dummy dummy params.
      */
-    @ConstructorProperties({"area", "format"})
-    public GenerationParams(Area area, OutputFormat format) {
+    @ConstructorProperties({"area", "format", "dummy"})
+    public GenerationParams(Area area, OutputFormat format, DummyParams dummy) {
         this.area = area;
         this.format = format;
+        this.dummy = dummy;
+        System.out.println(dummy);
     }
 
     /**

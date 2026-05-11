@@ -1,3 +1,10 @@
+dummy:
+  a: strA
+  b1: 7
+  b2: -3
+  c: strC
+  #d: true
+
 heightmaps:
   ground:
     default: 0
