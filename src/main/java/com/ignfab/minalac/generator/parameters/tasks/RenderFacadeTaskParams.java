@@ -91,7 +91,11 @@ public class RenderFacadeTaskParams extends TileTaskParams {
             // TODO: should seed rather be given when building ?
             builders.stream().map(builder -> {
                 try {
-                    return builder.createBuilder(generation.seed());
+                    return builder.createBuilder(generation.seed(), new LayoutBuilderParams.AxesPolicies(
+                        LayoutBuilderParams.AxisPolicy.ADJUST,
+                        LayoutBuilderParams.AxisPolicy.KEEP,
+                        LayoutBuilderParams.AxisPolicy.ADJUST
+                    ));
                 } catch (UnbuildableException e) {
                     throw new IllegalArgumentException(e);
                 }

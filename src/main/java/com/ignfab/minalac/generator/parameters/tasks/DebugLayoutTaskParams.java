@@ -60,7 +60,11 @@ public class DebugLayoutTaskParams extends TileTaskParams {
             return new DebugLayoutTask(
                 builders.stream().map(builder -> {
                     try {
-                        return builder.createBuilder(generation.seed());
+                        return builder.createBuilder(generation.seed(), new LayoutBuilderParams.AxesPolicies(
+                        LayoutBuilderParams.AxisPolicy.ADJUST,
+                        LayoutBuilderParams.AxisPolicy.KEEP,
+                        LayoutBuilderParams.AxisPolicy.ADJUST
+                    ));
                     } catch (UnbuildableException e) {
                         throw new IllegalArgumentException(e);
                     }

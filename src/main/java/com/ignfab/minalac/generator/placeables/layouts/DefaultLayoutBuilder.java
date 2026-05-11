@@ -1,7 +1,6 @@
 package com.ignfab.minalac.generator.placeables.layouts;
 
 import java.util.Arrays;
-import java.util.List;
 
 import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.placeables.EmptyStructure;
@@ -145,10 +144,13 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
      * @param builders builders to concatenate
      * @param axis axis of concatenation
      * @param priorities priorities for each builders (must have same length as {@code builders})
+     * @param adjustX whether X-axis should be adjusted or not.
+     * @param adjustY whether Y-axis should be adjusted or not.
+     * @param adjustZ whether Z-axis should be adjusted or not.
      * @return created {@link LayoutBuilder}
      * @throws UnbuildableException if layout builder cannot be created
      */
-    public static LayoutBuilder concat(LayoutBuilder[] builders, Axis axis, int[] priorities, List<Axis> adjusted) throws UnbuildableException {
+    public static LayoutBuilder concat(LayoutBuilder[] builders, Axis axis, int[] priorities, boolean adjustX, boolean adjustY, boolean adjustZ) throws UnbuildableException {
         if (builders.length == 0 || builders.length != priorities.length)
             throw new RuntimeException("tab length do not match");
 
@@ -166,11 +168,11 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
             },
             // PriorityRepartitionAxisMapperBuilder for chosen axis, KeepAxisMapperBuilder or AdjustAxisMapperBuilder for others
             axis == Axis.X ? new PriorityRepartitionAxisMapperBuilder(tabX, priorities)
-                : adjusted.contains(Axis.X) ? new AdjustAxisMapperBuilder(tabX) : new KeepAxisMapperBuilder(tabX),
+                : adjustX ? new AdjustAxisMapperBuilder(tabX) : new KeepAxisMapperBuilder(tabX),
             axis == Axis.Y ? new PriorityRepartitionAxisMapperBuilder(tabY, priorities)
-                : adjusted.contains(Axis.Y) ? new AdjustAxisMapperBuilder(tabY) : new KeepAxisMapperBuilder(tabY),
+                : adjustY ? new AdjustAxisMapperBuilder(tabY) : new KeepAxisMapperBuilder(tabY),
             axis == Axis.Z ? new PriorityRepartitionAxisMapperBuilder(tabZ, priorities)
-                : adjusted.contains(Axis.Z) ? new AdjustAxisMapperBuilder(tabZ) : new KeepAxisMapperBuilder(tabZ)
+                : adjustZ ? new AdjustAxisMapperBuilder(tabZ) : new KeepAxisMapperBuilder(tabZ)
         );
     }
 
