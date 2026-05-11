@@ -25,7 +25,7 @@ public class GenerationParamsTest {
         GenerationParams.Area.LatitudeLongitude center = new GenerationParams.Area.LatitudeLongitude(5.8, 2.4);
         GenerationParams.Area area = new GenerationParams.Area(center, 50, 75);
         OutputFormat format = new OutputFormat((destination) -> new TestingVoxelWorld(), TestingVoxelParams.class, TestingVoxelParams::new);
-        params = new GenerationParams(area, format);
+        params = new GenerationParams(area, format, new DummyParams(new DummyParams.B(), new DummyParams.C("")));
         params.heightmaps = new HashMap<>();
         params.forEachTile = new ScheduleParams();
     }
