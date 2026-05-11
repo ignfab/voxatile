@@ -31,11 +31,12 @@ references:
       concatenate:
         # Left corner
         - &corner
-          at: [ 0, -1..0, 0 ]
-          put: *corner-material
-          stretchX:
+          structure:
+            at: [ 0, -1..0, 0 ]
+            put: *corner-material
+          stretchableAlongX:
             at: 0
-          stretchZ:
+          stretchableAlongZ:
             at: 0
           priority: -1
         # TODO
@@ -50,30 +51,34 @@ references:
                 - atLeast: 0
                   along: x
                   repeat:
-                    axes: [ z, x ]
-                    blueprint: [ "-O==O", "-O**O", "-O**O", "-O**O", "-O==O", "-O--O" ]
-                    with : *materials
-                    stretchZ:
+                    structure:
+                      axes: [ z, x ]
+                      blueprint: [ "-O==O", "-O**O", "-O**O", "-O**O", "-O==O", "-O--O" ]
+                      with : *materials
+                    stretchableAlongZ:
                       at: 0
                 # Door
-                - axes: [ z, x ]
-                  blueprint: [ "-O==O-", "-O  O-", "-O  O-", "-O  O-", "-O  O-", "-O  O-" ]
-                  with : *materials
-                  stretchZ:
+                - structure:
+                    axes: [ z, x ]
+                    blueprint: [ "-O==O-", "-O  O-", "-O  O-", "-O  O-", "-O  O-", "-O  O-" ]
+                    with : *materials
+                  stretchableAlongZ:
                     at: 0
                 # Right ground windows
                 - along: x
                   atLeast: 0
                   repeat:
-                    axes: [ z, x ]
-                    blueprint: [ "O==O-", "O**O-", "O**O-", "O**O-", "O==O-", "O--O-" ]
-                    with: *materials
-                    stretchZ:
+                    structure:
+                      axes: [ z, x ]
+                      blueprint: [ "O==O-", "O**O-", "O**O-", "O**O-", "O==O-", "O--O-" ]
+                      with: *materials
+                    stretchableAlongZ:
                       at: 0
             # Cornice
-            - at: [ 0, 0, 0 ]
-              put: *cornice-material
-              stretchX:
+            - structure:
+                at: [ 0, 0, 0 ]
+                put: *cornice-material
+              stretchableAlongX:
                 at: 0
             # Upper floors
             - priority: 2
@@ -83,31 +88,35 @@ references:
                 along: x
                 adjust: z
                 concatenate:
-                  - at: [ 0, 0, 0..5 ]
-                    put: *other-material
+                  - structure:
+                      at: [ 0, 0, 0..5 ]
+                      put: *other-material
                   - along: x
                     repeat:
-                      axes: [ y, z, x ]
-                      blueprint:
-                        - [ "O==O+", "O**O+", "O**O+", "O**O+", "O==O+", "O--O+" ]
-                        - [ "     ", "     ", "     ", "|||| ", "==== ", "O  O " ]
-                      with : *materials
-                      # TODO: En inversant la profondeur, on peut s'éviter beaucoup d'offset (a priori, les façade vont être plus souvent saillantes)
-                      yOffset: -1
+                      structure:
+                        axes: [ y, z, x ]
+                        blueprint:
+                          - [ "O==O+", "O**O+", "O**O+", "O**O+", "O==O+", "O--O+" ]
+                          - [ "     ", "     ", "     ", "|||| ", "==== ", "O  O " ]
+                        with : *materials
+                        # TODO: En inversant la profondeur, on peut s'éviter beaucoup d'offset (a priori, les façade vont être plus souvent saillantes)
+                        yOffset: -1
             # Upper cornice
-            - at: [ 0, 0, 0 ]
-              put: *cornice-material
-              stretchX:
+            - structure:
+                at: [ 0, 0, 0 ]
+                put: *cornice-material
+              stretchableAlongX:
                 at: 0
-              stretchZ:
+              stretchableAlongZ:
                 at: 0
         # Right corner
         - *corner
-    - at: [ 0, 0, 0 ]
-      put: *base-material
-      stretchX:
+    - structure:
+        at: [ 0, 0, 0 ]
+        put: *base-material
+      stretchableAlongX:
         at: 0
-      stretchZ:
+      stretchableAlongZ:
         at: 0
 
 forEachTile:
@@ -124,11 +133,12 @@ forEachTile:
         repeat:
           along: z
           repeat:
-            with:
-              O: wool:dark_grey
-              X: wool:grey
-            axes: [x, z]
-            blueprint: ["OX", "XO"]
+            structure:
+              with:
+                O: wool:dark_grey
+                X: wool:grey
+              axes: [x, z]
+              blueprint: ["OX", "XO"]
     at:
       x: -100
       y: 60

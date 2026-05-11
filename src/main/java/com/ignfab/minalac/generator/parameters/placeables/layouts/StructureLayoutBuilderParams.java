@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.parameters.placeables.layouts;
 
+import java.beans.ConstructorProperties;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -36,82 +38,43 @@ import com.ignfab.minalac.generator.utils.random.Seed;
  *     atLeast: 0
  * </pre>
  */
-@JsonDeserialize(using = StructureLayoutBuilderParams.Deserializer.class)
 public class StructureLayoutBuilderParams implements LayoutBuilderParams {
+    public PlaceableStructureParams structure;
+    public StretchAxisParams stretchableAlongX;
+    public StretchAxisParams stretchableAlongY;
+    public StretchAxisParams stretchableAlongZ;
 
-    @JsonIgnore
-    private PlaceableStructureParams structure;
-    @JsonIgnore
-    private StretchAxisParams stretchX;
-    @JsonIgnore
-    private StretchAxisParams stretchY;
-    @JsonIgnore
-    private StretchAxisParams stretchZ;
+    @ConstructorProperties({ "structure" })
+    public StructureLayoutBuilderParams(PlaceableStructureParams structure) {
+        this.structure = structure;
+    }
 
     @Override
     public void validate() {
         structure.validate();
-        if (stretchX != null)
-            stretchX.validate();
-        if (stretchY != null)
-            stretchY.validate();
-        if (stretchZ != null)
-            stretchZ.validate();
+        if (stretchableAlongX != null)
+            stretchableAlongX.validate();
+        if (stretchableAlongY != null)
+            stretchableAlongY.validate();
+        if (stretchableAlongZ != null)
+            stretchableAlongZ.validate();
     }
 
     @Override
     public LayoutBuilder createBuilder(Seed seed) throws UnbuildableException {
         PlaceableStructure structure = this.structure.create(seed);
 
-        /*
-        LayoutBuilder builder = new StructureLayoutBuilder(structure);
-        if (stretchX != null)
-            builder = stretchX.create(structure, builder, Axis.X);
-        if (stretchY != null)
-            builder = stretchY.create(structure, builder, Axis.Y);
-        if (stretchZ != null)
-            builder = stretchZ.create(structure, builder, Axis.Z);
-
-         */
         StretchableStructureBuilder.StretchAxis x = null;
         StretchableStructureBuilder.StretchAxis y = null;
         StretchableStructureBuilder.StretchAxis z = null;
-        if (stretchX != null)
-            x = new StretchableStructureBuilder.StretchAxis(Axis.X, stretchX.at, stretchX.atLeast, stretchX.atMost);
-        if (stretchY != null)
-            y = new StretchableStructureBuilder.StretchAxis(Axis.Y, stretchY.at, stretchY.atLeast, stretchY.atMost);
-        if (stretchZ != null)
-            z = new StretchableStructureBuilder.StretchAxis(Axis.Z, stretchZ.at, stretchZ.atLeast, stretchZ.atMost);
+        if (stretchableAlongX != null)
+            x = new StretchableStructureBuilder.StretchAxis(Axis.X, stretchableAlongX.at, stretchableAlongX.atLeast, stretchableAlongX.atMost);
+        if (stretchableAlongY != null)
+            y = new StretchableStructureBuilder.StretchAxis(Axis.Y, stretchableAlongY.at, stretchableAlongY.atLeast, stretchableAlongY.atMost);
+        if (stretchableAlongZ != null)
+            z = new StretchableStructureBuilder.StretchAxis(Axis.Z, stretchableAlongZ.at, stretchableAlongZ.atLeast, stretchableAlongZ.atMost);
 
         return new StretchableStructureBuilder(structure, x, y, z);
-    }
-
-    /**
-     * A custom deserializer for {@code StructureLayoutBuilderParams}.
-     */
-    public static class Deserializer extends ValueDeserializer<StructureLayoutBuilderParams> {
-        @Override
-        public StructureLayoutBuilderParams deserialize(JsonParser parser, DeserializationContext context) throws JacksonException {
-            JsonNode node = parser.readValueAsTree();
-
-            if (node instanceof ObjectNode objectNode) {
-                StructureLayoutBuilderParams params = new StructureLayoutBuilderParams();
-                params.stretchX = popProperty(context, objectNode, "stretchX", StretchAxisParams.class);
-                params.stretchY = popProperty(context, objectNode, "stretchY", StretchAxisParams.class);
-                params.stretchZ = popProperty(context, objectNode, "stretchZ", StretchAxisParams.class);
-                params.structure = context.readTreeAsValue(objectNode, PlaceableStructureParams.class);
-                return params;
-            }  else
-                throw new InputCoercionException(parser, "Expected a structure", node.asToken(), LayoutBuilderParams.class);
-        }
-    }
-
-    private static <T> T popProperty(DeserializationContext context, ObjectNode node, String name, Class<T> type) {
-        JsonNode property = node.get(name);
-        if (property == null)
-            return null;
-        node.remove(name);
-        return context.readTreeAsValue(property, type);
     }
 
     /**
@@ -141,28 +104,9 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
         if (at < 0)
             throw new IllegalArgumentException("Stretch position must be positive");
         if (atLeast < 0)
-            throw new IllegalArgumentException("Stretch at least must be positivie");
+            throw new IllegalArgumentException("Stretch at least must be positive");
         if (atMost < atLeast)
             throw new IllegalArgumentException("Stretch at most must be greater or equals to stretch at least");
         }
-
-        /**
-         * Creates a {@link LayoutBuilder} stretching an underlying {@link PlaceableStructure} according to these parameters.
-         * @param structure Structure to stretch (used for checking validity of `at` value)
-         * @param builder Builder that may already stretch given structure in other axes
-         * @param axis Concerned axis
-         * @return created layout builder
-         */
-        // TODO: Limit builder to stretch builders
-        // TODO: Create a class form Stretch Layout that gives the structure size.
-//        public LayoutBuilder create(PlaceableStructure structure, LayoutBuilder builder, Axis axis) throws UnbuildableException {
-//            if (at > structure.limits().max().coord(axis) || at < structure.limits().min().coord(axis))
-//                throw new UnsupportedOperationException("\"at\" value (%d) is outside structure (%d to %d) for axis %s"
-//                    .formatted(at, structure.limits().min().coord(axis), structure.limits().max().coord(axis), axis));
-//
-//            if (atLeast == 0 && structure.limits().sizeX() <= 1)
-//                throw new UnsupportedOperationException("Forbidden to create empty builder"); // TODO: Check that
-//            return DefaultLayoutBuilder.stretch(builder, axis, at, atLeast, atMost);
-//        }
     }
 }
