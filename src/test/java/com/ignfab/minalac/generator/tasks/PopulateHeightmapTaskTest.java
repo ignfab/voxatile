@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.tasks;
 
+import java.util.List;
+
 import org.geotools.referencing.operation.transform.IdentityTransform;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.util.AffineTransformation;
@@ -35,7 +37,7 @@ public class PopulateHeightmapTaskTest {
         FloatGeographicDataMatrix2d data = new FloatArrayGeographicDataMatrix2d(values, 3, 4, 0, -1, 1.0, 1.0);
         FloatMatrixModel model = new FloatMatrixModel(data, converter);
 
-        tile.models().add("matrix", model);
+        tile.models().add("matrix", List.of(model));
         ModelSelection selection = new ModelSelection("matrix", null);
 
         new PopulateHeightmapTask(selection, heightmap.spec()).run(tile);

@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.tasks;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.TestingGenerationTile;
@@ -29,7 +31,7 @@ public class FillBetweenHeightmapAndModelTaskTest {
         Model model = new TestingRectangleShape2dModel(tile.limits().to2d());
         int zMetadata = 5;
         model.setMetadata("zTest", zMetadata);
-        tile.models().add("model", model);
+        tile.models().add("model", List.of(model));
 
         // Run leveling
         assertDoesNotThrow(() -> new FillBetweenHeightmapAndValueTask(

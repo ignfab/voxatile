@@ -1,8 +1,8 @@
 package com.ignfab.minalac.generator.models;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,19 +13,17 @@ public class ModelStore {
     private final Map<String, List<Model>> byType = new HashMap<>();
 
     /**
-     * Add a model of a given type in store.
+     * Add models of a given type in store.
      * Store is quite dumb, it is not able to retrieve type from model (anyway Models do not have type for now).
      *
-     * @param type Type to associate with stored model
-     * @param model Model to be stored
+     * @param type Type to associate with stored models
+     * @param models Models to be stored
      */
-    public void add(String type, Model model) {
-        List<Model> list = byType.get(type);
-        if (list == null) {
-            list = new LinkedList<>();
-            byType.put(type, list);
-        }
-        list.add(model);
+    public void add(String type, List<Model> models) {
+        if (type == null || type.isEmpty())
+            throw new IllegalArgumentException("Type must be a non empty string");
+
+        byType.computeIfAbsent(type, k -> new ArrayList<>()).addAll(models);
     }
 
     /**

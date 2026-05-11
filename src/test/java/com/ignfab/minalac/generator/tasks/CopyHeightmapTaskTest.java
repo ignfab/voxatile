@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.tasks;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.TestingGenerationTile;
@@ -40,7 +42,7 @@ public class CopyHeightmapTaskTest {
             }
 
         Model model = new TestingRectangleShape2dModel(new WorldBBox2d(0, 1, 2, 2));
-        tile.models().add("square", model);
+        tile.models().add("square", List.of(model));
         ModelSelection selection = new ModelSelection("square", null);
 
         new CopyHeightmapTask(selection, from.spec(), to.spec()).run(tile);
@@ -81,7 +83,7 @@ public class CopyHeightmapTaskTest {
         TestingHeightmap to = tile.newStoredHeightmap("to", new WorldBBox2d(-1, -3, 3, 4), 2);
 
         Model model = new TestingRectangleShape2dModel(new WorldBBox2d(0, 0, 2, 3));
-        tile.models().add("rectangle", model);
+        tile.models().add("rectangle", List.of(model));
         ModelSelection selection = new ModelSelection("rectangle", null);
 
         // Below

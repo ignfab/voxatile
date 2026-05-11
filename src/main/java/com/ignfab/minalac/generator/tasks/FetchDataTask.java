@@ -1,5 +1,9 @@
 package com.ignfab.minalac.generator.tasks;
 
+import java.time.Duration;
+import java.util.LinkedList;
+import java.util.List;
+
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
@@ -17,6 +21,8 @@ public class FetchDataTask implements TileTask {
     private final Provider<?> provider;
     private final Processor<Object, ?> processor;
     private final PostProcessor<Model, ?> postProcessor;
+    private final int maxTries;
+    private final Duration retryDelay;
 
     /**
      * Creates a new {@code FetchDataTask}.
@@ -25,12 +31,16 @@ public class FetchDataTask implements TileTask {
      * @param provider data provider
      * @param processor processor converting provided data to models
      * @param postProcessor post-processor to run on created models
+     * @param maxTries maximum number of tries
+     * @param retryDelay retry delay in seconds
      */
     public FetchDataTask(
         String modelType,
         Provider<?> provider,
         Processor<?, ? extends Model> processor,
-        PostProcessor<?, ?> postProcessor
+        PostProcessor<?, ?> postProcessor,
+        int maxTries,
+        Duration retryDelay
     ) {
         if (!processor.acceptedType().isAssignableFrom(provider.providedType()))
             throw new IllegalArgumentException("%s cannot treat provided type. Provided = %s, Accepted = %s".formatted(
@@ -49,14 +59,14 @@ public class FetchDataTask implements TileTask {
         this.provider = provider;
         this.processor = uncheckedProcessor;
         this.postProcessor = uncheckedPostProcessor;
+        this.maxTries = maxTries;
+        this.retryDelay = retryDelay;
     }
 
-    /**
-     * Fetches data from provider, and create and process models.
-     *
-     * @param tile tile for which data is fetched (it gives the wanted area)
-     */
-    public void run(GenerationTile tile) {
+    private void tryOnce(GenerationTile tile) throws RetryableException {
+        // Resulting list of models. Will be added to store only if fetch succeeds
+        List<Model> models = new LinkedList<>();
+
         try (Provider.Result<?> result = provider.provide(tile.limits())) {
             processor.initialize(result.crs());
             while (result.hasNext()) {
@@ -66,7 +76,7 @@ public class FetchDataTask implements TileTask {
                     if (model != null) {
                         model = postProcessor.process(model);
                         if (model != null)
-                            tile.models().add(modelType, model);
+                            models.add(model);
                     }
                 } catch (IgnorableException e) {
                     // TODO Add an exception handling policy
@@ -74,9 +84,6 @@ public class FetchDataTask implements TileTask {
                     // throw new GenerationFailedException(e);
                 }
             }
-        } catch (RetryableException e) {
-            // TODO Implement a retry mechanism
-            throw new RuntimeException(e);
         } catch (IgnorableException e) {
             // TODO Handle this according to the policy
             // This can be thrown if unable to close a Provider.Result
@@ -84,5 +91,44 @@ public class FetchDataTask implements TileTask {
         } catch (GenerationFailedException e) {
             throw new RuntimeException(e);
         }
+
+        tile.models().add(modelType, models);
+    }
+
+    @Override
+    public void run(GenerationTile tile) {
+        String taskName = Thread.currentThread().getName();
+        List<RetryableException> suppressedRetryableExceptions = new LinkedList<>();
+        int tries = 0;
+
+        do {
+            try {
+                tryOnce(tile);
+
+                // Successful task
+                return;
+
+            } catch (RetryableException e) {
+                suppressedRetryableExceptions.add(e);
+
+                tries++;
+                if (tries >= maxTries) {
+                    System.err.printf("%s task failed (try %d of %d), giving up.%n", taskName, tries, maxTries);
+                    RuntimeException exception = new RuntimeException("%s task failed after %d tries".formatted(taskName, maxTries));
+                    suppressedRetryableExceptions.forEach(exception::addSuppressed);
+                    throw exception;
+                }
+
+                System.out.printf("%s task failed (try %d of %d), retrying in %d seconds.%n", taskName, tries, maxTries, retryDelay.toSeconds());
+
+                try {
+                    Thread.sleep(retryDelay.toMillis());
+                } catch (InterruptedException e2) {
+                    throw new RuntimeException(e2);
+                }
+            }
+
+        // loop exits on successful return or if max number of tries exceeded
+        } while (true);
     }
 }
