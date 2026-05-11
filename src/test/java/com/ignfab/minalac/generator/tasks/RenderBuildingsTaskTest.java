@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.tasks;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +41,7 @@ public class RenderBuildingsTaskTest {
         building.setMetadata("height", expectedHeight);
         building.setMetadata("minimum-ground-altitude", 0);
         building.setMetadata("ground-floor-altitude", 0);
-        tile.models().add("building", building);
+        tile.models().add("building", List.of(building));
 
         assertDoesNotThrow(() -> new RenderBuildingsTask(
             new ModelSelection("building", new ModelFilterHasMetadata("height")),
@@ -88,7 +90,7 @@ public class RenderBuildingsTaskTest {
     void testBuildingRenderingWithoutMetadata() {
         WorldBBox2d modelBbox = new WorldBBox2d(0, 0, 3, 3);
         Model building = new TestingRectangleShape2dModel(modelBbox);
-        tile.models().add("building", building);
+        tile.models().add("building", List.of(building));
 
         Placeable placeable = new TestingVoxelParams("voxel").create(TestingSeed.UNUSED);
         assertDoesNotThrow(() -> new RenderBuildingsTask(
@@ -109,7 +111,7 @@ public class RenderBuildingsTaskTest {
         Model building = new TestingRectangleShape2dModel(modelBbox);
 
         building.setMetadata("height", -20);
-        tile.models().add("building", building);
+        tile.models().add("building", List.of(building));
 
         Placeable placeable = new TestingVoxelParams("voxel").create(TestingSeed.UNUSED);
         assertDoesNotThrow(() -> new RenderBuildingsTask(

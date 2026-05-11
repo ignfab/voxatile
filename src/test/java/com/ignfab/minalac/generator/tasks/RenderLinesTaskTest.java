@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.tasks;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +43,7 @@ class RenderLinesTaskTest {
     @Test
     public void testRenderWithoutHeightmap() {
 
-        tile.models().add("testing", new TestingShape3dModel(LineString3d.fromPoints(bbox.min(), bbox.max())));
+        tile.models().add("testing", List.of(new TestingShape3dModel(LineString3d.fromPoints(bbox.min(), bbox.max()))));
         PlaceableStructure structure = PlaceableStructure.builder()
             .set(new WorldCoords3d(0, 0, 0), new TestingVoxel("TEST"))
             .build();
@@ -70,7 +72,7 @@ class RenderLinesTaskTest {
     @Test
     public void testRenderWithHeightmap() {
 
-        tile.models().add("testing", new TestingShape3dModel(LineString3d.fromPoints(bbox.min(), bbox.max())));
+        tile.models().add("testing", List.of(new TestingShape3dModel(LineString3d.fromPoints(bbox.min(), bbox.max()))));
         PlaceableStructure structure = PlaceableStructure.builder()
             .set(new WorldCoords3d(0, 0, 0), new TestingVoxel("TEST"))
             .build();

@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
 import java.beans.ConstructorProperties;
+import java.time.Duration;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -21,6 +22,18 @@ public class FetchDataTaskParams extends TaskParams {
      */
     @JsonSetter(nulls = Nulls.FAIL)
     public String modelType;
+
+    /**
+     * Number of retries in case of failure (optional, default 0).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public int retry = 0;
+
+    /**
+     * Delay in seconds between two retries (optional, default 10).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public int retryDelay = 10;
 
     /**
      * Data provider (required).
@@ -57,14 +70,18 @@ public class FetchDataTaskParams extends TaskParams {
         if (modelType.isBlank())
             throw new IllegalArgumentException("The 'modelType' field cannot be empty or contain only whitespace.");
 
-        super.validate();
-        provider.validate();
+        if (retry < 0)
+            throw new IllegalArgumentException("`retry` must be a positive integer.");
+
+        if (retryDelay < 0)
+            throw new IllegalArgumentException("`retryDelay` must be a positive integer.");
 
         if (processor == null)
             throw new IllegalArgumentException("Missing processor and no default processor");
 
+        super.validate();
+        provider.validate();
         processor.validate();
-
         postProcessing.validate();
     }
 
@@ -74,7 +91,9 @@ public class FetchDataTaskParams extends TaskParams {
             modelType,
             provider.create(generation),
             processor.create(generation),
-            postProcessing.create()
+            postProcessing.create(),
+            retry + 1,
+            Duration.ofSeconds(retryDelay)
         );
     }
 }

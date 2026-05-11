@@ -21,11 +21,8 @@ public class ModelTaskTest {
     public void testRun() {
         GenerationTile tile = new TestingGenerationTile(WorldBBox3d.ORIGIN);
 
-        tile.models().add("digit", new ModelImplTester('1'));
-        tile.models().add("digit", new ModelImplTester('1'));
-        tile.models().add("digit", new ModelImplTester('2'));
-        tile.models().add("letter", new ModelImplTester('b'));
-        tile.models().add("letter", new ModelImplTester('a'));
+        tile.models().add("digit", List.of(new ModelImplTester('1'), new ModelImplTester('1'), new ModelImplTester('2')));
+        tile.models().add("letter", List.of(new ModelImplTester('b'), new ModelImplTester('a')));
 
         ModelTaskImpl task = new ModelTaskImpl("digit");
         assertEquals(0, task.modelsRendered.size());

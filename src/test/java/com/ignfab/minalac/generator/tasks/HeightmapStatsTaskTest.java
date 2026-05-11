@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.tasks;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.TestingGenerationTile;
@@ -29,9 +31,8 @@ public class HeightmapStatsTaskTest {
 
         // Prepare a single square model
         Model modelA = new TestingRectangleShape2dModel(new WorldBBox2d(0, -1, 5, 3));
-        tile.models().add("model", modelA);
         Model modelB = new TestingRectangleShape2dModel(new WorldBBox2d(3, 3, 4, 3));
-        tile.models().add("model", modelB);
+        tile.models().add("model", List.of(modelA, modelB));
 
         // Try to compute
         assertDoesNotThrow(() -> new HeightmapStatsTask(
@@ -53,7 +54,7 @@ public class HeightmapStatsTaskTest {
         TestingHeightmap ground = tile.newStoredHeightmap("heightmap", 0);
 
         Model model = new TestingRectangleShape2dModel(new WorldBBox2d(0, -1, 5, 3));
-        tile.models().add("model", model);
+        tile.models().add("model", List.of(model));
 
         assertDoesNotThrow(() -> new HeightmapStatsTask(
             new ModelSelection("model", null),

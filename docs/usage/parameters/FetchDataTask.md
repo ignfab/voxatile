@@ -47,6 +47,8 @@ fetchBuildings:
     - Additional parameters specific to the given [type](#processors)
 - `postProcessing` (optional): Additional post-processing steps.
     - [Post-processing](PostProcessing.md) definition
+- `retry` (optional, default 0): Number of retries before giving up.
+- `retryDelay` (optional, default 10): Delay (in seconds) between two retries.
 
 Not all processors are compatible with all provider. See [providers](#provider-parameters) and [processors](#processor-parameters) documentation for compatibility.
 

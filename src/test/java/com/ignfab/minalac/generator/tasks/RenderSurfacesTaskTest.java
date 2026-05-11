@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.tasks;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +45,7 @@ class RenderSurfacesTaskTest {
     public void testRenderFlatSmaller() {
 
         WorldBBox2d modelBbox = new WorldBBox2d(0, -1, 3, 4);
-        tile.models().add("testing", new TestingRectangleShape2dModel(modelBbox));
+        tile.models().add("testing", List.of(new TestingRectangleShape2dModel(modelBbox)));
 
         new RenderSurfacesTask(modelSelection, heightmap.spec(), voxel).run(tile);
 
@@ -64,7 +66,7 @@ class RenderSurfacesTaskTest {
             heightmap.set(pos, (pos.x() + pos.y()) / 2);
 
         // Add one model covering the whole map
-        tile.models().add("testing", new TestingRectangleShape2dModel(bbox.to2d()));
+        tile.models().add("testing", List.of(new TestingRectangleShape2dModel(bbox.to2d())));
 
         new RenderSurfacesTask(modelSelection, heightmap.spec(), voxel).run(tile);
 
@@ -86,7 +88,7 @@ class RenderSurfacesTaskTest {
             heightmap.set(pos, pos.x() + pos.y() * 2);
 
         // Add one model covering the whole map with BORDER voxels
-        tile.models().add("testing", new TestingRectangleShape2dModel(bbox.to2d()));
+        tile.models().add("testing", List.of(new TestingRectangleShape2dModel(bbox.to2d())));
 
         new RenderSurfacesTask(modelSelection, heightmap.spec(), voxel).run(tile);
 
@@ -103,7 +105,7 @@ class RenderSurfacesTaskTest {
     public void testRenderHorizontalOverflow() {
         // Prepare a larger model bbox
         WorldBBox2d modelBbox = new WorldBBox2d(bbox.minX() - 1, bbox.minY() - 1, bbox.sizeX() + 2, bbox.sizeY() + 2);
-        tile.models().add("testing", new TestingRectangleShape2dModel(modelBbox));
+        tile.models().add("testing", List.of(new TestingRectangleShape2dModel(modelBbox)));
 
         new RenderSurfacesTask(modelSelection, heightmap.spec(), voxel).run(tile);
 

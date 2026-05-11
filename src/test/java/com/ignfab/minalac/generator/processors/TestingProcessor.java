@@ -5,6 +5,11 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import com.ignfab.minalac.generator.models.TestingModel;
 
 public class TestingProcessor implements Processor<String, TestingModel> {
+    private int processed = 0;
+
+    public int processed() {
+        return processed;
+    }
 
     @Override
     public Class<String> acceptedType() {
@@ -21,6 +26,7 @@ public class TestingProcessor implements Processor<String, TestingModel> {
 
     @Override
     public TestingModel process(String object) {
+        processed++;
         return new TestingModel();
     }
 
