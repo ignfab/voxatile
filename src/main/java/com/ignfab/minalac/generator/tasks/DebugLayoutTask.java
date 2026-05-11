@@ -50,7 +50,7 @@ public class DebugLayoutTask implements TileTask {
             System.out.println(builder.xAxis() + ", " + builder.xAxis().minimumSize() + ", " + builder.xAxis().maxSizeUnder(x));
             System.out.println(builder.yAxis() + ", " + builder.yAxis().minimumSize() + ", " + builder.yAxis().maxSizeUnder(y));
             System.out.println(builder.zAxis() + ", " + builder.zAxis().minimumSize() + ", " + builder.zAxis().maxSizeUnder(z));
-            System.out.println("Builder #%d buid(%d, %d, %d)".formatted(number,x, y, z));
+            System.out.println("Builder #%d buid(%d, %d, %d)".formatted(number, x, y, z));
             try {
                 structure = builder.build(x, y, z);
                 break;

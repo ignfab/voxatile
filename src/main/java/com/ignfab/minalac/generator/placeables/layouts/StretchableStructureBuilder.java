@@ -15,13 +15,13 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 // TODO-Z: There is probably a better way to do it. This is to lock stretchable ability to only PlaceableStructure.
 //  Since choice is uncertain, there is redundancy with DefaultLayoutBuilder.
-public class FooStructureBuilder implements LayoutBuilder {
+public class StretchableStructureBuilder implements LayoutBuilder {
     private final Structure structure;
     private final AxisMapperBuilder xAxisBuilder;
     private final AxisMapperBuilder yAxisBuilder;
     private final AxisMapperBuilder zAxisBuilder;
 
-    public FooStructureBuilder(PlaceableStructure structure, StretchAxis axisX, StretchAxis axisY, StretchAxis axisZ) throws UnbuildableException {
+    public StretchableStructureBuilder(PlaceableStructure structure, StretchAxis axisX, StretchAxis axisY, StretchAxis axisZ) throws UnbuildableException {
         this.structure = structure;
         AxisMapperBuilder xBase = new ConstantAxisMapperBuilder(structure.limits().sizeX(), structure.limits().minX());
         AxisMapperBuilder yBase = new ConstantAxisMapperBuilder(structure.limits().sizeY(), structure.limits().minY());
@@ -50,6 +50,8 @@ public class FooStructureBuilder implements LayoutBuilder {
         AxisMapper axisY = yAxisBuilder.build(sizeY);
         AxisMapper axisZ = zAxisBuilder.build(sizeZ);
 
+
+        // TODO-Z: Should not happen as either Constant or Stretch have a length of 1
         if (axisX.intervals().length == 0 || axisY.intervals().length == 0 || axisZ.intervals().length == 0)
             return EmptyStructure.INSTANCE;
 

@@ -16,8 +16,6 @@ public class KeepAxisMapperBuilderTest {
         System.out.println(keep.maxSizeUnder(12));
         System.out.println(keep.maxSizeUnder(30));
 
-
-        if (true)
-            throw new RuntimeException("not implmeted");
+        throw new RuntimeException("TODO");
     }
 }

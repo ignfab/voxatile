@@ -59,8 +59,6 @@ public class RepeatAxisMapperBuilderTest {
         // TODO-N-12: Revenir sur ça (Ca peut devenir compliqué car deux sources de variations de taille)
         // Ca serait bien d'avoir un TestingAxisBuilder prenant une liste de tailles possibles
         // Par exemple, taille possible de 6 et 8 avec minOccur de 2 et maxOccur de 3, on aurait maxUnder(25/24) = 24 et maxUnder(23) = 22
-
-
     }
 
     @Test

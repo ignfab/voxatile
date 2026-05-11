@@ -17,5 +17,7 @@ public class AdjustAxisMapperBuilderTest {
         System.out.println(keep.maxSizeUnder(6));
         System.out.println(keep.maxSizeUnder(12));
         System.out.println(keep.maxSizeUnder(30));
+
+        throw new RuntimeException("TODO ( + Do not forget other MapperBuilder)");
     }
 }

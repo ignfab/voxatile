@@ -15,7 +15,6 @@ import com.ignfab.minalac.generator.utils.axis.mappers.builders.DelegateAxisMapp
 import com.ignfab.minalac.generator.utils.axis.mappers.builders.KeepAxisMapperBuilder;
 import com.ignfab.minalac.generator.utils.axis.mappers.builders.PriorityRepartitionAxisMapperBuilder;
 import com.ignfab.minalac.generator.utils.axis.mappers.builders.RepeatAxisMapperBuilder;
-import com.ignfab.minalac.generator.utils.axis.mappers.builders.StretcherAxisMapperBuilder;
 
 /**
  * A versatile implementation of {@link LayoutBuilder} based on a layout builder provider.
@@ -88,30 +87,6 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
     public AxisMapperBuilder zAxis() {
         return zAxisBuilder;
     }
-
-    /**
-     * Creates a new {@code AxisStructureBuilder} stretching an {@link LayoutBuilder} along an axis.
-     * <p>
-     * Stetching is done by repeating a stretch position. This repeating is limited by {@code minStretch} and {@code maxStretch}.
-     * A stretch of 0 means voxels at stetch position are ommited.
-     *
-     * @param builder builder to stretch
-     * @param axis stretch axis
-     * @param stretchPosition where builder should be streched along axis
-     * @param minStretch minimal stretching
-     * @param maxStretch maximal stretching
-     * @return created {@link LayoutBuilder}
-     * @throws UnbuildableException if layout builder cannot be created
-     */
-//    public static LayoutBuilder stretch(LayoutBuilder builder, Axis axis, int stretchPosition, int minStretch, int maxStretch) throws UnbuildableException {
-//        return new DefaultLayoutBuilder(
-//            builder,
-//            // StretcherAxisMapperBuilder for chosen axis, DelegateAxisMapperBuilder for others
-//            axis == Axis.X ? new StretcherAxisMapperBuilder(builder.xAxis(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.xAxis()),
-//            axis == Axis.Y ? new StretcherAxisMapperBuilder(builder.yAxis(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.yAxis()),
-//            axis == Axis.Z ? new StretcherAxisMapperBuilder(builder.zAxis(), stretchPosition, minStretch, maxStretch) : new DelegateAxisMapperBuilder(builder.zAxis())
-//        );
-//    }
 
     /**
      * Creates a new {@code AxisStructureBuilder} repeating an {@link LayoutBuilder} along an axis.

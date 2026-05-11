@@ -15,8 +15,7 @@ import tools.jackson.databind.node.ObjectNode;
 import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
-import com.ignfab.minalac.generator.placeables.layouts.DefaultLayoutBuilder;
-import com.ignfab.minalac.generator.placeables.layouts.FooStructureBuilder;
+import com.ignfab.minalac.generator.placeables.layouts.StretchableStructureBuilder;
 import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
 import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.utils.random.Seed;
@@ -74,17 +73,17 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
             builder = stretchZ.create(structure, builder, Axis.Z);
 
          */
-        FooStructureBuilder.StretchAxis x = null;
-        FooStructureBuilder.StretchAxis y = null;
-        FooStructureBuilder.StretchAxis z = null;
+        StretchableStructureBuilder.StretchAxis x = null;
+        StretchableStructureBuilder.StretchAxis y = null;
+        StretchableStructureBuilder.StretchAxis z = null;
         if (stretchX != null)
-            x = new FooStructureBuilder.StretchAxis(Axis.X, stretchX.at, stretchX.atLeast, stretchX.atMost);
+            x = new StretchableStructureBuilder.StretchAxis(Axis.X, stretchX.at, stretchX.atLeast, stretchX.atMost);
         if (stretchY != null)
-            y = new FooStructureBuilder.StretchAxis(Axis.Y, stretchY.at, stretchY.atLeast, stretchY.atMost);
+            y = new StretchableStructureBuilder.StretchAxis(Axis.Y, stretchY.at, stretchY.atLeast, stretchY.atMost);
         if (stretchZ != null)
-            z = new FooStructureBuilder.StretchAxis(Axis.Z, stretchZ.at, stretchZ.atLeast, stretchZ.atMost);
+            z = new StretchableStructureBuilder.StretchAxis(Axis.Z, stretchZ.at, stretchZ.atLeast, stretchZ.atMost);
 
-        return new FooStructureBuilder(structure, x, y, z);
+        return new StretchableStructureBuilder(structure, x, y, z);
     }
 
     /**
