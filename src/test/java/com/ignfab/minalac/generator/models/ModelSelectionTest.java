@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.models;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -21,11 +22,9 @@ public class ModelSelectionTest {
         Model modelB = new TestingModel("B", Map.of("b", 2));
         Model modelC = new TestingModel("C");
 
-        tile.models().add("X", modelA);
-        tile.models().add("Y", modelA);
-        tile.models().add("X", modelB);
-        tile.models().add("X", modelA);
-        tile.models().add("Y", modelC);
+        tile.models().add("X", List.of(modelA, modelB));
+        tile.models().add("Y", List.of(modelA, modelC));
+        tile.models().add("X", List.of(modelA));
 
         assertBrowsesAllOnce(Arrays.asList(modelA, modelA, modelB), new ModelSelection("X", null).forTile(tile));
 
