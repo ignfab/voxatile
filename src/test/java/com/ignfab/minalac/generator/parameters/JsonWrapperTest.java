@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import org.junit.jupiter.api.Test;
 import tools.jackson.core.JacksonException;
+import tools.jackson.databind.exc.MismatchedInputException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,11 +48,46 @@ public class JsonWrapperTest {
         CreatorWrapper creatorWrapper = assertDoesNotThrow(() -> ParamsTester.deserialize(CreatorWrapper.class, "true"));
         assertTrue(creatorWrapper.arg);
 
-        // Invalid wrapper class (multiple properties)
-        assertThrows(IllegalStateException.class, () -> ParamsTester.deserialize(InvalidWrapper1.class, "42"));
+        // Multi wrapper class
+        MultiWrapper multiWrapper = assertDoesNotThrow(() -> ParamsTester.deserialize(MultiWrapper.class, "42"));
+        assertEquals(42, multiWrapper.x);
+        assertEquals(42, multiWrapper.y);
+
+        // Single wrapper class with complex property
+        ABWrapper abWrapper = assertDoesNotThrow(() -> ParamsTester.deserialize(ABWrapper.class, "{ a: 1, b: 2 }"));
+        assertEquals(1, abWrapper.ab.a);
+        assertEquals(2, abWrapper.ab.b);
+
+        // Single wrapper class with missing sub-property
+        assertThrows(MismatchedInputException.class, () -> ParamsTester.deserialize(ABWrapper.class, "{ a: 1 }"));
+
+        // Single wrapper class with unknown sub-property
+        assertThrows(MismatchedInputException.class, () -> ParamsTester.deserialize(ABWrapper.class, "{ a: 1, b: 2, c: 3 }"));
+
+        // Multi wrapper class with complex properties
+        ABCWrapper abcWrapper = assertDoesNotThrow(() -> ParamsTester.deserialize(ABCWrapper.class, "{ a: 1, b: 2, c: 3 }"));
+        assertEquals(1, abcWrapper.ab.a);
+        assertEquals(2, abcWrapper.ab.b);
+        assertEquals(2, abcWrapper.bc.b);
+        assertEquals(3, abcWrapper.bc.c);
+
+        // Multi wrapper class with missing sub-property
+        assertThrows(MismatchedInputException.class, () -> ParamsTester.deserialize(ABCWrapper.class, "{ a: 1, b: 2 }"));
+
+        // Multi wrapper class with unknown sub-property
+        assertThrows(MismatchedInputException.class, () -> ParamsTester.deserialize(ABCWrapper.class, "{ a: 1, b: 2, c: 3, d: 4 }"));
+
+        // Multi wrapper class with direct property
+        DirectWrapper directWrapper = assertDoesNotThrow(() -> ParamsTester.deserialize(DirectWrapper.class, "{ a: 1, b: 2, c: 3 }"));
+        assertEquals(1, directWrapper.ab.a);
+        assertEquals(2, directWrapper.ab.b);
+        assertEquals(3, directWrapper.c);
+
+        // Multi wrapper class with missing direct property
+        assertThrows(MismatchedInputException.class, () -> ParamsTester.deserialize(DirectWrapper.class, "{ a: 1, b: 2 }"));
 
         // Invalid wrapper class (no instantiation method)
-        assertThrows(IllegalStateException.class, () -> ParamsTester.deserialize(InvalidWrapper2.class, "text"));
+        assertThrows(JacksonException.class, () -> ParamsTester.deserialize(InvalidWrapper.class, "text"));
 
         // Wrapper usage
         DummyParams dummyParams = assertDoesNotThrow(() -> ParamsTester.deserialize(DummyParams.class, "wrapperProperty: str"));
@@ -98,19 +134,45 @@ public class JsonWrapperTest {
         }
     }
 
-    // Illegal wrapper with multiple properties
+    // Multi wrapper with simple properties
     @JsonWrapper
-    public static class InvalidWrapper1 {
+    public static class MultiWrapper {
         public int x;
         public int y;
     }
 
-    // Illegal wrapper with no instantiation method (only constructor available requires an int but property is a string)
+    // Sample params
+    public record AB(int a, int b) {}
+    public record BC(int b, int c) {}
+
+    // Single wrapper with complex property
     @JsonWrapper
-    public static class InvalidWrapper2 {
+    public static class ABWrapper {
+        public AB ab;
+    }
+
+    // Multi wrapper with complex properties
+    @JsonWrapper
+    public static class ABCWrapper {
+        public AB ab;
+        public BC bc;
+    }
+
+    // Multi wrapper with direct property
+    @JsonWrapper
+    public static class DirectWrapper {
+        public AB ab;
+        @JsonWrapper.DirectProperty
+        public int c;
+    }
+
+    // Illegal wrapper with no instantiation method (its only constructor available requires an int but the property is a string)
+    // This wrapper class is instantiated with the MissingInstantiator (thus not really instantiated)
+    @JsonWrapper
+    public static class InvalidWrapper {
         public String value;
 
-        public InvalidWrapper2(int ignored) {}
+        public InvalidWrapper(int ignored) {}
     }
 
     // Dummy class using a wrapper
