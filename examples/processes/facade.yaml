@@ -27,7 +27,6 @@ references:
       "|": default:fence_junglewood
   - &facade
     - along: x
-      adjust: z
       concatenate:
         # Left corner
         - &corner
@@ -41,12 +40,10 @@ references:
           priority: -1
         # TODO
         - along: z
-          adjust: x
           concatenate:
             # Ground floor
             - priority: 1
               along: x
-              adjust: z
               concatenate:
                 - atLeast: 0
                   along: x
@@ -86,7 +83,6 @@ references:
               atLeast: 0
               repeat:
                 along: x
-                adjust: z
                 concatenate:
                   - structure:
                       at: [ 0, 0, 0..5 ]

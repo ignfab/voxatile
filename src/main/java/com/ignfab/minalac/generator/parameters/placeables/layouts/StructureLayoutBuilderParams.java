@@ -61,7 +61,7 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
     }
 
     @Override
-    public LayoutBuilder createBuilder(Seed seed) throws UnbuildableException {
+    public LayoutBuilder createBuilder(Seed seed, AxesPolicies policies) throws UnbuildableException {
         PlaceableStructure structure = this.structure.create(seed);
 
         StretchableStructureBuilder.StretchAxis x = null;

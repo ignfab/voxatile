@@ -50,11 +50,22 @@ public class ConcatenateLayoutBuilderParams implements LayoutBuilderParams {
     AxisParams along;
 
     /**
-     * Axes along which layouts are adjusted.
+     * Adjust policy along X-axis (default: inherit).
      */
     @JsonSetter(nulls = Nulls.SKIP)
-    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    List<AxisParams> adjust;
+    AxisPolicy xPolicy = AxisPolicy.INHERIT;
+
+    /**
+     * Adjust policy along Y-axis (default: inherit).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    AxisPolicy yPolicy = AxisPolicy.INHERIT;
+
+    /**
+     * Adjust policy along Z-axis (default: inherit).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    AxisPolicy zPolicy = AxisPolicy.INHERIT;
 
     /**
      * Creates a new {@code ConcatenateLayoutBuilderParams} out of mandatory parameters.
@@ -75,19 +86,19 @@ public class ConcatenateLayoutBuilderParams implements LayoutBuilderParams {
     }
 
     @Override
-    public LayoutBuilder createBuilder(Seed seed) throws UnbuildableException {
+    public LayoutBuilder createBuilder(Seed seed, AxesPolicies policies) throws UnbuildableException {
         LayoutBuilder[] builders = new LayoutBuilder[concatenate.size()];
         int[] priorities = new int[concatenate.size()];
         for (int i = 0; i < concatenate.size(); i++)  {
-            builders[i] = concatenate.get(i).layout.createBuilder(seed);
+            builders[i] = concatenate.get(i).layout.createBuilder(seed, policies);
             priorities[i] = concatenate.get(i).priority;
         }
 
-        List<Axis> adjustAxes = adjust == null
-            ? Collections.emptyList()
-            : adjust.stream().map(AxisParams::create).collect(Collectors.toList());
-
-        return DefaultLayoutBuilder.concat(builders, along.create(), priorities, adjustAxes);
+        return DefaultLayoutBuilder.concat(builders, along.create(), priorities,
+            (xPolicy == AxisPolicy.INHERIT ? policies.x() : xPolicy) == AxisPolicy.ADJUST,
+            (yPolicy == AxisPolicy.INHERIT ? policies.y() : yPolicy) == AxisPolicy.ADJUST,
+            (zPolicy == AxisPolicy.INHERIT ? policies.z() : zPolicy) == AxisPolicy.ADJUST
+        );
     }
 
     /**

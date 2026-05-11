@@ -123,7 +123,50 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
      * @return created {@link LayoutBuilder}
      * @throws UnbuildableException if layout builder cannot be created
      */
-    public static LayoutBuilder concat(LayoutBuilder[] builders, Axis axis, int[] priorities, List<Axis> adjusted) throws UnbuildableException {
+//    public static LayoutBuilder concat(LayoutBuilder[] builders, Axis axis, int[] priorities, List<Axis> adjusted) throws UnbuildableException {
+//        if (builders.length == 0 || builders.length != priorities.length)
+//            throw new RuntimeException("tab length do not match");
+//
+//        // Separate in three axis arrays the axes from each builder.
+//        AxisMapperBuilder[] tabX = Arrays.stream(builders).map(LayoutBuilder::xAxis).toArray(AxisMapperBuilder[]::new);
+//        AxisMapperBuilder[] tabY = Arrays.stream(builders).map(LayoutBuilder::yAxis).toArray(AxisMapperBuilder[]::new);
+//        AxisMapperBuilder[] tabZ = Arrays.stream(builders).map(LayoutBuilder::zAxis).toArray(AxisMapperBuilder[]::new);
+//
+//
+//        // Note: OverlayAxisMapperBuilder est devenu AdjustAxisMapperBuilder (Aussi KeepAxisMapperBuilder d'une certaine manière). C'était dans le overlay qu'il y avait le code smell.
+//        // TODO-Z : IntelliJ rouge alors que pas besoin.
+//        LayoutBuilderProvider provider = switch (axis) {
+//            case X -> (x, y, z) -> builders[x];
+//            case Y -> (x, y, z) -> builders[y];
+//            case Z -> (x, y, z) -> builders[z];
+//        };
+//
+//        return new DefaultLayoutBuilder(
+//            // A LayoutBuilderProvider that maps `builders` argument array to the chosen axis:
+//            provider,
+//            // PriorityRepartitionAxisMapperBuilder for chosen axis, KeepAxisMapperBuilder or AdjustAxisMapperBuilder for others
+//            axis == Axis.X ? new PriorityRepartitionAxisMapperBuilder(tabX, priorities)
+//                : adjusted.contains(Axis.X) ? new AdjustAxisMapperBuilder(tabX) : new KeepAxisMapperBuilder(tabX),
+//            axis == Axis.Y ? new PriorityRepartitionAxisMapperBuilder(tabY, priorities)
+//                : adjusted.contains(Axis.Y) ? new AdjustAxisMapperBuilder(tabY) : new KeepAxisMapperBuilder(tabY),
+//            axis == Axis.Z ? new PriorityRepartitionAxisMapperBuilder(tabZ, priorities)
+//                : adjusted.contains(Axis.Z) ? new AdjustAxisMapperBuilder(tabZ) : new KeepAxisMapperBuilder(tabZ)
+//        );
+//    }
+
+    /**
+     * Creates a new {@code AxisStructureBuilder} concatenating {@link LayoutBuilder}s along an axis, with priorities for repartition.
+     *
+     * @param builders builders to concatenate
+     * @param axis axis of concatenation
+     * @param priorities priorities for each builders (must have same length as {@code builders})
+     * @param adjustX whether X-axis should be adjusted or not.
+     * @param adjustY whether Y-axis should be adjusted or not.
+     * @param adjustZ whether Z-axis should be adjusted or not.
+     * @return created {@link LayoutBuilder}
+     * @throws UnbuildableException if layout builder cannot be created
+     */
+    public static LayoutBuilder concat(LayoutBuilder[] builders, Axis axis, int[] priorities, boolean adjustX, boolean adjustY, boolean adjustZ) throws UnbuildableException {
         if (builders.length == 0 || builders.length != priorities.length)
             throw new RuntimeException("tab length do not match");
 
@@ -131,7 +174,6 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
         AxisMapperBuilder[] tabX = Arrays.stream(builders).map(LayoutBuilder::xAxis).toArray(AxisMapperBuilder[]::new);
         AxisMapperBuilder[] tabY = Arrays.stream(builders).map(LayoutBuilder::yAxis).toArray(AxisMapperBuilder[]::new);
         AxisMapperBuilder[] tabZ = Arrays.stream(builders).map(LayoutBuilder::zAxis).toArray(AxisMapperBuilder[]::new);
-
 
         // Note: OverlayAxisMapperBuilder est devenu AdjustAxisMapperBuilder (Aussi KeepAxisMapperBuilder d'une certaine manière). C'était dans le overlay qu'il y avait le code smell.
         // TODO-Z : IntelliJ rouge alors que pas besoin.
@@ -146,13 +188,14 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
             provider,
             // PriorityRepartitionAxisMapperBuilder for chosen axis, KeepAxisMapperBuilder or AdjustAxisMapperBuilder for others
             axis == Axis.X ? new PriorityRepartitionAxisMapperBuilder(tabX, priorities)
-                : adjusted.contains(Axis.X) ? new AdjustAxisMapperBuilder(tabX) : new KeepAxisMapperBuilder(tabX),
+                : adjustX ? new AdjustAxisMapperBuilder(tabX) : new KeepAxisMapperBuilder(tabX),
             axis == Axis.Y ? new PriorityRepartitionAxisMapperBuilder(tabY, priorities)
-                : adjusted.contains(Axis.Y) ? new AdjustAxisMapperBuilder(tabY) : new KeepAxisMapperBuilder(tabY),
+                : adjustY ? new AdjustAxisMapperBuilder(tabY) : new KeepAxisMapperBuilder(tabY),
             axis == Axis.Z ? new PriorityRepartitionAxisMapperBuilder(tabZ, priorities)
-                : adjusted.contains(Axis.Z) ? new AdjustAxisMapperBuilder(tabZ) : new KeepAxisMapperBuilder(tabZ)
+                : adjustZ ? new AdjustAxisMapperBuilder(tabZ) : new KeepAxisMapperBuilder(tabZ)
         );
     }
+
 
     @FunctionalInterface
     private interface LayoutBuilderProvider {

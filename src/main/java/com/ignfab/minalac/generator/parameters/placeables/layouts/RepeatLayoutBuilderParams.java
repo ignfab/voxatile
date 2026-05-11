@@ -69,9 +69,9 @@ public class RepeatLayoutBuilderParams implements LayoutBuilderParams {
     }
 
     @Override
-    public LayoutBuilder createBuilder(Seed seed) throws UnbuildableException {
+    public LayoutBuilder createBuilder(Seed seed, AxesPolicies policies) throws UnbuildableException {
         return DefaultLayoutBuilder.repeat(
-            repeat.createBuilder(seed),
+            repeat.createBuilder(seed, policies),
             along.create(),
             atLeast,
             atMost
