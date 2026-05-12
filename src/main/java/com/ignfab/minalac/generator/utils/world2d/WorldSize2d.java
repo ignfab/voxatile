@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.utils.world2d;
 
+import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.utils.world3d.WorldSize3d;
 
 /**
@@ -53,5 +54,19 @@ public record WorldSize2d(int x, int y) {
      */
     public WorldSize3d to3d(int z) {
         return new WorldSize3d(this, z);
+    }
+
+    // TODO-PR-Facade: Not used. Should be renamed: confusion with coords().
+    /**
+     * Returns one of {@code WorldSize2d} component.
+     * @param axis component axis
+     * @return component value
+     */
+    public int coord(Axis axis) {
+        return switch (axis) {
+            case X -> x;
+            case Y -> y;
+            case Z -> throw new IllegalArgumentException("Does not exist for that axis.");
+        };
     }
 }

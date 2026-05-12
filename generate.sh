@@ -66,7 +66,7 @@ while [[ "$1" == "-"* ]]; do
                     exit 1
                     ;;
             esac
-            exit 0 
+            exit 0
             ;;
         *)
             echo "Unknown option $opt"
@@ -127,9 +127,10 @@ if [ $output_dir_needed ]; then
     output_dir=$(realpath "$output_dir")
 fi
 
-params=$({
-  cat "$format"; echo; cat "$process"; echo; cat "$place"
-})
+# TODO-PR-Facade: Check this modification
+params=$(
+ ( cat "$format"; printf "\n---\n"; cat "$process"; printf "\n---\n"; cat "$place"; printf "\n---\n" ) | yq ea 'select(di == 0) *+ select(di == 1) *+ select(di == 2)' | yq 'explode(.)'
+)
 
 if [ "$display_only" ]; then
     echo "$params"

@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.utils.world3d;
 
+import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
@@ -91,6 +92,20 @@ public record WorldCoords3d(int x, int y, int z) implements Positioned3d {
      */
     public WorldCoords3d add(WorldCoords3d value) {
         return add(value.x, value.y, value.z);
+    }
+
+    // TODO-PR-Facade: Should be renamed: confusion with coords(). Maybe create Axis2D to avoid exception.
+    /**
+     * Returns one of {@code WorldCoords3d} component.
+     * @param axis component axis
+     * @return component value
+     */
+    public int coord(Axis axis) {
+        return switch (axis) {
+            case X -> x;
+            case Y -> y;
+            case Z -> z;
+        };
     }
 
     @Override

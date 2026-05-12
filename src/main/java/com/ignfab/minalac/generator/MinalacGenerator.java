@@ -37,11 +37,13 @@ import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.CopyHeightmapTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.DebugLayoutTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.FillBetweenHeightmapAndMetadataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.HeightmapStatsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.PopulateHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.RenderFacadeTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderLinesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderSurfacesTaskParams;
@@ -106,9 +108,10 @@ public final class MinalacGenerator {
         parser.registerParams("fillBetweenHeightmapAndMetadata", FillBetweenHeightmapAndMetadataTaskParams.class);
         parser.registerParams("populateHeightmap", PopulateHeightmapTaskParams.class);
         parser.registerParams("renderBuildings", RenderBuildingsTaskParams.class);
+        parser.registerParams("renderFacade", RenderFacadeTaskParams.class);
         parser.registerParams("renderHeightmap", RenderHeightmapTaskParams.class);
-        parser.registerParams("renderSurfaces", RenderSurfacesTaskParams.class);
         parser.registerParams("renderLines", RenderLinesTaskParams.class);
+        parser.registerParams("renderSurfaces", RenderSurfacesTaskParams.class);
         parser.registerParams("setSpawn", SetSpawnTaskParams.class);
 
         parser.registerParams("wfs", WFSProviderParams.class);
@@ -129,6 +132,8 @@ public final class MinalacGenerator {
         parser.registerParams("truncate", MetadataTruncatePostProcessorParams.class);
         parser.registerParams("geometryBuffer", JTSGeometryBufferPostProcessorParams.class);
         parser.registerParams("remap", MetadataValueMappingPostProcessorParams.class);
+
+        parser.registerParams("debugLayout", DebugLayoutTaskParams.class);
 
         Generation generation = parser.parse(parameters).create(maxTileSize);
 
