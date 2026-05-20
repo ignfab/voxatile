@@ -44,6 +44,7 @@ import com.ignfab.minalac.generator.parameters.tasks.NoOperationTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.PopulateHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.RenderLines2dTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderLinesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderSurfacesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.ScheduleTaskParams;
@@ -116,6 +117,7 @@ public final class MinalacGenerator {
         parser.registerParams("renderHeightmap", RenderHeightmapTaskParams.class);
         parser.registerParams("renderSurfaces", RenderSurfacesTaskParams.class);
         parser.registerParams("renderLines", RenderLinesTaskParams.class);
+        parser.registerParams("renderLines2d", RenderLines2dTaskParams.class);
         parser.registerParams("setSpawn", SetSpawnTaskParams.class);
 
         parser.registerParams("wfs", WFSProviderParams.class);
