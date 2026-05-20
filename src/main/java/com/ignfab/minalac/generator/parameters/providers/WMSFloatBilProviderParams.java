@@ -10,6 +10,8 @@ import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.inputs.WMSFloatBilDataProvider;
+import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
 
 /**
  * Parameters for WMS float providers.
@@ -55,5 +57,10 @@ public class WMSFloatBilProviderParams extends ProviderParams {
             layerCrs = generation.crs();
 
         return new WMSFloatBilDataProvider(url, layer, layerCrs, generation::getEnvelopeForCRS);
+    }
+
+    @Override
+    public ProcessorParams defaultProcessor() {
+        return new FloatMatrixProcessorParams();
     }
 }

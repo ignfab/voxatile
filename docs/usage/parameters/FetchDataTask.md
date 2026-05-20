@@ -42,7 +42,7 @@ fetchBuildings:
 - `provider` (required): Definition of the [data provider](#providers) to use.
     - `type` (required): Type of data provider.
     - Additional parameters specific to the given [type](#providers)
-- `processor` (required): Definition of the [data processor](#processors) to use.
+- `processor` (required if provider has no default processor): Definition of the [data processor](#processors) to use.
     - `type` (required): Type of data processor.
     - Additional parameters specific to the given [type](#processors)
 - `postProcessing` (optional): Additional post-processing steps.
@@ -63,7 +63,7 @@ Provider of type `wfs` fetches vector data from a [Web Feature Service](https://
 - `crs` (optional): Wanted CRS for these features (defaults to target CRS)
 - `maxFeaturesPerQuery` (optional): Maximum number of features fetched per query (default 1000)
 
-**Suitable processors**: `geoToolsVector`
+**Default processor**: `geoToolsVector`
 
 ### `gpkg` (GeoPackage)
 Provider of type `gpkg` reads vector data from a [GeoPackage](https://en.wikipedia.org/wiki/GeoPackage) file.
@@ -73,7 +73,7 @@ Provider of type `gpkg` reads vector data from a [GeoPackage](https://en.wikiped
 - `typeName` (required): Name of feature type to read
 - `crsOverride` (optional, default none): CRS to use when reading data. By default, the CRS is read from the GeoPackage itself. You should only use this parameter if the CRS is invalid or missing from the file. This **DOES NOT** reproject data!
 
-**Suitable processors**: `geoToolsVector`
+**Default processor**: `geoToolsVector`
 
 ### `shapefile` (Shapefile)
 Provider of type `shapefile` reads vector data from a [Shapefile](https://en.wikipedia.org/wiki/Shapefile).
@@ -82,7 +82,7 @@ Provider of type `shapefile` reads vector data from a [Shapefile](https://en.wik
 - `filePath` (required): Path of the Shapefile (absolute, or relative to execution context)
 - `crsOverride` (optional, default none): CRS to use when reading data. By default, the CRS is read from the Shapefile itself. You should only use this parameter if the CRS is invalid or missing from the file. This **DOES NOT** reproject data!
 
-**Suitable processors**: `geoToolsVector`
+**Default processor**: `geoToolsVector`
 
 ### `wmsFloat` (Web Map Service with floating point values)
 Provider of type `wmsFloat` fetches **float** data from a [Web Map Service](https://en.wikipedia.org/wiki/Web_Map_Service) source. Source must be able to provide `x-bil` format.
@@ -92,7 +92,7 @@ Provider of type `wmsFloat` fetches **float** data from a [Web Map Service](http
 - `layer` (required): Name of layer to fetch
 - `crs` (optional): Wanted CRS for this layer (defaults to target CRS)
 
-**Suitable processors**: `floatMatrix`
+**Default processor**: `floatMatrix`
 
 ### `geotiff` (GeoTiff)
 Provider of type `geotiff` reads **float** (for now) raster data from a [GeoTiff](https://en.wikipedia.org/wiki/GeoTIFF) file.
@@ -101,7 +101,7 @@ Provider of type `geotiff` reads **float** (for now) raster data from a [GeoTiff
 - `filePath` (required): Path of the GeoTiff file (absolute, or relative to execution context)
 - `crsOverride` (optional, default none): CRS to use when reading data. By default, the CRS is read from the GeoTiff itself. You should only use this parameter if the CRS is invalid or missing from the file. This **DOES NOT** reproject data!
 
-**Suitable processors**: `floatMatrix`
+**Default processor**: `floatMatrix`
 
 ## Processors
 

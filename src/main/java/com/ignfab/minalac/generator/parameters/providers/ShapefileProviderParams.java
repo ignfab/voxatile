@@ -13,6 +13,8 @@ import org.geotools.referencing.CRS;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.inputs.ShapefileDataProvider;
+import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 
 /**
@@ -61,5 +63,10 @@ public class ShapefileProviderParams extends ProviderParams {
             throw new IllegalArgumentException("File \"%s\" does not exist".formatted(file.getAbsolutePath()));
 
         return new ShapefileDataProvider(file, crsOverride, generation::getEnvelopeForCRS);
+    }
+
+    @Override
+    public ProcessorParams defaultProcessor() {
+        return new GeoToolsVectorProcessorParams();
     }
 }
