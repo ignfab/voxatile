@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
@@ -54,6 +55,7 @@ import com.ignfab.minalac.generator.parameters.tasks.RenderBuildings3dTaskParams
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderDynamicLinesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.RenderLines2dTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderLinesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderSurfacesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderVoxelsTaskParams;
@@ -61,6 +63,7 @@ import com.ignfab.minalac.generator.parameters.tasks.ScheduleTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.SequenceTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.SetHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.SetSpawnTaskParams;
+import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.HStoreValueParser;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
@@ -78,9 +81,8 @@ public final class MinalacGenerator {
      * Serves as the entry point for the program.
      *
      * @param args command line arguments
-     * @throws JsonProcessingException
      */
-    public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException, JsonProcessingException, GenerationFailedException {
+    public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException, TimeoutException, GenerationFailedException, JsonProcessingException {
         // Execution duration start
         Instant start = Instant.now();
         HttpTrustAllSSL.applyGlobally();
@@ -90,12 +92,20 @@ public final class MinalacGenerator {
         // Command line arguments parsing & basic processing
         MinalacGeneratorCLI cli = new MinalacGeneratorCLI();
         cli.parse(args);
-        File destination;
 
+        File destination;
+        String parameters = cli.readParameters();
         if (cli.saveDisabled())
             destination = null;
-        else
+        else {
             destination = cli.outputPath().toFile();
+            // Write the parameters file in the world root directory
+            try {
+                FileHelpers.write(new File(destination, "parameters.yaml"), parameters);
+            } catch (IOException e) {
+                throw new MapWriteException("Failed to write parameters.yaml", e);
+            }
+        }
 
         Integer maxTileSize = cli.maxTileSize();
 
@@ -120,6 +130,7 @@ public final class MinalacGenerator {
         parser.registerParams("renderHeightmap", RenderHeightmapTaskParams.class);
         parser.registerParams("renderSurfaces", RenderSurfacesTaskParams.class);
         parser.registerParams("renderLines", RenderLinesTaskParams.class);
+        parser.registerParams("renderLines2d", RenderLines2dTaskParams.class);
         parser.registerParams("renderDynamicLines", RenderDynamicLinesTaskParams.class);
         parser.registerParams("setSpawn", SetSpawnTaskParams.class);
         parser.registerParams("renderVoxels", RenderVoxelsTaskParams.class);
@@ -155,7 +166,7 @@ public final class MinalacGenerator {
 
         HStoreValueParser.INSTANCE.register("hstore");
 
-        Generation generation = parser.parse(cli.readParameters()).create(maxTileSize);
+        Generation generation = parser.parse(parameters).create(maxTileSize);
 
         System.out.printf("Generation initialization took %ds.%n", Duration.between(initializationStart, Instant.now()).toSeconds());
         if (cli.generationDisabled()) {
