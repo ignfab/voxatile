@@ -1,37 +1,42 @@
 package com.ignfab.minalac.generator.parameters.processors;
 
-import java.beans.ConstructorProperties;
-
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
-
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.TestingProcessor;
 
 public class TestingProcessorParams extends ProcessorParams {
     /**
-     * A required field.
+     * An invalid TestingProcessorParams.
      */
-    public String requiredField;
-    /**
-     * An optional field.
-     */
-    @JsonSetter(nulls = Nulls.SKIP)
-    public String optionalField = "defaultOptionalValue";
+    public static final TestingProcessorParams INVALID = new TestingProcessorParams(false);
 
     /**
-     * Constructor used to ensure that the required fields are present during deserialization.
-     *
-     * @param requiredField the required field.
+     * A valid TestingProcessorParams.
      */
-    @ConstructorProperties({"requiredField"})
-    public TestingProcessorParams(String requiredField) {
-        this.requiredField = requiredField;
+    public static final TestingProcessorParams VALID = new TestingProcessorParams(true);
+
+    private final boolean valid;
+
+    private TestingProcessorParams(boolean valid) {
+        this.valid = valid;
+    }
+
+    /**
+     * Creates a new valid {@code TestingProcessorParams}.
+     */
+    public TestingProcessorParams() {
+        this(true);
+    }
+
+    @Override
+    public void validate() {
+        if (!valid)
+            throw new IllegalArgumentException("Invalid test processor params");
     }
 
     @Override
     public Processor<?, ?> create(Generation generation) {
         return new TestingProcessor();
     }
+
 }

@@ -9,7 +9,6 @@ import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
-import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.TestingProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.NoOperationTaskParams;
@@ -118,8 +117,8 @@ public class GenerationParamsTest {
         params.heightmaps.put("altitude", new HeightmapDeclarationParams("minimal"));
         params.forEachTile.tasks.put("task1", new NoOperationTaskParams());
         params.forEachTile.tasks.put("task2", new NoOperationTaskParams());
-        params.forEachTile.tasks.put("source1", new FetchDataTaskParams("models1", new TestingProviderParams("value1"), new TestingProcessorParams("value2")));
-        params.forEachTile.tasks.put("source2", new FetchDataTaskParams("models2", new TestingProviderParams("value3"), new TestingProcessorParams("value3")));
+        params.forEachTile.tasks.put("source1", new FetchDataTaskParams("models1", new TestingProviderParams("value1")));
+        params.forEachTile.tasks.put("source2", new FetchDataTaskParams("models2", new TestingProviderParams("value3")));
 
         TestingVoxelParams placeable = new TestingVoxelParams("voxel");
         RenderBuildingsTaskParams task = new RenderBuildingsTaskParams(

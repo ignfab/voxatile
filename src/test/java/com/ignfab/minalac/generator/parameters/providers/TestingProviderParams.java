@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.inputs.TestingProvider;
+import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
 
 public class TestingProviderParams extends ProviderParams {
     /**
@@ -35,4 +37,8 @@ public class TestingProviderParams extends ProviderParams {
         return new TestingProvider(generation.crs());
     }
 
+    @Override
+    public ProcessorParams defaultProcessor() {
+        return new TestingProcessorParams();
+    }
 }

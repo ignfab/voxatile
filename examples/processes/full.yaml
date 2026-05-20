@@ -15,8 +15,6 @@ forEachTile:
         type: wmsFloat
         url: https://data.geopf.fr/wms-r/wms
         layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
-      processor:
-        type: floatMatrix
     - type: populateHeightmap
       models:
         type: altitude
@@ -35,8 +33,6 @@ forEachTile:
       url: https://data.geopf.fr/wfs/wfs
       features: BDTOPO_V3:batiment
       maxFeaturesPerQuery: 500
-    processor:
-      type: geoToolsVector
     postProcessing:
       - type: copy
         metadata: hauteur
@@ -62,8 +58,6 @@ forEachTile:
       type: wfs
       url: https://data.geopf.fr/wfs/wfs
       features: BDTOPO_V3:surface_hydrographique
-    processor:
-      type: geoToolsVector
 
   fetchRoads:
     type: fetchData
@@ -72,8 +66,6 @@ forEachTile:
       type: wfs
       url: https://data.geopf.fr/wfs/wfs
       features: BDTOPO_V3:troncon_de_route
-    processor:
-      type: geoToolsVector
 
   flattenWater:
     after:
@@ -147,8 +139,6 @@ forEachTile:
           type: wfs
           url: https://data.geopf.fr/wfs/wfs
           features: BDTOPO_V3:zone_de_vegetation
-        processor:
-          type: geoToolsVector
       - type: renderSurfaces
         after: renderGround
         models:
