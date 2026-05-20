@@ -14,7 +14,6 @@ public class TestingShape3dModel extends ModelImpl implements Shape3dConvertible
      * @param shape shape for this model
      */
     public TestingShape3dModel(Shape3d shape) {
-        super();
         this.shape = shape;
     }
 
