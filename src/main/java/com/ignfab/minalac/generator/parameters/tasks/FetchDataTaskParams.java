@@ -28,8 +28,9 @@ public class FetchDataTaskParams extends TileTaskParams {
     public ProviderParams provider;
 
     /**
-     * Data processor (required).
+     * Data processor (required if provider has no default processor).
      */
+    @JsonSetter(nulls = Nulls.SKIP)
     public ProcessorParams processor;
 
     /**
@@ -43,13 +44,12 @@ public class FetchDataTaskParams extends TileTaskParams {
      *
      * @param modelType type to give to resulting models
      * @param provider data provider for this source
-     * @param processor data processor for provided data
      */
-    @ConstructorProperties({"modelType", "provider", "processor"})
-    public FetchDataTaskParams(String modelType, ProviderParams provider, ProcessorParams processor) {
+    @ConstructorProperties({"modelType", "provider"})
+    public FetchDataTaskParams(String modelType, ProviderParams provider) {
         this.modelType = modelType;
         this.provider = provider;
-        this.processor = processor;
+        this.processor = provider.defaultProcessor();
     }
 
     @Override
@@ -59,7 +59,12 @@ public class FetchDataTaskParams extends TileTaskParams {
 
         super.validate();
         provider.validate();
+
+        if (processor == null)
+            throw new IllegalArgumentException("Missing processor and no default processor");
+
         processor.validate();
+
         postProcessing.validate();
     }
 

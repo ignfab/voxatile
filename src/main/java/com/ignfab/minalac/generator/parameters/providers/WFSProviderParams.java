@@ -12,6 +12,8 @@ import org.geotools.referencing.CRS;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider;
+import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
 
 /**
  * Parameters for WFS providers.
@@ -64,4 +66,10 @@ public class WFSProviderParams extends ProviderParams {
 
         return new WFS1_1_GML3_1_DataProvider(url, features, layerCrs, generation::getEnvelopeForCRS, maxFeaturesPerQuery);
     }
+
+    @Override
+    public ProcessorParams defaultProcessor() {
+        return new GeoToolsVectorProcessorParams();
+    }
+
 }
