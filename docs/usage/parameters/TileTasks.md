@@ -17,7 +17,7 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`renderLines`](#renderlines)
   * [`renderPoints`](#renderpoints)
   * [`renderSurfaces`](#rendersurfaces)
-  * [`fillBetweenHeightmapAndMetadata`](#fillbetweenheightmapandmetadata)
+  * [`fillBetweenHeightmapAndValue`](#fillbetweenheightmapandvalue)
   * [`renderBuildings`](#renderbuildings)
   * [`setSpawn`](#setspawn)
 * [Tasks operating on heightmaps](#tasks-operating-on-heightmaps)
@@ -199,9 +199,9 @@ heightmap: ground
 place: default:cobble
 ```
 
-### `fillBetweenHeightmapAndMetadata`
+### `fillBetweenHeightmapAndValue`
 
-For each model in [selection](ModelSelection.md), fills the gap between a heightmap and an altitude (given by a model metadata) within the model's boundaries.
+For each model in [selection](ModelSelection.md), fills the gap between a heightmap and an altitude (given by a model value) within the model's boundaries.
 
 If the heightmap value is lower than or equal to the altitude, the placeable used to fill is `placeBelow`, otherwise it is `placeAbove`.
 
@@ -209,7 +209,7 @@ If the heightmap value is lower than or equal to the altitude, the placeable use
 
 - `models` (required, models must be convertible to 2d shapes): [Selection of models](ModelSelection.md) to use.
 - `heightmap` (required): [Heightmap](Heightmaps.md) to use.
-- `altitudeMetadata` (required): Name of the model metadata containing the altitude value.
+- `altitudeValue` (required): [Model value](ModelValues.md) containing the altitude value.
 - `placeAbove` (optional, default [`Nothing`](Placeables.md#nothing)): [Placeable](Placeables.md) placed above the altitude value.
 - `placeBelow` (optional, default [`Nothing`](Placeables.md#nothing)): [Placeable](Placeables.md) placed below the altitude value.
 
@@ -218,11 +218,11 @@ If the heightmap value is lower than or equal to the altitude, the placeable use
 #### Example
 
 ```yaml
-type: fillBetweenHeightmapAndMetadata
+type: fillBetweenHeightmapAndValue
 models:
   type: buildings
 heightmap: ground
-altitudeMetadata: maximum-ground-altitude
+altitudeValue: maximum-ground-altitude
 placeAbove: air
 placeBelow: default:cobble
 ```

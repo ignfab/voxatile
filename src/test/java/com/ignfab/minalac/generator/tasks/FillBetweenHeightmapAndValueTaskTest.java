@@ -9,6 +9,7 @@ import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.TestingRectangleShape2dModel;
+import com.ignfab.minalac.generator.models.values.MetadataValue;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -16,7 +17,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FillBetweenHeightmapAndModelTaskTest {
+public class FillBetweenHeightmapAndValueTaskTest {
     @Test
     void testFlattenSurface() {
         TestingGenerationTile tile = new TestingGenerationTile(new WorldBBox3d(0, 0, 0, 10, 10, 10));
@@ -33,10 +34,10 @@ public class FillBetweenHeightmapAndModelTaskTest {
         tile.models().add("model", List.of(model));
 
         // Run leveling
-        assertDoesNotThrow(() -> new FillBetweenHeightmapAndMetadataTask(
+        assertDoesNotThrow(() -> new FillBetweenHeightmapAndValueTask(
             new ModelSelection("model", null),
             heightmap.spec(),
-            "zTest",
+            new MetadataValue("zTest"),
             new TestingVoxel("A"),
             new TestingVoxel("B")
         ).run(tile));

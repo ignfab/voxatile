@@ -109,11 +109,11 @@ forEachTile:
   flattenGroundBuildings:
     after:
       - computeBuildingsAltitude
-    type: fillBetweenHeightmapAndMetadata
+    type: fillBetweenHeightmapAndValue
     models:
       type: buildings
     heightmap: ground
-    altitudeMetadata: ground-floor-altitude
+    altitudeValue: ground-floor-altitude
     placeAbove: *voxel-empty
     placeBelow: *voxel-building-ground
 
