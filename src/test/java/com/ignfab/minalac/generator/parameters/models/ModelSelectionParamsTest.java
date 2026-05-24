@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.parameters.models;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.parameters.models.filters.ModelFilterAndParams;
 import com.ignfab.minalac.generator.parameters.models.filters.ModelFilterEmptyGeometryParams;
@@ -42,10 +43,10 @@ public class ModelSelectionParamsTest {
         params = new ModelSelectionParams();
         params.type = "aa";
 
-        assertInstanceOf(ModelSelection.class, assertDoesNotThrow(params::create));
+        assertInstanceOf(ModelSelection.class, assertDoesNotThrow(() -> params.create(TestingGeneration.UNUSED)));
 
         params.filter = TestingModelFilterParams.VALID;
-        assertInstanceOf(ModelSelection.class, assertDoesNotThrow(params::create));
+        assertInstanceOf(ModelSelection.class, assertDoesNotThrow(() -> params.create(TestingGeneration.UNUSED)));
     }
 
     @Test

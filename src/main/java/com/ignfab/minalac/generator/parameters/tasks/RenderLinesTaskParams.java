@@ -48,7 +48,7 @@ public class RenderLinesTaskParams extends ModelTaskParams {
     @Override
     public TileTask create(Generation generation) {
         return new RenderLinesTask(
-            models.create(),
+            models.create(generation),
             structure.create(generation.seed()),
             renderOnlyWhenAbove == null ? null : renderOnlyWhenAbove.create(generation.heightmaps())
         );

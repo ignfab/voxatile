@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.Model;
 
 
@@ -35,8 +36,8 @@ public class ModelFilterNotParams extends ModelFilterParams {
     }
 
     @Override
-    public Predicate<Model> create() {
-        return not.create().negate();
+    public Predicate<Model> create(Generation generation) {
+        return not.create(generation).negate();
     }
 
 }

@@ -57,7 +57,7 @@ public class ConditionalModelValueParams extends ModelValueParams {
     @Override
     public ModelValue create(Generation generation) {
         return new ConditionalModelValue(
-            condition.create(),
+            condition.create(generation),
             valueIfTrue.create(generation),
             valueIfFalse.create(generation)
         );

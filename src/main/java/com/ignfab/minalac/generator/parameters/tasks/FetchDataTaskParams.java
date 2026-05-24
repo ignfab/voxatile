@@ -100,7 +100,7 @@ public class FetchDataTaskParams extends TaskParams {
             modelType,
             provider.create(generation),
             processor.create(generation),
-            postProcessing.create(),
+            postProcessing.create(generation),
             retry + 1,
             Duration.ofSeconds(retryDelay),
             Duration.ofSeconds(delay)
