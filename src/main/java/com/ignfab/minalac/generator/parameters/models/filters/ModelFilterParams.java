@@ -19,8 +19,10 @@ import com.ignfab.minalac.generator.models.Model;
     @JsonSubTypes.Type(ModelFilterMetadataEqualsParams.class),
     @JsonSubTypes.Type(ModelFilterMetadataInParams.class),
     @JsonSubTypes.Type(ModelFilterHasMetadataParams.class),
-    @JsonSubTypes.Type(ModelFilterMetadataLowerThanParams.class),
-    @JsonSubTypes.Type(ModelFilterMetadataGreaterThanParams.class),
+    @JsonSubTypes.Type(ModelFilterValueEqualsParams.class),
+    @JsonSubTypes.Type(ModelFilterValueLowerThanParams.class),
+    @JsonSubTypes.Type(ModelFilterValueGreaterThanParams.class),
+    @JsonSubTypes.Type(ModelFilterHasValueParams.class),
     @JsonSubTypes.Type(ModelFilterEmptyGeometryParams.class)
 })
 public abstract class ModelFilterParams {
