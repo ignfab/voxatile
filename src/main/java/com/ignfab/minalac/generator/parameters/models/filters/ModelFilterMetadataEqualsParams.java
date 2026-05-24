@@ -12,8 +12,9 @@ import com.ignfab.minalac.generator.models.filters.ModelFilterOnMetadataValue;
 import com.ignfab.minalac.generator.parameters.ValueParser;
 
 /**
- * Parameters for an "equals" operator.
+ * Parameters for an "equals" operator on metadata value.
  */
+// TODO once model values can handle any type of values, this won't be necessary anymore
 public class ModelFilterMetadataEqualsParams extends ModelFilterParams {
 
     /**
