@@ -63,7 +63,7 @@ public class RenderBuildingsTaskParams extends ModelTaskParams {
     @Override
     public TileTask create(Generation generation) {
         return new RenderBuildingsTask(
-            models.create(),
+            models.create(generation),
             roof.create(generation.seed()),
             wall.create(generation.seed()),
             window.create(generation.seed())

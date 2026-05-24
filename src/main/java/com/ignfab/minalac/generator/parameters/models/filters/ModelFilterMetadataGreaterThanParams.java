@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.filters.ModelFilterOnMetadataValue;
 
@@ -45,7 +46,7 @@ public class ModelFilterMetadataGreaterThanParams extends ModelFilterParams {
     }
 
     @Override
-    public Predicate<Model> create() {
+    public Predicate<Model> create(Generation generation) {
         return new ModelFilterOnMetadataValue<>(Number.class, metadata, metadataValue -> metadataValue.doubleValue() > greaterThan);
     }
 }

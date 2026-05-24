@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -101,23 +102,22 @@ public class MetadataValueMappingPostProcessorParamsTest {
 
     @Test
     public void testCreate() {
-        MetadataValueMappingPostProcessorParams params;
-        params = new MetadataValueMappingPostProcessorParams("metadata");
-        params.fromTo = Map.of("a", "b", "c", "d");
-        assertDoesNotThrow(params::create);
+        MetadataValueMappingPostProcessorParams params1 = new MetadataValueMappingPostProcessorParams("metadata");
+        params1.fromTo = Map.of("a", "b", "c", "d");
+        assertDoesNotThrow(() -> params1.create(TestingGeneration.UNUSED));
 
-        params = new MetadataValueMappingPostProcessorParams("metadata");
-        params.fromTo = Map.of("a", "b", "c", "d");
-        params.defaultValue = "z";
-        assertDoesNotThrow(params::create);
+        MetadataValueMappingPostProcessorParams params2 = new MetadataValueMappingPostProcessorParams("metadata");
+        params2.fromTo = Map.of("a", "b", "c", "d");
+        params2.defaultValue = "z";
+        assertDoesNotThrow(() -> params2.create(TestingGeneration.UNUSED));
 
-        params = new MetadataValueMappingPostProcessorParams("metadata");
-        params.fromTo = Map.of("a", "b", "c", "d");
-        params.toFrom = Map.of("b", Set.of("a", "c", "d"), "e", Set.of("f", "g", "h"));
-        assertThrows(IllegalArgumentException.class, params::create);
+        MetadataValueMappingPostProcessorParams params3 = new MetadataValueMappingPostProcessorParams("metadata");
+        params3.fromTo = Map.of("a", "b", "c", "d");
+        params3.toFrom = Map.of("b", Set.of("a", "c", "d"), "e", Set.of("f", "g", "h"));
+        assertThrows(IllegalArgumentException.class, () -> params3.create(TestingGeneration.UNUSED));
 
-        params = new MetadataValueMappingPostProcessorParams("metadata");
-        params.toFrom = Map.of("b", Set.of("a", "c", "d"), "e", Set.of("a", "c", "d"));
-        assertThrows(IllegalArgumentException.class, params::create);
+        MetadataValueMappingPostProcessorParams params4 = new MetadataValueMappingPostProcessorParams("metadata");
+        params4.toFrom = Map.of("b", Set.of("a", "c", "d"), "e", Set.of("a", "c", "d"));
+        assertThrows(IllegalArgumentException.class, () -> params4.create(TestingGeneration.UNUSED));
     }
 }

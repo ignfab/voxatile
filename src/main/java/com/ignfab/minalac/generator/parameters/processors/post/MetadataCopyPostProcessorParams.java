@@ -5,6 +5,7 @@ import java.beans.ConstructorProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.processors.post.MetadataCopyPostProcessor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
@@ -58,7 +59,7 @@ public class MetadataCopyPostProcessorParams extends PostProcessorParams {
     }
 
     @Override
-    public PostProcessor<Model, ?> create() {
+    public PostProcessor<Model, ?> create(Generation generation) {
         return new MetadataCopyPostProcessor(
             metadata,
             to,

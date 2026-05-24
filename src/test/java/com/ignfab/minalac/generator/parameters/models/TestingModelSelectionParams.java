@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.parameters.models;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.ModelSelection;
 
 /**
@@ -36,7 +37,7 @@ public class TestingModelSelectionParams extends ModelSelectionParams {
     }
 
     @Override
-    public ModelSelection create() {
+    public ModelSelection create(Generation generation) {
         return null;
     }
 }

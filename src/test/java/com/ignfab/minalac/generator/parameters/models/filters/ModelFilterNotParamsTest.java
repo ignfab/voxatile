@@ -4,6 +4,7 @@ import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.TestingModel;
 
@@ -32,7 +33,7 @@ public class ModelFilterNotParamsTest {
 
         ModelFilterParams params = new ModelFilterNotParams(new TestingModelFilterParams(model1));
 
-        Predicate<Model> filter = assertDoesNotThrow(params::create);
+        Predicate<Model> filter = assertDoesNotThrow(() -> params.create(TestingGeneration.UNUSED));
 
         // Check filter has been negated
         assertFalse(filter.test(model1));

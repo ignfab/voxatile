@@ -10,6 +10,7 @@ import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.deser.std.DelegatingDeserializer;
 import tools.jackson.databind.jsontype.TypeDeserializer;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.JsonDelegateDeserialize;
 import com.ignfab.minalac.generator.parameters.PolymorphicParams;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
@@ -22,9 +23,10 @@ public abstract class PostProcessorParams extends PolymorphicParams {
     /**
      * Creates the corresponding {@link PostProcessor}.
      *
+     * @param generation the generation context
      * @return the created {@link PostProcessor}
      */
-    public abstract PostProcessor<?, ?> create();
+    public abstract PostProcessor<?, ?> create(Generation generation);
 
     /**
      * Custom deserializer to handle list of post processors seamlessly.

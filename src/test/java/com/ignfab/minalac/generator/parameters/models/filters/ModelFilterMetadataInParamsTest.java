@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.models.filters.ModelFilterOnMetadataValue;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +23,6 @@ public class ModelFilterMetadataInParamsTest {
     @Test
     public void testCreate() {
         ModelFilterParams params = new ModelFilterMetadataInParams("a", List.of(1, 2));
-        assertInstanceOf(ModelFilterOnMetadataValue.class, assertDoesNotThrow(params::create));
+        assertInstanceOf(ModelFilterOnMetadataValue.class, assertDoesNotThrow(() -> params.create(TestingGeneration.UNUSED)));
     }
 }

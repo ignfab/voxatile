@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.parameters.processors.post;
 
 import java.util.List;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.processors.post.IdentityPostProcessor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
 import com.ignfab.minalac.generator.processors.post.SequentialPostProcessor;
@@ -27,11 +28,11 @@ public class SequentialPostProcessorParams extends PostProcessorParams {
     }
 
     @Override
-    public PostProcessor<?, ?> create() {
+    public PostProcessor<?, ?> create(Generation generation) {
         if (sequence.isEmpty())
             return IdentityPostProcessor.INSTANCE;
         if (sequence.size() == 1)
-            return sequence.get(0).create();
-        return new SequentialPostProcessor<>(sequence.stream().map(PostProcessorParams::create).toList());
+            return sequence.get(0).create(generation);
+        return new SequentialPostProcessor<>(sequence.stream().map(params -> params.create(generation)).toList());
     }
 }

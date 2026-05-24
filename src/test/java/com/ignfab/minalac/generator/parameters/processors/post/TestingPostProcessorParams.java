@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.parameters.processors.post;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
 import com.ignfab.minalac.generator.processors.post.TestingPostProcessor;
 
@@ -43,7 +44,7 @@ public class TestingPostProcessorParams extends PostProcessorParams {
     }
 
     @Override
-    public PostProcessor<?, ?> create() {
+    public PostProcessor<?, ?> create(Generation generation) {
         return new TestingPostProcessor(mark);
     }
 }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataTruncatePostProcessorParams.TruncationMethodParams;
 
@@ -12,7 +13,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MetadataTruncatePostProcessorParamsTest {
     @Test
     public void testCreate() {
-        assertDoesNotThrow(new MetadataTruncatePostProcessorParams("metadata", TruncationMethodParams.ROUND)::create);
+        MetadataTruncatePostProcessorParams params = new MetadataTruncatePostProcessorParams("metadata", TruncationMethodParams.ROUND);
+        assertDoesNotThrow(() -> params.create(TestingGeneration.UNUSED));
     }
 
     @Test

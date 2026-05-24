@@ -79,7 +79,7 @@ public class HeightmapStatsTaskParams extends ModelTaskParams {
     @Override
     public TileTask create(Generation generation) {
         return new HeightmapStatsTask(
-            models.create(),
+            models.create(generation),
             heightmap.create(generation.heightmaps()),
             compute.minimum,
             compute.maximum

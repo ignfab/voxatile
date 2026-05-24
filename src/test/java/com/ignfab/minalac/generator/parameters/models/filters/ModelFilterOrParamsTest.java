@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.TestingModel;
 
@@ -46,18 +47,17 @@ public class ModelFilterOrParamsTest {
         Model model2 = new TestingModel("2");
         Model model3 = new TestingModel("3");
 
-        ModelFilterParams params;
         Predicate<Model> filter;
 
         // Check we really have an "OR" at the end
 
-        params = new ModelFilterOrParams(List.of(
+        ModelFilterParams params1 = new ModelFilterOrParams(List.of(
             new TestingModelFilterParams(model2),
             new TestingModelFilterParams(model2),
             new TestingModelFilterParams(model1),
             new TestingModelFilterParams(model1)
         ));
-        filter = assertDoesNotThrow(params::create);
+        filter = assertDoesNotThrow(() -> params1.create(TestingGeneration.UNUSED));
 
         assertTrue(filter.test(model1));
         assertTrue(filter.test(model2));
@@ -65,10 +65,10 @@ public class ModelFilterOrParamsTest {
 
         // Check we have same predicate if it is the only element in list
 
-        params = new ModelFilterOrParams(List.of(
+        ModelFilterParams params2 = new ModelFilterOrParams(List.of(
             new TestingModelFilterParams(model1)
         ));
-        filter = assertDoesNotThrow(params::create);
+        filter = assertDoesNotThrow(() -> params2.create(TestingGeneration.UNUSED));
 
         assertTrue(filter.test(model1));
         assertFalse(filter.test(model2));
