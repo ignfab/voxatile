@@ -48,7 +48,7 @@ public class RenderSurfacesTaskParams extends ModelTaskParams {
     @Override
     public TileTask create(Generation generation) {
         return new RenderSurfacesTask(
-            models.create(),
+            models.create(generation),
             heightmap.create(generation.heightmaps()),
             place.create(generation.seed())
         );

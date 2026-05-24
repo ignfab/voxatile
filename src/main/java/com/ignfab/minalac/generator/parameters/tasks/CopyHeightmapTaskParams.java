@@ -49,7 +49,7 @@ public class CopyHeightmapTaskParams extends ModelTaskParams {
     @Override
     public TileTask create(Generation generation) {
         return new CopyHeightmapTask(
-            models.create(),
+            models.create(generation),
             from.create(generation.heightmaps()),
             to.create(generation.heightmaps())
         );

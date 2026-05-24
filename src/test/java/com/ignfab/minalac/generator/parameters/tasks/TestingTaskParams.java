@@ -67,7 +67,7 @@ public class TestingTaskParams extends ModelTaskParams {
 
     @Override
     public Task create(Generation generation) {
-        return new DummyTask(models.create());
+        return new DummyTask(models.create(generation));
     }
 
     /**

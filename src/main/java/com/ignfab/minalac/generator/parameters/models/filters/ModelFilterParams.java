@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.Model;
 
 /**
@@ -31,7 +32,8 @@ public abstract class ModelFilterParams {
     /**
      * Creates a {@code Predicate<Model>} out of these params.
      *
+     * @param generation the generation context.
      * @return the resulting predicate.
      */
-    public abstract Predicate<Model> create();
+    public abstract Predicate<Model> create(Generation generation);
 }

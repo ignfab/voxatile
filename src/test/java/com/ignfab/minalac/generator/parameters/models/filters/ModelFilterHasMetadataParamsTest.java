@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.generation.TestingGeneration;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ModelFilterHasMetadataParamsTest {
@@ -25,7 +27,10 @@ public class ModelFilterHasMetadataParamsTest {
 
     @Test
     public void testCreate() {
-        assertDoesNotThrow(new ModelFilterHasMetadataParams(List.of("a"))::create);
-        assertDoesNotThrow(new ModelFilterHasMetadataParams(List.of("a", "b"))::create);
+        ModelFilterHasMetadataParams params1 = new ModelFilterHasMetadataParams(List.of("a"));
+        assertDoesNotThrow(() -> params1.create(TestingGeneration.UNUSED));
+
+        ModelFilterHasMetadataParams params2 = new ModelFilterHasMetadataParams(List.of("a", "b"));
+        assertDoesNotThrow(() -> params2.create(TestingGeneration.UNUSED));
     }
 }

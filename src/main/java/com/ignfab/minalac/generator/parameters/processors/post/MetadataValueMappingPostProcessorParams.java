@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.parameters.ValueParser;
 import com.ignfab.minalac.generator.processors.post.MetadataValueMappingPostProcessor;
@@ -89,7 +90,7 @@ public class MetadataValueMappingPostProcessorParams extends PostProcessorParams
     }
 
     @Override
-    public PostProcessor<Model, Model> create() {
+    public PostProcessor<Model, Model> create(Generation generation) {
         Map<String, Object> valueMapping = new HashMap<>();
         if (fromTo != null)
             fromTo.forEach((key, value) -> valueMapping.put(key, as.parse(value)));

@@ -5,6 +5,7 @@ import java.beans.ConstructorProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.parameters.ValueParser;
 import com.ignfab.minalac.generator.processors.post.MetadataDefaultPostProcessor;
@@ -54,7 +55,7 @@ public class MetadataDefaultPostProcessorParams extends PostProcessorParams {
     }
 
     @Override
-    public PostProcessor<Model, Model> create() {
+    public PostProcessor<Model, Model> create(Generation generation) {
         return new MetadataDefaultPostProcessor(metadata, as.parse(value));
     }
 }

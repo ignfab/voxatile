@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.parameters.processors.post;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.processors.post.JTSGeometryBufferPostProcessor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
 
@@ -27,7 +28,7 @@ public class JTSGeometryBufferPostProcessorParamsTest {
     @DisplayName("JTS geometry buffer post-processor params creates a JTS geometry post-processor")
     public void testCreate() {
         JTSGeometryBufferPostProcessorParams params = new JTSGeometryBufferPostProcessorParams(-2);
-        PostProcessor<?, ?> postProcessor = assertDoesNotThrow(params::create);
+        PostProcessor<?, ?> postProcessor = assertDoesNotThrow(() -> params.create(TestingGeneration.UNUSED));
         assertInstanceOf(JTSGeometryBufferPostProcessor.class, postProcessor);
     }
 }

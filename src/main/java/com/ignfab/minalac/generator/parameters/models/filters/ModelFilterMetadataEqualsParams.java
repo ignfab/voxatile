@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.filters.ModelFilterOnMetadataValue;
 import com.ignfab.minalac.generator.parameters.ValueParser;
@@ -52,7 +53,7 @@ public class ModelFilterMetadataEqualsParams extends ModelFilterParams {
     }
 
     @Override
-    public Predicate<Model> create() {
+    public Predicate<Model> create(Generation generation) {
         Object equals = as.parse(this.equals);
         return new ModelFilterOnMetadataValue<>(as.type(), metadata, equals::equals);
     }

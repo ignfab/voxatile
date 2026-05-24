@@ -49,7 +49,7 @@ public class RenderLines2dTaskParams extends ModelTaskParams {
     @Override
     public TileTask create(Generation generation) {
         return new RenderLines2dTask(
-            models.create(),
+            models.create(generation),
             structure.create(generation.seed()),
             heightmap.create(generation.heightmaps())
         );
