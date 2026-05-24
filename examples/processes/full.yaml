@@ -124,7 +124,8 @@ forEachTile:
     models:
       type: buildings
       filter:
-        metadata: height
+        value:
+          metadata: height
         greaterThan: 0
     roof: *voxel-cobble
     wall: *voxel-stone
