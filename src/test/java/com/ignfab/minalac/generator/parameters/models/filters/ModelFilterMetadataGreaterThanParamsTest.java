@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.parameters.models.filters;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.models.filters.ModelFilterOnMetadataValue;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -22,6 +23,6 @@ public class ModelFilterMetadataGreaterThanParamsTest {
     @Test
     public void testCreate() {
         ModelFilterParams params = new ModelFilterMetadataGreaterThanParams("a", 1.);
-        assertInstanceOf(ModelFilterOnMetadataValue.class, assertDoesNotThrow(params::create));
+        assertInstanceOf(ModelFilterOnMetadataValue.class, assertDoesNotThrow(() -> params.create(TestingGeneration.UNUSED)));
     }
 }

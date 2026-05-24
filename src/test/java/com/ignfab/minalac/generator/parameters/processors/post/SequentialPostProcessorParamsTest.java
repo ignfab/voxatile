@@ -5,6 +5,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.processors.post.IdentityPostProcessor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
 import com.ignfab.minalac.generator.processors.post.SequentialPostProcessor;
@@ -53,7 +54,7 @@ public class SequentialPostProcessorParamsTest {
     @DisplayName("Empty sequential post-processor params creates an identity post-processor")
     public void testCreateEmpty() {
         SequentialPostProcessorParams emptyParams = new SequentialPostProcessorParams(List.of());
-        PostProcessor<?, ?> emptyPostProcessor = assertDoesNotThrow(emptyParams::create);
+        PostProcessor<?, ?> emptyPostProcessor = assertDoesNotThrow(() -> emptyParams.create(TestingGeneration.UNUSED));
         assertSame(IdentityPostProcessor.INSTANCE, emptyPostProcessor);
     }
 
@@ -63,7 +64,7 @@ public class SequentialPostProcessorParamsTest {
         SequentialPostProcessorParams singleParams = new SequentialPostProcessorParams(List.of(
             TestingPostProcessorParams.VALID
         ));
-        PostProcessor<?, ?> singlePostProcessor = assertDoesNotThrow(singleParams::create);
+        PostProcessor<?, ?> singlePostProcessor = assertDoesNotThrow(() -> singleParams.create(TestingGeneration.UNUSED));
         assertInstanceOf(TestingPostProcessor.class, singlePostProcessor);
     }
 
@@ -74,7 +75,7 @@ public class SequentialPostProcessorParamsTest {
             TestingPostProcessorParams.VALID,
             TestingPostProcessorParams.VALID
         ));
-        PostProcessor<?, ?> multiplePostProcessor = assertDoesNotThrow(multipleParams::create);
+        PostProcessor<?, ?> multiplePostProcessor = assertDoesNotThrow(() -> multipleParams.create(TestingGeneration.UNUSED));
         assertInstanceOf(SequentialPostProcessor.class, multiplePostProcessor);
     }
 }

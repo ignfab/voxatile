@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.parameters.processors.post;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.TestingModel;
 import com.ignfab.minalac.generator.parameters.models.filters.TestingModelFilterParams;
@@ -61,7 +62,7 @@ public class ConditionalPostProcessorParamsTest {
         );
         params.postProcessorIfFalse = new TestingPostProcessorParams("not-matched");
         @SuppressWarnings("unchecked") // TestingPostProcessor is generic
-        PostProcessor<Model, ?> postProcessor = (PostProcessor<Model, ?>) assertDoesNotThrow(params::create);
+        PostProcessor<Model, ?> postProcessor = (PostProcessor<Model, ?>) assertDoesNotThrow(() -> params.create(TestingGeneration.UNUSED));
         assertInstanceOf(ConditionalPostProcessor.class, postProcessor);
 
         assertDoesNotThrow(() -> {

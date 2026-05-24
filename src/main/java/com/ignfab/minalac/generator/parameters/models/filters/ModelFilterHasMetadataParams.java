@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.filters.ModelFilterHasMetadata;
 
@@ -44,7 +45,7 @@ public class ModelFilterHasMetadataParams extends ModelFilterParams {
     }
 
     @Override
-    public Predicate<Model> create() {
+    public Predicate<Model> create(Generation generation) {
         Iterator<String> iterator = hasMetadata.iterator();
         if (!iterator.hasNext())
             throw new IllegalArgumentException("There must be at least one metadata name (should have been tested with validation!)");

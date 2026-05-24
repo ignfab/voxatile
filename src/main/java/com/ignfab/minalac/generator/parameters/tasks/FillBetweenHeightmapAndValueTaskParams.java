@@ -70,7 +70,7 @@ public class FillBetweenHeightmapAndValueTaskParams extends ModelTaskParams {
     @Override
     public TileTask create(Generation generation) {
         return new FillBetweenHeightmapAndValueTask(
-            models.create(),
+            models.create(generation),
             heightmap.create(generation.heightmaps()),
             altitudeValue.create(generation),
             placeAbove.create(generation.seed()),

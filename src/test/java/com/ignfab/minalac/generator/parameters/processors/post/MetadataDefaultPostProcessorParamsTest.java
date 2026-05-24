@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.parameters.processors.post;
 
 import org.junit.jupiter.api.Test;
 
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.parameters.ValueParser;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,12 +10,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class MetadataDefaultPostProcessorParamsTest {
     @Test
     public void testCreate() {
-        MetadataDefaultPostProcessorParams params;
-        params = new MetadataDefaultPostProcessorParams("toto", "toto", ValueParser.INTEGER);
-        assertThrows(NumberFormatException.class, params::create);
+        MetadataDefaultPostProcessorParams params1 = new MetadataDefaultPostProcessorParams("toto", "toto", ValueParser.INTEGER);
+        assertThrows(NumberFormatException.class, () -> params1.create(TestingGeneration.UNUSED));
 
-        params = new MetadataDefaultPostProcessorParams("toto", "5", ValueParser.INTEGER);
-        assertDoesNotThrow(params::create);
+        MetadataDefaultPostProcessorParams params2 = new MetadataDefaultPostProcessorParams("toto", "5", ValueParser.INTEGER);
+        assertDoesNotThrow(() -> params2.create(TestingGeneration.UNUSED));
     }
 
     @Test

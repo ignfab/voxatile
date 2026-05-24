@@ -5,6 +5,7 @@ import java.beans.ConstructorProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.JTSGeometryModel;
 import com.ignfab.minalac.generator.processors.post.JTSGeometryBufferPostProcessor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
@@ -35,7 +36,7 @@ public class JTSGeometryBufferPostProcessorParams extends PostProcessorParams {
     }
 
     @Override
-    public PostProcessor<JTSGeometryModel, ?> create() {
+    public PostProcessor<JTSGeometryModel, ?> create(Generation generation) {
         return new JTSGeometryBufferPostProcessor(buffer);
     }
 }

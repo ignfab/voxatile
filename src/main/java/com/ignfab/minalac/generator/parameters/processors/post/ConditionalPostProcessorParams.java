@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.parameters.models.filters.ModelFilterParams;
 import com.ignfab.minalac.generator.processors.post.ConditionalPostProcessor;
@@ -56,11 +57,11 @@ public class ConditionalPostProcessorParams extends PostProcessorParams {
 
     @Override
     @SuppressWarnings("unchecked") // Types will be validated later
-    public PostProcessor<?, ?> create() {
+    public PostProcessor<?, ?> create(Generation generation) {
         return new ConditionalPostProcessor<>(
-            condition.create(),
-            (PostProcessor<Model, ?>) postProcessorIfTrue.create(),
-            (PostProcessor<Model, ?>) postProcessorIfFalse.create()
+            condition.create(generation),
+            (PostProcessor<Model, ?>) postProcessorIfTrue.create(generation),
+            (PostProcessor<Model, ?>) postProcessorIfFalse.create(generation)
         );
     }
 }

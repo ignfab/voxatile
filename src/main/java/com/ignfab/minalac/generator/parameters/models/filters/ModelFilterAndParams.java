@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.Model;
 
 /**
@@ -41,12 +42,12 @@ public class ModelFilterAndParams extends ModelFilterParams {
     }
 
     @Override
-    public Predicate<Model> create() {
+    public Predicate<Model> create(Generation generation) {
         Iterator<ModelFilterParams> iterator = and.iterator();
-        Predicate<Model> predicate = iterator.next().create();
+        Predicate<Model> predicate = iterator.next().create(generation);
 
         while (iterator.hasNext())
-            predicate = predicate.and(iterator.next().create());
+            predicate = predicate.and(iterator.next().create(generation));
 
         return predicate;
     }
