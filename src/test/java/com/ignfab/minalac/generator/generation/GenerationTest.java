@@ -18,18 +18,20 @@ import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
-import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelTile;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestGeneration {
+public class GenerationTest {
     private static CoordinateReferenceSystem crs2154;
     private static CoordinateReferenceSystem crs4326;
     private static CoordinateReferenceSystem crs3857;
     private static Seed seed;
+
+    private static int x2154;
+    private static int y2154;
 
     @BeforeAll
     public static void setUp() throws FactoryException {
@@ -37,11 +39,11 @@ public class TestGeneration {
         crs4326 = CRS.decode("EPSG:4326");
         crs3857 = CRS.decode("EPSG:3857");
         seed = new Seed("ABCD");
-    }
 
-    // 657_781, 6_860_729 (EPSG:2154) IGN Saint Mandé
-    private final int x2154 = 657_781;
-    private final int y2154 = 6_860_729;
+        // 657_781, 6_860_729 (EPSG:2154) IGN Saint Mandé
+        x2154 = 657_781;
+        y2154 = 6_860_729;
+    }
 
     @Test
     public void testGeneration() throws FactoryException, TransformException {
@@ -92,8 +94,8 @@ public class TestGeneration {
     }
 
     private static class EmptyVoxelWorld extends VoxelWorld {
-        private int extentX;
-        private int extentY;
+        private final int extentX;
+        private final int extentY;
 
         protected EmptyVoxelWorld(int extentX, int extentY) {
             super(new VoxelWorldMetadata());
@@ -107,12 +109,10 @@ public class TestGeneration {
         }
 
         @Override
-        public void initialize() throws MapWriteException {
-        }
+        public void initialize() {}
 
         @Override
-        public void finalizeAndSave() throws MapWriteException {
-        }
+        public void finalizeAndSave() {}
 
         @Override
         public VoxelTile newTile(WorldBBox3d limits) {
