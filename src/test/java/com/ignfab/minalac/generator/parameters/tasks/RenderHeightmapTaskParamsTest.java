@@ -4,21 +4,20 @@ import org.junit.jupiter.api.Test;
 import tools.jackson.databind.cfg.MapperBuilder;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
 import com.ignfab.minalac.generator.parameters.heightmaps.WritableHeightmapParams;
 import com.ignfab.minalac.generator.parameters.placeables.TestingPlaceableParams;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
-import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RenderHeightmapTaskParamsTest {
     @Test
     public void testDeserializeAt() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
+        Generation generation = new TestingGeneration();
         generation.heightmaps().add(new HeightmapDeclaration("ground", 5));
 
         MapperBuilder<?, ?> builder = ParamsTester.mapperBuilderWithParams("heightmapRenderer", RenderHeightmapTaskParams.class);
@@ -41,7 +40,7 @@ public class RenderHeightmapTaskParamsTest {
 
     @Test
     public void testDeserializeMinMax() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
+        Generation generation = new TestingGeneration();
         generation.heightmaps().add(new HeightmapDeclaration("water", 5));
         generation.heightmaps().add(new HeightmapDeclaration("ground", 25));
 
