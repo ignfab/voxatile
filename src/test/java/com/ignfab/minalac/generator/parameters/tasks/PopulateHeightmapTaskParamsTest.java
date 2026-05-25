@@ -5,19 +5,18 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.databind.cfg.MapperBuilder;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.heightmaps.TestingHeightmapParams;
 import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
-import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PopulateHeightmapTaskParamsTest {
     @Test
     public void testDeserialize() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
+        Generation generation = new TestingGeneration();
         generation.heightmaps().add(new HeightmapDeclaration("ground", 5));
 
         MapperBuilder<?, ?> builder = ParamsTester.mapperBuilderWithParams("matrixToHeightmap", PopulateHeightmapTaskParams.class);

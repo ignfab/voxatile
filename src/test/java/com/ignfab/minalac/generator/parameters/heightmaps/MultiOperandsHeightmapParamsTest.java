@@ -7,24 +7,21 @@ import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.GenerationTile;
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmap;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
-import com.ignfab.minalac.generator.utils.random.TestingSeed;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MultiOperandsHeightmapParamsTest {
     @Test
     public void testDeserializeSum() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
-        HeightmapDeclaration heightmapSpec = (new HeightmapDeclaration("ground", 0));
+        Generation generation = new TestingGeneration();
+        HeightmapDeclaration heightmapSpec = new HeightmapDeclaration("ground", 0);
         generation.heightmaps().add(heightmapSpec);
 
         GenerationTile tile = new GenerationTile(generation, new WorldBBox3d(0, 0, 0, 3, 1, 1));
@@ -54,8 +51,8 @@ public class MultiOperandsHeightmapParamsTest {
 
     @Test
     public void testDeserializeProduct() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
-        HeightmapDeclaration heightmapSpec = (new HeightmapDeclaration("ground", 0));
+        Generation generation = new TestingGeneration();
+        HeightmapDeclaration heightmapSpec = new HeightmapDeclaration("ground", 0);
         generation.heightmaps().add(heightmapSpec);
 
         GenerationTile tile = new GenerationTile(generation, new WorldBBox3d(0, 0, 0, 3, 1, 1));
@@ -86,7 +83,7 @@ public class MultiOperandsHeightmapParamsTest {
     @Test
     public void testValidate() {
         // Sum and Product use the same validate()
-        assertThrows(IllegalArgumentException.class, (new MultiOperandsHeightmapParams.Sum(Collections.emptyList()))::validate);
+        assertThrows(IllegalArgumentException.class, new MultiOperandsHeightmapParams.Sum(Collections.emptyList())::validate);
 
         // Testing first validation is propagated.
         MultiOperandsHeightmapParams.Sum paramsFirstInvalid = new MultiOperandsHeightmapParams.Sum(

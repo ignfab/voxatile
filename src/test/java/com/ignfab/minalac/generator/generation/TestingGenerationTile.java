@@ -4,18 +4,17 @@ import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationSt
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapStore;
 import com.ignfab.minalac.generator.generation.heightmaps.TestingHeightmap;
 import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
- * A fake GenerationTile over a {@link TestingVoxelWorld}.
- *
- * For now, used {@link TestingVoxelWorld} has no seed nor CRS.
+ * A fake GenerationTile over a {@link TestingGeneration}.
+ * <p>
+ * The tile occupies the whole limits of the generation
  */
 public class TestingGenerationTile extends GenerationTile {
 
-    // This is a mock heightmap store that is re-created each {@code newStoredHeightmap} call.
+    // This is a mock heightmap store that supports modification through {@code newStoredHeightmap} call.
     private final TestingHeightmapStore heightmaps;
 
     /**
@@ -24,23 +23,16 @@ public class TestingGenerationTile extends GenerationTile {
      * @param limits Limits of that tile
      */
     public TestingGenerationTile(WorldBBox3d limits) {
-        super(new Generation(
-                new TestingVoxelWorld(),
-                null, // Seed
-                null, // CRS
-                0.0, // CenterX
-                0.0, // CenterY
-                limits.sizeX(), // extentX
-                limits.sizeY(), // extentY
-                1.0, // Horizontal scale
-                1.0, // Vertical sclae
-                0, // Angle
-                Math.max(limits.sizeX(), limits.sizeY())
-            ),
-            limits);
+        super(new TestingGeneration(limits), limits);
         heightmaps = new TestingHeightmapStore(generation().heightmaps(), limits().to2d());
     }
 
+    @Override
+    public TestingGeneration generation() {
+        return (TestingGeneration) super.generation();
+    }
+
+    @Override
     public TestingVoxelTile voxels() {
         return (TestingVoxelTile) super.voxels();
     }
@@ -78,11 +70,12 @@ public class TestingGenerationTile extends GenerationTile {
      *
      * @return heightmap store
      */
+    @Override
     public HeightmapStore heightmaps() {
         return heightmaps;
     }
 
-    private class TestingHeightmapStore extends HeightmapStore {
+    private static class TestingHeightmapStore extends HeightmapStore {
         TestingHeightmapStore(HeightmapDeclarationStore heightmaps, WorldBBox2d bbox) {
             super(heightmaps, bbox);
         }
