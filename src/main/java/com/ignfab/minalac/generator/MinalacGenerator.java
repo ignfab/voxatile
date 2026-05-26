@@ -70,7 +70,7 @@ public final class MinalacGenerator {
      */
     public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException, TimeoutException, GenerationFailedException {
         // Execution duration start
-        Instant start = Instant.now();
+        Instant start =Instant.now();
         HttpTrustAllSSL.applyGlobally();
 
         // Deserialization duration start
