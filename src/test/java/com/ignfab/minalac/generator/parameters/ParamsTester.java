@@ -38,17 +38,8 @@ public final class ParamsTester {
      * @return deserialized object
      */
     public static <T> T deserialize(Class<T> cls, String serialized, OutputFormat format, MapperBuilder<?, ?> builder) throws JacksonException {
-        builder.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-        builder.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
-        builder.enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION);
-
-        builder.addModule(new ParamsParser.MinalacParserModule());
-
         format.registerPlaceableDeserializer(builder);
-
-        ObjectMapper mapper = builder.build();
-        JsonNode node = mapper.readValue(serialized, JsonNode.class);
-        return mapper.treeToValue(node, cls);
+        return deserialize(cls, serialized, builder);
     }
 
     /**
@@ -63,9 +54,8 @@ public final class ParamsTester {
      * @return deserialized object
      */
     public static <T> T deserialize(Class<T> cls, String serialized, OutputFormat format) throws JacksonException {
-        return deserialize(cls, serialized, format, YAMLMapper.builder());
+        return deserialize(cls, serialized, mapperBuilder(format));
     }
-
 
     /**
      * Deserializes parameters with "Testing" output format and given mapper.
@@ -79,7 +69,9 @@ public final class ParamsTester {
      * @return deserialized object
      */
     public static <T> T deserialize(Class<T> cls, String serialized, MapperBuilder<?, ?> builder) throws JacksonException {
-        return deserialize(cls, serialized, OUTPUT_FORMAT, builder);
+        ObjectMapper mapper = builder.build();
+        JsonNode node = mapper.readValue(serialized, JsonNode.class);
+        return mapper.treeToValue(node, cls);
     }
 
     /**
@@ -93,7 +85,33 @@ public final class ParamsTester {
      * @return deserialized object
      */
     public static <T> T deserialize(Class<T> cls, String serialized) throws JacksonException {
-        return deserialize(cls, serialized, OUTPUT_FORMAT, YAMLMapper.builder());
+        return deserialize(cls, serialized, mapperBuilder());
+    }
+
+    /**
+     * Creates a new {@link YAMLMapper.Builder} with project-specific configuration.
+     * @return A new mapper builder
+     */
+    public static YAMLMapper.Builder mapperBuilder() {
+        return mapperBuilder(OUTPUT_FORMAT);
+    }
+
+    /**
+     * Creates a new {@link YAMLMapper.Builder} with project-specific configuration.
+     * @param format output format to use for deserialization
+     * @return A new mapper builder
+     */
+    public static YAMLMapper.Builder mapperBuilder(OutputFormat format) {
+        YAMLMapper.Builder builder = YAMLMapper.builder();
+        builder.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+        builder.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
+        builder.enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION);
+
+        builder.addModule(new ParamsParser.MinalacParserModule());
+
+        format.registerPlaceableDeserializer(builder);
+
+        return builder;
     }
 
     /**
@@ -104,7 +122,7 @@ public final class ParamsTester {
      * @see ParamsParser#registerParams(String, Class)
      */
     public static YAMLMapper.Builder mapperBuilderWithParams(String type, Class<? extends PolymorphicParams> clazz) {
-        return YAMLMapper.builder().registerSubtypes(new NamedType(clazz, type));
+        return mapperBuilder().registerSubtypes(new NamedType(clazz, type));
     }
 
     /**
