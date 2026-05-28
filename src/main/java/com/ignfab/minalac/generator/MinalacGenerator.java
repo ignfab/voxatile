@@ -29,6 +29,7 @@ import com.ignfab.minalac.generator.parameters.processors.post.JTSGeometryBuffer
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataCopyPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataDefaultPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataParsePostProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.post.MetadataSetPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataTruncatePostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataValueMappingPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParams;
@@ -130,6 +131,7 @@ public final class MinalacGenerator {
         parser.registerParams("identity", IdentityPostProcessorParams.class);
         parser.registerParams("discard", DiscardPostProcessorParams.class);
         parser.registerParams("conditional", ConditionalPostProcessorParams.class);
+        parser.registerParams("set", MetadataSetPostProcessorParams.class);
         parser.registerParams("copy", MetadataCopyPostProcessorParams.class);
         parser.registerParams("default", MetadataDefaultPostProcessorParams.class);
         parser.registerParams("parse", MetadataParsePostProcessorParams.class);

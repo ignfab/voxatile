@@ -10,6 +10,7 @@ Each post-processor has a field `type` which is used to identify it.
 * [Generic post-processors](#generic-post-processors)
   * [Identity](#identity)
   * [Discard](#discard)
+  * [Metadata set](#metadata-set)
   * [Metadata copy](#metadata-copy)
   * [Metadata default](#metadata-default)
   * [Metadata parse](#metadata-parse)
@@ -94,6 +95,19 @@ A post-processor doing nothing, returning the input model untouched. It can be c
 A post-processor discarding everything. It can be paired with [conditional post-processing](#conditional-post-processing) to drop models based on a condition.
 
 **Type**: discard
+
+### Metadata set
+
+A post-processor defining a metadata from a [model value](ModelValues.md).
+This can only work with numerical values, see the [`copy`](#metadata-copy) post-processor to copy any type of value.
+
+**Type**: `set`
+
+**Extra parameters**:
+- `metadata` (required, `text`): Name of the metadata to define.
+- `value` (required, `text`): [Model value](ModelValues.md) to use.
+- `abortIfValueIsAbsent` (optional, default `false`): `true` to stop the operation if the value is absent, `false` to allow the operation to proceed even if the value is absent (in this case, the metadata value will be empty).
+- `keepExisting` (optional, default `false`): `false` to overwrite existing data, `true` to keep existing metadata.
 
 ### Metadata copy
 
