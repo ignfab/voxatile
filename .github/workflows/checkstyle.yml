@@ -16,11 +16,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Run checkstyle
-        uses: dbelyaev/action-checkstyle@v1.12.0
+        uses: dbelyaev/action-checkstyle@v3.10.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           checkstyle_config: checkstyle.xml
-          checkstyle_version: "11.0.1"
+          checkstyle_version: "13.5.0"
           level: error
-          reporter: github-check # Check may be reported on wrong checksuite, but it's a known issue of GitHub Checks API: https://github.com/reviewdog/reviewdog/issues/403
+          fail_level: error
+          reporter: github-pr-annotations
           reviewdog_flags: -name checkstyle
