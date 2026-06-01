@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.generation.Generation;
@@ -65,7 +68,7 @@ public final class MinalacGenerator {
      *
      * @param args command line arguments
      */
-    static void main(String[] args) throws InterruptedException, MapWriteException, ParseException, TaskFailedException, TimeoutException, GenerationFailedException {
+    static void main(String[] args) throws MapWriteException, ParseException, GenerationFailedException {
         // Execution duration start
         Instant start = Instant.now();
         HttpTrustAllSSL.applyGlobally();
@@ -152,38 +155,48 @@ public final class MinalacGenerator {
         System.out.printf("Generation will be performed in %d tiles of maximum %d voxels by side.%n", numberOfTiles, generation.maxTileSize());
 
         // Start generating tiles
-        Duration generatingDuration = Duration.ZERO; // This will hold total generation time
-        Duration mapSavingDuration = Duration.ZERO; // This will hold total map saving time
+        List<Duration> tileGenerationDurations = new ArrayList<>(numberOfTiles); // This will hold total generation time
+        List<Duration> tileSaveDurations = new ArrayList<>(numberOfTiles); // This will hold total map saving time
 
-        int currentTile = 0;
+        AtomicInteger currentTile = new AtomicInteger();
 
         try {
-            while (generation.nextTile()) {
-                currentTile++;
+            generation.forEachTile(() -> {
+                int n = currentTile.incrementAndGet();
                 WorldBBox3d limits = GenerationTile.current().limits();
-                String tileString = "%d/%d (x=%d..%d, y=%d..%d)".formatted(currentTile, numberOfTiles, limits.minX(), limits.maxX(), limits.minY(), limits.maxY());
+                String tileString = "%d/%d (x=%d..%d, y=%d..%d)".formatted(n, numberOfTiles, limits.minX(), limits.maxX(), limits.minY(), limits.maxY());
                 System.out.printf("%nTile %s.%n", tileString);
 
                 // Generate tile
                 Instant tileGenerationStart = Instant.now();
 
-                generation.scheduler().run(5, TimeUnit.MINUTES);
+                try {
+                    generation.scheduler().run(5, TimeUnit.MINUTES);
+                } catch (InterruptedException | TimeoutException | TaskFailedException e) {
+                    throw new GenerationFailedException(e);
+                }
                 Duration tileGenerationDuration = Duration.between(tileGenerationStart, Instant.now());
 
-                generatingDuration = generatingDuration.plus(tileGenerationDuration);
+                tileGenerationDurations.add(tileGenerationDuration);
                 System.out.printf("Tile %s generated in %ds.%n", tileString, tileGenerationDuration.toSeconds());
 
                 // Save tile
                 Instant tileSavingStart = Instant.now();
-                GenerationTile.current().save();
+                try {
+                    GenerationTile.current().save();
+                } catch (MapWriteException e) {
+                    throw new GenerationFailedException(e);
+                }
                 Duration tileSavingDuration = Duration.between(tileSavingStart, Instant.now());
 
-                mapSavingDuration = mapSavingDuration.plus(tileSavingDuration);
+                tileSaveDurations.add(tileSavingDuration);
                 System.out.printf("Tile %s saved in %ds.%n", tileString, tileSavingDuration.toSeconds());
-            }
+            });
         } finally {
             generation.scheduler().shutdown();
         }
+        Duration generatingDuration = tileGenerationDurations.stream().reduce(Duration.ZERO, Duration::plus);
+        Duration mapSavingDuration = tileSaveDurations.stream().reduce(Duration.ZERO, Duration::plus);
 
         System.out.printf("%nAll %d tiles generated and saved.%nSpent %ds generating and %ds saving.%n", numberOfTiles, generatingDuration.toSeconds(), mapSavingDuration.toSeconds());
 

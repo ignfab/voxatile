@@ -19,24 +19,27 @@ public class GenerationTile {
     private final HeightmapStore heightmaps;
     private final ModelStore models = new ModelStore();
 
-    private static GenerationTile currentTile = null;
+    private static final ScopedValue<GenerationTile> CURRENT_TILE = ScopedValue.newInstance();
 
     /**
-     * @return current tile.
+     * {@return the tile currently defined in this scope}
      */
     public static GenerationTile current() {
-        if (currentTile == null)
-            throw new IllegalStateException("No current tile!");
-        return currentTile;
+        // FIXME does not work in other threads created by the ExecutorService of the Scheduler, must use StructuredTaskScope (in preview...)
+        return CURRENT_TILE.orElseThrow(() -> new IllegalStateException("No current tile!"));
     }
 
     /**
-     * Sets current tile (or null for none).
+     * Runs the action in a new scope with the given tile.
      *
-     * @param tile tile to set
+     * @param tile tile to set in the scope
+     * @param run the action to run
+     * @param <T> the type of the value returned by the action
+     * @param <X> the type of the exception produced by the action
+     * @return the value returned by the action
      */
-    /* package private */ static void setCurrent(GenerationTile tile) {
-        currentTile = tile;
+    public static <T, X extends Throwable> T withCurrent(GenerationTile tile, ScopedValue.CallableOp<T, X> run) throws X {
+        return ScopedValue.where(CURRENT_TILE, tile).call(run);
     }
 
     /**

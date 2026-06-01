@@ -1,7 +1,6 @@
 package com.ignfab.minalac.generator.generation;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
@@ -12,12 +11,13 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.util.AffineTransformation;
 
+import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationStore;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
 import com.ignfab.minalac.generator.utils.execution.Scheduler;
-import com.ignfab.minalac.generator.utils.iterator.Iterators;
+import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -49,7 +49,6 @@ public class Generation {
     private final int maxTileSize;
     private final Collection<WorldBBox2d> tiles;
 
-    private final Iterator<GenerationTile> tileIterator;
     /**
      * Constructs a new generation context.
      * It sets {@code VoxelWorld}'s limits in way the center is at {@code WorldCoords2d} (0, 0).
@@ -96,9 +95,6 @@ public class Generation {
 
         this.maxTileSize = maxTileSize;
         tiles = world.tiles(maxTileSize);
-        tileIterator = Iterators.remap(tiles.iterator(),
-            bbox -> new GenerationTile(this, bbox.to3d(world.limits().minZ(), world.limits().sizeZ()))
-        );
 
         this.crs = crs;
         this.verticalScale = verticalScale;
@@ -214,13 +210,39 @@ public class Generation {
     }
 
     /**
-     * Switches to next tile.
-     *
-     * @return false if no more tile
+     * {@return an iterable over generation tiles}
      */
-    public boolean nextTile() {
-        boolean hasNext = tileIterator.hasNext();
-        GenerationTile.setCurrent(hasNext ? tileIterator.next() : null);
-        return hasNext;
+    public Iterable<GenerationTile> tiles() {
+        return Iterables.remap(tiles,
+            bbox -> new GenerationTile(this, bbox.to3d(world.limits().minZ(), world.limits().sizeZ()))
+        );
+    }
+
+    /**
+     * Runs the action with each tile in the scope.
+     * @param run action to run
+     * @throws GenerationFailedException if the action fails
+     */
+    public void forEachTile(Action run) throws GenerationFailedException {
+        for (GenerationTile tile : tiles())
+            GenerationTile.withCurrent(tile, run);
+    }
+
+    /**
+     * A runnable that can throw {@link GenerationFailedException}.
+     */
+    @FunctionalInterface
+    public interface Action extends ScopedValue.CallableOp<Void, GenerationFailedException> {
+        /**
+         * Runs the action.
+         * @throws GenerationFailedException if the action fails
+         */
+        void run() throws GenerationFailedException;
+
+        @Override
+        default Void call() throws GenerationFailedException {
+            run();
+            return null;
+        }
     }
 }
