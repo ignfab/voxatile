@@ -13,7 +13,7 @@ import com.ignfab.minalac.generator.utils.random.Seed;
 /**
  * Parameters for simple Minecraft voxel with only block type name.
  */
-public class MCVoxelParams extends PlaceableParams {
+public class MinecraftVoxelParams extends PlaceableParams {
     /**
      * Block type name (required).
      */
@@ -27,12 +27,12 @@ public class MCVoxelParams extends PlaceableParams {
     public Map<String, String> properties = null;
 
     /**
-     * Creates a new {@code MCVoxelParams}.
+     * Creates a new {@code MinecraftVoxelParams}.
      *
      * @param block Block type name
      */
     @ConstructorProperties({"block"})
-    public MCVoxelParams(String block) {
+    public MinecraftVoxelParams(String block) {
         this.block = block;
     }
 
@@ -44,6 +44,6 @@ public class MCVoxelParams extends PlaceableParams {
 
     @Override
     public Placeable create(Seed seed) {
-        return new MCVoxel(block, properties);
+        return new MinecraftVoxel(block, properties);
     }
 }

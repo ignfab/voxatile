@@ -10,11 +10,11 @@ import com.ignfab.minalac.generator.world.MapWriteException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MCVoxelTileTest {
-    private static final MCVoxel STONE = new MCVoxel("minecraft:stone");
+public class MinecraftVoxelTileTest {
+    private static final MinecraftVoxel STONE = new MinecraftVoxel("minecraft:stone");
 
-    private MCVoxelTile initTile(WorldBBox3d limits) {
-        MCVoxelWorld world = assertDoesNotThrow(() -> new MCVoxelWorld(null));
+    private MinecraftVoxelTile initTile(WorldBBox3d limits) {
+        MinecraftVoxelWorld world = assertDoesNotThrow(() -> new MinecraftVoxelWorld(null));
         world.setLimits(limits);
         assertDoesNotThrow(world::initialize);
         return world.newTile(limits);
@@ -22,7 +22,7 @@ public class MCVoxelTileTest {
 
     @Test
     public void testIsOutOfLimits() throws MapWriteException {
-        MCVoxelTile tile = initTile(new WorldBBox3d(new WorldCoords3d(-10, -20, 0), new WorldCoords3d(20, 30, 40)));
+        MinecraftVoxelTile tile = initTile(new WorldBBox3d(new WorldCoords3d(-10, -20, 0), new WorldCoords3d(20, 30, 40)));
 
         // X/Y/Z => X/Z/-Y
         assertFalse(tile.isOutOfLimits(-10, 0, 19));
@@ -40,12 +40,12 @@ public class MCVoxelTileTest {
 
     @Test
     public void testGetVoxel() throws MapWriteException {
-        MCVoxelTile tile = initTile(new WorldBBox3d(new WorldCoords3d(-20, -20, 0), new WorldCoords3d(50, 50, 255)));
-        MCVoxel barrel = new MCVoxel("minecraft:barrel", Map.of(
+        MinecraftVoxelTile tile = initTile(new WorldBBox3d(new WorldCoords3d(-20, -20, 0), new WorldCoords3d(50, 50, 255)));
+        MinecraftVoxel barrel = new MinecraftVoxel("minecraft:barrel", Map.of(
             "facing", "south",
             "open", "true"
         ));
-        MCVoxel dirt = new MCVoxel("minecraft:dirt");
+        MinecraftVoxel dirt = new MinecraftVoxel("minecraft:dirt");
         barrel.place(tile, -9, -8, 1);
         STONE.place(tile, 4, -3, 78);
         dirt.place(tile, -7, 5, 55);
@@ -64,14 +64,14 @@ public class MCVoxelTileTest {
 
     @Test
     public void testGetDefaultVoxel() {
-        MCVoxelTile tile = initTile(new WorldBBox3d(new WorldCoords3d(-32, -32, 0), new WorldCoords3d(32, 32, 255)));
+        MinecraftVoxelTile tile = initTile(new WorldBBox3d(new WorldCoords3d(-32, -32, 0), new WorldCoords3d(32, 32, 255)));
         STONE.place(tile, -12, 12, 5);
 
         // Region created, chunk created with only one voxel
-        assertEquals(MCVoxel.DEFAULT_VOXEL, tile.getVoxel(-12, 13, 98));
+        assertEquals(MinecraftVoxel.DEFAULT_VOXEL, tile.getVoxel(-12, 13, 98));
         // Region created, but no chunk
-        assertEquals(MCVoxel.DEFAULT_VOXEL, tile.getVoxel(-17, 17, 39));
+        assertEquals(MinecraftVoxel.DEFAULT_VOXEL, tile.getVoxel(-17, 17, 39));
         // Returns something even if the region is not created
-        assertEquals(MCVoxel.DEFAULT_VOXEL, tile.getVoxel(16, 16, 24));
+        assertEquals(MinecraftVoxel.DEFAULT_VOXEL, tile.getVoxel(16, 16, 24));
     }
 }
