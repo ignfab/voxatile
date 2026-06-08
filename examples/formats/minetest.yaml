@@ -1,4 +1,4 @@
-format: minetest
+format: luanti
 references:
   - &voxel-stone default:stone
   - &voxel-dirt default:dirt
