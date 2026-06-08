@@ -5,34 +5,34 @@ import java.util.Map;
 import net.querz.nbt.tag.CompoundTag;
 
 /**
- * {@code MCBlockEntityVoxel} abstract class represents a Minecraft block with additional data associated with it.
+ * {@code MinecraftBlockEntityVoxel} abstract class represents a Minecraft block with additional data associated with it.
  * That additional information is known as block entity.
  * @see <a href="https://minecraft.wiki/w/Block_entity"> Block entity (Minecraft wiki)</a>
  */
-public abstract class MCBlockEntityVoxel extends MCVoxel {
+public abstract class MinecraftBlockEntityVoxel extends MinecraftVoxel {
     /**
-     * Constructs a new {@code MCBlockEntityVoxel}.
+     * Constructs a new {@code MinecraftBlockEntityVoxel}.
      *
      * @param type the block type string
      */
-    public MCBlockEntityVoxel(String type) {
+    public MinecraftBlockEntityVoxel(String type) {
         super(type);
     }
 
     /**
-     * Constructs a new {@code MCBlockEntityVoxel}.
+     * Constructs a new {@code MinecraftBlockEntityVoxel}.
      *
      * @param type the block type string
      * @param properties the block state properties
      */
-    public MCBlockEntityVoxel(String type, Map<String, String> properties) {
+    public MinecraftBlockEntityVoxel(String type, Map<String, String> properties) {
         super(type, properties);
     }
 
     protected abstract void serialize(CompoundTag tag);
 
     @Override
-    protected void place(MCVoxelTile tile, int x, int y, int z)  {
+    protected void place(MinecraftVoxelTile tile, int x, int y, int z)  {
         super.place(tile, x, y, z);
         CompoundTag block = new CompoundTag();
         block.putString("id", type);

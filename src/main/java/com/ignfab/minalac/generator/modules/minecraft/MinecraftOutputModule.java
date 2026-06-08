@@ -11,6 +11,6 @@ public class MinecraftOutputModule extends Module {
 
     @Override
     public void registerParams(ParamsParser parser) {
-        parser.registerFormat("minecraft", new OutputFormat(MCVoxelWorld::new, MCVoxelParams.class, MCVoxelParams::new));
+        parser.registerFormat("minecraft", new OutputFormat(MinecraftVoxelWorld::new, MinecraftVoxelParams.class, MinecraftVoxelParams::new));
     }
 }

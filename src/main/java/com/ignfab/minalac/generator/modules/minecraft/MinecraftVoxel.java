@@ -11,15 +11,15 @@ import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
- * {@code MCVoxel} class implements a {@link Placeable} voxel for Minecraft.
+ * {@code MinecraftVoxel} class implements a {@link Placeable} voxel for Minecraft.
  * A voxel in Minecraft, known as block, consists of two parameters: type and state properties.
  */
-public class MCVoxel implements Placeable {
+public class MinecraftVoxel implements Placeable {
 
     /**
      * Default voxel used on map initialization.
      */
-    public static final MCVoxel DEFAULT_VOXEL = new MCVoxel("minecraft:air");
+    public static final MinecraftVoxel DEFAULT_VOXEL = new MinecraftVoxel("minecraft:air");
 
     /**
      * The block type string.
@@ -35,32 +35,32 @@ public class MCVoxel implements Placeable {
     private CompoundTag block;
 
     /**
-     * Constructs a new {@code MCVoxel}.
+     * Constructs a new {@code MinecraftVoxel}.
      *
      * @param type the block type string
      */
-    public MCVoxel(String type) {
+    public MinecraftVoxel(String type) {
         this(type, null);
     }
 
     /**
-     * Constructs a new {@code MCVoxel}.
+     * Constructs a new {@code MinecraftVoxel}.
      *
      * @param type the block type string
      * @param properties the block state properties
      */
-    public MCVoxel(String type, Map<String, String> properties) {
+    public MinecraftVoxel(String type, Map<String, String> properties) {
         this.type = type;
         this.properties = properties;
     }
 
     /**
-     * Creates a new instance of {@link MCVoxel} from a {@link CompoundTag} and a {@link MCVoxelWorld}.
+     * Creates a new instance of {@link MinecraftVoxel} from a {@link CompoundTag} and a {@link MinecraftVoxelWorld}.
      *
      * @param block the {@code CompoundTag} representing a block.
-     * @return a new {@code MCVoxel}
+     * @return a new {@code MinecraftVoxel}
      */
-    public static MCVoxel fromBlockState(CompoundTag block) {
+    public static MinecraftVoxel fromBlockState(CompoundTag block) {
         String type = block.getStringTag("Name").getValue();
 
         CompoundTag propertiesTag = block.getCompoundTag("Properties");
@@ -70,15 +70,15 @@ public class MCVoxel implements Placeable {
                 entry.getKey(),
                 ((StringTag) entry.getValue()).getValue()
             ));
-            return new MCVoxel(type, properties);
+            return new MinecraftVoxel(type, properties);
         }
 
-        return new MCVoxel(type);
+        return new MinecraftVoxel(type);
     }
 
     @Override
     public void place(VoxelTile tile, int x, int y, int z)  {
-        if (tile instanceof MCVoxelTile mcTile) {
+        if (tile instanceof MinecraftVoxelTile mcTile) {
             place(mcTile, x, y, z);
         } else {
             throw new IllegalArgumentException("Voxel does not match voxel tile output format");
@@ -86,14 +86,14 @@ public class MCVoxel implements Placeable {
     }
 
     /**
-     * Places this voxel on a {@link MCVoxelTile} at given position.
+     * Places this voxel on a {@link MinecraftVoxelTile} at given position.
      *
      * @param tile tile to place into
      * @param x position x-coordinate
      * @param y position y-coordinate
      * @param z position z-coordinate
      */
-    protected void place(MCVoxelTile tile, int x, int y, int z)  {
+    protected void place(MinecraftVoxelTile tile, int x, int y, int z)  {
         if (block == null) {
             block = new CompoundTag();
             block.putString("Name", type);
@@ -110,7 +110,7 @@ public class MCVoxel implements Placeable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MCVoxel that = (MCVoxel) o;
+        MinecraftVoxel that = (MinecraftVoxel) o;
         return type.equals(that.type) && Objects.equals(properties, that.properties);
     }
 
