@@ -27,7 +27,7 @@ import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 /**
  * Implementation of {@link VoxelWorld} that creates a playable world specifically for Minecraft.
  */
-public class MCVoxelWorld extends VoxelWorld {
+public class MinecraftVoxelWorld extends VoxelWorld {
     // Note: The two z-component values aren't strictly hard-limits.
     // We can extends from -2032 to 2031 but the client
     // will need higher performances to play the game!
@@ -41,12 +41,12 @@ public class MCVoxelWorld extends VoxelWorld {
     private final File regionDirectory;
 
     /**
-     * Constructs a new {@code MCVoxelWorld}.
+     * Constructs a new {@code MinecraftVoxelWorld}.
      * The limits of the world have to be set using {@link #setLimits(WorldBBox3d)}
      *
      * @param destination Directory where to save data to. If null nothing is saved.
      */
-    public MCVoxelWorld(File destination) {
+    public MinecraftVoxelWorld(File destination) {
         super(new VoxelWorldMetadata());
         this.destination = destination;
 
@@ -63,8 +63,8 @@ public class MCVoxelWorld extends VoxelWorld {
     }
 
     @Override
-    public MCVoxelTile newTile(WorldBBox3d limits) {
-        return new MCVoxelTile(regionDirectory, limits);
+    public MinecraftVoxelTile newTile(WorldBBox3d limits) {
+        return new MinecraftVoxelTile(regionDirectory, limits);
     }
 
     @Override

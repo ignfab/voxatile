@@ -13,7 +13,7 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MCVoxelWorldTest {
+public class MinecraftVoxelWorldTest {
     @TempDir
     private File dir;
 
@@ -22,11 +22,11 @@ public class MCVoxelWorldTest {
         WorldBBox3d limits = new WorldBBox3d(
             new WorldCoords3d(-16, -16, 0),
             new WorldCoords3d(15, 15, 255));
-        MCVoxelWorld world = assertDoesNotThrow(() -> new MCVoxelWorld(dir));
+        MinecraftVoxelWorld world = assertDoesNotThrow(() -> new MinecraftVoxelWorld(dir));
         world.setLimits(limits);
         assertDoesNotThrow(world::initialize);
 
-        MCVoxelTile tile = world.newTile(limits);
+        MinecraftVoxelTile tile = world.newTile(limits);
 
         world.getMetadata().setWorldName("testSave");
         world.getMetadata().setSpawn(new WorldCoords3d(0, 64, 0));

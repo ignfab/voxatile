@@ -19,18 +19,18 @@ import com.ignfab.minalac.generator.world.VoxelTile;
 /**
  * Implementation of {@link VoxelTile} for Minecraft.
  */
-public class MCVoxelTile extends VoxelTile {
+public class MinecraftVoxelTile extends VoxelTile {
     private final File destination;
 
     private final Int2ObjectMap<Region> regions = Int2ObjectMaps.synchronize(new Int2ObjectOpenHashMap<>());
 
     /**
-     * Creates a new {@code MCVoxelTile}.
+     * Creates a new {@code MinecraftVoxelTile}.
      *
      * @param destination Destination directory (must point to existing "region" directory)
      * @param limits Limits of this tile (must be contained in world limits)
      */
-    public MCVoxelTile(File destination, WorldBBox3d limits) {
+    public MinecraftVoxelTile(File destination, WorldBBox3d limits) {
         super(limits);
         this.destination = destination;
     }
@@ -93,13 +93,13 @@ public class MCVoxelTile extends VoxelTile {
      * The returned voxel is not necessarily one placed using {@link Placeable#place}.
      * It may be an air block created when the world is initialized.
      * <p>
-     * If you try to get a voxel outside the tile limits, it will return {@link MCVoxel#DEFAULT_VOXEL}.
+     * If you try to get a voxel outside the tile limits, it will return {@link MinecraftVoxel#DEFAULT_VOXEL}.
      */
     @Override
     public Placeable getVoxel(int x, int y, int z) {
         Region region = regions.get(Region.computeKeyFromBlock(x, -y - 1));
 
-        if (region == null) return MCVoxel.DEFAULT_VOXEL;
+        if (region == null) return MinecraftVoxel.DEFAULT_VOXEL;
 
         // (World coords to In-Game coords) X/Y/Z => X/Z/-Y-1
         return region.getBlock(x, z, -y - 1);

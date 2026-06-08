@@ -13,26 +13,26 @@ import com.ignfab.minalac.generator.world.MapWriteException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MCVoxelTest {
+public class MinecraftVoxelTest {
     private TileMock tileMock;
 
     @BeforeEach
     public void setUp() throws MapWriteException {
         WorldBBox3d limits = new WorldBBox3d(new WorldCoords3d(-50, -10, 0), new WorldCoords3d(10, 0, 200));
-        MCVoxelWorld world = new MCVoxelWorld(null);
+        MinecraftVoxelWorld world = new MinecraftVoxelWorld(null);
         world.setLimits(limits);
         tileMock = new TileMock(world, limits);
     }
 
     @Test
     public void testPlace() {
-        MCVoxel air = new MCVoxel("minecraft:air");
+        MinecraftVoxel air = new MinecraftVoxel("minecraft:air");
         air.place(tileMock, 3, -7, 64);
         CompoundTag expectedAir = new CompoundTag();
         expectedAir.putString("Name", "minecraft:air");
         tileMock.assertBlockStateAt(3, 64, 6, expectedAir); // X/Y/Z => X/Z/-Y
 
-        MCVoxel stairs = new MCVoxel("minecraft:oak_stairs", Map.of(
+        MinecraftVoxel stairs = new MinecraftVoxel("minecraft:oak_stairs", Map.of(
             "facing", "north",
             "half", "bottom",
             "shape", "straight",
@@ -50,10 +50,10 @@ public class MCVoxelTest {
         tileMock.assertBlockStateAt(-43, 192, -1, expectedStairs); // X/Y/Z => X/Z/-Y
     }
 
-    private static final class TileMock extends MCVoxelTile {
+    private static final class TileMock extends MinecraftVoxelTile {
         private final Map<String, CompoundTag> blockStates = new HashMap<>();
 
-        TileMock(MCVoxelWorld world, WorldBBox3d limits) {
+        TileMock(MinecraftVoxelWorld world, WorldBBox3d limits) {
             super(null, limits);
         }
 

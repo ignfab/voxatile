@@ -6,26 +6,26 @@ import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MCVoxelParamsTest {
+public class MinecraftVoxelParamsTest {
 
     @Test
     public void testConstructor() {
-        assertDoesNotThrow(() -> new MCVoxelParams("toto"));
+        assertDoesNotThrow(() -> new MinecraftVoxelParams("toto"));
     }
 
     @Test
     public void testValidate() {
-        MCVoxelParams params;
-        params = new MCVoxelParams("titi");
+        MinecraftVoxelParams params;
+        params = new MinecraftVoxelParams("titi");
         assertDoesNotThrow(params::validate);
 
-        params = new MCVoxelParams("");
+        params = new MinecraftVoxelParams("");
         assertThrows(IllegalArgumentException.class, params::validate);
     }
 
     @Test
     public void testCreate() {
-        MCVoxelParams params = new MCVoxelParams("tata");
+        MinecraftVoxelParams params = new MinecraftVoxelParams("tata");
         assertDoesNotThrow(() -> params.create(TestingSeed.UNUSED));
     }
 }
