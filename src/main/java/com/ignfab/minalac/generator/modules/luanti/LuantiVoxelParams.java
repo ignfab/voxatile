@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.modules.minetest;
+package com.ignfab.minalac.generator.modules.luanti;
 
 import java.beans.ConstructorProperties;
 
@@ -10,9 +10,9 @@ import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
 /**
- * Parameters for Minetest voxels with only node name.
+ * Parameters for Luanti voxels with only node name.
  */
-public class MTVoxelParams extends PlaceableParams {
+public class LuantiVoxelParams extends PlaceableParams {
     /**
      * Node name (required).
      */
@@ -20,22 +20,22 @@ public class MTVoxelParams extends PlaceableParams {
     public String node;
 
     /**
-     * Node param1 (Refer to Minetest documentation).
+     * Node param1 (Refer to Luanti documentation).
      */
     public byte param1 = 0;
 
     /**
-     * Node param2 (Refer to Minetest documentation).
+     * Node param2 (Refer to Luanti documentation).
      */
     public byte param2 = 0;
 
     /**
-     * Creates a new {@code MTVoxelParams}.
+     * Creates a new {@code LuantiVoxelParams}.
      *
      * @param node Node type name
      */
     @ConstructorProperties({"node"})
-    public MTVoxelParams(String node) {
+    public LuantiVoxelParams(String node) {
         this.node = node;
     }
 
@@ -47,6 +47,6 @@ public class MTVoxelParams extends PlaceableParams {
 
     @Override
     public Placeable create(Seed seed) {
-        return new MTVoxel(node, param1, param2);
+        return new LuantiVoxel(node, param1, param2);
     }
 }

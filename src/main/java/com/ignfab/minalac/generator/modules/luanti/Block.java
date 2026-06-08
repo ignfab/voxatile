@@ -1,12 +1,12 @@
-package com.ignfab.minalac.generator.modules.minetest;
+package com.ignfab.minalac.generator.modules.luanti;
 
 import java.util.HashMap;
 
 /**
- * This class is a representation of what Minetest refers as block.
- * In Minetest, a world is composed of blocks, where a block consists of 16x16x16 voxels (or nodes per Minetest terminology).
+ * This class is a representation of what Luanti refers as block.
+ * In Luanti, a world is composed of blocks, where a block consists of 16x16x16 voxels (or nodes per Luanti terminology).
  *
- * @see <a href="https://github.com/minetest/minetest/blob/master/doc/world_format.md#map-file-format">Minetest world format</a>
+ * @see <a href="https://github.com/luanti-org/luanti/blob/master/doc/world_format.md#map-file-format">Luanti world format</a>
  */
 public class Block {
 
@@ -25,7 +25,7 @@ public class Block {
      * Constructs a new {@code Block}.
      */
     public Block() {
-        // Array length defined by map version (https://github.com/minetest/minetest/blob/master/doc/world_format.md#node-data)
+        // Array length defined by map version (https://github.com/luanti-org/luanti/blob/master/doc/world_format.md#node-data)
         this.param0 = new short[4096];
         this.param1 = new byte[4096];
         this.param2 = new byte[4096];
@@ -37,14 +37,14 @@ public class Block {
 
     /**
      * Places the specified voxel on the block by updating the block's three array parameters.
-     * The coordinate system is the one used in Minetest.
+     * The coordinate system is the one used in Luanti.
      *
      * @param nodeX the x-coordinate value relatively to the block
      * @param nodeY the y-coordinate value relatively to the block
      * @param nodeZ the z-coordinate value relatively to the block
-     * @param voxel the {@link MTVoxel} to place within the block
+     * @param voxel the {@link LuantiVoxel} to place within the block
      */
-    public void set(int nodeX, int nodeY, int nodeZ, MTVoxel voxel) {
+    public void set(int nodeX, int nodeY, int nodeZ, LuantiVoxel voxel) {
         int i = nodeCoordsToIndex(nodeX, nodeY, nodeZ);
         param0[i] = getOrCreateIdForType(voxel.getType());
         param1[i] = voxel.getParam1();
@@ -114,12 +114,12 @@ public class Block {
 
     private int nodeCoordsToIndex(int nodeX, int nodeY, int nodeZ) {
         // Node location on arrays
-        // https://github.com/minetest/minetest/blob/master/doc/world_format.md#node-data
+        // https://github.com/luanti-org/luanti/blob/master/doc/world_format.md#node-data
         return nodeZ << 8 | nodeY << 4 | nodeX;
     }
 
-    protected MTVoxel get(int nodeX, int nodeY, int nodeZ) {
+    protected LuantiVoxel get(int nodeX, int nodeY, int nodeZ) {
         int i = nodeCoordsToIndex(nodeX, nodeY, nodeZ);
-        return new MTVoxel(nameIdMapping.get((int) param0[i]), param1[i], param2[i]);
+        return new LuantiVoxel(nameIdMapping.get((int) param0[i]), param1[i], param2[i]);
     }
 }
