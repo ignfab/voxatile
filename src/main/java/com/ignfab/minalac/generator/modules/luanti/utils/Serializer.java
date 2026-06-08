@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.modules.minetest.utils;
+package com.ignfab.minalac.generator.modules.luanti.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,12 +13,12 @@ import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.SoftReferenceObjectPool;
 
-import com.ignfab.minalac.generator.modules.minetest.Block;
+import com.ignfab.minalac.generator.modules.luanti.Block;
 
 /**
  * This class is responsible for providing the serialized {@code Block} needed by the {@code map.sqlite} file.
  * @see SQLiteMapWriter
- * @see com.ignfab.minalac.generator.modules.minetest.MTVoxelTile#save()
+ * @see com.ignfab.minalac.generator.modules.luanti.LuantiVoxelTile#save()
  */
 public class Serializer implements AutoCloseable {
     // Shared pool of internal state objects to minimize memory allocations.
@@ -104,7 +104,7 @@ public class Serializer implements AutoCloseable {
         }
 
         // See World Format Documentation for more information about block serialization
-        // https://github.com/minetest/minetest/blob/master/doc/world_format.md#node-timers
+        // https://github.com/luanti-org/luanti/blob/master/doc/world_format.md#mapblock-serialization-format
         public void generateNameIdMapping(Block block) throws IOException {
             // u8 name-id-mapping version
             write8Bits(0);
@@ -138,12 +138,12 @@ public class Serializer implements AutoCloseable {
     }
 
     /**
-     * Serialize the specified {@link Block} for Minetest map version 28.
+     * Serialize the specified {@link Block} for Luanti map version 28.
      *
      * @param block the block to serialize
      * @return a {@code byte[]} representing the serialized block
      * @throws IOException if an error occurs during serialization
-     * @see <a href="https://github.com/luanti-org/luanti/blob/master/doc/world_format.md#mapblock-serialization-format">Minetest world format documentation</a>
+     * @see <a href="https://github.com/luanti-org/luanti/blob/master/doc/world_format.md#mapblock-serialization-format">Luanti world format documentation</a>
      */
     public byte[] serialize(Block block) throws IOException {
         InternalState state;

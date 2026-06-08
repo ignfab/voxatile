@@ -1,10 +1,10 @@
-package com.ignfab.minalac.generator.modules.minetest;
+package com.ignfab.minalac.generator.modules.luanti;
 
 import java.io.File;
 import java.util.Collection;
 
 import com.ignfab.minalac.generator.generation.SquareUnitsTileGenerator;
-import com.ignfab.minalac.generator.modules.minetest.utils.SQLiteMapWriter;
+import com.ignfab.minalac.generator.modules.luanti.utils.SQLiteMapWriter;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -14,11 +14,11 @@ import com.ignfab.minalac.generator.world.VoxelWorld;
 import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
 /**
- * Implementation of {@link VoxelWorld} that creates a playable world specifically for Minetest.
+ * Implementation of {@link VoxelWorld} that creates a playable world specifically for Luanti.
  */
-public class MTVoxelWorld extends VoxelWorld {
-    // See MAX_MAP_GENERATION_LIMIT constant on Minetest
-    // https://github.com/minetest/minetest/blob/master/src/constants.h#L69
+public class LuantiVoxelWorld extends VoxelWorld {
+    // See MAX_MAP_GENERATION_LIMIT constant on Luanti
+    // https://github.com/luanti-org/luanti/blob/master/src/constants.h#L69
     private static final WorldBBox3d MAX_LIMIT = new WorldBBox3d(
         new WorldCoords3d(-31_007, -31_007, -31_007),
         new WorldCoords3d(31_007, 31_007, 31_007)
@@ -28,12 +28,12 @@ public class MTVoxelWorld extends VoxelWorld {
     private SQLiteMapWriter mapWriter;
 
     /**
-     * Constructs a new {@code MTVoxelWorld}.
+     * Constructs a new {@code LuantiVoxelWorld}.
      * The limits of the world have to be set using {@link #setLimits(WorldBBox3d)}
      *
      * @param destination Directory where to save data to. If null nothing is saved.
      */
-    public MTVoxelWorld(File destination) {
+    public LuantiVoxelWorld(File destination) {
         super(new VoxelWorldMetadata());
         this.destination = destination;
     }
@@ -44,8 +44,8 @@ public class MTVoxelWorld extends VoxelWorld {
     }
 
     @Override
-    public MTVoxelTile newTile(WorldBBox3d limits) {
-        return new MTVoxelTile(mapWriter, limits);
+    public LuantiVoxelTile newTile(WorldBBox3d limits) {
+        return new LuantiVoxelTile(mapWriter, limits);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class MTVoxelWorld extends VoxelWorld {
 
     /**
      * {@inheritDoc}
-     * The world is exported in a format for Minetest.
+     * The world is exported in a format for Luanti.
      */
     @Override
     public void finalizeAndSave() throws MapWriteException {
@@ -87,7 +87,7 @@ public class MTVoxelWorld extends VoxelWorld {
                 [end_of_params]
                 """);
             FileHelpers.write(new File(destination, "worldmods/ign_spawn/init.lua"), """
-                minetest.setting_set("static_spawnpoint", "%d, %d, %d")
+                core.setting_set("static_spawnpoint", "%d, %d, %d")
                 core.register_on_joinplayer(function(player) player:set_sky{ clouds = false } end)
                 """.formatted(metadata.getSpawn().x(), metadata.getSpawn().z(), metadata.getSpawn().y())); // XYZ => XZY
         } catch (Exception e) {

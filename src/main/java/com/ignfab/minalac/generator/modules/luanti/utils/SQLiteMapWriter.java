@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.modules.minetest.utils;
+package com.ignfab.minalac.generator.modules.luanti.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,13 +8,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.ignfab.minalac.generator.modules.minetest.Block;
+import com.ignfab.minalac.generator.modules.luanti.Block;
 import com.ignfab.minalac.generator.world.MapWriteException;
 
 /**
  * {@code SQLiteMapWriter} is responsible for creating and updating the {@code map.sqlite} file,
- * which is used by Minetest to store all blocks of a world.
- * @see <a href="https://github.com/minetest/minetest/blob/master/doc/world_format.md#mapsqlite-1">Minetest's map world format</a>
+ * which is used by Luanti to store all blocks of a world.
+ * @see <a href="https://github.com/luanti-org/luanti/blob/master/doc/world_format.md#mapsqlite-1">Luanti's map world format</a>
  */
 public class SQLiteMapWriter implements AutoCloseable {
     private final Connection connection;

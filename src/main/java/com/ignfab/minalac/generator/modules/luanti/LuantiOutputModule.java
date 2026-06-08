@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.modules.minetest;
+package com.ignfab.minalac.generator.modules.luanti;
 
 import com.ignfab.minalac.generator.parameters.OutputFormat;
 import com.ignfab.minalac.generator.parameters.ParamsParser;
@@ -11,6 +11,6 @@ public class LuantiOutputModule extends Module {
 
     @Override
     public void registerParams(ParamsParser parser) {
-        parser.registerFormat("minetest", new OutputFormat(MTVoxelWorld::new, MTVoxelParams.class, MTVoxelParams::new));
+        parser.registerFormat("luanti", new OutputFormat(LuantiVoxelWorld::new, LuantiVoxelParams.class, LuantiVoxelParams::new));
     }
 }

@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.modules.minetest;
+package com.ignfab.minalac.generator.modules.luanti;
 
 import org.junit.jupiter.api.Test;
 
@@ -8,13 +8,13 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MTVoxelTileTest {
-    private static final MTVoxel GRASS = new MTVoxel("default:dirt_with_grass", (byte) 0, (byte) 0);
-    private static final MTVoxel DIRT = new MTVoxel("default:dirt", (byte) 0, (byte) 0);
-    private static final MTVoxel STONE = new MTVoxel("default:stone", (byte) 0, (byte) 0);
+public class LuantiVoxelTileTest {
+    private static final LuantiVoxel GRASS = new LuantiVoxel("default:dirt_with_grass", (byte) 0, (byte) 0);
+    private static final LuantiVoxel DIRT = new LuantiVoxel("default:dirt", (byte) 0, (byte) 0);
+    private static final LuantiVoxel STONE = new LuantiVoxel("default:stone", (byte) 0, (byte) 0);
 
-    private MTVoxelTile initTile(WorldBBox3d limits) {
-        MTVoxelWorld world = assertDoesNotThrow(() -> new MTVoxelWorld(null));
+    private LuantiVoxelTile initTile(WorldBBox3d limits) {
+        LuantiVoxelWorld world = assertDoesNotThrow(() -> new LuantiVoxelWorld(null));
         world.setLimits(limits);
         assertDoesNotThrow(world::initialize);
         return world.newTile(limits);
@@ -22,7 +22,7 @@ public class MTVoxelTileTest {
 
     @Test
     public void testGetVoxel() {
-        MTVoxelTile tile;
+        LuantiVoxelTile tile;
 
         tile = initTile(new WorldBBox3d(new WorldCoords3d(-1, -2, -5), new WorldCoords3d(2, 3, 6)));
         GRASS.place(tile, -1, -2, -3);
@@ -42,7 +42,7 @@ public class MTVoxelTileTest {
         DIRT.place(tile, 37, 16, 387);
         STONE.place(tile, 37, 31, 387);
 
-        // Testing on MT max limits
+        // Testing on Luanti max limits
         assertEquals(STONE, tile.getVoxel(-2, -3, -1));
         assertEquals(GRASS, tile.getVoxel(-2, -3, -16));
         assertEquals(DIRT, tile.getVoxel(37, 16, 387));
@@ -51,12 +51,12 @@ public class MTVoxelTileTest {
 
     @Test
     public void testGetDefaultVoxel() {
-        MTVoxelTile tile = initTile(new WorldBBox3d(new WorldCoords3d(-5, -5, -20), new WorldCoords3d(50, 50, 500)));
+        LuantiVoxelTile tile = initTile(new WorldBBox3d(new WorldCoords3d(-5, -5, -20), new WorldCoords3d(50, 50, 500)));
         GRASS.place(tile, 1, 0, 0);
 
         // Block created with only one voxel
-        assertEquals(MTVoxel.DEFAULT_VOXEL, tile.getVoxel(3, 2, 7));
+        assertEquals(LuantiVoxel.DEFAULT_VOXEL, tile.getVoxel(3, 2, 7));
         // Returns something even if the block is not created.
-        assertEquals(MTVoxel.DEFAULT_VOXEL, tile.getVoxel(49, 49, 71));
+        assertEquals(LuantiVoxel.DEFAULT_VOXEL, tile.getVoxel(49, 49, 71));
     }
 }
