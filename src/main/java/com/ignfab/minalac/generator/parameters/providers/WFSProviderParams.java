@@ -35,6 +35,12 @@ public class WFSProviderParams extends ProviderParams {
     public String crs;
 
     /**
+     * Token to use for authentication (optional, default: none).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public String token;
+
+    /**
      * Maximum features fetched at once (optional, default: 1000).
      */
     @JsonSetter(nulls = Nulls.SKIP)
@@ -64,7 +70,7 @@ public class WFSProviderParams extends ProviderParams {
         else
             layerCrs = generation.crs();
 
-        return new WFS1_1_GML3_1_DataProvider(url, features, layerCrs, generation::getEnvelopeForCRS, maxFeaturesPerQuery);
+        return new WFS1_1_GML3_1_DataProvider(url, features, layerCrs, generation::getEnvelopeForCRS, maxFeaturesPerQuery, token);
     }
 
     @Override

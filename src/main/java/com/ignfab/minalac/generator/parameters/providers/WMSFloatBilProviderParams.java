@@ -6,6 +6,8 @@ import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.inputs.Provider;
@@ -33,6 +35,12 @@ public class WMSFloatBilProviderParams extends ProviderParams {
     public String crs;
 
     /**
+     * Token to use for authentication (optional, default: none).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public String token;
+
+    /**
      * Creates a new WFSProviderParams with mandatory fields.
      *
      * @param url Base URL for WFS queries (including protocol, port, domain name and directories but not query arguments)
@@ -56,7 +64,7 @@ public class WMSFloatBilProviderParams extends ProviderParams {
         else
             layerCrs = generation.crs();
 
-        return new WMSFloatBilDataProvider(url, layer, layerCrs, generation::getEnvelopeForCRS);
+        return new WMSFloatBilDataProvider(url, layer, layerCrs, generation::getEnvelopeForCRS, token);
     }
 
     @Override

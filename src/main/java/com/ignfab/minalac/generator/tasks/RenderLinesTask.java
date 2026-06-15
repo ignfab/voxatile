@@ -61,8 +61,10 @@ public class RenderLinesTask extends ModelTask<Shape3dConvertibleModel> {
             // Much simpler for y-axis
             int y = (int) Math.floor(pos.distance() + yOffset);
 
-            for (int z = limits.minZ(); z <= limits.maxZ(); z++)
+            for (int z = limits.minZ(); z <= limits.maxZ(); z++) {
                 structure.get(x, y, z).place(tile.voxels(), pos.coords().x(), pos.coords().y(), pos.coords().z() + z);
+                System.out.println(z);
+            }
         }
     }
 }

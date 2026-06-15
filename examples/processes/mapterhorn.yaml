@@ -1,0 +1,36 @@
+crs: EPSG:6870
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+  # DTM rendering
+  altitude:
+    type: sequence
+    do:
+    - type: fetchData
+      modelType: altitude
+      provider:
+        type: terrarium
+        url: https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png
+        zoom: 14
+        resolution: 30
+    - type: populateHeightmap
+      models:
+        type: altitude
+      heightmap: ground
+    - type: setSpawn
+      heightmap:
+        sum: [ground, 1]
+      x: 0
+      y: 0
+    - type: renderHeightmap
+      at: ground
+      place:
+        structure:
+          - put: *voxel-grass
+            at: [0, 0, 0]
+          - put: *voxel-dirt
+            at: [0, 0, -3..-1]
+          - put: *voxel-stone
+            at: [0, 0, -20..-4]

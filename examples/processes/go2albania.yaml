@@ -1,0 +1,897 @@
+crs: EPSG:6870
+heightmaps:
+  ground:
+    default: 0
+  water:
+    default: 0
+
+forEachTile:
+
+  osm:
+    type: sequence
+    after: altitude
+    models:
+      type: osm
+    do:
+      - type: fetchData
+        modelType: osm
+        provider:
+          type: overpass
+          url: https://overpass-api.de/api/interpreter
+          query: >-
+            (
+              nwr[building];
+              nwr[natural=tree];
+              nwr[barrier];
+              nwr[amenity=parking];
+              nwr[landuse=cemetery];
+              nwr[highway=footway];
+              nwr[landuse~"^(forest|farmland|meadow|orchard|vineyard|grass|greenfield|residential|industrial|commercial|retail|quarry|construction|allotments|village_green|farmyard|cemetery)$"];
+              nwr[natural~"^(wood|scrub|grassland|heath|wetland|beach|sand|bare_rock|scree|shingle)$"];
+              nwr[leisure~"^(park|garden|golf_course|pitch)$"];
+            )
+        retry: 10
+        postProcessing:
+          - type: default
+            metadata: height
+            value: 10
+            as: integer
+          # Only some features carry each key: a tree has no `landuse`, a field no
+          # `natural`. Without a default the remap stops on the first one missing it.
+          - type: default
+            metadata: landuse
+            value: none
+            as: text
+          - type: remap
+            metadata: landuse
+            toFrom:
+              forest:     forest
+              farmland:   [ farmland, allotments, farmyard, greenfield ]
+              orchard:    [ orchard, vineyard ]
+              grassland:  [ meadow, grass, village_green ]
+              urban:      [ residential, commercial, retail ]
+              industrial: industrial
+              bareGround: [ quarry, construction ]
+              cemetery:   cemetery
+            ifNoMatchFound: ignore
+
+          - type: default
+            metadata: natural
+            value: none
+            as: text
+          - type: remap
+            metadata: natural
+            toFrom:
+              forest:     wood
+              scrub:      [ scrub, heath ]
+              grassland:  grassland
+              wetland:    wetland
+              sand:       [ beach, sand ]
+              rock:       [ bare_rock, scree, shingle ]
+            ifNoMatchFound: ignore
+
+          - type: default
+            metadata: leisure
+            value: none
+            as: text
+          - type: remap
+            metadata: leisure
+            toFrom:
+              park:  [ park, garden ]
+              pitch: [ pitch, golf_course ]
+            ifNoMatchFound: ignore
+
+      # land cover
+      # Forests come from two sources (landuse=forest and natural=wood):
+      # the `place` list is anchored on the first task and reused on the second.
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: landuse
+            in: [ forest ]
+        heightmap: ground
+        place: &place-forest
+          - pattern:
+              seed: forest-grass
+              chance: 0.1
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *forest-grass
+          - *voxel-forest-ground
+          - pattern:
+              seed: forest-tree1
+              chance: 0.01
+              place: *forest-tree1
+          - pattern:
+              seed: tree2
+              chance: 0.003
+              place: *forest-tree2
+
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: natural
+            in: [ forest ]
+        heightmap: ground
+        place: *place-forest
+
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: natural
+            in: [ scrub ]
+        heightmap: ground
+        place:
+          - *voxel-grass
+          - pattern:
+              seed: osm-scrub-grass
+              chance: 0.2
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *dry-grass-sparse
+          - pattern:
+              seed: osm-scrub-bush
+              chance: 0.05
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *bush-stem
+                  - at: [0, 0, 2]
+                    put: *bush-leaves
+
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: landuse
+            in: [ farmland ]
+        heightmap: ground
+        place:
+          - *voxel-dirt
+          # Two stalk heights: at a single chance of 0.3 the bare ground showed
+          # through and the field read as pasture rather than crops.
+          - pattern:
+              repeatStructure:
+                axes: [x, y]
+                blueprint:
+                  - "░▓"
+                with:
+                  "░": *voxel-air
+                  "▓":
+                    - pattern:
+                        seed: farmland-wheat
+                        chance: 0.6
+                        place:
+                          structure:
+                            - at: [0, 0, 1]
+                              put: *dry-grass-tall
+                    - pattern:
+                        seed: farmland-wheat-short
+                        chance: 0.3
+                        place:
+                          structure:
+                            - at: [0, 0, 1]
+                              put: *dry-grass-short
+
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: landuse
+            in: [ orchard ]
+        heightmap: ground
+        place:
+          - *voxel-grass
+          - pattern:
+              seed: osm-orchard-tree
+              chance: 0.03
+              place:
+                structure:
+                  axes: [ z, y, x ]
+                  blueprint:
+                    - - "   "
+                      - " * "
+                      - "   "
+                    - - "***"
+                      - "*|*"
+                      - "***"
+                    - - "   "
+                      - " | "
+                      - "   "
+                  with:
+                    "*": *voxel-leaves
+                    "|": *voxel-tree
+
+      # Grasslands come from two sources (landuse meadow/grass/village_green
+      # and natural=grassland): same anchor trick as the forests.
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: landuse
+            in: [ grassland ]
+        heightmap: ground
+        place: &place-grassland
+          - *voxel-grass
+          - pattern:
+              seed: osm-meadow
+              chance: 0.25
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *grass-tall
+          - pattern:
+              seed: osm-meadow-flower
+              chance: 0.02
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *flower-yellow
+
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: natural
+            in: [ grassland ]
+        heightmap: ground
+        place: *place-grassland
+
+      - type: renderSurfaces
+        # Urban areas.
+        models:
+          filter:
+            metadata: landuse
+            in: [ urban ]
+        heightmap: ground
+        place:
+          - *voxel-grass
+          - pattern:
+              seed: osm-urban-street
+              chance: 0.22
+              place: *voxel-paving
+          - pattern:
+              seed: osm-urban-path
+              chance: 0.12
+              place: *voxel-gravel
+
+      - type: renderSurfaces
+        # Industrial areas.
+        models:
+          filter:
+            metadata: landuse
+            in: [ industrial ]
+        heightmap: ground
+        place:
+          - *voxel-paving
+          - pattern:
+              seed: osm-indus-gravel
+              chance: 0.25
+              place: *voxel-gravel
+          - pattern:
+              seed: osm-indus-metal
+              chance: 0.04
+              place: *voxel-metal
+
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: landuse
+            in: [ bareGround ]
+        heightmap: ground
+        place:
+          - *voxel-gravel
+          - pattern:
+              seed: osm-bare-stone
+              chance: 0.3
+              place: *voxel-stone
+          - pattern:
+              seed: osm-bare-dirt
+              chance: 0.2
+              place: *voxel-dirt
+
+      - type: renderSurfaces
+        # Parks and gardens: the very thing CORINE misses below 25 ha.
+        models:
+          filter:
+            metadata: leisure
+            in: [ park ]
+        heightmap: ground
+        place:
+          - *voxel-grass
+          - pattern:
+              seed: osm-park-path
+              chance: 0.06
+              place: *path
+          - pattern:
+              seed: osm-park-grass
+              chance: 0.2
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *grass-tuft
+          - pattern:
+              seed: osm-park-flower
+              chance: 0.03
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *flower-red
+          - pattern:
+              seed: osm-park-tree
+              chance: 0.015
+              place:
+                structure:
+                  axes: [ z, y, x ]
+                  blueprint:
+                    - - "     "
+                      - "  *  "
+                      - " *** "
+                      - "  *  "
+                      - "     "
+                    - - " *** "
+                      - "*****"
+                      - "**|**"
+                      - "*****"
+                      - " *** "
+                    - - "     "
+                      - "     "
+                      - "  |  "
+                      - "     "
+                      - "     "
+                  with:
+                    "*": *voxel-leaves
+                    "|": *voxel-tree
+
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: leisure
+            in: [ pitch ]
+        heightmap: ground
+        place: *voxel-grass
+
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: natural
+            in: [ sand ]
+        heightmap: ground
+        place: *voxel-sand
+
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: natural
+            in: [ rock ]
+        heightmap: ground
+        place: *voxel-stone
+
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: natural
+            in: [ wetland ]
+        heightmap: ground
+        place:
+          - *voxel-dirt
+          - pattern:
+              seed: osm-wetland-papyrus
+              chance: 0.08
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *reed
+
+      # parking
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: amenity
+            in: [ parking ]
+        heightmap: ground
+        place:
+          structure:
+            - put: *voxel-air
+              at: [ 0, 0, 1..10 ]
+
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: amenity
+            in: [ parking ]
+        heightmap: ground
+        place:
+          - *voxel-paving
+          - pattern:
+              repeatStructure:
+                axes: [ x, y ]
+                blueprint:
+                  - "    "
+                  - "    "
+                  - "    "
+                  - "    "
+                  - "▒   "
+                  - "▒   "
+                  - "▒   "
+                  - "▒   "
+                  - "▒▒▒▒"
+                with:
+                  '▒': *road-paint
+
+      # cemetery
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: landuse
+            in: [ cemetery ]
+        heightmap: ground
+        place:
+          - *voxel-grass
+          - pattern:
+              repeatStructure:
+                axes: [ x, y ]
+                blueprint:
+                  - " H  "
+                  - " B  "
+                  - " B  "
+                  - "    "
+                  - "    "
+                with:
+                  'H':
+                    structure:
+                      - put: *voxel-stonebrick
+                        at: [0, 0, 1]  # Stèle
+                  'B':
+                    structure:
+                      - put: *voxel-stone
+                        at: [0..1, 0, 0]  # Tête de tombe au sol*
+
+
+      # le render point 2d a un problème
+      # trees
+      #- type: renderPoints2d
+      #  models:
+      #    filter:
+      #      metadata: natural
+      #      in: [ tree ]
+      #  heightmap: ground
+      #  place:
+      #    structure:
+      #      axes: [ z, y, x ]
+      #      blueprint:
+      #        - - "     "
+      #          - "  *  "
+      #          - " *** "
+      #          - "  *  "
+      #          - "     "
+      #        - - " *** "
+      #          - "*****"
+      #          - "*****"
+      #          - "*****"
+      #          - " *** "
+      #        - - " *** "
+      #          - "*****"
+      #          - "**|**"
+      #          - "*****"
+      #          - " *** "
+      #        - - "     "
+      #          - "     "
+      #          - "  |  "
+      #          - "     "
+      #          - "     "
+      #        - - "     "
+      #          - "     "
+      #          - "  |  "
+      #          - "     "
+      #          - "     "
+      #      with:
+      #        "*": *voxel-leaves
+      #        "|": *voxel-tree
+
+      # footway
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: highway
+            in: [ footway ]
+        heightmap: ground
+        structure:
+          axes: [ y ]
+          blueprint: "SS"
+          with:
+            "S": *path
+
+      # barriers
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: barrier
+            in: [ wall, city_wall, retaining_wall ]
+        heightmap: ground
+        structure:
+          axes: [ z, y ]
+          blueprint:
+            - "▒"
+            - "▒"
+            - "▒"
+          with:
+            "▒": *voxel-cobble
+
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: barrier
+            in: [ fence, hedge, cable_barrier, handrail ]
+        heightmap: ground
+        structure:
+          axes: [ z, y ]
+          blueprint:
+            - "▒"
+            - "▒"
+          with:
+            "▒": *voxel-slab-wood
+
+      - type: renderPoints2d
+        models:
+          filter:
+            metadata: barrier
+            in: [ bollard, block, gate, lift_gate ]
+        heightmap: ground
+        place:
+          structure:
+            - at: [0, 0, 1]
+              put: *voxel-stonebrick
+
+      # buildings
+      - type: computeHeightmapStats
+        models:
+          filter:
+            metadata: building
+            in: [ "yes", apartments, residential, house, construction, retail,
+                  commercial, school, roof, hospital, industrial, dormitory ]
+        heightmap: ground
+        compute:
+          minimum: minimum-ground-altitude
+          maximum: ground-floor-altitude
+
+      - type: renderSurfaces
+        models:
+          filter:
+            metadata: building
+            in: [ "yes", apartments, residential, house, construction, retail,
+                  commercial, school, roof, hospital, industrial, dormitory ]
+        heightmap: ground
+        place:
+          structure:
+            - put: *voxel-air
+              at: [ 0, 0, 1..10 ]
+
+      - type: fillBetweenHeightmapAndMetadata
+        models:
+          filter:
+            metadata: building
+            in: [ "yes", apartments, residential, house, construction, retail,
+                  commercial, school, roof, hospital, industrial, dormitory ]
+        heightmap: ground
+        altitudeMetadata: ground-floor-altitude
+        placeAbove: *voxel-air
+        placeBelow: *voxel-paving
+
+      - type: renderBuildings
+        models:
+          filter:
+            metadata: building
+            in: [ "yes", apartments, residential, house, construction, retail,
+                  commercial, school, roof, hospital, industrial, dormitory ]
+        roof: *voxel-roof
+        wall: *voxel-wall
+        window: *voxel-glass
+
+  altitude:
+    type: sequence
+    do:
+      # The GeoTIFF must already be in the CRS declared at the top of this file:
+      # a raster in another projection silently renders nothing at all.
+      - type: fetchData
+        modelType: altitude
+        provider:
+          type: geotiff
+          filePath: data/asig/test/dtm-lamber93.tif
+      - type: populateHeightmap
+        models:
+          type: altitude
+        heightmap: ground
+      - type: setSpawn
+        heightmap:
+          sum: [ground, 1]
+        x: 0
+        y: 0
+      - type: renderHeightmap
+        at: ground
+        place:
+          structure:
+            - put: *voxel-grass
+              at: [0, 0, 0]
+            - put: *voxel-dirt
+              at: [0, 0, -3..-1]
+            - put: *voxel-stone
+              at: [0, 0, -20..-4]
+
+  water:
+    after: altitude
+    type: sequence
+    models:
+      type: water
+    do:
+      - type: fetchData
+        modelType: water
+        provider:
+          type: shapefile
+          filePath: "data/asig/III_Rrjedhe_ujore/III_Rrjedhe_ujore.shp"
+      - type: copyHeightmap
+        from:
+          localMin: ground
+          range: 9
+        to: ground
+      - type: copyHeightmap
+        from: 1
+        to: water
+      # Depth grows with the distance from the bank.
+      - type: copyHeightmap
+        from:
+          remap:
+            manhattan: water
+            maximumDistance: 12
+            targetValue: 0
+          mapping:
+            0: 0
+            1: 1
+            2: 8
+            3..3: 10
+            4..6: 11
+            7..12: 12
+        to: water
+      - type: renderHeightmap
+        minimum:
+          sum:
+            - ground
+            - 1
+            - product: [ -1, water ]
+        maximum: ground
+        place:
+          structure:
+            - put: *voxel-water
+              at: [ 0, 0, 0 ]
+            # Clear the vegetation that would otherwise float on the surface.
+            - put: *voxel-air
+              at: [ 0, 0, 1..12 ]
+
+  roads:
+    after:
+      - altitude
+      # for render bridge
+      - water
+      - osm
+    type: sequence
+    models:
+      type: road
+    do:
+      - type: fetchData
+        modelType: road
+        provider:
+          type: shapefile
+          filePath: "data/asig/Transporti Rrugor/LinjeRrugor.shp"
+        postProcessing:
+          - type: remap
+            metadata: PërSimbol
+            toFrom:
+              national:   Kombëtare
+              local:      Lokale
+              roundabout: Rrethrrotullim
+              bridge:     Urë
+              tunnel:     Tunel
+              overpass:   Mbikalim
+              # "Nënkalm" is a typo present in the source data (one segment)
+              underpass:  [ Nënkalim, Nënkalm ]
+              railway:    Hekurudhe
+            default: other
+          - type: copy
+            metadata: PërSimbol
+            to: roadType
+          - type: remap
+            metadata: Kategori_1
+            toFrom:
+              paved:   E shtruar
+              unpaved: E pashtruar
+            default: other
+          - type: copy
+            metadata: Kategori_1
+            to: surface
+
+      # clear national
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: roadType
+            in: [ national, roundabout, overpass ]
+        heightmap: ground
+        structure:
+          axes: [ z, y ]
+          blueprint:
+            - "········"
+            - "········"
+            - "········"
+            - "········"
+            - "▒······▒"
+          with:
+            "·": *voxel-air
+            "▒": *voxel-cobble
+
+      # clear local
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: roadType
+            in: [ local, underpass ]
+        heightmap: ground
+        structure:
+          axes: [ z, y ]
+          blueprint:
+            - "·····"
+            - "·····"
+            - "·····"
+            - "▒···▒"
+          with:
+            "·": *voxel-air
+            "▒": *voxel-cobble
+
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: surface
+            in: [ unpaved ]
+        heightmap: ground
+        structure:
+          axes: [ z, y ]
+          blueprint:
+            - "····"
+            - "····"
+            - "····"
+          with:
+            "·": *voxel-air
+
+      # unpaved
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: surface
+            in: [ unpaved ]
+        heightmap: ground
+        structure:
+          axes: [ y ]
+          blueprint: "DGGD"
+          with:
+            "D": *voxel-dirt
+            "G": *voxel-gravel
+
+      # local, underpass
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: roadType
+            in: [ local, underpass ]
+        heightmap: ground
+        structure:
+          axes: [ y ]
+          blueprint: "▒▒▒"
+          with:
+            "▒": *voxel-paving
+
+      # national, roundabout, overpass
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: roadType
+            in: [ national, roundabout, overpass ]
+        heightmap: ground
+        structure:
+          axes: [ x, y ]
+          blueprint:
+            - "▒▒▒█▒▒▒"
+            - "▒▒▒█▒▒▒"
+            - "▒▒▒▒▒▒▒"
+            - "▒▒▒▒▒▒▒"
+          with:
+            "▒": *voxel-paving
+            "█": *road-paint
+
+      # ---- structures ------------------------------------------------------
+      # The shapefile is a PolylineZ, so its vertices may carry an elevation.
+      # Should those values prove to be populated, switching these two tasks to
+      # `renderLines` with `renderOnlyWhenAbove` would give real decks spanning
+      # the valleys instead of the draped ones below.
+
+      # bridge
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: roadType
+            in: [ bridge ]
+        heightmap: ground
+        #structure:
+        #  axes: [ z, y ]
+        #  blueprint:
+        #    - "W      W"
+        #    - "W      W"
+        #    - "W      W"
+        #    - "W      W"
+        #    - "W      W"
+        #    - "W      W"
+        #    - "W      W"
+        #    - "W      W"
+        #    - "AAAAAAAA"
+        #  with:
+        #    "A": *voxel-paving
+        #    "W":
+        #        repeatStructure:
+        #          axes: [ z, x ]
+        #          blueprint:
+        #            - "         ▒           "
+        #            - "       ==▒==         "
+        #            - "     ==  ▒  ==       "
+        #            - "   ==    ▒    ==     "
+        #            - " ==      ▒      ==   "
+        #            - "█████████████████████"
+        #          with:
+        #            "█": *voxel-paving
+        #            "▒": *voxel-metal
+        #            "=": *voxel-metal
+        structure:
+          axes: [ z, y ]
+          blueprint:
+            - "█     █"
+            - "▒▒▒▒▒▒▒"
+          with:
+            "▒": *voxel-paving
+            "█": *voxel-planks
+
+  railway:
+    after: altitude
+    type: sequence
+    models:
+      type: railways
+    do:
+      - type: fetchData
+        modelType: railways
+        provider:
+          type: shapefile
+          filePath: "data/asig/Transporti Rrugor/LinjeRrugor.shp"
+        postProcessing:
+          - type: remap
+            metadata: PërSimbol
+            toFrom:
+              railway: Hekurudhe
+            default: other
+          - type: copy
+            metadata: PërSimbol
+            to: roadType
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: roadType
+            in: [ railway ]
+        heightmap: ground
+        structure:
+          axes: [ z, y ]
+          blueprint:
+            - " ▒ ▒ "
+            - "█████"
+          with:
+            "▒": *voxel-metal
+            "█":
+              pattern:
+                repeatStructure:
+                  axes: [ x ]
+                  blueprint: "WG"
+                  with:
+                    "W": *voxel-planks
+                    "G": *voxel-gravel

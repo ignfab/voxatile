@@ -4,7 +4,6 @@ import java.beans.ConstructorProperties;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-
 import com.ignfab.minalac.generator.parameters.placeables.structures.PlaceableStructureParams;
 import com.ignfab.minalac.generator.placeables.Nothing;
 import com.ignfab.minalac.generator.placeables.Pattern;

@@ -1,0 +1,10 @@
+# 
+worldName: Shkodra train station - Albania
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 42.06129880054384
+    longitude: 19.52715475952434
+  extentX: 500
+  extentY: 500

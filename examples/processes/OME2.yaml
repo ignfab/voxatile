@@ -1,0 +1,40 @@
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+
+  altitude:
+    type: sequence
+    do:
+    #- type: fetchData
+    #  modelType: altitude
+    #  provider:
+    #    type: wfs
+    #    url: https://www.mapsforeurope.org/maps/wfs
+    #    features: ome:eurodem_wms
+    #    token: ImV1cm9nZW9ncmFwaGljc19yZWdpc3RlcmVkXzgyMzc5OCI.HS1Sgg._s2SSfxvXP88IxKhKBL6zz5Y1Do
+    - type: fetchData
+      modelType: altitude
+      provider:
+        type: geotiff
+        filePath: data/ome2/eurodem.tif
+    - type: populateHeightmap
+      models:
+        type: altitude
+      heightmap: ground
+    - type: setSpawn
+      heightmap:
+        sum: [ground, 1]
+      x: 0
+      y: 0
+    - type: renderHeightmap
+      at: ground
+      place:
+        structure:
+          - put: *voxel-grass
+            at: [0, 0, 0]
+          - put: *voxel-dirt
+            at: [0, 0, -3..-1]
+          - put: *voxel-stone
+            at: [0, 0, -20..-4]

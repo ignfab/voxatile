@@ -57,7 +57,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
      *
      * @throws IllegalArgumentException if SRS name could not be retrieved from envelope.
      */
-    public WFS1_1_GML3_1_DataProvider(String baseURL, String type, CoordinateReferenceSystem crs, EnvelopeProvider envelopeProvider, int maxFeaturePerQuery) {
+    public WFS1_1_GML3_1_DataProvider(String baseURL, String type, CoordinateReferenceSystem crs, EnvelopeProvider envelopeProvider, int maxFeaturePerQuery, String token) {
         this.maxFeaturePerQuery = maxFeaturePerQuery;
         this.crs = crs;
         this.envelopeProvider = envelopeProvider;
@@ -67,6 +67,7 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
             throw new IllegalArgumentException("Could not retrieve SRS name for layer");
 
         this.url = ParameterizedURL.base(baseURL)
+            .parameter("token", token)
             .parameter("SERVICE", SERVICE)
             .parameter("VERSION", VERSION)
             .parameter("REQUEST", "GetFeature")

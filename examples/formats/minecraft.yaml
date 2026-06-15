@@ -37,4 +37,42 @@ references:
       - put: minecraft:birch_log
         at: [ 0, 0, 0..5 ]
   - &voxel-water minecraft:water
-  - &voxel-air minecraft:air
+  - &voxel-air minecraft:air 
+  - &voxel-leaves
+    block: minecraft:oak_leaves
+    properties:
+      persistent: true
+  - &voxel-tree minecraft:oak_log
+  - &voxel-pine-needles
+    block: minecraft:spruce_leaves
+    properties:
+      persistent: true
+  - &voxel-pine-tree minecraft:spruce_log
+  - &voxel-sand minecraft:sand
+  - &dry-grass-sparse minecraft:short_grass
+  - &dry-grass-short minecraft:short_grass
+  - &dry-grass-tall
+    block: minecraft:wheat
+    properties:
+      age: 7
+  - &bush-stem minecraft:oak_log
+  - &bush-leaves
+    block: minecraft:oak_leaves
+    properties:
+      persistent: true
+  - &grass-tuft minecraft:short_grass
+  - &grass-tall minecraft:short_grass
+  - &flower-yellow minecraft:dandelion
+  - &flower-red minecraft:poppy
+  - &reed minecraft:sugar_cane
+  - &voxel-paving minecraft:smooth_stone
+  - &voxel-gravel minecraft:gravel
+  - &voxel-metal minecraft:iron_block
+  - &voxel-stonebrick minecraft:stone_bricks
+  - &voxel-slab-wood minecraft:oak_slab
+  - &voxel-roof minecraft:cut_red_sandstone
+  - &voxel-wall minecraft:sandstone
+  - &voxel-planks minecraft:oak_planks
+  - &grass-low minecraft:short_grass
+  - &voxel-mossy minecraft:mossy_cobblestone
+  - &voxel-silver-sand minecraft:sand

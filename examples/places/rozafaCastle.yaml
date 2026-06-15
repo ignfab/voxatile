@@ -1,0 +1,10 @@
+# 
+worldName: Rozafa castle - Albania
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 42.04650929658799
+    longitude: 19.493624262746618
+  extentX: 2000
+  extentY: 2000

@@ -1,0 +1,10 @@
+# 
+worldName: Parking Shkoder - Albania
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 42.066000
+    longitude: 19.512218
+  extentX: 250
+  extentY: 250

@@ -32,3 +32,29 @@ references:
         at: [ 0, 0, 0..5 ]
   - &voxel-water default:water_source
   - &voxel-air air
+  - &voxel-leaves default:leaves
+  - &voxel-tree default:tree
+  - &voxel-pine-needles default:pine_needles
+  - &voxel-pine-tree default:pine_tree
+  - &voxel-sand default:sand
+  - &dry-grass-sparse default:dry_grass_3
+  - &dry-grass-short default:dry_grass_4
+  - &dry-grass-tall default:dry_grass_5
+  - &bush-stem default:bush_stem
+  - &bush-leaves default:bush_leaves
+  - &grass-tuft default:grass_3
+  - &grass-tall default:grass_4
+  - &flower-yellow flowers:dandelion_yellow
+  - &flower-red flowers:rose
+  - &reed default:papyrus
+  - &voxel-paving default:stone_block
+  - &voxel-gravel default:gravel
+  - &voxel-metal default:steelblock
+  - &voxel-stonebrick default:stonebrick
+  - &voxel-slab-wood stairs:slab_wood
+  - &voxel-roof default:desert_stone_block
+  - &voxel-wall default:sandstonebrick
+  - &voxel-planks default:wood
+  - &grass-low default:grass_2
+  - &voxel-mossy default:mossycobble
+  - &voxel-silver-sand default:silver_sand

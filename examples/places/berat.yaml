@@ -1,0 +1,10 @@
+# 
+worldName: Berat - Albania
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 40.70470841194029 
+    longitude: 19.95214167567668
+  extentX: 1000
+  extentY: 1000

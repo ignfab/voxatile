@@ -1,0 +1,860 @@
+crs: EPSG:6870
+heightmaps:
+  ground:
+    default: 0
+  water:
+    default: 0
+
+forEachTile:
+
+  # ===========================================================================
+  #  TERRAIN
+  # ===========================================================================
+  altitude:
+    type: sequence
+    do:
+      - type: fetchData
+        modelType: altitude
+        provider:
+          type: terrarium
+          # https://mapterhorn.com/coverage/#map=8.54/41.4918/20.0628
+          url: https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png
+          zoom: 14
+          resolution: 30
+      - type: populateHeightmap
+        models:
+          type: altitude
+        heightmap: ground
+      - type: setSpawn
+        heightmap:
+          sum: [ground, 1]
+        x: 0
+        y: 0
+      - type: renderHeightmap
+        at: ground
+        place:
+          structure:
+            - put: *voxel-grass
+              at: [0, 0, 0]
+            - put: *voxel-dirt
+              at: [0, 0, -3..-1]
+            - put: *voxel-stone
+              at: [0, 0, -20..-4]
+
+  # ===========================================================================
+  #  LAND COVER (CORINE Land Cover 2018)
+  # ===========================================================================
+  # CORINE codes are remapped here, once and for all, into readable identifiers.
+  # Rendering tasks then need to know neither the codes nor the Albanian name of
+  # the attribute: switching data source only touches this block.
+  fetchLandcover:
+    after: altitude
+    type: fetchData
+    modelType: landcover
+    provider:
+      type: wmsFeatureInfo
+      url: https://geoportal.asig.gov.al/service/akmjedis/wms
+      layer: Mbulesa_tokes_Corine_2018
+    retry: 10
+    postProcessing:
+      - type: remap
+        metadata: KodiKlases
+        toFrom:
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-311.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-312.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-313.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-324.html
+          forest:      [ "311", "312", "313", "324" ]   # broad-leaved, coniferous, mixed, regrowth
+          
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-322.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-323.html
+          scrub:       [ "322", "323" ]                 # moors, sclerophyllous vegetation
+          
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-211.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-212.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-213.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-241.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-242.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-243.html
+          farmland:    [ "211", "212", "213", "241", "242", "243" ]
+          
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-221.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-222.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-223.html
+          orchard:     [ "221", "222", "223" ]          # vineyards, fruit trees, olive groves
+          
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-231.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-321.html
+          grassland:   [ "231", "321" ]                 # past  ures, natural grassland
+
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-111.html
+          urbanDense:  [ "111" ]                        # continuous urban fabric
+          
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-112.html
+          urbanLoose:  [ "112" ]                        # discontinuous urban fabric
+          
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-121.html
+          industrial:  [ "121" ]
+          
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-122.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-123.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-124.html
+          transport:   [ "122", "123", "124" ]          # road and rail, ports, airports
+
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-131.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-132.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-133.html
+          bareGround:  [ "131", "132", "133" ]          # extraction, dump and construction sites
+
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-142.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-141.html
+          urbanGreen:  [ "141", "142" ]                 # green urban areas, sport and leisure
+
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-331.html
+          sand:        [ "331" ]
+
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-332.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-333.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-334.html          
+          rock:        [ "332", "333", "334" ]
+
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-411.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-421.html
+          # https://land.copernicus.eu/content/corine-land-cover-nomenclature-guidelines/html/index-clc-422.html
+          wetland:     [ "411", "421", "422" ]
+        default: other
+      - type: copy
+        metadata: KodiKlases
+        to: landType
+
+  # A `schedule` gathers the fourteen renderings: the model selection is declared
+  # once and inherited by the subtasks, which then only carry their own filter.
+  # Other tasks only have to wait for `landcover`.
+  #
+  # In every `place` list the ground material comes FIRST: each item overwrites
+  # what the previous ones placed, so a base listed last would wipe out every
+  # pattern above it.
+  landcover:
+    after: fetchLandcover
+    type: schedule
+    models:
+      type: landcover
+    do:
+
+      forest:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landType
+            in: [ forest ]
+        heightmap: ground
+        place:
+          - *voxel-grass
+          - pattern:
+              seed: forest-fern
+              chance: 0.12
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *forest-grass
+          - pattern:
+              seed: forest-tree-oak
+              chance: 0.02
+              place:
+                structure:
+                  axes: [ z, y, x ]
+                  blueprint:
+                    - - "     "
+                      - "  *  "
+                      - " *** "
+                      - "  *  "
+                      - "     "
+                    - - " *** "
+                      - "*****"
+                      - "*****"
+                      - "*****"
+                      - " *** "
+                    - - " *** "
+                      - "*****"
+                      - "**|**"
+                      - "*****"
+                      - " *** "
+                    - - "     "
+                      - "     "
+                      - "  |  "
+                      - "     "
+                      - "     "
+                    - - "     "
+                      - "     "
+                      - "  |  "
+                      - "     "
+                      - "     "
+                  with:
+                    "*": *voxel-leaves
+                    "|": *voxel-tree
+          - pattern:
+              seed: forest-tree-pine
+              chance: 0.01
+              place:
+                structure:
+                  axes: [ z, y, x ]
+                  blueprint:
+                    - - "     "
+                      - "     "
+                      - "  *  "
+                      - "     "
+                      - "     "
+                    - - "     "
+                      - "  *  "
+                      - " *** "
+                      - "  *  "
+                      - "     "
+                    - - "  *  "
+                      - " *** "
+                      - "**|**"
+                      - " *** "
+                      - "  *  "
+                    - - "     "
+                      - "  *  "
+                      - " *|* "
+                      - "  *  "
+                      - "     "
+                    - - "     "
+                      - "     "
+                      - "  |  "
+                      - "     "
+                      - "     "
+                    - - "     "
+                      - "     "
+                      - "  |  "
+                      - "     "
+                      - "     "
+                  with:
+                    "*": *voxel-pine-needles
+                    "|": *voxel-pine-tree
+
+      scrub:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landType
+            in: [ scrub ]
+        heightmap: ground
+        place:
+          - *voxel-grass
+          - pattern:
+              seed: scrub-grass
+              chance: 0.2
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *dry-grass-sparse
+          - pattern:
+              seed: scrub-bush
+              chance: 0.05
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *bush-stem
+                  - at: [0, 0, 2]
+                    put: *bush-leaves
+
+      farmland:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landType
+            in: [ farmland ]
+        heightmap: ground
+        place:
+          - *voxel-dirt
+          # Two stalk heights: at a single chance of 0.3 the bare ground showed
+          # through and the field read as pasture rather than crops.
+          - pattern:
+              repeatStructure:
+                axes: [x, y]
+                blueprint:
+                  - "░▓"
+                with:
+                  "░": *voxel-air
+                  "▓":
+                    - pattern:
+                        seed: farmland-wheat
+                        chance: 0.6
+                        place:
+                          structure:
+                            - at: [0, 0, 1]
+                              put: *dry-grass-tall
+                    - pattern:
+                        seed: farmland-wheat-short
+                        chance: 0.3
+                        place:
+                          structure:
+                            - at: [0, 0, 1]
+                              put: *dry-grass-short
+
+      orchard:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landType
+            in: [ orchard ]
+        heightmap: ground
+        place:
+          - *voxel-grass
+          - pattern:
+              seed: orchard-tree
+              chance: 0.03
+              place:
+                structure:
+                  axes: [ z, y, x ]
+                  blueprint:
+                    - - "   "
+                      - " * "
+                      - "   "
+                    - - "***"
+                      - "*|*"
+                      - "***"
+                    - - "   "
+                      - " | "
+                      - "   "
+                  with:
+                    "*": *voxel-leaves
+                    "|": *voxel-tree
+
+      grassland:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landType
+            in: [ grassland ]
+        heightmap: ground
+        place:
+          - *voxel-grass
+          - pattern:
+              seed: grassland-tuft
+              chance: 0.25
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *grass-tall
+          - pattern:
+              seed: grassland-flower
+              chance: 0.02
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *flower-yellow
+
+      urbanDense:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landType
+            in: [ urbanDense ]
+        heightmap: ground
+        place:
+          - *voxel-paving
+          - pattern:
+              seed: dense-cobble
+              chance: 0.3
+              place: *voxel-cobble
+          - pattern:
+              seed: dense-brick
+              chance: 0.15
+              place: *voxel-stonebrick
+          - pattern:
+              seed: dense-moss
+              chance: 0.05
+              place: *voxel-mossy
+
+      urbanLoose:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landType
+            in: [ urbanLoose ]
+        heightmap: ground
+        place:
+          - *voxel-grass
+          - pattern:
+              seed: loose-lawn
+              chance: 0.15
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *grass-low
+          - pattern:
+              seed: loose-garden-tree
+              chance: 0.01
+              place:
+                structure:
+                  axes: [ z, y, x ]
+                  blueprint:
+                    - - "   "
+                      - " * "
+                      - "   "
+                    - - "***"
+                      - "***"
+                      - "***"
+                    - - "   "
+                      - "   "
+                      - "   "
+                  with:
+                    "*": *voxel-leaves
+                    "|": *voxel-tree
+
+      industrial:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landType
+            in: [ industrial ]
+        heightmap: ground
+        place:
+          - *voxel-paving
+          - pattern:
+              seed: indus-gravel
+              chance: 0.25
+              place: *voxel-gravel
+          - pattern:
+              seed: indus-metal
+              chance: 0.04
+              place: *voxel-metal
+
+      transport:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landType
+            in: [ transport ]
+        heightmap: ground
+        place:
+          - *voxel-paving
+          - pattern:
+              seed: transport-wear
+              chance: 0.12
+              place: *voxel-cobble
+
+      bareGround:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landType
+            in: [ bareGround ]
+        heightmap: ground
+        place:
+          - *voxel-gravel
+          - pattern:
+              seed: bare-stone
+              chance: 0.3
+              place: *voxel-stone
+          - pattern:
+              seed: bare-dirt
+              chance: 0.2
+              place: *voxel-dirt
+          - pattern:
+              seed: bare-sand
+              chance: 0.1
+              place: *voxel-silver-sand
+
+      urbanGreen:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landType
+            in: [ urbanGreen ]
+        heightmap: ground
+        place:
+          - *voxel-grass
+          - pattern:
+              seed: park-path
+              chance: 0.06
+              place: *voxel-gravel
+          - pattern:
+              seed: park-grass
+              chance: 0.2
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *grass-tuft
+          - pattern:
+              seed: park-flower
+              chance: 0.03
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *flower-red
+          - pattern:
+              seed: park-tree
+              chance: 0.015
+              place:
+                structure:
+                  axes: [ z, y, x ]
+                  blueprint:
+                    - - "     "
+                      - "  *  "
+                      - " *** "
+                      - "  *  "
+                      - "     "
+                    - - " *** "
+                      - "*****"
+                      - "**|**"
+                      - "*****"
+                      - " *** "
+                    - - "     "
+                      - "     "
+                      - "  |  "
+                      - "     "
+                      - "     "
+                  with:
+                    "*": *voxel-leaves
+                    "|": *voxel-tree
+
+      sand:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landType
+            in: [ sand ]
+        heightmap: ground
+        place: *voxel-sand
+
+      rock:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landType
+            in: [ rock ]
+        heightmap: ground
+        place: *voxel-stone
+
+      wetland:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landType
+            in: [ wetland ]
+        heightmap: ground
+        place:
+          - *voxel-dirt
+          - pattern:
+              seed: wetland-papyrus
+              chance: 0.08
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    put: *reed
+
+  # ===========================================================================
+  #  HYDROGRAPHY
+  # ===========================================================================
+  water:
+    after: altitude
+    type: sequence
+    models:
+      type: water
+    do:
+      - type: fetchData
+        modelType: water
+        provider:
+          type: wmsFeatureInfo
+          url: https://geoportal.asig.gov.al/service/hidro_operator/wms
+          layer: iii_rrjedhe_ujore_1
+        retry: 10
+      # Carve the bed by lowering the ground to the local minimum.
+      - type: copyHeightmap
+        from:
+          localMin: ground
+          range: 9
+        to: ground
+      - type: copyHeightmap
+        from: 1
+        to: water
+      # Depth grows with the distance from the bank.
+      - type: copyHeightmap
+        from:
+          remap:
+            manhattan: water
+            maximumDistance: 12
+            targetValue: 0
+          mapping:
+            0: 0
+            1: 1
+            2: 8
+            3..3: 10
+            4..6: 11
+            7..12: 12
+        to: water
+      - type: renderHeightmap
+        minimum:
+          sum:
+            - ground
+            - 1
+            - product: [ -1, water ]
+        maximum: ground
+        place:
+          structure:
+            - put: *voxel-water
+              at: [ 0, 0, 0 ]
+            # Clear the vegetation that would otherwise float on the surface.
+            - put: *voxel-air
+              at: [ 0, 0, 1..12 ]
+
+  # ===========================================================================
+  #  BUILDINGS
+  # ===========================================================================
+  buildings:
+    after:
+      - altitude
+      - landcover
+    type: sequence
+    models:
+      type: buildings
+    do:
+      - type: fetchData
+        modelType: buildings
+        provider:
+          type: wmsFeatureInfo
+          url: https://geoportal.asig.gov.al/service/adresar/wms
+          layer: adr_ndertese
+        retry: 10
+        # The ASIG layer carries no height at all, so every building is given 10 m.
+        postProcessing:
+          - type: default
+            metadata: height
+            value: 10
+            as: integer
+      # Keeps a building on a slope from having one corner buried and the other
+      # hanging in the air.
+      - type: computeHeightmapStats
+        heightmap: ground
+        compute:
+          minimum: minimum-ground-altitude
+          maximum: ground-floor-altitude
+      # Clear inside the building
+      - type: renderSurfaces
+        heightmap: ground
+        place:
+          structure:
+            - put: *voxel-air
+              at: [ 0, 0, 1..10 ]
+      # Build fondations under the building
+      - type: fillBetweenHeightmapAndMetadata
+        heightmap: ground
+        altitudeMetadata: ground-floor-altitude
+        placeAbove: *voxel-air
+        placeBelow: *voxel-paving
+      - type: renderBuildings
+        roof: *voxel-roof
+        wall: *voxel-wall
+        window: *voxel-glass
+
+  # ===========================================================================
+  #  ROAD NETWORK
+  # ===========================================================================
+  # Same idea as the land cover: the Albanian values are remapped here into
+  # stable identifiers. Switching from the WMS to the shapefile would only touch
+  # this block, as the attribute is named `persimbol` in one and `PërSimbol` in
+  # the other.
+  fetchRoads:
+    after: altitude
+    type: fetchData
+    modelType: roads
+    provider:
+      type: wmsFeatureInfo
+      url: https://geoportal.asig.gov.al/service/Rrjete_Transporti/wms
+      layer: rruge_asig_062025
+      # The layer answers between 0.7 and 50 m per pixel; below that it returns an
+      # empty collection without any error, hence resolution: 1 (scale 1:3571).
+      resolution: 1
+      spacing: 50
+      queryRadius: 70
+    retry: 10
+    postProcessing:
+      - type: remap
+        metadata: persimbol
+        toFrom:
+          national:   Kombëtare
+          local:      Lokale
+          roundabout: Rrethrrotullim
+          bridge:     Urë
+          tunnel:     Tunel
+          overpass:   Mbikalim
+          # "Nënkalm" is a typo present in the source data (one segment)
+          underpass:  [ Nënkalim, Nënkalm ]
+          railway:    Hekurudhe
+        default: other
+      - type: copy
+        metadata: persimbol
+        to: roadType
+      - type: remap
+        metadata: kategori_1
+        toFrom:
+          paved:   E shtruar
+          unpaved: E pashtruar
+        default: other
+      - type: copy
+        metadata: kategori_1
+        to: surface
+
+  roads:
+    after:
+      - fetchRoads
+      - altitude
+      - landcover
+      - water
+    type: sequence
+    models:
+      type: roads
+    do:
+
+      # clearNational
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: roadType
+            in: [ national, roundabout, overpass ]
+        heightmap: ground
+        structure:
+          axes: [ z, y ]
+          blueprint:
+            - "········"
+            - "········"
+            - "········"
+            - "········"
+            - "▒······▒"
+          with:
+            "·": *voxel-air
+            "▒": *voxel-cobble
+
+      # clearLocal
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: roadType
+            in: [ local, underpass ]
+        heightmap: ground
+        structure:
+          axes: [ z, y ]
+          blueprint:
+            - "·····"
+            - "·····"
+            - "·····"
+            - "▒···▒"
+          with:
+            "·": *voxel-air
+            "▒": *voxel-cobble
+
+      # clearUnpaved
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: surface
+            in: [ unpaved ]
+        heightmap: ground
+        structure:
+          axes: [ z, y ]
+          blueprint:
+            - "····"
+            - "····"
+            - "····"
+          with:
+            "·": *voxel-air
+
+      # unpaved
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: surface
+            in: [ unpaved ]
+        heightmap: ground
+        structure:
+          axes: [ y ]
+          blueprint: "DGGD"
+          with:
+            "D": *voxel-dirt
+            "G": *voxel-gravel
+
+      # local
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: roadType
+            in: [ local, underpass ]
+        heightmap: ground
+        structure:
+          axes: [ y ]
+          blueprint: "AAA"
+          with:
+            "A": *voxel-paving
+
+      # national
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: roadType
+            in: [ national, roundabout, overpass ]
+        heightmap: ground
+        structure:
+          axes: [ x, y ]
+          blueprint:
+            - "▒▒▒█▒▒▒"
+            - "▒▒▒█▒▒▒"
+            - "▒▒▒▒▒▒▒"
+            - "▒▒▒▒▒▒▒"
+          with:
+            "▒": *voxel-paving
+            "█": *road-paint
+
+      # bridge
+      - type: renderLines2d
+        models:
+          filter:
+            metadata: roadType
+            in: [ bridge ]
+        heightmap: ground
+        structure:
+          axes: [ z, y ]
+          blueprint:
+            - "W      W"
+            - "AAAAAAAA"
+          with:
+            "A": *voxel-paving
+            "W": *voxel-planks
+
+  railway:
+    after:
+      - landcover
+      - roads
+    type: sequence
+    models:
+      type: railways
+    do:
+      - type: fetchData
+        modelType: railways
+        provider:
+          type: wmsFeatureInfo
+          url: https://geoportal.asig.gov.al/service/Rrjete_Transporti/wms
+          layer: linjehekurudh_asig_062025
+          resolution: 1
+          spacing: 50
+          queryRadius: 70
+        retry: 10
+      - type: renderLines2d
+        heightmap: ground
+        structure:
+          axes: [ z, y ]
+          blueprint:
+            - " S S "
+            - "TTTTT"
+          with:
+            "S": *voxel-metal
+            "T":
+              pattern:
+                repeatStructure:
+                  axes: x
+                  blueprint: "WG"
+                  with:
+                    "W": *voxel-planks
+                    "G": *voxel-gravel

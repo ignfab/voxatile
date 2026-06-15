@@ -1,0 +1,10 @@
+# Tuneli Thirrë - Kalimash
+worldName: Tuneli Thirrë - Kalimash
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 42.012744787049904
+    longitude: 20.24962231261709
+  extentX: 1000
+  extentY: 1000

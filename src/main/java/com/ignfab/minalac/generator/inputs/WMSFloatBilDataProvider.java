@@ -37,8 +37,9 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
      * @param layer name of the WMS layer to query
      * @param crs coordinate reference system to use for this source
      * @param envelopeProvider function to use to compute envelopes from bounding boxes
+     * @param token authentication token
      */
-    public WMSFloatBilDataProvider(String baseURL, String layer, CoordinateReferenceSystem crs, EnvelopeProvider envelopeProvider) {
+    public WMSFloatBilDataProvider(String baseURL, String layer, CoordinateReferenceSystem crs, EnvelopeProvider envelopeProvider, String token) {
         this.crs = crs;
         this.envelopeProvider = envelopeProvider;
 
@@ -47,6 +48,7 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
             throw new IllegalArgumentException("Could not retrieve SRS name for layer");
 
         this.baseURL = ParameterizedURL.base(baseURL)
+            .parameter("token", token)
             .parameter("SERVICE", SERVICE)
             .parameter("VERSION", VERSION)
             .parameter("REQUEST", "GetMap")

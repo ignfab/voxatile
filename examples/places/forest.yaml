@@ -1,0 +1,10 @@
+# 
+worldName: Molo Mazrek - Albania
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 42.077547
+    longitude: 19.626442
+  extentX: 1000
+  extentY: 1000

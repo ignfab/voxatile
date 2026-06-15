@@ -31,6 +31,7 @@ public class PopulateHeightmapTask extends ModelTask<FloatMatrixModel> {
     protected void run(FloatMatrixModel model, GenerationTile tile) {
         WritableHeightmap heightmap = tile.heightmap(heightmapSpec);
         WorldBBox2d intersection = tile.limits().to2d().intersection(heightmap.bbox());
+
         // Iterate over matrix and fill heightmap altitude
         for (Matrix2d.Value<Float> value : model) {
             WorldCoords2d c = value.coords();
