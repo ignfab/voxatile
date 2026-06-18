@@ -58,7 +58,6 @@ public class BuildLayoutTaskParams extends TaskParams {
 
     @Override
     public void validate() {
-        at.validate();
         build.forEach(LayoutBuilderParams::validate);
     }
 
