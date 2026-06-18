@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.parameters.utils;
 
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.exc.MismatchedInputException;
 
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -13,14 +14,11 @@ public class WorldBBox3dParamsTest {
         WorldBBox3dParams params;
         WorldBBox3d box;
 
-        params = assertDeserialize("[]");
-        assertThrows(IllegalArgumentException.class, params::validate);
+        assertThrows(MismatchedInputException.class, () -> ParamsTester.deserialize(WorldBBox3dParams.class, "[]"));
 
-        params = assertDeserialize("[1, 2]");
-        assertThrows(IllegalArgumentException.class, params::validate);
+        assertThrows(MismatchedInputException.class, () -> ParamsTester.deserialize(WorldBBox3dParams.class, "[1, 2]"));
 
-        params = assertDeserialize("[1, 2, 3, 4]");
-        assertThrows(IllegalArgumentException.class, params::validate);
+        assertThrows(MismatchedInputException.class, () -> ParamsTester.deserialize(WorldBBox3dParams.class, "[1, 2, 3, 4]"));
 
         params = assertDeserialize("[1, 2, 3]");
         assertDoesNotThrow(params::validate);
