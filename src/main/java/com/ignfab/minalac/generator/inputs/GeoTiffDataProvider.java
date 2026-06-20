@@ -50,7 +50,11 @@ public class GeoTiffDataProvider implements Provider<FloatGeographicDataMatrix2d
     public Provider.Result<FloatGeographicDataMatrix2d> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
         GridCoverage2D grid;
         try {
-            grid = new GeoTiffReader(file, crsOverride == null ? null : new Hints(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crsOverride)).read();
+            // This hint must remain enabled
+            Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, true);
+            if (crsOverride != null)
+                hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crsOverride);
+            grid = new GeoTiffReader(file, hints).read();
         } catch (IOException e) {
             throw new RetryableException(e);
         }
