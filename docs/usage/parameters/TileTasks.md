@@ -15,6 +15,7 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
 * [Tasks operating on world](#tasks-operating-on-world)
   * [`renderHeightmap`](#renderheightmap)
   * [`renderLines`](#renderlines)
+  * [`renderPoints`](#renderpoints)
   * [`renderSurfaces`](#rendersurfaces)
   * [`fillBetweenHeightmapAndMetadata`](#fillbetweenheightmapandmetadata)
   * [`renderBuildings`](#renderbuildings)
@@ -158,6 +159,24 @@ Three-dimensional structures can be used and same rules apply. X-axis is repeate
 The blueprint shows five successive vertical slices of the structure. This will form a sort of long building with windows:
 
 ![Several long building-like structures with glass window, stone top and bottom, floating in the air](img/render-line-zyx.png)
+
+### `renderPoints`
+
+Renders 3d points as a placeable. 
+
+#### Extra parameters
+
+- `models`: [Selection of models](ModelSelection.md) to render (required, models must be convertible to 3d shapes)
+- `place`: [Placeable](Placeables.md) to use (required)
+
+#### Example
+
+```yaml
+type: renderPoints
+models:
+  type: points
+place: default:stone
+```
 
 ### `renderSurfaces`
 
