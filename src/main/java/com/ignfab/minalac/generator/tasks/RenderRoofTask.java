@@ -1,11 +1,14 @@
 package com.ignfab.minalac.generator.tasks;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
 import com.ignfab.minalac.generator.placeables.Placeable;
-import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.LineString2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Segment2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Shape2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.Shape2dVoxelizer;
@@ -66,30 +69,91 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
     }
 
     private void drawHipped(Shape2d shape, GenerationTile tile, int altitude, double slope) {
+
+        Set<Segment2d> straightSegments = new HashSet<>();
+
+        // For test, make some segment straights
+        int ix = 0;
+        for (LineString2d string: shape.lineStrings())
+            for (Segment2d segment: string.segments()) {
+                ix ++;
+                if (ix%300 == 1)
+                    straightSegments.add(segment);
+            }
+
+
         for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(shape))) {
             int x = voxel.coords().x();
             int y = voxel.coords().y();
-            Double distance = null;
-            for (Segment2d segment : Iterables.flatMap(shape.lineStrings(), (lineString) -> lineString.segments())) {
-                double index = segment.nearestPointIndex(x, y);
-                double extra = 0;
-                double d;
-                if (index < 0) {
-                    d = segment.start().squareDistanceTo(x, y);
-                    extra = -index;
-                } else if (index > segment.length()) {
-                    d = segment.end().squareDistanceTo(x, y);
-                    extra = index - segment.length();
-                } else {
-                    d = segment.signedDistanceTo(x, y);
-                    d = d * d;
+
+            Segment2d selectedSegment = null;
+            double lineDistance = 0.0;
+
+            for (LineString2d string: shape.lineStrings())
+                for (int index = 0; index < string.size(); index++) {
+
+                    Segment2d segment = string.get(index);
+
+                    double d = segment.signedDistanceTo(x, y); // * Slope
+
+                    // Distance being negative means we are outside the shape
+                    // (Shape should be correctly oriented)
+                    if (Math.round(d) < 0) continue;
+
+                    // No roof surface for straight segments
+                    if (straightSegments.contains(segment)) continue;
+
+                    // We have to "cut" the roof plane according to neightbor segments
+
+                    // Computation is similar for previous and next segment:
+                    // If other segment oriented inside the shape, we discart point
+                    // if it's closer to the other segment line.
+                    // Otherwise, we do the opposite, discard it if it's closer to
+                    // cutrrent segment line.
+                    // TODO: previous explanation outdated
+
+                    Segment2d previousSegment = string.get(index - 1);
+                    if (previousSegment != null) {
+                        double dd = previousSegment.signedDistanceTo(x,y);
+                        // TODO: Maybe "concave" ? Not sure of signs
+                        boolean convex = segment.direction().determinant(previousSegment.direction()) < 0;
+                        if (straightSegments.contains(previousSegment)) {
+                            // Straight segment cuts current on own axis
+                            if (convex ^ dd < 0)
+                                continue;
+                        } else {
+                            // Non straight segment cuts current on bisector
+                            if (convex ^ dd < d)
+                                continue;
+                        }
+                    }
+
+                   Segment2d nextSegment = string.get(index + 1);
+                    if (nextSegment != null) {
+                        double dd = nextSegment.signedDistanceTo(x,y);
+                        // TODO: Maybe "concave" ? Not sure of signs
+                        boolean convex = segment.direction().determinant(nextSegment.direction()) > 0;
+                        if (straightSegments.contains(nextSegment)) {
+                            // Straight segment cuts current on own axis
+                            if (convex ^ dd < 0)
+                                continue;
+                        } else {
+                            // Non straight segment cuts current on bisector
+                            if (convex ^ dd < d)
+                                continue;
+                        }
+                    }
+
+                    // Ok, now, we select segment if it has a lower distance than previously
+                    if (selectedSegment == null || d < lineDistance) {
+                        lineDistance = d;
+                        selectedSegment = segment;
+                    }
                 }
 
-                if (d >= (extra * extra) && (distance == null || distance > d))
-                    distance = d;
-            }
-            if (distance != null)
-                placeable.place(tile.voxels(), x, y, altitude + (int) Math.round(slope * Math.sqrt(distance)));
+            if (selectedSegment != null)
+                placeable.place(tile.voxels(), x, y, altitude + (int) Math.round(slope * lineDistance));
+
         }
     }
 
@@ -110,7 +174,7 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
                 drawFlat(shape, tile, altitude);
                 break;
             case HIPPED:
-                drawHipped(shape, tile, altitude, 1.0);
+                drawHipped(shape, tile, altitude, 1.0);                            // Skip what is on the next neighbour segment plane
                 break;
             default:
                 break;
