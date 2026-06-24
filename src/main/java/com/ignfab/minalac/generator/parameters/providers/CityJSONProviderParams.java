@@ -11,6 +11,8 @@ import org.geotools.referencing.CRS;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.CityJSONDataProvider;
 import com.ignfab.minalac.generator.inputs.Provider;
+import com.ignfab.minalac.generator.parameters.processors.CityJSONBuildingProcessorParams;
+import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 
 /**
@@ -53,5 +55,10 @@ public class CityJSONProviderParams extends ProviderParams {
             throw new IllegalArgumentException("File \"%s\" does not exist or is not readable".formatted(file.getAbsolutePath()));
 
         return new CityJSONDataProvider(file, crs, generation::getEnvelopeForCRS);
+    }
+
+    @Override
+    public ProcessorParams defaultProcessor() {
+        return new CityJSONBuildingProcessorParams();
     }
 }

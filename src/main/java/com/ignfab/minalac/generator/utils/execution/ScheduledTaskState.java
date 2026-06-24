@@ -31,7 +31,7 @@ public enum ScheduledTaskState {
     FAILED;
 
     public String toString() {
-        return switch(this){
+        return switch (this) {
             case WAITING   -> "Waiting";
             case LAUNCHING -> "Launching";
             case RUNNING   -> "Running";

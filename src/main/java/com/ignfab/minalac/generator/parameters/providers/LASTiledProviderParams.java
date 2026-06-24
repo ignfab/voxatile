@@ -13,6 +13,7 @@ import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.LASPointAndHeader;
 import com.ignfab.minalac.generator.inputs.LASTiledDataProvider;
 import com.ignfab.minalac.generator.inputs.Provider;
+import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
 
 /**
  * Parameters for LAS tiled providers.
@@ -83,5 +84,10 @@ public class LASTiledProviderParams extends ProviderParams {
             throw new IllegalArgumentException("Directory \"%s\" does not exist".formatted(tiles.getAbsolutePath()));
 
         return new LASTiledDataProvider(tiles, tilesFilenameTemplate, tileSize, tileOffsetX, tileOffsetY, crsOverride, generation::getEnvelopeForCRS);
+    }
+
+    @Override
+    public ProcessorParams defaultProcessor() {
+        return null;
     }
 }

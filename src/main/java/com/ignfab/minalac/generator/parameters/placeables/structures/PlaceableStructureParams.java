@@ -29,7 +29,7 @@ public final class PlaceableStructureParams extends PlaceableParams {
 
     private final List<Variant> params;
 
-    private PlaceableStructureParams(List<Variant> params) {
+    public PlaceableStructureParams(List<Variant> params) {
         this.params = params;
     }
 

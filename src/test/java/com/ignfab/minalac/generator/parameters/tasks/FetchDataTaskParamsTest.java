@@ -1,9 +1,8 @@
 package com.ignfab.minalac.generator.parameters.tasks;
 
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.junit.jupiter.api.Test;
-import tools.jackson.databind.cfg.MapperBuilder;
-import tools.jackson.databind.jsontype.NamedType;
-import tools.jackson.dataformat.yaml.YAMLMapper;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.Provider;
@@ -43,11 +42,12 @@ public class FetchDataTaskParamsTest {
 
     @Test
     public void testDefaultProcessor() {
-        MapperBuilder<?, ?> builder = YAMLMapper.builder()
+        YAMLMapper mapper = YAMLMapper.builder()
             .registerSubtypes(new NamedType(FetchDataTaskParams.class, "fetchData"))
             .registerSubtypes(new NamedType(TestingProviderWithoutDefaultParams.class, "testProviderWithoutDefault"))
             .registerSubtypes(new NamedType(TestingProviderWithDefaultParams.class, "testProviderWithDefault"))
-            .registerSubtypes(new NamedType(TestingProcessorParams.class, "testProcessor"));
+            .registerSubtypes(new NamedType(TestingProcessorParams.class, "testProcessor"))
+            .build();
 
         FetchDataTaskParams params;
 
@@ -56,7 +56,7 @@ public class FetchDataTaskParamsTest {
             modelType: test
             provider:
                 type: testProviderWithoutDefault
-        """, builder));
+        """, mapper));
 
         assertNotNull(params.provider);
         assertNull(params.processor);
@@ -68,7 +68,7 @@ public class FetchDataTaskParamsTest {
                 type: testProviderWithoutDefault
             processor:
                 type: testProcessor
-        """, builder));
+        """, mapper));
 
         assertNotNull(params.provider);
         assertNotNull(params.processor);
@@ -78,7 +78,7 @@ public class FetchDataTaskParamsTest {
             modelType: test
             provider:
                 type: testProviderWithDefault
-        """, builder));
+        """, mapper));
 
         assertNotNull(params.provider);
         assertEquals(TestingProviderWithDefaultParams.DEFAULT_PROCESSOR, params.processor);
@@ -90,7 +90,7 @@ public class FetchDataTaskParamsTest {
                 type: testProviderWithDefault
             processor:
                 type: testProcessor
-        """, builder));
+        """, mapper));
 
         assertNotNull(params.provider);
         assertNotNull(params.processor);

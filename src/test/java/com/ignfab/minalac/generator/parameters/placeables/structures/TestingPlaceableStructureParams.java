@@ -20,21 +20,22 @@ public final class TestingPlaceableStructureParams {
     public static final PlaceableStructureParams INVALID;
 
     static {
-        VALID = new PlaceableStructureParams();
-        VALID.params = List.of(new Valid());
-        INVALID = new PlaceableStructureParams();
-        INVALID.params = List.of(new Invalid());
+        VALID = new PlaceableStructureParams(List.of(new Valid()));
+        INVALID = new PlaceableStructureParams(List.of(new Invalid()));
     }
 
     private static final class Valid extends PlaceableStructureParams.Variant {
-        public void apply(Seed seed, PlaceableStructure.Builder structureBuilder) {}
+        @Override
+        public void apply(Seed seed, PlaceableStructure structure) {}
     }
 
     private static final class Invalid extends PlaceableStructureParams.Variant {
         public void validate() {
             throw new IllegalArgumentException("Invalid structure");
         }
-        public void apply(Seed seed, PlaceableStructure.Builder structureBuilder) {}
+
+        @Override
+        public void apply(Seed seed, PlaceableStructure structure) {}
     }
 
     private TestingPlaceableStructureParams() {}

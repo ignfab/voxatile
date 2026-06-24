@@ -13,6 +13,7 @@ import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.inputs.LASDataProvider;
 import com.ignfab.minalac.generator.inputs.LASPointAndHeader;
 import com.ignfab.minalac.generator.inputs.Provider;
+import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 
 /**
@@ -60,5 +61,10 @@ public class LASProviderParams extends ProviderParams {
             throw new IllegalArgumentException("File \"%s\" does not exist".formatted(file.getAbsolutePath()));
 
         return new LASDataProvider(file, crsOverride, generation::getEnvelopeForCRS);
+    }
+
+    @Override
+    public ProcessorParams defaultProcessor() {
+        return null;
     }
 }

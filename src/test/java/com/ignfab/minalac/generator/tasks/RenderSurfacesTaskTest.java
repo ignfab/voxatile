@@ -50,7 +50,6 @@ class RenderSurfacesTaskTest {
         tile.models().add("testing", List.of(new TestingRectangleShape2dModel(modelBbox)));
 
         // Add one model covering the whole map with INSIDE voxels
-        tile.models().add("testing", new TestingRectangleShape2dModel(modelBbox));
 
         new RenderSurfacesTask(modelSelection, getZ, voxel).run(tile);
 
