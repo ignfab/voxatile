@@ -1,15 +1,25 @@
 package com.ignfab.minalac.generator.inputs;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -27,6 +37,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.coordinates.EnvelopeProvider;
 import com.ignfab.minalac.generator.utils.iterator.Iterators;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -38,6 +49,8 @@ public class OverpassProvider implements Provider<OsmData> {
     private final URI url;
     private final EnvelopeProvider envelopeProvider;
     private final String query;
+
+    private static final File PERSISTENT_CACHE_DIR = new File("overpass-cache");
 
     /**
      * Creates a new {@code OverpassProvider}.
@@ -73,34 +86,68 @@ public class OverpassProvider implements Provider<OsmData> {
 
         String body = "data=" + URLEncoder.encode(data, StandardCharsets.UTF_8);
 
-        HttpClient client = HttpClient.newHttpClient();
+        InputStream stream;
+        File cache = cache(body);
+        if (FileHelpers.isReadableRegularFile(cache)) {
+            System.out.println("Cache hit: " + cache.getAbsolutePath());
+            try {
+                stream = new FileInputStream(cache);
+            } catch (FileNotFoundException e) {
+                throw new GenerationFailedException(e);
+            }
+        } else {
+            System.out.println("Cache miss: " + cache.getAbsolutePath());
+            HttpClient client = HttpClient.newHttpClient();
 
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(url)
-            .POST(HttpRequest.BodyPublishers.ofString(body))
-            .build();
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .POST(HttpRequest.BodyPublishers.ofString(body))
+                .build();
 
-        HttpResponse<InputStream> response;
+            HttpResponse<InputStream> response;
 
-        try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
-        } catch (IOException | InterruptedException e) {
-            throw new RetryableException("Error opening connection", e);
-        }
+            try {
+                response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+            } catch (IOException | InterruptedException e) {
+                throw new RetryableException("Error opening connection", e);
+            }
 
-        int status = response.statusCode();
+            int status = response.statusCode();
 
-        if (status >= 400) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(response.body()))) {
-                System.err.printf("%d status code from Overpass%n", status);
-                System.err.println(reader.lines().collect(Collectors.joining("\n")));
-            } catch (IOException ignored) {}
+            if (status >= 400) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(response.body()))) {
+                    System.err.printf("%d status code from Overpass%n", status);
+                    System.err.println(reader.lines().collect(Collectors.joining("\n")));
+                } catch (IOException ignored) {}
 
-            throw new RetryableException("%d status code from Overpass".formatted(status));
+                throw new RetryableException("%d status code from Overpass".formatted(status));
+            }
+            File parent = cache.getParentFile();
+            File tmp = new File(parent, cache.getName() + ".tmp");
+            try {
+                if (!parent.exists() && !parent.mkdirs())
+                    throw new IOException("Failed to create directory: " + parent.getAbsolutePath());
+                if (!tmp.createNewFile())
+                    throw new IOException("Failed to create file: " + tmp.getAbsolutePath());
+            } catch (IOException e) {
+                throw new GenerationFailedException(e);
+            }
+            try (InputStream is = response.body(); OutputStream os = new FileOutputStream(tmp)) {
+                is.transferTo(os);
+            } catch (IOException e) {
+                throw new RetryableException(e);
+            }
+            try {
+                Files.move(tmp.toPath(), cache.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                stream = new FileInputStream(cache);
+            } catch (IOException e) {
+                boolean ignored = cache.delete();
+                throw new GenerationFailedException(e);
+            }
         }
 
         InMemoryMapDataSet dataset;
-        try (InputStream stream = response.body()) {
+        try (stream) {
             dataset = MapDataSetLoader.read(new OsmXmlReader(stream, false), true, true, true);
         } catch (OsmInputException e) {
             throw new GenerationFailedException(e);
@@ -155,6 +202,19 @@ public class OverpassProvider implements Provider<OsmData> {
             OsmEntity result = next;
             moveOn();
             return result;
+        }
+    }
+
+    private File cache(String request) throws GenerationFailedException {
+        return new File(new File(PERSISTENT_CACHE_DIR, md5(url.toString())), md5(request) + ".xml");
+    }
+
+    private static String md5(String input) throws GenerationFailedException {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            return HexFormat.of().formatHex(md.digest(input.getBytes(StandardCharsets.UTF_8)));
+        } catch (NoSuchAlgorithmException e) {
+            throw new GenerationFailedException(e);
         }
     }
 }
