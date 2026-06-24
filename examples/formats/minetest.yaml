@@ -179,3 +179,11 @@ references:
         "=": default:fence_rail_wood
       zOffset: 1
 
+  - &wms-retry-policy
+    retry: 3
+    retryDelay: 10
+  - &wfs-retry-policy
+    <<: *wms-retry-policy
+  - &overpass-retry-policy
+    retry: 5
+    retryDelay: 15

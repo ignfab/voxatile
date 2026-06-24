@@ -18,8 +18,7 @@ forEachTile:
       type: wmsFloat
       url: https://data.geopf.fr/wms-r/wms
       layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
-    processor:
-      type: floatMatrix
+    <<: *wms-retry-policy
 
   fetchAltitudeLidar:
     type: fetchData
@@ -28,10 +27,7 @@ forEachTile:
       type: wmsFloat
       url: https://data.geopf.fr/wms-r
       layer: IGNF_LIDAR-HD_MNT_ELEVATION.ELEVATIONGRIDCOVERAGE.LAMB93
-    retry: 2
-    retryDelay: 10
-    processor:
-      type: floatMatrix
+    <<: *wms-retry-policy
 
   setAltitude:
     after: fetchAltitude
@@ -101,8 +97,7 @@ forEachTile:
       type: wfs
       url: https://data.geopf.fr/wfs/wfs
       features: BDTOPO_V3:zone_d_activite_ou_d_interet
-    processor:
-      type: geoToolsVector
+    <<: *wfs-retry-policy
 
   renderPlace:
     after:
@@ -146,10 +141,7 @@ forEachTile:
       type: overpass
       url: &overpass-instance https://overpass.private.coffee/api/interpreter
       query: way[landuse="grass"]
-    retry: 5
-    retryDelay: 10
-    processor:
-      type: osm
+    <<: *overpass-retry-policy
 
   renderGrassGround:
     after:
@@ -185,8 +177,7 @@ forEachTile:
       type: wfs
       url: https://data.geopf.fr/wfs/wfs
       features: BDTOPO_V3:surface_hydrographique
-    processor:
-      type: geoToolsVector
+    <<: *wfs-retry-policy
 
   flattenWater:
     after:
@@ -277,14 +268,13 @@ forEachTile:
     modelType: building-city
     provider:
       type: cityjson
-      filePath: /home/TSzanto/hericraft2026/bati.city.json
-    processor:
-      type: cityjsonBuilding
+      filePath: data/bati-hericraft.city.json
 
   renderBati3dGround:
     after:
       - fetchBatiCity
       - ground
+      - roads
     type: renderBuildings3d
     models:
       type: building-city
@@ -303,7 +293,7 @@ forEachTile:
         not:
           or:
             - metadata: nature
-              in: [ "Chapelle", "Eglise" ]
+              in: [ "Chapelle", "Eglise", "Château" ]
             - metadata: usage_1
               in: [ "Résidentiel", "Commercial et services" ]
     surfaceType: wall
@@ -316,7 +306,7 @@ forEachTile:
       type: building-city
       filter:
         metadata: nature
-        in: [ "Chapelle", "Eglise" ]
+        in: [ "Chapelle", "Eglise", "Château" ]
     surfaceType: wall
     place: *buildings-walls-church
 
@@ -326,8 +316,12 @@ forEachTile:
     models:
       type: building-city
       filter:
-        metadata: usage_1
-        equals: "Résidentiel"
+        and:
+          - metadata: usage_1
+            equals: "Résidentiel"
+          - not:
+              metadata: nature
+              in: [ "Chapelle", "Eglise", "Château" ]
     surfaceType: wall
     place: *buildings-walls-residential
 
@@ -337,8 +331,12 @@ forEachTile:
     models:
       type: building-city
       filter:
-        metadata: usage_1
-        equals: "Commercial et services"
+        and:
+          - metadata: usage_1
+            equals: "Commercial et services"
+          - not:
+              metadata: nature
+              in: [ "Chapelle", "Eglise", "Château" ]
     surfaceType: wall
     place: *buildings-walls-commercial
 
@@ -361,7 +359,7 @@ forEachTile:
             - metadata: materiaux_de_la_toiture
               in: [ "3", "03", "30", "33", "13", "31", "12", "21", "2", "02", "20", "22", "4", "04", "44", "40" ]
             - metadata: nature
-              in: [ "Chapelle", "Eglise" ]
+              in: [ "Chapelle", "Eglise", "Château" ]
     surfaceType: roof
     place:
       structure:
@@ -403,7 +401,7 @@ forEachTile:
       type: building-city
       filter:
         metadata: nature
-        in: [ "Chapelle", "Eglise" ]
+        in: [ "Chapelle", "Eglise", "Château" ]
     surfaceType: roof
     place:
       structure:
@@ -461,8 +459,7 @@ forEachTile:
       type: wfs
       url: https://data.geopf.fr/wfs/wfs
       features: BDTOPO_V3:troncon_de_route
-    processor:
-      type: geoToolsVector
+    <<: *wfs-retry-policy
     postProcessing:
       # Discard fictive features (should be done on all BDTOPO features)
       - type: conditional
@@ -524,7 +521,7 @@ forEachTile:
           else:
             type: default
             metadata: width
-            value: 2
+            value: 3
             as: integer
 
   cleanRoads:
@@ -590,7 +587,8 @@ forEachTile:
             in: [ "Chemin", "Sentier", "Route empierrée" ]
         stickToHeightmap: *roads-ground
         width:
-          round: width
+          round:
+            product: [width, 0.7]
         repeated:
           put: *path
           at: [0, 0, 0]
@@ -602,7 +600,8 @@ forEachTile:
             equals: Piste cyclable
         stickToHeightmap: *roads-ground
         width:
-          round: width
+          round:
+            product: [width, 0.7]
         repeated:
           put: *cycle-path
           at: [0, 0, 0]
@@ -614,7 +613,8 @@ forEachTile:
             equals: "Escalier"
         stickToHeightmap: *roads-ground
         width:
-          round: width
+          round:
+            product: [width, 0.7]
         repeated:
           put: *stairs
           at: [0, 0, 0]
@@ -633,7 +633,8 @@ forEachTile:
                   equals: Piste cyclable
         stickToHeightmap: *roads-ground
         width:
-          round: width
+          round:
+            product: [width, 0.7]
         repeated:
           put: *other-path
           at: [0, 0, 0]
@@ -659,7 +660,8 @@ forEachTile:
       # Sidewalks
       - type: renderDynamicLines
         width:
-          round: width
+          round:
+            product: [width, 0.7]
         repeated:
           put: nothing
           at: [0, 0, -2..0]
@@ -672,7 +674,8 @@ forEachTile:
       # Road surface
       - type: renderDynamicLines
         width:
-          round: width
+          round:
+            product: [width, 0.7]
         repeated:
           - put: *road-tar
             at: [ 0, 0, 0 ]
@@ -730,7 +733,8 @@ forEachTile:
       # Sidewalks
       - type: renderDynamicLines
         width:
-          round: width
+          round:
+            product: [width, 0.7]
         repeated:
           put: nothing
           at: [0, 0, -2..0]
@@ -743,7 +747,8 @@ forEachTile:
       # Road surface
       - type: renderDynamicLines
         width:
-          round: width
+          round:
+            product: [width, 0.7]
         repeated:
           - put: *road-tar
             at: [ 0, 0, 0 ]
@@ -797,10 +802,7 @@ forEachTile:
           type: overpass
           url: *overpass-instance
           query: way[footway="crossing"]
-        retry: 5
-        retryDelay: 10
-        processor:
-          type: osm
+        <<: *overpass-retry-policy
 
       # Wipe road lines
       - type: renderLines
@@ -838,17 +840,14 @@ forEachTile:
       type: overpass
       url: *overpass-instance
       query: node[natural="tree"]
-    retry: 5
-    retryDelay: 10
-    processor:
-      type: osm
+    <<: *overpass-retry-policy
 
   fetchLidar:
     type: fetchData
     modelType: lidarhd
     provider:
       type: lasTiled
-      tilesPath: /home/TSzanto/hericraft2026/lidar
+      tilesPath: data/lidar
       tilesFilenameTemplate: LHD_FXX_%04d_%04d_PTS_LAMB93_IGN69.copc.laz
       tileSize: 1000
       tileOffsetY: 1000
@@ -918,52 +917,52 @@ forEachTile:
       - renderVegetation
 
   # Metro stations
-  metroStations:
-    type: sequence
-    using: ground
-    do:
-      - type: fetchData
-        modelType: metro
-        provider:
-          type: gpkg
-          filePath: data/metro.gpkg
-          typeName: metro-parkings
-        processor:
-          type: geoToolsVector
-
-      - type: schedule
-        after: ground
-        models:
-          type: metro
-        do:
-          computeAltitude:
-            type: computeHeightmapStats
-            heightmap: ground
-            compute:
-              maximum: surface-altitude
-
-          renderSteps:
-            type: renderSurfaces
-            heightmap: ground
-            place: *metro-station-steps
-
-          # Here, altitude is raised at maximum entrance level so decoration will be placed at that level.
-          # It would be better to limit that to entrance walls but we don't have appropriate task yet.
-          updateGround:
-            after: [ renderSteps, computeAltitude ]
-            type: setHeightmap
-            set: surface-altitude
-            to: ground
-
-          renderWalls:
-            after: updateGround
-            type: renderLines
-            structure:
-              - at: [0..1, 0..1, 0]
-                put: *metro-station-walls-top
-              - at: [0..1, 0..1, -10..-1]
-                put: *metro-station-walls
-            stickToAltitude: surface-altitude
+#  metroStations:
+#    type: sequence
+#    using: ground
+#    do:
+#      - type: fetchData
+#        modelType: metro
+#        provider:
+#          type: gpkg
+#          filePath: data/metro.gpkg
+#          typeName: metro-parkings
+#        processor:
+#          type: geoToolsVector
+#
+#      - type: schedule
+#        after: ground
+#        models:
+#          type: metro
+#        do:
+#          computeAltitude:
+#            type: computeHeightmapStats
+#            heightmap: ground
+#            compute:
+#              maximum: surface-altitude
+#
+#          renderSteps:
+#            type: renderSurfaces
+#            heightmap: ground
+#            place: *metro-station-steps
+#
+#          # Here, altitude is raised at maximum entrance level so decoration will be placed at that level.
+#          # It would be better to limit that to entrance walls but we don't have appropriate task yet.
+#          updateGround:
+#            after: [ renderSteps, computeAltitude ]
+#            type: setHeightmap
+#            set: surface-altitude
+#            to: ground
+#
+#          renderWalls:
+#            after: updateGround
+#            type: renderLines
+#            structure:
+#              - at: [0..1, 0..1, 0]
+#                put: *metro-station-walls-top
+#              - at: [0..1, 0..1, -10..-1]
+#                put: *metro-station-walls
+#            stickToAltitude: surface-altitude
 
   # Fences
 
@@ -974,16 +973,13 @@ forEachTile:
       type: overpass
       url: *overpass-instance
       query: way[barrier="fence"]
-    retry: 5
-    retryDelay: 10
-    processor:
-      type: osm
+    <<: *overpass-retry-policy
 
   renderFences:
     after:
       - fetchFences
       - ground
-      - metroStations
+      #- metroStations
     type: renderLines
     models:
       type: fences
@@ -1002,10 +998,7 @@ forEachTile:
       type: overpass
       url: *overpass-instance
       query: node[amenity="bench"]
-    retry: 5
-    retryDelay: 10
-    processor:
-      type: osm
+    <<: *overpass-retry-policy
 
   renderBenches:
     after:
@@ -1100,10 +1093,7 @@ forEachTile:
       type: overpass
       url: *overpass-instance
       query: node[emergency="fire_hydrant"]
-    retry: 5
-    retryDelay: 10
-    processor:
-      type: osm
+    <<: *overpass-retry-policy
 
   renderFireHydrants:
     after:
@@ -1122,10 +1112,7 @@ forEachTile:
       type: overpass
       url: *overpass-instance
       query: node[amenity="waste_basket"]
-    retry: 5
-    retryDelay: 10
-    processor:
-      type: osm
+    <<: *overpass-retry-policy
 
   renderTrashCans:
     after:
@@ -1147,10 +1134,7 @@ forEachTile:
       type: overpass
       url: *overpass-instance
       query: node[tourism="picnic_site"]
-    retry: 5
-    retryDelay: 10
-    processor:
-      type: osm
+    <<: *overpass-retry-policy
 
   renderPicNic:
     after:
