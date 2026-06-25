@@ -97,6 +97,7 @@ public class MCVoxelWorld extends VoxelWorld {
 
     @SuppressWarnings({ "checkstyle:MethodLength", "checkstyle:AvoidNestedBlocks", "checkstyle:LocalVariableName" })
     private CompoundTag createLevelData() {
+        DataVersion mcVersion = DataVersion.JAVA_1_21_11; // DataVersion.latest();
         long seed = new Random().nextLong();
 
         CompoundTag root = new CompoundTag();
@@ -130,7 +131,7 @@ public class MCVoxelWorld extends VoxelWorld {
                 }
                 data.put("DataPacks", dataPacks);
 
-                data.putInt("DataVersion", DataVersion.latest().id());
+                data.putInt("DataVersion", mcVersion.id());
 
                 data.putLong("DayTime", 0);
 
@@ -262,7 +263,7 @@ public class MCVoxelWorld extends VoxelWorld {
                     }
                     player.put("Brain", brain);
 
-                    player.putInt("DataVersion", DataVersion.latest().id());
+                    player.putInt("DataVersion", mcVersion.id());
 
                     player.putShort("DeathTime", (short) 0);
 
@@ -385,8 +386,8 @@ public class MCVoxelWorld extends VoxelWorld {
                 data.putInt("version", 19133);
                 CompoundTag version = new CompoundTag();
                 {
-                    version.putInt("Id", DataVersion.latest().id());
-                    version.putString("Name", DataVersion.latest().toSimpleString());
+                    version.putInt("Id", mcVersion.id());
+                    version.putString("Name", mcVersion.toSimpleString());
                     version.putString("Series", "main");
                     version.putBoolean("Snapshot", false);
                 }
