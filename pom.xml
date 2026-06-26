@@ -6,12 +6,16 @@
 
     <groupId>com.ignfab</groupId>
     <artifactId>minalac-generator</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <!-- Those are the only allowed properties here: https://maven.apache.org/guides/mini/guide-maven-ci-friendly.html -->
+    <version>${revision}${sha1}${changelist}</version>
     <name>minalac-generator</name>
     <description>Minecraft/Minetest world generator from real world geographic data</description>
     <url>https://www.ign.fr/minecraft</url>
 
     <properties>
+        <revision>1.0</revision>
+        <changelist>-SNAPSHOT</changelist>
+        <sha1/>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>

@@ -23,7 +23,26 @@ jobs:
           java-version: 17
           distribution: temurin
           cache: maven
+      - name: Compute sha1 Maven option
+        id: compute-sha1
+        run: |
+          branch="${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+          echo "On branch: ${branch}"
+          if [ "$branch" == "${{ github.event.repository.default_branch }}" ]; then
+            sha1=""
+          else
+            sha1="-${branch//\//-}"
+          fi
+          echo "Computed sha1: ${sha1}"
+          echo "sha1=${sha1}" >> $GITHUB_OUTPUT
       - name: Publish package
-        run: mvn --batch-mode deploy --no-transfer-progress --update-snapshots -Dmaven.test.skip=true deploy
+        run: >-
+          mvn \
+            --batch-mode \
+            --no-transfer-progress \
+            --update-snapshots \
+            -Dmaven.test.skip=true \
+            -Dsha1=${{ steps.compute-sha1.outputs.sha1 }} \
+            deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
