@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.tasks;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 import com.ignfab.minalac.generator.generation.GenerationTile;
@@ -62,25 +62,7 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
         this.heightMetadata = heightMetadata;
     }
 
-    private void drawFlat(Shape2d shape, GenerationTile tile, int altitude) {
-        for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(shape))) {
-            placeable.place(tile.voxels(),  voxel.coords().x(), voxel.coords().y(), altitude);
-        }
-    }
-
-    private void drawHipped(Shape2d shape, GenerationTile tile, int altitude, double slope) {
-
-        Set<Segment2d> straightSegments = new HashSet<>();
-
-        // For test, make some segment straights
-        int ix = 0;
-        for (LineString2d string: shape.lineStrings())
-            for (Segment2d segment: string.segments()) {
-                ix ++;
-                if (ix%300 == 1)
-                    straightSegments.add(segment);
-            }
-
+    private void drawSlopes(GenerationTile tile, Shape2d shape, Set<Segment2d> straightSegments, int altitude, double slope) {
 
         for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(shape))) {
             int x = voxel.coords().x();
@@ -157,6 +139,30 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
         }
     }
 
+
+    private void drawFlat(GenerationTile tile, Shape2d shape, int altitude) {
+        for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(shape))) {
+            placeable.place(tile.voxels(),  voxel.coords().x(), voxel.coords().y(), altitude);
+        }
+    }
+
+    private void drawHipped(GenerationTile tile, Shape2d shape, int altitude, double slope) {
+        drawSlopes(tile, shape, Collections.emptySet(), altitude, slope);
+    }
+
+/*
+        Set<Segment2d> straightSegments = new HashSet<>();
+
+        // For test, make some segment straights
+        int ix = 0;
+        for (LineString2d string: shape.lineStrings())
+            for (Segment2d segment: string.segments()) {
+                ix ++;
+                if (ix%300 == 1)
+                    straightSegments.add(segment);
+            }
+*/
+
     @Override
     protected void run(Shape2dConvertibleModel model, GenerationTile tile) {
 
@@ -171,10 +177,10 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
 
         switch (type) {
             case FLAT:
-                drawFlat(shape, tile, altitude);
+                drawFlat(tile, shape, altitude);
                 break;
             case HIPPED:
-                drawHipped(shape, tile, altitude, 1.0);                            // Skip what is on the next neighbour segment plane
+                drawHipped(tile, shape, altitude, 1.0);                            // Skip what is on the next neighbour segment plane
                 break;
             default:
                 break;
