@@ -9,9 +9,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+import org.geotools.api.geometry.Position;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.api.referencing.operation.TransformException;
+import org.geotools.geometry.Position2D;
+import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import tools.jackson.databind.JsonNode;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.utils.random.Seed;
+import com.ignfab.minalac.generator.world.VoxelWorld;
 
 /**
  * GenerationParams represents the parameters used during the generation.
@@ -43,17 +53,20 @@ public class GenerationParams {
      */
     @JsonSetter(nulls = Nulls.SKIP)
     public Double verticalScale = 1.0;
+
     /**
      * The horizontal scale (horizontal size of voxel in meters).
      * This field is optional. (Default value: 1.0)
      */
     @JsonSetter(nulls = Nulls.SKIP)
     public Double horizontalScale = 1.0;
+
     /**
      * The area of generation.
      * This field is required during deserialization.
      */
     public Area area;
+
     /**
      * The CRS used when projecting in the world.
      * This field is optional.
@@ -76,11 +89,7 @@ public class GenerationParams {
     /**
      * Declarations of stored heightmaps used during the generation, by name (optional).
      */
-    @JsonSetter(
-        nulls = Nulls.SKIP,
-        // To prevent null values on required field of an element of the map.
-        contentNulls = Nulls.FAIL
-    )
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.FAIL)
     public Map<String, HeightmapDeclarationParams> heightmaps = new LinkedHashMap<>();
 
     /**
@@ -137,7 +146,45 @@ public class GenerationParams {
      * @return the corresponding {@code Generation}
      */
     public Generation create(File destination, Integer maxTileSize) {
-        return GenerationCreator.create(destination, this, maxTileSize);
+        // TODO : If not provided its default value should be calculated by finding the appropriated projected CRS for the provided center point.
+        // At the moment the default value is EPSG:2154
+        CoordinateReferenceSystem targetCrs;
+        double[] center;
+        try {
+            targetCrs = CRS.decode(crs == null ? "EPSG:2154" : crs);
+            MathTransform mathTransform = CRS.findMathTransform(DefaultGeographicCRS.WGS84, targetCrs);
+            Position position = new Position2D(DefaultGeographicCRS.WGS84, area.center.longitude, area.center.latitude);
+            center = mathTransform.transform(position, position).getCoordinate();
+        } catch (FactoryException e) {
+            throw new RuntimeException("Wasn't able to decode the CRS code", e);
+        } catch (TransformException e) {
+            throw new RuntimeException("Wasn't able to convert the coordinates", e);
+        }
+
+        VoxelWorld world = format.createWorld(destination);
+        world.getMetadata().setWorldName(worldName);
+        Generation generation = new Generation(
+            world,
+            new Seed(seed),
+            targetCrs,
+            center[0],
+            center[1],
+            area.extentX,
+            area.extentY,
+            horizontalScale,
+            verticalScale,
+            Math.toRadians(area.angle),
+            maxTileSize == null || maxTileSize <= 0 ? Math.max(area.extentX, area.extentY) : maxTileSize
+        );
+
+        heightmaps.forEach((name, heightmapParams) ->
+            generation.heightmaps().add(heightmapParams.create(name))
+        );
+
+        // ForEachTile scheduling
+        forEachTile.populate(generation, generation.scheduler());
+
+        return generation;
     }
 
     /**
