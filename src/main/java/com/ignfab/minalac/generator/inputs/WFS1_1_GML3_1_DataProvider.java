@@ -180,7 +180,10 @@ public class WFS1_1_GML3_1_DataProvider implements Provider<SimpleFeature> {
             }
 
             // Invalidate schema declaration because GML version 3.1 is not used in this schema (version is unspecified, defaulting to 3.2)
-            String string = new String(bytes).replace("http://BDTOPO_V3", "explicitly-invalid");
+            String string = new String(bytes)
+                .replace("http://BDTOPO_V3", "explicitly-invalid")
+                .replace("http://RPG.LATEST", "explicitly-invalid")
+                .replace("http://AOC-VITICOLES", "explicitly-invalid");
             stream = new ByteArrayInputStream(string.getBytes());
             try {
                 // This is the "clean but not working" (see below) way to do things:
