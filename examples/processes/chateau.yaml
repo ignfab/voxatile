@@ -88,7 +88,11 @@ forEachTile:
     place:
       structure:
         - put: *underground
-          at: [0, 0, -20..0]
+          at: [0, 0, -20..-4]
+        - put: *dirt
+          at: [0, 0, -3..-1]
+        - put: *grass
+          at: [0, 0, 0]
 
   fetchZoneActivite:
     type: fetchData
@@ -140,7 +144,7 @@ forEachTile:
     provider:
       type: overpass
       url: &overpass-instance https://overpass.private.coffee/api/interpreter
-      query: way[landuse="grass"]
+      query: ( way[landuse="grass"]; way[leisure="garden"]; way[leisure="park"]; )
     <<: *overpass-retry-policy
 
   renderGrassGround:
@@ -167,6 +171,172 @@ forEachTile:
     after:
       - renderSquareGround
       - renderGrassGround
+
+  # Fields
+
+  fields:
+    type: schedule
+    using: ground
+    do:
+      fetchFields:
+        type: fetchData
+        modelType: field
+        provider:
+          type: wfs
+          url: https://data.geopf.fr/wfs/wfs
+          features: RPG.LATEST:parcelles_graphiques
+        <<: *wfs-retry-policy
+        postProcessing:
+          - type: copy
+            metadata: code_cultu
+            to: crop
+          - type: remap
+            metadata: crop
+            toFrom:
+              # Special values:
+              # "none" is set for surfaces that won't be rendered (not a field).
+              # "common" is set for all type of culture we don't want a specific rendering.
+              # "unknown" is set for all unknown "code_cultu". Could be replaced later with "common".
+              none: [BFS, BOR, BTA, CSS, MRS, SNE, TCR]
+              common: [ACP, AFG, CAC, CAG, CID, CIT, CML, CPL, CSA, LDH, LDP, LEC, LOT, LUZ, MCS, MLC, MLF, MLG, MLT, MOH, MPC, MSW, OAG, OHR, PAG, PHF, PHI, PHS, PPR, SAG, SHD, SOG, SRS, ZZZ]
+              banana: [BCA, BEF]
+              barley: [AVH, AVP, ORH, ORP]
+              carrot: [CAR]
+              corn: [MID, MIS]
+              cucumber: [CCN]
+              flower: [HPC]
+              hemp: [CHV, CSE]
+              herb: [AAR, AME, ARP, GES, OEI, PME, PRF, SAI, SGE, TAB, VES, VNL]
+              hop: [HBL]
+              lavender: [LAV]
+              linen: [LIF, LIH, LIP]
+              meadow: [GRA, JAC, JNO, PPH, PTR, SIN, SNU, SPH, SPL, TRE]
+              orchard: [AGR, ANA, CBT, CNA, CNE, OLI, PEP, PEV, PPP, PRU, PVT, PWT, SBO]
+              potato: [PTC]
+              rapeseed: [CZH, CZP]
+              rice: [RIZ]
+              rye: [SGH, SGP]
+              soya: [SOJ]
+              sunflower: [TRN]
+              tomato: [TOM]
+              trees: [CAE, CEE, CTG, NOS, NOX, TRU]
+              vegetable: [AIL, ARA, ART, BTN, CEL, CHU, EPI, FEV, FLA, FLP, FNU, FRA, FVL, FVP, LBF, MDI, MLO, MOT, NVT, OIG, PCH, PFR, POR, POT, PSL, PVP, RDI, TBT]
+              vine: [VRC, VRG]
+              wheat: [BDH, BDP, BTH, BTP, CAH, EPE, MCR, TTH, TTP]
+            default: unknown
+
+      renderCommon:
+        after:
+          - fetchFields
+          - ground
+        type: renderSurfaces
+        models:
+          type: field
+          filter:
+            metadata: crop
+            in: [common, barley, rapeseed, wheat]
+        heightmap: ground
+        place: *field-common
+
+      renderSunflower:
+        after:
+          - fetchFields
+          - ground
+        type: renderSurfaces
+        models:
+          type: field
+          filter:
+            metadata: crop
+            equals: sunflower
+        heightmap: ground
+        place: *field-sunflower
+
+      renderCorn:
+        after:
+          - fetchFields
+          - ground
+        type: renderSurfaces
+        models:
+          type: field
+          filter:
+            metadata: crop
+            equals: corn
+        heightmap: ground
+        place: *field-corn
+
+      renderLinen:
+        after:
+          - fetchFields
+          - ground
+        type: renderSurfaces
+        models:
+          type: field
+          filter:
+            metadata: crop
+            equals: linen
+        heightmap: ground
+        place: *field-linen
+
+      renderSoya:
+        after:
+          - fetchFields
+          - ground
+        type: renderSurfaces
+        models:
+          type: field
+          filter:
+            metadata: crop
+            equals: soya
+        heightmap: ground
+        place: *field-soya
+
+      renderVegetable:
+        after:
+          - fetchFields
+          - ground
+        type: renderSurfaces
+        models:
+          type: field
+          filter:
+            metadata: crop
+            equals: vegetable
+        heightmap: ground
+        place: *field-vegetable
+
+      renderMeadow:
+        after:
+          - fetchFields
+          - ground
+        type: renderSurfaces
+        models:
+          type: field
+          filter:
+            metadata: crop
+            equals: meadow
+        heightmap: ground
+        place: *field-meadow
+
+      fetchVineyards:
+        type: fetchData
+        modelType: vineyard
+        provider:
+          type: wfs
+          url: https://data.geopf.fr/wfs/wfs
+          features: AOC-VITICOLES:aire_parcellaire
+        <<: *wfs-retry-policy
+        postProcessing:
+          type: geometryBuffer
+          buffer: -2
+
+      renderVineyards:
+        after:
+          - fetchVineyards
+          - ground
+        type: renderSurfaces
+        models:
+          type: vineyard
+        heightmap: ground
+        place: *vineyard
 
   # Water
 
@@ -348,6 +518,8 @@ forEachTile:
       - renderBati3dWallsResidentiel
       - renderBati3dWallsCommercialServices
 
+  # roof material codes: https://piece-jointe-carto.developpement-durable.gouv.fr/NAT004/DTerNP/html3/annexes/desc_pb40_pevprincipale_dmatto.html
+
   renderBati3dRoofsOther:
     after: bati3dWalls
     type: renderBuildings3d
@@ -357,7 +529,7 @@ forEachTile:
         not:
           or:
             - metadata: materiaux_de_la_toiture
-              in: [ "3", "03", "30", "33", "13", "31", "12", "21", "2", "02", "20", "22", "4", "04", "44", "40" ]
+              in: [ "1", "01", "10", "11", "19", "91", "3", "03", "30", "33", "13", "31", "12", "21", "2", "02", "20", "22", "4", "04", "44", "40" ]
             - metadata: nature
               in: [ "Chapelle", "Eglise", "Château" ]
     surfaceType: roof
@@ -365,6 +537,20 @@ forEachTile:
       structure:
         at: [0, 0, 0..1] # 2 block to wipe overstepping walls
         put: *buildings-roof-default
+
+  renderBati3dRoofsTiles:
+    after: bati3dWalls
+    type: renderBuildings3d
+    models:
+      type: building-city
+      filter:
+        metadata: materiaux_de_la_toiture
+        in: [ "1", "01", "10", "11", "19", "91" ]
+    surfaceType: roof
+    place:
+      structure:
+        at: [0, 0, 0..1] # 2 block to wipe overstepping walls
+        put: *buildings-roof-tiles
 
   renderBati3dRoofsZinc:
     after: bati3dWalls
@@ -529,6 +715,7 @@ forEachTile:
       - fetchRoads
       - vegetation
       - ground
+      - fields
     type: schedule
     models:
       type: road
@@ -540,7 +727,8 @@ forEachTile:
             equals: ground
         type: renderDynamicLines
         width:
-          round: width
+          round:
+            product: [width, 0.7]
         repeated:
           put: *air
           at: [0, 0, 1..7]
@@ -565,7 +753,8 @@ forEachTile:
             equals: aerial
         type: renderDynamicLines
         width:
-          round: width
+          round:
+            product: [width, 0.7]
         repeated:
           put: *air
           at: [0, 0, 1..7]
@@ -576,6 +765,7 @@ forEachTile:
       - fetchRoads
       - renderWater
       - ground
+      - fields
     models:
       type: road
     do:
@@ -664,12 +854,12 @@ forEachTile:
             product: [width, 0.7]
         repeated:
           put: nothing
-          at: [0, 0, -2..0]
+          at: [ 0, 0, -2..0 ]
         extra:
           - put: *sidewalk
-            at: [0, 0, 0]
+            at: [ 0, 0..1, 0 ]
           - put: *sidewalk-bed
-            at: [0, 0, -2..-1]
+            at: [ 0, 0..1, -2..-1 ]
         stickToHeightmap: *roads-ground
       # Road surface
       - type: renderDynamicLines
@@ -683,34 +873,34 @@ forEachTile:
             at: [ 0, 0, -2..-1 ]
         stickToHeightmap: *roads-ground
       # Lines
-      - type: renderLines
-        models:
-          type: road
-          filter:
-            metadata: nombre_de_voies
-            equals: 2
-            as: text
-        structure:
-          axes: [ x ]
-          blueprint: "   ==="
-          with:
-            "=": *road-paint
-        stickToHeightmap: *roads-ground
-      - type: renderLines
-        models:
-          filter:
-            metadata: nombre_de_voies
-            greaterThan: 2
-        structure:
-          axes: [ y, x ]
-          blueprint:
-            - "   ==="
-            - "      "
-            - "      "
-            - "      "
-          with:
-            "=": *road-paint
-        stickToHeightmap: *roads-ground
+#      - type: renderLines
+#        models:
+#          type: road
+#          filter:
+#            metadata: nombre_de_voies
+#            equals: 2
+#            as: text
+#        structure:
+#          axes: [ x ]
+#          blueprint: "   ==="
+#          with:
+#            "=": *road-paint
+#        stickToHeightmap: *roads-ground
+#      - type: renderLines
+#        models:
+#          filter:
+#            metadata: nombre_de_voies
+#            greaterThan: 2
+#        structure:
+#          axes: [ y, x ]
+#          blueprint:
+#            - "   ==="
+#            - "      "
+#            - "      "
+#            - "      "
+#          with:
+#            "=": *road-paint
+#        stickToHeightmap: *roads-ground
 
   renderAerialRoads:
     after:
@@ -737,12 +927,12 @@ forEachTile:
             product: [width, 0.7]
         repeated:
           put: nothing
-          at: [0, 0, -2..0]
+          at: [ 0, 0, -2..0 ]
         extra:
           - put: *sidewalk
-            at: [0, 0, 0]
+            at: [ 0, 0..1, 0 ]
           - put: *sidewalk-bed
-            at: [0, 0, -2..-1]
+            at: [ 0, 0..1, -2..-1 ]
         updateHeightmap: ground
       # Road surface
       - type: renderDynamicLines
@@ -756,31 +946,31 @@ forEachTile:
             at: [ 0, 0, -2..-1 ]
         updateHeightmap: ground
       # Lines
-      - type: renderLines
-        models:
-          filter:
-            metadata: nombre_de_voies
-            equals: 2
-            as: text
-        structure:
-          axes: [ x ]
-          blueprint: "   ==="
-          with:
-            "=": *road-paint
-      - type: renderLines
-        models:
-          filter:
-            metadata: nombre_de_voies
-            greaterThan: 2
-        structure:
-          axes: [ y, x ]
-          blueprint:
-            - "   ==="
-            - "      "
-            - "      "
-            - "      "
-          with:
-            "=": *road-paint
+#      - type: renderLines
+#        models:
+#          filter:
+#            metadata: nombre_de_voies
+#            equals: 2
+#            as: text
+#        structure:
+#          axes: [ x ]
+#          blueprint: "   ==="
+#          with:
+#            "=": *road-paint
+#      - type: renderLines
+#        models:
+#          filter:
+#            metadata: nombre_de_voies
+#            greaterThan: 2
+#        structure:
+#          axes: [ y, x ]
+#          blueprint:
+#            - "   ==="
+#            - "      "
+#            - "      "
+#            - "      "
+#          with:
+#            "=": *road-paint
 
   roads:
     type: noOperation
@@ -805,15 +995,15 @@ forEachTile:
         <<: *overpass-retry-policy
 
       # Wipe road lines
-      - type: renderLines
-        after: roads
-        stickToHeightmap: *roads-ground
-        structure:
-          put:
-            pattern:
-              place: *road-tar
-              onlyInsteadOf: *road-paint
-          at: [ 0..3, 0..5, 0 ]
+#      - type: renderLines
+#        after: roads
+#        stickToHeightmap: *roads-ground
+#        structure:
+#          put:
+#            pattern:
+#              place: *road-tar
+#              onlyInsteadOf: *road-paint
+#          at: [ 0..3, 0..5, 0 ]
 
       # Draw cross walks
       - type: renderLines
