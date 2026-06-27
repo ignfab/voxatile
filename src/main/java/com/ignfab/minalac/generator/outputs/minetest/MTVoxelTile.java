@@ -73,35 +73,8 @@ public class MTVoxelTile extends VoxelTile {
         if (mapWriter == null)
             return; // Save disabled if null writer
 
-        for (Long2ObjectMap.Entry<Block> entry : Long2ObjectMaps.fastIterable(blocks)) {
-            Block block = entry.getValue();
-
-            long pos = entry.getLongKey() + 0x800800800L;
-            int blockX = (int) (pos & 0xFFF) - 0x800;
-            int blockY = (int) ((pos >> 12) & 0xFFF) - 0x800;
-            int blockZ = (int) ((pos >> 24) & 0xFFF) - 0x800;
-
-            byte[] param1 = block.getParam1();
-            for (int localZ = 0; localZ < Block.SIZE; localZ++) {
-                int worldZ = (blockZ << 4) + localZ;
-                for (int localX = 0; localX < Block.SIZE; localX++) {
-                    int worldX = (blockX << 4) + localX;
-                    for (int localY = 0; localY < Block.SIZE; localY++) {
-                        int worldY = (blockY << 4) + localY;
-                        if (!limits().contains(worldX, worldZ, worldY))
-                            continue;
-
-                        int nodeIndex = (localZ << 8) | (localY << 4) | localX;
-                        int param0 = block.getParam0()[nodeIndex] & 0xFFFF;
-                        if (block.getNameIdMapping().get(param0).equals("default:water_source") || block.getNameIdMapping().get(param0).equals("air"))
-                            param1[nodeIndex] = (byte) 0x0F;
-                    }
-                }
-            }
-
-            block.setParam1(param1);
-            mapWriter.insertBlock(entry.getLongKey(), block);
-        }
+        for (Long2ObjectMap.Entry<Block> entry : Long2ObjectMaps.fastIterable(blocks))
+            mapWriter.insertBlock(entry.getLongKey(), entry.getValue());
     }
 
     /**

@@ -30,5 +30,9 @@ references:
         at: [ -3..3, -3..3, 4..10 ]
       - put: default:aspen_tree
         at: [ 0, 0, 0..5 ]
-  - &voxel-water default:water_source
-  - &voxel-air air
+  - &voxel-water 
+    node: default:water_source
+    param1: 15
+  - &voxel-air
+    node: air
+    param1: 15

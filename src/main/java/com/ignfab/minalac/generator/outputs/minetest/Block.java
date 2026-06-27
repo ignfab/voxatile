@@ -104,15 +104,6 @@ public class Block {
     }
 
     /**
-     * Sets the param1 array parameter of this block.
-     *
-     * @param param1 the param1 {@code byte} array parameter to set
-     */
-    public void setParam1(byte[] param1) {
-        this.param1 = param1;
-    }
-
-    /**
      * Returns the param2 array parameter of this block.
      *
      * @return the param2 {@code byte} array parameter
