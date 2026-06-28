@@ -1,11 +1,11 @@
 # Château de Valençay
 worldName: Valençay
-verticalScale: 1.4
-horizontalScale: 1.4
+verticalScale: 0.7
+horizontalScale: 0.7
 area:
   center:
     latitude: 47.157414
     longitude: 1.563673
-  extentX: 1500
-  extentY: 1500
+  extentX: 3000
+  extentY: 3000
   angle: 23.5

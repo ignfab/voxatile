@@ -124,15 +124,23 @@ references:
       - at: [ 0, 0, 0 ]
         put: minecraft:rooted_dirt
       - at: [ 0, 0, 1 ]
-        put: minecraft:bamboo[leaves=small]
+        put: minecraft:bamboo
       - at: [ 0, 0, 2 ]
-        put: minecraft:bamboo[age=1,leaves=large]
+        put: minecraft:bamboo[leaves=small]
       - at: [ 0, 0, 3 ]
+        put: minecraft:bamboo[age=1,leaves=large]
+      - at: [ 0, 0, 4 ]
         put:
           pattern:
             randomChoice:
+              - place: minecraft:yellow_candle[candles=1]
+                weight: 1
+              - place: minecraft:yellow_candle[candles=2]
+                weight: 2
               - place: minecraft:yellow_candle[candles=3]
+                weight: 3
               - place: minecraft:yellow_candle[candles=4]
+                weight: 4
             seed: corn
 
   - &field-linen
