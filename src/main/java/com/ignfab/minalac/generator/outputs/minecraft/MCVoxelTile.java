@@ -24,6 +24,8 @@ public class MCVoxelTile extends VoxelTile {
 
     private final Int2ObjectMap<Region> regions = Int2ObjectMaps.synchronize(new Int2ObjectOpenHashMap<>());
 
+    public static final int Z_OFFSET = -64;
+
     /**
      * Creates a new {@code MCVoxelTile}.
      *
@@ -31,7 +33,7 @@ public class MCVoxelTile extends VoxelTile {
      * @param limits Limits of this tile (must be contained in world limits)
      */
     public MCVoxelTile(File destination, WorldBBox3d limits) {
-        super(limits);
+        super(limits.to2d().to3d(limits.minZ() - Z_OFFSET, limits.sizeZ()));
         this.destination = destination;
     }
 
@@ -71,7 +73,7 @@ public class MCVoxelTile extends VoxelTile {
         );
         clearBlockEntity(blockX, blockY, blockZ); // TODO This negatively affects performances and should be optimized!
         // (In-Game coords to world coords) X/Z/-Y => X/Y/Z
-        updateHeightmaps(blockX, -(blockZ + 1), blockY);
+        updateHeightmaps(blockX, -(blockZ + 1), blockY - Z_OFFSET);
     }
 
     // In-Game coords
@@ -106,7 +108,7 @@ public class MCVoxelTile extends VoxelTile {
     // In-Game coords
     /* package-private */ boolean isOutOfLimits(int blockX, int blockY, int blockZ) {
         // (In-Game coords to world coords) X/Z/-Y => X/Y/Z
-        return !limits().contains(blockX, -(blockZ + 1), blockY);
+        return !limits().contains(blockX, -(blockZ + 1), blockY - Z_OFFSET);
     }
 
     /**
@@ -118,7 +120,7 @@ public class MCVoxelTile extends VoxelTile {
     public Placeable getVoxel(int x, int y, int z) {
         // (World coords to In-Game coords) X/Y/Z => X/Z/-Y-1
         int blockX = x;
-        int blockY = z;
+        int blockY = z + Z_OFFSET;
         int blockZ = -y - 1;
 
         Region region = regions.get(Region.computeKeyFromBlock(blockX, blockZ));

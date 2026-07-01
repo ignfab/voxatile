@@ -136,7 +136,7 @@ public class MCVoxel implements Placeable {
                 block.put("Properties", state);
             }
         }
-        tile.setBlockState(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
+        tile.setBlockState(x, z + MCVoxelTile.Z_OFFSET, -y - 1, block); // X/Y/Z => X/Z/-Y
     }
 
     @Override

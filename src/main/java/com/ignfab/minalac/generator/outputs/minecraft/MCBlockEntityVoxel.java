@@ -60,7 +60,7 @@ public class MCBlockEntityVoxel extends MCVoxel {
         block.putBoolean("keepPacked", false);
         for (NamedTag tag : data)
             block.put(tag);
-        tile.addBlockEntity(x, z, -y - 1, block); // X/Y/Z => X/Z/-Y
+        tile.addBlockEntity(x, z + MCVoxelTile.Z_OFFSET, -y - 1, block); // X/Y/Z => X/Z/-Y
     }
 
     @Override

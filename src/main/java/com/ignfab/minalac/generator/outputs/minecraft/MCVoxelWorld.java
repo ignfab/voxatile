@@ -34,8 +34,8 @@ public class MCVoxelWorld extends VoxelWorld {
     // will need higher performances to play the game!
     // The Querz library does not support extended limits...
     private static final WorldBBox3d MAX_LIMIT = new WorldBBox3d(
-        new WorldCoords3d(-30_000_000, -30_000_000, 0),
-        new WorldCoords3d(30_000_000, 30_000_000, 255)
+        new WorldCoords3d(-30_000_000, -30_000_000, -64),
+        new WorldCoords3d(30_000_000, 30_000_000, 319)
     );
 
     private final File destination;
