@@ -1,0 +1,10 @@
+# Forteresse de Chinon
+worldName: Chinon
+verticalScale: 0.33
+horizontalScale: 0.33
+area:
+  center:
+    latitude: 47.167962
+    longitude: 0.235995
+  extentX: 3000
+  extentY: 3000

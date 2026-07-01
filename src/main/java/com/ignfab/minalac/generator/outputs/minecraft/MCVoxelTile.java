@@ -24,7 +24,8 @@ public class MCVoxelTile extends VoxelTile {
 
     private final Int2ObjectMap<Region> regions = Int2ObjectMaps.synchronize(new Int2ObjectOpenHashMap<>());
 
-    public static final int Z_OFFSET = -64;
+    public static final int Z_OFFSET = 0;
+    //public static final int Z_OFFSET = -64; // Chinon
 
     /**
      * Creates a new {@code MCVoxelTile}.
