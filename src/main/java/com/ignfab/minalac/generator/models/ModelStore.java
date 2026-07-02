@@ -19,9 +19,12 @@ public class ModelStore {
      * @param type Type to associate with stored models
      * @param models Models to be stored
      */
-    public void add(String type, List<Model> models) {
+    // The method is synchronized to prevent concurrent modification exception
+    public synchronized void add(String type, List<Model> models) {
         if (type == null || type.isEmpty())
             throw new IllegalArgumentException("Type must be a non empty string");
+        if (models.isEmpty())
+            return;
 
         byType.computeIfAbsent(type, k -> new ArrayList<>()).addAll(models);
     }
