@@ -438,7 +438,7 @@ forEachTile:
     modelType: building-city
     provider:
       type: cityjson
-      filePath: data/bati-hericraft.city.json
+      filePath: data/bati-valencay.city.json
 
   renderBati3dGround:
     after:

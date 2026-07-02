@@ -6,6 +6,7 @@ references:
   - &air air
   - &water default:water_source
   - &underground default:stone
+  - &dirt default:dirt
   - &grass default:dirt_with_grass
   - &grass-decoration
       - pattern: # TODO: need a "random choose" rather than place over (specially for choosing structures)
@@ -14,6 +15,54 @@ references:
       - pattern:
           chance: 0.02
           place: default:grass_2
+
+  - &field-common
+    structure:
+      - at: [ 0, 0, 0 ]
+        put: default:dirt
+      - at: [ 0, 0, 1 ]
+        put: default:dry_grass_5
+  - &field-vegetable
+      structure:
+        - at: [ 0, 0, 0 ]
+          put: default:dirt
+        - at: [ 0, 0, 1 ]
+          put: default:dry_grass_5
+  - &field-sunflower
+      structure:
+        - at: [ 0, 0, 0 ]
+          put: default:dirt
+        - at: [ 0, 0, 1 ]
+          put: default:dry_grass_5
+  - &field-corn
+      structure:
+        - at: [ 0, 0, 0 ]
+          put: default:dirt
+        - at: [ 0, 0, 1 ]
+          put: default:dry_grass_5
+  - &field-linen
+      structure:
+        - at: [ 0, 0, 0 ]
+          put: default:dirt
+        - at: [ 0, 0, 1 ]
+          put: default:dry_grass_5
+  - &field-soya
+      structure:
+        - at: [ 0, 0, 0 ]
+          put: default:dirt
+        - at: [ 0, 0, 1 ]
+          put: default:dry_grass_5
+  - &vineyard
+    structure:
+      - at: [ 0, 0, 0 ]
+        put: default:dirt
+      - at: [ 0, 0, 1 ]
+        put: default:dry_grass_5
+
+  - &field-meadow
+    structure:
+      - at: [ 0, 0, 1 ]
+        put: default:grass_5
 
    # BUILDINGS
 
@@ -45,6 +94,7 @@ references:
   - &buildings-roof-slates-tiles darkage:slate_tile
   - &buildings-roof-slates darkage:slate_block
   - &buildings-roof-concrete darkage:chalk
+  - &buildings-roof-tiles darkage:ors_brick
 
   # ROADS
 
@@ -183,7 +233,8 @@ references:
     retry: 3
     retryDelay: 10
   - &wfs-retry-policy
-    <<: *wms-retry-policy
+    retry: 3
+    retryDelay: 10
   - &overpass-retry-policy
     retry: 5
     retryDelay: 15
