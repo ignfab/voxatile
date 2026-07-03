@@ -1,3 +1,477 @@
+format: minecraft
+references:
+
+  # BASE VOXELS
+
+  - &air minecraft:air
+  - &water minecraft:water
+  - &underground minecraft:stone
+  - &dirt minecraft:dirt
+  - &grass minecraft:grass_block
+  - &grass-decoration
+    - pattern:
+        chance: 0.04
+        place: minecraft:short_grass
+    - pattern:
+        chance: 0.02
+        place: minecraft:fern
+
+  - &field-common
+    pattern:
+      repeatStructure:
+        axes: y
+        blueprint: "xxxWxxx"
+        with:
+          "W":
+            structure:
+              axes: [ x, y ]
+              blueprint:
+                - " v "
+                - ">w<"
+                - " ^ "
+              with:
+                "w": minecraft:water
+                ">":
+                  pattern:
+                    place: minecraft:spruce_trapdoor[half=bottom,open=true,facing=south]
+                    onlyInsteadOf: [ minecraft:air, "minecraft:wheat[age=7]" ]
+                "v":
+                  pattern:
+                    place: minecraft:spruce_trapdoor[half=bottom,open=true,facing=east]
+                    onlyInsteadOf: [ minecraft:air, "minecraft:wheat[age=7]" ]
+                "<":
+                  pattern:
+                    place: minecraft:spruce_trapdoor[half=bottom,open=true,facing=north]
+                    onlyInsteadOf: [ minecraft:air, "minecraft:wheat[age=7]" ]
+                "^":
+                  pattern:
+                    place: minecraft:spruce_trapdoor[half=bottom,open=true,facing=west]
+                    onlyInsteadOf: [ minecraft:air, "minecraft:wheat[age=7]" ]
+              xOffset: -1
+              yOffset: -1
+          "x":
+            structure:
+              - at: [ 0, 0, 0 ]
+                put: minecraft:farmland[moisture=7]
+              - at: [ 0, 0, 1 ]
+                put:
+                  pattern:
+                    place: minecraft:wheat[age=7]
+                    neverInsteadOf:
+                      - minecraft:spruce_trapdoor[half=bottom,open=true,facing=south]
+                      - minecraft:spruce_trapdoor[half=bottom,open=true,facing=east]
+                      - minecraft:spruce_trapdoor[half=bottom,open=true,facing=north]
+                      - minecraft:spruce_trapdoor[half=bottom,open=true,facing=west]
+
+  - &field-vegetable
+    pattern:
+      repeatStructure:
+        axes: y
+        blueprint: "xxxWxxx"
+        with:
+          "W":
+            structure:
+              axes: [ x, y ]
+              blueprint:
+                - " v "
+                - ">w<"
+                - " ^ "
+              with:
+                "w": minecraft:water
+                ">":
+                  pattern:
+                    place: minecraft:spruce_trapdoor[half=bottom,open=true,facing=south]
+                    onlyInsteadOf: [ minecraft:air, "minecraft:wheat[age=7]" ]
+                "v":
+                  pattern:
+                    place: minecraft:spruce_trapdoor[half=bottom,open=true,facing=east]
+                    onlyInsteadOf: [ minecraft:air, "minecraft:wheat[age=7]" ]
+                "<":
+                  pattern:
+                    place: minecraft:spruce_trapdoor[half=bottom,open=true,facing=north]
+                    onlyInsteadOf: [ minecraft:air, "minecraft:wheat[age=7]" ]
+                "^":
+                  pattern:
+                    place: minecraft:spruce_trapdoor[half=bottom,open=true,facing=west]
+                    onlyInsteadOf: [ minecraft:air, "minecraft:wheat[age=7]" ]
+              xOffset: -1
+              yOffset: -1
+          "x":
+            structure:
+              - at: [ 0, 0, 0 ]
+                put: minecraft:farmland[moisture=7]
+              - at: [ 0, 0, 1 ]
+                put:
+                  pattern:
+                    place: minecraft:potatoes[age=7]
+                    neverInsteadOf:
+                      - minecraft:spruce_trapdoor[half=bottom,open=true,facing=south]
+                      - minecraft:spruce_trapdoor[half=bottom,open=true,facing=east]
+                      - minecraft:spruce_trapdoor[half=bottom,open=true,facing=north]
+                      - minecraft:spruce_trapdoor[half=bottom,open=true,facing=west]
+
+  - &field-sunflower
+    structure:
+      - at: [ 0, 0, 0 ]
+        put: minecraft:rooted_dirt
+      - at: [ 0, 0, 1 ]
+        put: minecraft:sunflower[half=lower]
+      - at: [ 0, 0, 2 ]
+        put: minecraft:sunflower[half=upper]
+
+  - &field-corn
+    structure:
+      - at: [ 0, 0, 0 ]
+        put: minecraft:rooted_dirt
+      - at: [ 0, 0, 1 ]
+        put: minecraft:bamboo
+      - at: [ 0, 0, 2 ]
+        put: minecraft:bamboo[leaves=small]
+      - at: [ 0, 0, 3 ]
+        put: minecraft:bamboo[age=1,leaves=large]
+      - at: [ 0, 0, 4 ]
+        put:
+          pattern:
+            randomChoice:
+              - place: minecraft:yellow_candle[candles=1]
+                weight: 1
+              - place: minecraft:yellow_candle[candles=2]
+                weight: 2
+              - place: minecraft:yellow_candle[candles=3]
+                weight: 3
+              - place: minecraft:yellow_candle[candles=4]
+                weight: 4
+            seed: corn
+
+  - &field-linen
+    structure:
+      - at: [ 0, 0, 0 ]
+        put: minecraft:grass_block
+      - at: [ 0, 0, 1 ]
+        put:
+          pattern:
+            randomChoice:
+              - place: minecraft:cornflower
+              - place: minecraft:blue_orchid
+            seed: linen
+
+  - &field-soya
+    pattern:
+      repeatStructure:
+        axes: x
+        blueprint: ".s"
+        with:
+          ".": minecraft:coarse_dirt
+          "s":
+            structure:
+              - at: [ 0, 0, 0 ]
+                put: minecraft:coarse_dirt
+              - at: [ 0, 0, 1 ]
+                put: minecraft:bush
+
+  - &field-meadow
+    structure:
+      - at: [ 0, 0, 0 ]
+        put: minecraft:grass_block
+      - at: [ 0, 0, 1 ]
+        put:
+          pattern:
+            randomChoice:
+              - place: nothing
+                weight: 10
+              - place: minecraft:short_grass
+                weight: 10
+              - place: minecraft:bush
+                weight: 6
+              - place:
+                  structure:
+                    - at: [ 0, 0, 0 ]
+                      put: minecraft:tall_grass[half=lower]
+                    - at: [ 0, 0, 1 ]
+                      put: minecraft:tall_grass[half=upper]
+                weight: 4
+              - place:
+                  pattern:
+                    randomChoice:
+                      # 1 flower
+                      - place: minecraft:wildflowers[flower_amount=1,facing=south]
+                      - place: minecraft:wildflowers[flower_amount=1,facing=east]
+                      - place: minecraft:wildflowers[flower_amount=1,facing=north]
+                      - place: minecraft:wildflowers[flower_amount=1,facing=west]
+                      # 2 flowers
+                      - place: minecraft:wildflowers[flower_amount=2,facing=south]
+                      - place: minecraft:wildflowers[flower_amount=2,facing=east]
+                      - place: minecraft:wildflowers[flower_amount=2,facing=north]
+                      - place: minecraft:wildflowers[flower_amount=2,facing=west]
+                      # 3 flowers
+                      - place: minecraft:wildflowers[flower_amount=3,facing=south]
+                      - place: minecraft:wildflowers[flower_amount=3,facing=east]
+                      - place: minecraft:wildflowers[flower_amount=3,facing=north]
+                      - place: minecraft:wildflowers[flower_amount=3,facing=west]
+                      # 4 flowers
+                      - place: minecraft:wildflowers[flower_amount=4]
+                    seed: meadow-wildflowers
+                weight: 2
+              - place: minecraft:dandelion
+                weight: 1.5
+              - place: minecraft:oxeye_daisy
+                weight: 1
+              - place: minecraft:azure_bluet
+                weight: 1
+              - place: minecraft:cornflower
+                weight: 0.25
+              - place: minecraft:allium
+                weight: 0.25
+            seed: meadow
+
+  - &vineyard
+    pattern:
+      repeatStructure:
+        axes: [ x, y ]
+        blueprint:
+          - ".V."
+          - ".v."
+          - ".v."
+        with:
+          ".":
+            structure:
+              - at: [ 0, 0, 0 ]
+                put: minecraft:coarse_dirt
+              - at: [ 0, 0, 1 ]
+                put:
+                  pattern:
+                    seed: vineyard-fern
+                    chance: 0.15
+                    place: minecraft:fern
+          "v":
+            structure:
+              - at: [ 0, 0, 0 ]
+                put: minecraft:coarse_dirt
+              - at: [ 0, 0, 2 ]
+                put:
+                  - pattern:
+                      seed: vineyard
+                      chance: 0.9
+                      place: minecraft:azalea_leaves[persistent=true]
+                  - pattern:
+                      seed: vineyard
+                      chance: 0.45
+                      place: minecraft:flowering_azalea_leaves[persistent=true]
+          "V":
+            structure:
+              - at: [ 0, 0, 0 ]
+                put: minecraft:coarse_dirt
+              - at: [ 0, 0, 1 ]
+                put: minecraft:spruce_fence
+              - at: [ 0, 0, 2 ]
+                put:
+                  - minecraft:azalea_leaves[persistent=true]
+                  - pattern:
+                      seed: vineyard
+                      chance: 0.5
+                      place: minecraft:flowering_azalea_leaves[persistent=true]
+
+    # BUILDINGS
+
+  - &buildings-ground minecraft:cobblestone
+  - &buildings-walls-default minecraft:sandstone
+  - &buildings-walls-church minecraft:stone_bricks
+  - &buildings-walls-residential
+    pattern:
+      repeatStructure:
+        - at: [ 0..1, 0..1, 0..3 ]
+          put: minecraft:sandstone
+        - at: [ 0, 0, 2..3 ]
+          put: minecraft:glass
+        - at: [ 1, 1, 2..3 ]
+          put: minecraft:glass
+  - &buildings-walls-commercial
+    pattern:
+      repeatStructure:
+        - at: [ 0..1, 0..1, 0..3 ]
+          put: minecraft:bricks
+        - at: [ 0, 0, 2..3 ]
+          put: minecraft:glass
+        - at: [ 1, 1, 2..3 ]
+          put: minecraft:glass
+  - &buildings-roof-default minecraft:polished_andesite
+  - &buildings-roof-zinc minecraft:smooth_quartz
+  - &buildings-roof-zinc-tiles minecraft:quartz_block
+  - &buildings-roof-church minecraft:polished_blackstone_bricks
+  - &buildings-roof-slates-tiles minecraft:polished_basalt
+  - &buildings-roof-slates minecraft:basalt
+  - &buildings-roof-concrete minecraft:clay
+  - &buildings-roof-tiles minecraft:mud_bricks
+
+  # ROADS
+
+  - &path minecraft:dirt_path
+  - &road-paint minecraft:smooth_quartz_slab
+  - &road-tar minecraft:cobbled_deepslate_slab
+  - &road-bed minecraft:cobbled_deepslate
+  - &sidewalk minecraft:smooth_stone
+  - &sidewalk-bed minecraft:smooth_stone
+  - &cycle-path minecraft:granite
+  - &other-path minecraft:smooth_stone
+  - &stairs minecraft:smooth_stone_slab[type=double]
+
+  # VEGETATION
+
+  - &tree-trunk minecraft:oak_log
+  - &tree-leaves
+    structure:
+      at: [ -1..1, -1..1, -1..1 ]
+      put:
+        pattern:
+          onlyInsteadOf: air
+          place:
+            pattern:
+              seed: tree-leaves-1
+              chance: 0.4
+              place:
+                - minecraft:oak_leaves[persistent=true]
+                - pattern:
+                    seed: tree-leaves-2
+                    chance: 0.5
+                    place: minecraft:birch_leaves[persistent=true]
+  # List of possible tree leaves in *tree-leaves
+  - &tree-leaves-list
+    - minecraft:oak_leaves[persistent=true]
+    - minecraft:birch_leaves[persistent=true]
+
+  # OTHER URBAN STUFF
+
+  - &plazza minecraft:smooth_stone
+  - &metro-station-steps minecraft:smooth_sandstone
+  - &metro-station-walls-top minecraft:smooth_stone
+  - &metro-station-walls minecraft:cut_sandstone
+  - &fence-structure
+    - put: minecraft:smooth_stone
+      at: [ 0, 0, 1 ]
+    - put: minecraft:oak_fence
+      at: [ 0, 0, 2..3 ]
+  - &linear-bench-structure
+    axes: [ z, y ]
+    blueprint:
+      - "O  "
+      - "O  "
+      - "OOO"
+    with:
+      "O": minecraft:oak_planks
+    zOffset: 1
+  - &bench
+    structure:
+      - put: minecraft:dark_oak_slab[type=top]
+        at: [ -2..2, 0, 1 ]
+      - put: minecraft:dark_oak_slab
+        at: [ -1..1, 0, 1 ]
+  - &traffic-light
+    structure:
+      axes: [ z ]
+      blueprint: "1111123456"
+      with:
+        "1": minecraft:blackstone_wall
+        "2": minecraft:blackstone
+        "3": minecraft:green_wool
+        "4": minecraft:orange_wool
+        "5": minecraft:red_wool
+        "6": minecraft:blackstone_slab
+      zOffset: 1
+  - &city-light
+    schematic:
+      file: examples/formats/minecraft/lamp_post.schem
+      excludeAir: true
+#    structure:
+#      - axes: [ z, x, y ]
+#        blueprint:
+#          - - " S "
+#            - "S S"
+#            - " S "
+#          - - " L "
+#            - "L*L"
+#            - " L "
+#          - - " v "
+#            - ">X<"
+#            - " ^ "
+#        with:
+#          "X": minecraft:nether_brick_fence[east=true,north=true,west=true,south=true]
+#          ">": minecraft:nether_brick_fence[north=true]
+#          "v": minecraft:nether_brick_fence[west=true]
+#          "<": minecraft:nether_brick_fence[south=true]
+#          "^": minecraft:nether_brick_fence[east=true]
+#          "L": minecraft:redstone_lamp
+#          "S":
+#            block: minecraft:daylight_detector
+#            blockEntity: true
+#            properties:
+#              inverted: true
+#          "*": # This is mainly to demonstrate full block entity support
+#            block: minecraft:player_head
+#            blockEntity: minecraft:skull
+#            dataTags: >-
+#              {
+#                profile: {
+#                  properties: [
+#                    {
+#                      name: textures,
+#                      value: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzI3YmY4NzY0MzVlMDRkZGU5ZGExOTkyNDMxNWFlNTlhOGVmYzI3YWYxZGRiZWY4MTNkODljZmFmZmU5MTY0NyJ9fX0="
+#                    }
+#                  ]
+#                }
+#              }
+#        xOffset: -1
+#        yOffset: -1
+#        zOffset: 11
+#      - at: [ 0, 0, 1..10 ]
+#        put: minecraft:nether_brick_fence
+  - &fire-hydrant
+    structure:
+      - put: minecraft:red_wool
+        at: [ 0, 0, 1..3 ]
+      - put: minecraft:red_wool
+        at: [ 0, 1, 2 ]
+  - &trash-can
+    structure:
+      - put: minecraft:cauldron
+        at: [ 0, 0, 1 ]
+  - &pic-nic
+    structure:
+      axes: [ z, x, y ]
+      blueprint:
+        - - "     "
+          - "OOOOO"
+          - "OOOOO"
+          - "OOOOO"
+          - "     "
+        - - "OOOOO"
+          - "+   +"
+          - "     "
+          - "+   +"
+          - "OOOOO"
+        - - "v   v"
+          - "|   |"
+          - "=   ="
+          - "|   |"
+          - "^   ^"
+      with:
+        "O": minecraft:oak_slab
+        "+": minecraft:oak_fence
+        "|": minecraft:oak_fence[east=true,west=true]
+        "v": minecraft:oak_fence[west=true]
+        "^": minecraft:oak_fence[east=true]
+        "=": minecraft:oak_fence_gate
+      zOffset: 1
+
+  - &wms-retry-policy
+    retry: 3
+    retryDelay: 10
+  - &wfs-retry-policy
+    retry: 3
+    retryDelay: 10
+  - &overpass-retry-policy
+    retry: 5
+    retryDelay: 15
+
 heightmaps:
   ground:
     default: 0
@@ -1343,3 +1817,15 @@ forEachTile:
       type: picnic
     heightmap: ground
     place: *pic-nic
+
+# Château de Valençay
+worldName: Valençay
+verticalScale: 0.7
+horizontalScale: 0.7
+area:
+  center:
+    latitude: 47.157414
+    longitude: 1.563673
+  extentX: 3000
+  extentY: 3000
+  angle: 23.5

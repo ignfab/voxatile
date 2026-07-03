@@ -1,11 +1,11 @@
 # Château d'Azay-le-Rideau
 worldName: Azay-le-Rideau
-verticalScale: 1
-horizontalScale: 1
+verticalScale: 0.5
+horizontalScale: 0.5
 area:
   center:
     latitude: 47.259101
     longitude: 0.466030
-  extentX: 2000
-  extentY: 2000
+  extentX: 4000
+  extentY: 4000
   angle: -27.5
