@@ -62,8 +62,9 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
             return null;
         }
 
-        float x = (float) ((coordinates.x() - data.offsetX()) / data.cellSizeX());
-        float y = (float) ((coordinates.y() - data.offsetY()) / data.cellSizeY());
+        // We interpolate between cell centers (not cell upper left corner)
+        float x = (float) ((coordinates.x() + 0.5 - data.offsetX()) / data.cellSizeX() - 0.5);
+        float y = (float) ((coordinates.y() + 0.5 - data.offsetY()) / data.cellSizeY() - 0.5);
 
         // Using separate ceil & floor allows a good management of integer coordinates
         int xf = (int) Math.floor(x);

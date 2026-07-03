@@ -50,18 +50,18 @@ public class TestGeneration {
         Generation generation = new Generation(world, seed, crs2154, x2154, y2154, 500, 500, 2.0, 3.0, 0.5 * Math.PI, 500);
 
         assertEquals(seed, generation.seed());
+
+        // Size of the world expected to be given extents
         WorldBBox3d box = generation.world().limits();
-        assertEquals(-250, box.minX());
-        assertEquals(-250, box.minY());
-        assertEquals(249, box.maxX());
-        assertEquals(249, box.maxY());
+        assertEquals(500, box.sizeX());
+        assertEquals(500, box.sizeY());
 
         // We should have an envelope +/- 500 around center (250 voxel * 2.0 meters/voxels = 500m)
         Envelope envelope = generation.getEnvelopeForCRS(crs2154, box);
-        assertEquals(657_280.0, envelope.getMinX(), 2);
-        assertEquals(6_860_230.0, envelope.getMinY(), 2);
-        assertEquals(658_280.0, envelope.getMaxX(), 2);
-        assertEquals(6_861_230.0, envelope.getMaxY(), 2);
+        assertEquals(x2154 - 500.0, envelope.getMinX(), 2);
+        assertEquals(y2154 - 500.0, envelope.getMinY(), 2);
+        assertEquals(x2154 + 500.0, envelope.getMaxX(), 2);
+        assertEquals(y2154 + 500.0, envelope.getMaxY(), 2);
 
         // Try another CRS
         envelope = generation.getEnvelopeForCRS(crs4326, box);

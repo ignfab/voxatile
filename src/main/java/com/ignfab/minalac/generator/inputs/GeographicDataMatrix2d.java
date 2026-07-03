@@ -31,11 +31,15 @@ public interface GeographicDataMatrix2d<T> {
 
     /**
      * {@return x-axis component of geographical offset}
+     *
+     * Beware, the offset should be relative to cells (pixels) centers, not corners.
      */
     double offsetX();
 
     /**
      * {@return y-axis component of geographical offset}
+     *
+     * Beware, the offset should be relative to cells (pixels) centers, not corners.
      */
     double offsetY();
 

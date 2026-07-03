@@ -159,16 +159,13 @@ public class Generation {
     public ReferencedEnvelope getEnvelopeForCRS(CoordinateReferenceSystem crs, WorldBBox3d bbox) throws FactoryException, TransformException {
         WorldToMapConverter converter = makeCoordsConverter(crs).inverse();
 
-        int minX = bbox.minX();
-        int minY = bbox.minY();
-        int maxX = bbox.maxX() + 1;
-        int maxY = bbox.maxY() + 1;
+        // We include whole voxels surface (so +/- 0.5 around centers)
         Geometry geom = new GeometryFactory().createLinearRing(new Coordinate[] {
-            new Coordinate(minX, minY),
-            new Coordinate(maxX, minY),
-            new Coordinate(maxX, maxY),
-            new Coordinate(minX, maxY),
-            new Coordinate(minX, minY)
+            new Coordinate(bbox.minX() - 0.5, bbox.minY() - 0.5),
+            new Coordinate(bbox.maxX() + 0.5, bbox.minY() - 0.5),
+            new Coordinate(bbox.maxX() + 0.5, bbox.maxY() + 0.5),
+            new Coordinate(bbox.minX() - 0.5, bbox.maxY() + 0.5),
+            new Coordinate(bbox.minX() - 0.5, bbox.minY() - 0.5)
         });
 
         return new ReferencedEnvelope(converter.convert(geom).getEnvelopeInternal(), crs);
