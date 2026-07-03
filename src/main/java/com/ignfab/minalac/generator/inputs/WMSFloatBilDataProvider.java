@@ -14,6 +14,7 @@ import org.geotools.referencing.CRS;
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.utils.Rounding;
 import com.ignfab.minalac.generator.utils.coordinates.EnvelopeProvider;
 import com.ignfab.minalac.generator.utils.iterator.Iterators;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -71,23 +72,35 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
             throw new GenerationFailedException(e);
         }
 
-        // Let's say we want heightmap with 1 map unit precision.
-        // TODO: Should computed from capabilities and voxel size in realworld
+        // Pixel size in map units
+        // TODO: Should be computed from capabilities and voxel size in realworld
         // (we don't need information more accurate than voxel size neither information more
         // accurate than capabilities)
-        int width  = (int) Math.round(envelope.getMaxX() - envelope.getMinX());
-        int height = (int) Math.round(envelope.getMaxY() - envelope.getMinY());
+        double pixelSize = 1;
 
+        // This is the WMS bbox expressed in map coordinates.
+        // It is used below to deduce matrix offset and cell size.
+        // WMS matrix is aligned in the same way in all tiles (use of floor/ceil).
+        // This prevents glitches between tiles.
+
+        // We need margin for interpolation (-1/+1 expressed in pixelSize)
+        // TODO: Margin size should come from processor (may be with PR#123?)
+        double minX = Rounding.floor(envelope.getMinX(), pixelSize, -1);
+        double minY = Rounding.floor(envelope.getMinY(), pixelSize, -1);
+        double maxX = Rounding.ceil(envelope.getMaxX(), pixelSize, 1);
+        double maxY = Rounding.ceil(envelope.getMaxY(), pixelSize, 1);
+
+        // Formulas give integer numbers, we round them to avoid surprises with floating points
+        int width  = (int) Math.round((maxX - minX) / pixelSize);
+        int height = (int) Math.round((maxY - minY) / pixelSize);
+
+        // Perform WMS query
         ParameterizedURL url = baseURL.builder()
             .parameter("CRS", srsName)
-            .parameter("BBOX", envelope.getMinX()
-                + "," + envelope.getMinY()
-                + "," + envelope.getMaxX()
-                + "," + envelope.getMaxY())
+            .parameter("BBOX", minX + "," + minY + "," + maxX + "," + maxY)
             .parameter("WIDTH", width)
             .parameter("HEIGHT", height)
             .build();
-
         InputStream inputStream;
         try {
             inputStream = url.toURL().openStream();
@@ -97,6 +110,7 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
             throw new RetryableException("Error opening connection", e);
         }
 
+        // Read resulting binary data
         int size = 4 * width * height;
         int total = 0;
 
@@ -116,15 +130,9 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
         if (total != size)
             throw new RetryableException("Incomplete data read from stream");
 
-        FloatArrayGeographicDataMatrix2d result = new FloatArrayGeographicDataMatrix2d(
-            width,
-            height,
-            envelope.getMinX(),
-            envelope.getMinY(),
-            envelope.getWidth() / width,
-            envelope.getHeight() / height
-        );
+        FloatArrayGeographicDataMatrix2d result = new FloatArrayGeographicDataMatrix2d(width, height, minX, minY, pixelSize, pixelSize);
 
+        // Decode binary data into float matrix
         ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer().get(result.data());
 
         return new SimpleResult<>(crs, Iterators.iterator(result));

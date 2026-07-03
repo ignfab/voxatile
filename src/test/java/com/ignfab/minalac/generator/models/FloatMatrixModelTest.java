@@ -62,7 +62,11 @@ public class FloatMatrixModelTest {
             -1.0f, 1.0f,
             -3.0f, 5.0f,
         };
-        FloatGeographicDataMatrix2d data = new FloatArrayGeographicDataMatrix2d(values, 2, 2, 0.0, 0.0, 10.0, 10.0);
+
+        // Beware, interpolation is between cells centers, not cells upper left corner, at voxel center, not voxel upper left corner
+        // So we have an offset of -5/-5 for a cell size of 10
+        // and 0.5/0.5 for voxel size in order to have valid interpolable values between [0-10],[0-10].
+        FloatGeographicDataMatrix2d data = new FloatArrayGeographicDataMatrix2d(values, 2, 2, -4.5, -4.5, 10.0, 10.0);
 
         FloatMatrixModel model = new FloatMatrixModel(data, converter);
         // Borders
