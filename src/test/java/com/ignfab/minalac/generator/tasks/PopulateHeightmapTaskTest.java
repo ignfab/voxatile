@@ -40,17 +40,17 @@ public class PopulateHeightmapTaskTest {
         tile.models().add("matrix", List.of(model));
         ModelSelection selection = new ModelSelection("matrix", null);
 
-        new PopulateHeightmapTask(selection, heightmap.spec()).run(tile);
+        new PopulateHeightmapTask(selection, heightmap.spec(), 0.5).run(tile);
 
         assertValue(0, heightmap, -1, -2);
         assertValue(0, heightmap, 0, -2);
         assertValue(0, heightmap, 1, -2);
         assertValue(0, heightmap, -1, -1);
-        assertValue(1, heightmap, 0, -1);
-        assertValue(2, heightmap, 1, -1);
+        assertValue(2, heightmap, 0, -1);
+        assertValue(4, heightmap, 1, -1);
         assertValue(0, heightmap, -1, 0);
-        assertValue(4, heightmap, 0, 0);
-        assertValue(5, heightmap, 1, 0);
+        assertValue(8, heightmap, 0, 0);
+        assertValue(10, heightmap, 1, 0);
     }
 
     private void assertValue(int expected, ReadableHeightmap heightmap, int x, int y) {

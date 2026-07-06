@@ -15,16 +15,20 @@ import com.ignfab.minalac.generator.voxelization.Matrix2d;
  */
 public class PopulateHeightmapTask extends ModelTask<FloatMatrixModel> {
     private final WritableHeightmapSpec heightmapSpec;
+    private final double verticalScale;
 
     /**
      * Creates a new {@code PopulateHeightmapTask}.
      *
      * @param selection the model selection containing the wanted models
      * @param heightmapSpec Spec of writable heightmap where heights will be written
+     * @param verticalScale Vertical factor to apply on heights
      */
-    public PopulateHeightmapTask(ModelSelection selection, WritableHeightmapSpec heightmapSpec) {
+    // TODO: verticalScale maybe better applyed by model processor?
+    public PopulateHeightmapTask(ModelSelection selection, WritableHeightmapSpec heightmapSpec, double verticalScale) {
         super(FloatMatrixModel.class, selection);
         this.heightmapSpec = heightmapSpec;
+        this.verticalScale = verticalScale;
     }
 
     @Override
@@ -35,7 +39,7 @@ public class PopulateHeightmapTask extends ModelTask<FloatMatrixModel> {
         for (Matrix2d.Value<Float> value : model) {
             WorldCoords2d c = value.coords();
             if (intersection.contains(c))
-                heightmap.set(c, Math.round(value.value()));
+                heightmap.set(c, (int) Math.round(value.value() / verticalScale));
         }
     }
 }
