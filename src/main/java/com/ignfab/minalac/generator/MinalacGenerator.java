@@ -40,6 +40,7 @@ import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.FillBetweenHeightmapAndMetadataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.HeightmapStatsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.NoOperationTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.PlaceTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.PopulateHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
@@ -51,6 +52,8 @@ import com.ignfab.minalac.generator.parameters.tasks.RenderSurfacesTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.ScheduleTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.SequenceTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.SetSpawnTaskParams;
+import com.ignfab.minalac.generator.parameters.voxelizers.voxelizers2d.Voxelizer2dParams;
+import com.ignfab.minalac.generator.parameters.voxelizers.voxelizers3d.Voxelizer3dParams;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 import com.ignfab.minalac.generator.utils.execution.TaskFailedException;
 import com.ignfab.minalac.generator.utils.modules.ModulesLoader;
@@ -124,6 +127,7 @@ public final class MinalacGenerator {
         parser.registerParams("computeHeightmapStats", HeightmapStatsTaskParams.class);
         parser.registerParams("fetchData", FetchDataTaskParams.class);
         parser.registerParams("fillBetweenHeightmapAndMetadata", FillBetweenHeightmapAndMetadataTaskParams.class);
+        parser.registerParams("place", PlaceTaskParams.class);
         parser.registerParams("populateHeightmap", PopulateHeightmapTaskParams.class);
         parser.registerParams("renderBuildings", RenderBuildingsTaskParams.class);
         parser.registerParams("renderHeightmap", RenderHeightmapTaskParams.class);
@@ -154,6 +158,9 @@ public final class MinalacGenerator {
         parser.registerParams("truncate", MetadataTruncatePostProcessorParams.class);
         parser.registerParams("geometryBuffer", JTSGeometryBufferPostProcessorParams.class);
         parser.registerParams("remap", MetadataValueMappingPostProcessorParams.class);
+
+        Voxelizer2dParams.register(parser);
+        Voxelizer3dParams.register(parser);
 
         modules.registerParams(parser);
 
