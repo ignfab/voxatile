@@ -7,7 +7,7 @@ import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.voxelization.Matrix2d;
+import com.ignfab.minalac.generator.voxelization.matrix2d.Matrix2d;
 
 /**
  * A model based on a matrix of floats (usually a heightmap model).

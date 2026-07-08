@@ -7,7 +7,7 @@ import com.ignfab.minalac.generator.models.FloatMatrixModel;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.voxelization.Matrix2d;
+import com.ignfab.minalac.generator.voxelization.matrix2d.Matrix2d;
 
 /**
  * A {@link TileTask} copying data from a {@link ModelSelection} to a heightmap.
