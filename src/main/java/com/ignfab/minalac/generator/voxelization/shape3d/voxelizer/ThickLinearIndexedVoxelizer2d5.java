@@ -1,7 +1,11 @@
 package com.ignfab.minalac.generator.voxelization.shape3d.voxelizer;
 
+import java.util.Collections;
+
+import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.voxelization.shape3d.LineString3d;
+import com.ignfab.minalac.generator.voxelization.shape3d.Shape3d;
 import com.ignfab.minalac.generator.voxelization.shape3d.Shape3dConvertible;
 import com.ignfab.minalac.generator.voxelization.shape3d.iterator.IndexedPosition3d;
 import com.ignfab.minalac.generator.voxelization.shape3d.iterator.ThickLineString2d5IndexedIterator;
@@ -35,12 +39,22 @@ public class ThickLinearIndexedVoxelizer2d5 implements Shape3dVoxelizer {
      * @param lineString Line string to voxelize
      * @return an iterable over voxelized positions and indexes
      */
-    public Iterable<IndexedPosition3d> voxelize(LineString3d lineString) {
+    public Iterable<IndexedPosition3d> voxelizeShape3d(LineString3d lineString) {
         return () -> new ThickLineString2d5IndexedIterator(lineString, thickness);
     }
 
     @Override
-    public Iterable<IndexedPosition3d> voxelize(Shape3dConvertible convertible) {
-        return Iterables.flatMap(convertible.toShape3d().lineStrings(), this::voxelize);
+    public Iterable<IndexedPosition3d> voxelizeShape3d(Shape3d shape) {
+        return Iterables.flatMap(shape.lineStrings(), this::voxelizeShape3d);
+    }
+
+    // Needed to precise return type
+    @Override
+    public Iterable<IndexedPosition3d> voxelize(Model model) {
+        if (model instanceof Shape3dConvertible convertible)
+            return voxelizeShape3d(convertible.toShape3d());
+        else
+            return Collections.emptyList();
     }
 }
+
