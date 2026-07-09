@@ -8,7 +8,7 @@ import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.Point2dVoxelizer;
+import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.PointVoxelizer2d;
 
 /**
  * A task rendering points by placing placeables at them.
@@ -16,7 +16,7 @@ import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.Point2dVoxeli
 public class RenderPoints2dTask extends ModelTask<Shape2dConvertibleModel> {
     private final Placeable placeable;
     private final ReadableHeightmapSpec heightmapSpec;
-    private final Point2dVoxelizer voxelizer;
+    private final PointVoxelizer2d voxelizer;
 
     /**
      * Creates a new {@code RenderPoints2dTask}.
@@ -33,7 +33,7 @@ public class RenderPoints2dTask extends ModelTask<Shape2dConvertibleModel> {
         super(Shape2dConvertibleModel.class, selection);
         this.placeable = placeable;
         this.heightmapSpec = heightmapSpec;
-        voxelizer = new Point2dVoxelizer();
+        voxelizer = new PointVoxelizer2d();
     }
 
     @Override
