@@ -62,25 +62,51 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
         this.heightMetadata = heightMetadata;
     }
 
+//NOTE:
+// shell is clockwise
+// holes are anticlockwise
+// positive determinant of successive vectors : turns anticlockwise -> concave angle
+// negative determinant of successive vectors : turns clockwise -> convex angle
+// null determinant means vector are aligned, maybe uturn, maybe contine
+
+private String segmentstr(Segment2d segment) {
+    return "(%d, %d)-(%d, %d)".formatted(segment.start().x(), segment.start().y(), segment.end().x(), segment.end().y());
+}
+
     private void drawSlopes(GenerationTile tile, Shape2d shape, Set<Segment2d> straightSegments, int altitude, double slope) {
 
         for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(shape))) {
             int x = voxel.coords().x();
             int y = voxel.coords().y();
 
+            // For each 2d position, we try to find the corresponding slope (corresponding roof edge segment)
             Segment2d selectedSegment = null;
             double lineDistance = 0.0;
 
+//boolean debug = (x == -363) && (y == 95 || y == 96);
+boolean debug = false;
+if (debug) System.out.println("(" + x  + ", " + y +") VOXEL");
+
             for (LineString2d string: shape.lineStrings())
                 for (int index = 0; index < string.size(); index++) {
-
                     Segment2d segment = string.get(index);
-
                     double d = segment.signedDistanceTo(x, y); // * Slope
+                    if (debug) System.out.println("(" + x  + ", " + y +") #" + index + " SEGMENT " + segmentstr(segment) +" d="+d);
 
                     // Distance being negative means we are outside the shape
                     // (Shape should be correctly oriented)
-                    if (Math.round(d) < 0) continue;
+                    // TODO: -1 = margin, should correspond to horizontal scale
+                    //   If comparing to 0, we exclude some roof border
+                    if (d < -1) {
+                        if (debug) System.out.println("(" + x  + ", " + y +") #" + index + " -> Out because wrong side");
+                        continue;
+                    }
+
+                    // If there is already a selected segment nearest, no need to look further
+                    if (selectedSegment != null && d >= lineDistance) {
+                        if (debug) System.out.println("(" + x  + ", " + y +") #" + index + " -> Too far");
+                        continue;
+                    }
 
                     // No roof surface for straight segments
                     if (straightSegments.contains(segment)) continue;
@@ -94,40 +120,95 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
                     // cutrrent segment line.
                     // TODO: previous explanation outdated
 
+
+
+                    // TODO: On pourrait éviter les test suivants si de toutes façons d est plus grand que la distance sélectionnée
+
                     Segment2d previousSegment = string.get(index - 1);
-                    if (previousSegment != null) {
+                    if (previousSegment != null) { // Should be true, we process a polygon
                         double dd = previousSegment.signedDistanceTo(x,y);
-                        // TODO: Maybe "concave" ? Not sure of signs
-                        boolean convex = segment.direction().determinant(previousSegment.direction()) < 0;
-                        if (straightSegments.contains(previousSegment)) {
-                            // Straight segment cuts current on own axis
-                            if (convex ^ dd < 0)
-                                continue;
+                        double det = segment.direction().determinant(previousSegment.direction());
+                        if (det == 0.0) {
+                            // We cannot rely on segments distances, because segments are on the same line.
+                            if (segment.direction().dot(previousSegment.direction()) > 0) {
+                                // Same direction,
+                                // Choose segment according to projected index
+                                if (segment.nearestPointIndex(x, y) < 0) {
+                                    // Choose previous segment
+                                    continue;
+                                }
+
+                            } else {
+                                if (debug) System.out.println("(" + x  + ", " + y +") #" + index + " UTURN");
+                                // Opposite direction
+                                // --> there will be a problem, roof could go infinite.
+                                // Similar problem may occure with very sharp angles.
+                            }
                         } else {
-                            // Non straight segment cuts current on bisector
-                            if (convex ^ dd < d)
-                                continue;
+                            boolean convex = det < 0;
+
+                            if (debug) System.out.println("(" + x  + ", " + y +") #" + index + " Prevous: " + segmentstr(previousSegment) + " dd="+dd+" det=" + det + " convex="+convex);
+
+                            if (straightSegments.contains(previousSegment)) {
+
+                                // Straight segment cuts current on own axis
+                                if (dd != 0 && (convex ^ dd < 0))
+                                    continue;
+                            } else {
+                                // Non straight segment cuts current on bisector
+
+                                if (dd != d && (convex ^ dd < d)) { // we want to test dd < d or dd > d according to convex
+                                    if (debug) System.out.println("(" + x  + ", " + y +") #" + index + " -> Out because of previous");
+                                    continue;
+                                }
+                            }
                         }
                     }
 
                    Segment2d nextSegment = string.get(index + 1);
-                    if (nextSegment != null) {
+                    if (nextSegment != null) { // Should be true, we process a polygon
                         double dd = nextSegment.signedDistanceTo(x,y);
-                        // TODO: Maybe "concave" ? Not sure of signs
-                        boolean convex = segment.direction().determinant(nextSegment.direction()) > 0;
-                        if (straightSegments.contains(nextSegment)) {
-                            // Straight segment cuts current on own axis
-                            if (convex ^ dd < 0)
-                                continue;
+                        double det = segment.direction().determinant(nextSegment.direction());
+                        if (det == 0.0) {
+                            if (segment.direction().dot(nextSegment.direction()) > 0) {
+                                // Same direction
+                                // Choose segment according to projected index
+                                if (segment.nearestPointIndex(x, y) > segment.length()) {
+                                    // Choose next segment
+                                    continue;
+                                }
+
+                            } else {
+                                if (debug) System.out.println("(" + x  + ", " + y +") #" + index + " UTURN");
+
+                                // Opposite direction
+                                // --> there will be a problem, roof could go infinite.
+                                // Similar problem may occure with very sharp angles.
+                            }
                         } else {
-                            // Non straight segment cuts current on bisector
-                            if (convex ^ dd < d)
-                                continue;
+
+                            boolean convex = det > 0;
+
+                            if (debug) System.out.println("(" + x  + ", " + y +") #" + index + " Next: " + segmentstr(nextSegment) + " dd="+dd+" det=" + det + " convex="+convex);
+
+                            if (straightSegments.contains(nextSegment)) {
+                                // Straight segment cuts current on own axis
+                                if (dd != 0 && (convex ^ dd < 0)) // 0 = d / infinite slope
+                                    continue;
+                            } else {
+                                // Non straight segment cuts current on bisector
+                                if (dd != d && (convex ^ dd < d)) {
+                                    if (debug) System.out.println("(" + x  + ", " + y +") #" + index + " -> Out because of next");
+                                    continue;
+                                }
+                            }
                         }
                     }
 
                     // Ok, now, we select segment if it has a lower distance than previously
                     if (selectedSegment == null || d < lineDistance) {
+                        if (debug) System.out.println("(" + x  + ", " + y +") #" + index + " **** SELECTED **** Distance=" + d);
+
                         lineDistance = d;
                         selectedSegment = segment;
                     }
