@@ -1,0 +1,128 @@
+worldName: Scratch
+format: luanti
+area:
+  center:
+    latitude: 48.8822
+    longitude: 2.3819
+  extentX: 1000
+  extentY: 1000
+
+heightmaps:                 # Here are declared "heightmaps"
+  ground:                   # A new heightmap named "ground"
+    default: 0              # Its default value is 0 everywhere
+
+forEachTile:
+  fetch-elevation:          # A new task fetching elevation data
+    type: fetchData
+    modelType: elevation    # Store data in "elevation" models
+    provider:
+      type: wmsFloat        # Use "WMS" with float values
+      url: https://data.geopf.fr/wms-r/wms      # IGN WMS URL
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS # IGN DEM layer
+
+  populate-ground:          # A new task copying data from model to heightmap
+    after: fetch-elevation  # Start only once fetch-elevation task ended
+    type: populateHeightmap # We want to populate a heightmap
+    models:
+      type: elevation       # Take data from "elevation" models
+    heightmap: ground       # Populate "ground" heightmap with it
+
+  spawn:
+    after: populate-ground
+    type: setSpawn
+    heightmap:
+      sum: [ground, 2]
+    x: 0
+    y: 0
+
+  ground:
+    after: populate-ground  # Must start only once populate-ground done
+    type: renderHeightmap
+    at: ground              # Now we want ground to be at altitude from new heightmap
+    place: default:dirt_with_grass
+
+  fetch:
+    type: fetchData
+    modelType: buildings
+    provider:
+      type: overpass
+#      url: &overpass-url https://overpass.private.coffee/api/interpreter
+      url: &overpass-url https://overpass-api.de/api/interpreter
+      query: nwr[building]
+    retry: 2
+    retryDelay: 2
+    delay: 0
+
+  buildings:
+    after: [ground, fetch]
+    type: renderSurfaces
+    models:
+      type: buildings
+    heightmap: 
+      sum: [ground, 1]
+    place:
+      structure:           # Instead of a single voxel, we place a structure:
+        at: [0, 0, 0..9]  # A 1x1x10 "cube" of...
+        put: default:stone # ... default:stone voxels
+
+  fetch-roads:
+    type: fetchData
+    modelType: roads
+    provider:
+      type: overpass
+      url: *overpass-url
+      query: nwr[highway]
+    retry: 2
+    retryDelay: 10
+    delay: 11
+
+  draw-roads:
+    after: [ground, fetch-roads]
+    type: renderLines2d
+    heightmap: ground
+    models:
+      type: roads
+    structure:
+      put: default:cobble
+      at: [ 0, -1..1, 0]
+
+  fetch-water:
+    type: fetchData
+    modelType: water
+    provider:
+      type: overpass
+      url: *overpass-url
+      query: nwr[natural=water]
+    retry: 2
+    retryDelay: 9
+    delay: 17
+
+  draw-water:
+    after: [ground, fetch-water]
+    type: renderSurfaces
+    models:
+      type: water
+    heightmap: ground
+    place: default:water_source
+
+  fetch-tree:
+    type: fetchData
+    modelType: tree
+    provider:
+      type: overpass
+      url: *overpass-url
+      query: nwr[natural=tree]
+    retry: 2
+    retryDelay: 7
+    delay: 23
+
+  draw-tree:
+    after: fetch-tree
+    type: renderPoints2d
+    models:
+      type: tree
+    heightmap: ground
+    place:
+      structure:
+        at: [-2..2, -2..2, 3..7]
+        put: default:leaves
