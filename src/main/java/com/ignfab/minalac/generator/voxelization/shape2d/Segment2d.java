@@ -23,6 +23,24 @@ public class Segment2d implements Bounded2d {
     private final Vector2d direction;
     private final double length;
 
+
+    /**
+     * Creates a new zero length segment but with a direction.
+     * <p>
+     * This sound weird but for some computation we need to asign direction to empty segments {@see com.ignfab.minalac.generator.tasks.RenderRoofTask}.
+     *
+     * @param pos start and end of segment
+     * @param direction direction of that segment
+     */
+
+    public Segment2d(WorldCoords2d pos, Vector2d direction) {
+        this.start = pos;
+        this.end = pos;
+        bbox = new WorldBBox2d(pos);
+        length = 0;
+        this.direction = direction;
+    }
+
     /**
      * Creates a new line segment between the given start and end points.
      *

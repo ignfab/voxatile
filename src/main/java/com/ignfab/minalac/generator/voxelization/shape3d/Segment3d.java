@@ -25,10 +25,27 @@ public class Segment3d implements Bounded3d {
     private final double length;
 
     /**
-     * Creates a new line between the given start and end points.
+     * Creates a new zero length segment but with a direction.
+     * <p>
+     * This sound weird but for some computation we need to asign direction to empty segments {@see com.ignfab.minalac.generator.tasks.RenderRoofTask}.
      *
-     * @param start the start of the line.
-     * @param end the end of the line.
+     * @param pos start and end of segment
+     * @param direction direction of that segment
+     */
+
+    public Segment3d(WorldCoords3d pos, Vector3d direction) {
+        this.start = pos;
+        this.end = pos;
+        bbox = new WorldBBox3d(pos);
+        length = 0;
+        this.direction = direction;
+    }
+
+    /**
+     * Creates a new segment between the given start and end points.
+     *
+     * @param start starting point of the segment
+     * @param end ending point of the segment
      */
     public Segment3d(WorldCoords3d start, WorldCoords3d end) {
         this.start = start;

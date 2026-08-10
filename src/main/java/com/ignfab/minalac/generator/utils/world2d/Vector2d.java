@@ -101,6 +101,7 @@ public record Vector2d(double x, double y) {
      * Returns normal of this vector as a new vector.
      * <p>
      * Normal is on starboard (right side when looking towards vector direction).
+     * Normal direction turns clockwise.
      *
      * @return the normal of this vector
      */
