@@ -11,6 +11,8 @@ import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
+import com.ignfab.minalac.generator.utils.world2d.Vector2d;
+import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LineString2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LinearRing2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Segment2d;
@@ -66,6 +68,47 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
         this.heightMetadata = heightMetadata;
     }
 
+    // Beware, direction of line is not normalized (because of record)
+    private record Line2d(Vector2d origin, Vector2d direction) {
+        Line2d(Segment2d segment) {
+            this(segment.start().toVector(), segment.direction());
+        }
+
+        Vector2d intersection(Line2d other) {
+            double det = other.direction.determinant(direction);
+            if (det == 0.0)
+                return null;
+
+            return origin.add(direction.multiply(
+                direction.determinant(other.origin.x() - origin.x(), other.origin.y() - origin.y()) / det
+            ));
+        }
+
+        // TODO: Missing slope factor
+        Line2d bissector(Line2d other) {
+            Vector2d intersection = intersection(other);
+            if (intersection == null)
+                // If lines are parallel, we return a middle line parallel
+                intersection = new Vector2d((origin.x() + other.origin.x()) / 2, (origin.y() + other.origin.y()) / 2);
+
+            // Usual case: bissector is a line passing through the intersection of the two lines
+            // With a mean direction.
+            return new Line2d(intersection, direction.opposite().add(other.direction));
+        }
+    }
+
+    private record Bissector(
+        Line2d bissector,
+        double startIndex,
+        double endIndex
+    ) {}
+
+    private List<Bissector> computeBissectors(int segmentNumber) {
+        List<Bissector> result = new LinkedList<>();
+
+        Line2d bord =
+    }
+
 /*
 Il faut faire une première passe qui mâche le travail et élimine les cas limite (det=0):
 - Créer un ensemble de "segments" avec toujours un précédent/suivant (sinon c'est cas d'erreur);
@@ -91,7 +134,7 @@ Par segment, il nous faut pouvoir calculer:
         Segment2d next,
         double detNext
     ) {
-        Element(
+        Element(bissect
             Segment2d current,
             Segment2d previous,
             Segment2d next
@@ -178,6 +221,8 @@ Par segment, il nous faut pouvoir calculer:
 
         return result;
     }
+
+private
 
 //NOTE:
 // shell is clockwise
