@@ -39,7 +39,7 @@ public class RenderPoints2dTask extends ModelTask<Shape2dConvertibleModel> {
     @Override
     protected void run(Shape2dConvertibleModel model, GenerationTile tile) {
         ReadableHeightmap heightmap = tile.heightmap(heightmapSpec);
-        for (Positioned2d point : voxelizer.voxelize(model)) {
+        for (Positioned2d point : tile.limits().to2d().filterInside(voxelizer.voxelize(model))) {
             WorldCoords2d pos = point.coords();
             placeable.place(tile.voxels(), pos.x(), pos.y(), heightmap.get(pos));
         }

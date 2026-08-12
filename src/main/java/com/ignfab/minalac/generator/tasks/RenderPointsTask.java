@@ -31,7 +31,7 @@ public class RenderPointsTask extends ModelTask<Shape3dConvertibleModel> {
 
     @Override
     protected void run(Shape3dConvertibleModel model, GenerationTile tile) {
-        for (Positioned3d point : voxelizer.voxelize(model))
+        for (Positioned3d point : tile.limits().filterInside(voxelizer.voxelize(model)))
             placeable.place(tile.voxels(), point.coords());
     }
 }
