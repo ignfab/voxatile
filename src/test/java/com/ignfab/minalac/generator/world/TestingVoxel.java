@@ -1,9 +1,8 @@
-package com.ignfab.minalac.generator.outputs.testing;
+package com.ignfab.minalac.generator.world;
 
 import java.util.Objects;
 
 import com.ignfab.minalac.generator.placeables.Placeable;
-import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
  * A dummy voxel for {@code TestingVoxelWorld} and {@code TestingVoxelTile}.

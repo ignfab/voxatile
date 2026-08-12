@@ -9,9 +9,7 @@ import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.TestingModel;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MetadataValueMappingPostProcessorTest {
 

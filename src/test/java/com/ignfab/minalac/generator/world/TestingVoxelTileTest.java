@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.outputs.testing;
+package com.ignfab.minalac.generator.world;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,6 +47,6 @@ public class TestingVoxelTileTest {
     @DisplayName("Just ensure save throws no exception")
     public void testSave() {
         TestingVoxelTile tile = new TestingVoxelTile(new WorldBBox3d(0, 0, 0, 1, 1, 1));
-        assertDoesNotThrow(() -> tile.save());
+        assertDoesNotThrow(tile::save);
     }
 }

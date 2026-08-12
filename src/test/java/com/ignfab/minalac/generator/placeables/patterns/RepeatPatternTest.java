@@ -2,10 +2,10 @@ package com.ignfab.minalac.generator.placeables.patterns;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
 import com.ignfab.minalac.generator.placeables.Nothing;
 import com.ignfab.minalac.generator.placeables.PlaceableStructure;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.world.TestingVoxel;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -163,6 +163,7 @@ public class RepeatPatternTest {
         assertEquals(X, pattern.get(2, 1, 5));
     }
 
+    @Test
     public void testSpacing() {
         PlaceableStructure struc = PlaceableStructure.builder().set(0, 0, 0, X).build();
 

@@ -11,14 +11,12 @@ import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmap;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.utils.random.TestingSeed;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
+import com.ignfab.minalac.generator.world.TestingVoxelWorld;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MultiOperandsHeightmapParamsTest {
     @Test

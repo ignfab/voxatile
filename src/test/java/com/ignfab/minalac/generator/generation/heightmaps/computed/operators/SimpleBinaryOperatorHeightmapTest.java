@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SimpleBinaryOperatorHeightmapTest {
     @Test

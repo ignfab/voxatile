@@ -6,9 +6,9 @@ import java.util.Map;
 import io.github.ensgijs.nbt.tag.CompoundTag;
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
+import com.ignfab.minalac.generator.world.TestingVoxelTile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
