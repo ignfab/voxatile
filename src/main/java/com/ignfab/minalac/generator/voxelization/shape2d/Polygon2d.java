@@ -40,6 +40,10 @@ public class Polygon2d implements Shape2d {
         this(shell, Arrays.asList(holes));
     }
 
+    public LinearRing2d shell() {
+        return shell;
+    }
+
     @Override
     public WorldBBox2d bbox() {
         return shell.bbox();

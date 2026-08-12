@@ -12,9 +12,8 @@ import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.Vector2d;
-import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
-import com.ignfab.minalac.generator.voxelization.shape2d.LineString2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LinearRing2d;
+import com.ignfab.minalac.generator.voxelization.shape2d.Polygon2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Segment2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Shape2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.Shape2dVoxelizer;
@@ -101,128 +100,119 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
         Line2d bissector,
         double startIndex,
         double endIndex
-    ) {}
-
-    private List<Bissector> computeBissectors(int segmentNumber) {
-        List<Bissector> result = new LinkedList<>();
-
-        Line2d bord =
-    }
-
-/*
-Il faut faire une première passe qui mâche le travail et élimine les cas limite (det=0):
-- Créer un ensemble de "segments" avec toujours un précédent/suivant (sinon c'est cas d'erreur);
-- Fusionner les segments successifs de la même direction;
-- Insérer un segment de longueur 0, à 90°, dans le cas de deux segments successifs de direction opposée;
-- Ajouter éventuellement les calculs pouvant être factorisés;
-
-Pour pouvoir stoquer le segment de longeur 0, il faut une structure spécifique qui conserve la direction.
-
-Une fois cela fait, on peut lancer le calcul voxel par voxel.
-
-
-Par segment, il nous faut pouvoir calculer:
-- La distance signée (-> ligne)
-- L'appartenance au segment du point projeté (-> ligne + intervale indice)
-- La direction (-> ligne)
-*/
-
-    private record Element(
-        Segment2d current,
-        Segment2d previous,
-        double detPrevious,
-        Segment2d next,
-        double detNext
     ) {
-        Element(bissect
-            Segment2d current,
-            Segment2d previous,
-            Segment2d next
-        ) {
-            this(
-                current,
-                previous,
-                previous.direction().determinant(current.direction()),
-                next,
-                current.direction().determinant(next.direction())
-            );
+        boolean includes(double index) {
+            return startIndex < endIndex ?
+                (index >= startIndex && index <= endIndex) :
+                (index >= endIndex && index <= startIndex);
         }
 
     }
 
-    private List<Element> prepareGeometry(Shape2d shape) {
-
-        List<Element> result = new LinkedList<>();
-
-        for (LineString2d string: shape.lineStrings()) {
-            LinearRing2d ring = (LinearRing2d)string; // Should always work with polygons
-            boolean clockwise = ring.isClockwise();
-
-            Segment2d current, previous, next;
-            Iterator<Segment2d> iter;
-
-            // First create a list of segments per ring
-            List<Segment2d> list = new LinkedList<>();
-            iter = ring.segments().iterator();
-            current = iter.next();
-            while (iter.hasNext()) {
-                next = iter.next();
-
-                if (current.direction().equals(next.direction().opposite())) {
-                    // If consecutive segments have oposite direction, add a 0 lenght segment
-                    list.add(current);
-                    list.add(new Segment2d(
-                        current.end(),
-                        clockwise ? current.direction().normal() : current.direction().normal().opposite()
-                    ));
-                    current = next;
-                } else if (current.direction().equals(next.direction())) {
-                    // Merge consecutive segments with same direction
-                    current = new Segment2d(current.start(), next.end());
-                } else {
-                    // Add current segment to output.
-                    list.add(current);
-                    current = next;
-                }
-            }
-
-            next = list.get(0);
-
-            // Add remaining segment if not in the same direction of the first one
-            if (current.direction().equals(next.direction().opposite())) {
-                    // If consecutive segments have oposite direction, add a 0 lenght segment
-                    list.add(current);
-                    list.add(new Segment2d(
-                        current.end(),
-                        clockwise ? current.direction().normal() : current.direction().normal().opposite()
-                    ));
-                } else if (current.direction().equals(next.direction())) {
-                    // Merge consecutive segments with same direction
-                    current = new Segment2d(current.start(), next.end());
-                    list.set(0, current);
-                } else {
-                    // Add current segment to output.
-                    list.add(current);
-                }
-
-            // Then populate the resulting record list with values
-            previous = list.get(list.size()-1);
-            iter = list.iterator();
-            current = iter.next();
-            while (iter.hasNext()) {
-                next = iter.next();
-                result.add(new Element(current, previous, next));
-                previous = current;
-                current = next;
-            }
-            next = list.get(0);
-            result.add(new Element(current, previous, next));
+    // Rearange a ring list of segments so it ends with selected segment.
+    private List<Segment2d> prepareSegments(List<Segment2d> segments, int selected) {
+        List<Segment2d> result = new LinkedList<>();
+        int index = selected + 1;
+        int count = segments.size();
+        while(count > 0) {
+            if (index >= segments.size())
+                index = 0;
+            result.add(segments.get(index));
+            count--;
+            index++;
         }
-
         return result;
     }
 
-private
+    // SELECTED SEGMENT IS THE LAST ONE
+    private List<Bissector> computeBissectors(List<Segment2d> segments) {
+        List<Bissector> result = new LinkedList<>();
+
+        Segment2d selected = segments.get(segments.size() - 1);
+        System.out.println("selected="+selected);
+
+        List<Line2d> bissectors = new LinkedList<>();
+        Line2d previous = new Line2d(selected);
+        for (Segment2d segment : segments) {
+            Line2d line = new Line2d(segment);
+            System.out.println("bissector with="+segment+" "+line);
+            bissectors.add(previous.bissector(line));
+            previous = line;
+        }
+
+        // Selected segment could be excluded from result
+        // We start with selected segment as border line
+        Line2d border = new Line2d(selected);
+        double lastIndex = 0.0;
+        for (Line2d bissector : bissectors) {
+            System.out.println("border="+border+" bissector="+bissector);
+            // We always should have intersection between successive bissectors
+            Vector2d intersect = border.intersection(bissector);
+            Double index = selected.nearestPointIndex(intersect);
+            result.add(new Bissector(border, lastIndex, index));
+            lastIndex = index;
+            border = bissector;
+        }
+
+        return result;
+
+    }
+
+    private List<Segment2d> prepareRing(LinearRing2d ring) {
+
+        boolean clockwise = ring.isClockwise();
+
+        Segment2d current, next;
+        Iterator<Segment2d> iter;
+
+        List<Segment2d> list = new LinkedList<>();
+        iter = ring.segments().iterator();
+        current = iter.next();
+        while (iter.hasNext()) {
+            next = iter.next();
+
+            if (current.direction().equals(next.direction().opposite())) {
+                // If consecutive segments have oposite direction, add a 0 lenght segment
+                list.add(current);
+                list.add(new Segment2d(
+                    current.end(),
+                    clockwise ? current.direction().normal() : current.direction().normal().opposite()
+                ));
+                current = next;
+            } else if (current.direction().equals(next.direction())) {
+                // Merge consecutive segments with same direction
+                current = new Segment2d(current.start(), next.end());
+            } else {
+                // Add current segment to output.
+                list.add(current);
+                current = next;
+            }
+        }
+
+        next = list.get(0);
+
+        // Add remaining segment if not in the same direction of the first one
+        if (current.direction().equals(next.direction().opposite())) {
+                // If consecutive segments have oposite direction, add a 0 lenght segment
+                list.add(current);
+                list.add(new Segment2d(
+                    current.end(),
+                    clockwise ? current.direction().normal() : current.direction().normal().opposite()
+                ));
+            } else if (current.direction().equals(next.direction())) {
+                // Merge consecutive segments with same direction
+                current = new Segment2d(current.start(), next.end());
+                list.set(0, current);
+            } else {
+                // Add current segment to output.
+                list.add(current);
+            }
+
+        return list;
+    }
+
+    // FIRST WORK ONLY ON SHELL
+    // We will see holes later
 
 //NOTE:
 // shell is clockwise
@@ -231,78 +221,54 @@ private
 // negative determinant of successive vectors : turns clockwise -> convex angle
 // null determinant means vector are aligned, maybe uturn, maybe contine
 
-    private double distance(Segment2d segment, int x, int y) {
-        double d = segment.signedDistanceTo(x, y) + 1;
-        if (d < 0)
-            return d;
-
-        double i = segment.nearestPointIndex(x, y);
-        if (i < 0)
-            return -i;
-
-        if (i > segment.length())
-            return i - segment.length();
-
-        return d;
+    private Line2d getBissector(List<Bissector> bissectors, double index) {
+        for (Bissector bissector : bissectors) {
+            if (bissector.includes(index))
+                return bissector.bissector;
+        }
+        return null;
     }
 
     private void drawSlopes(GenerationTile tile, Shape2d shape, Set<Segment2d> straightSegments, int altitude, double slopeFactor) {
-        List<Element> elements = prepareGeometry(shape);
+//        List<Element> elements = prepareGeometry(shape);
+
 
         for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(shape))) {
             int x = voxel.coords().x();
             int y = voxel.coords().y();
 
-            // For each 2d position, we try to find the corresponding slope (corresponding roof edge segment)
             Segment2d selectedSegment = null;
-            double distance = 1000.0;
-            double d2 = -1000.0;
 
-            for (Element slope: elements) {
-                double d = slope.current().signedDistanceTo(x, y); // * Slope
+            // TODO: TO BE OPTIMIZED
+            // All bissectors could be computed in a first pass and stored per segment
+            for (Polygon2d polygon: shape.polygons()) {
 
-                if (d < -1) continue;
+                // TODO: TAKE HOLES IN ACCOUNT
+                List<Segment2d> segments = prepareRing(polygon.shell());
 
-                double npi = slope.current().nearestPointIndex(x, y);
-                double i = 0.0;
-                    if (npi < 0) i = - npi;
-                    if (npi > slope.current().length()) i = npi - slope.current().length();
+                for (int index = 0; index < segments.size(); index ++) {
+                    Segment2d tested = segments.get(index);
+                    if (tested.signedDistanceTo(x, y) < -1)
+                        continue;
 
-                // If there is already a selected segment nearest, no need to look further
-//                if (selectedSegment != null && d >= distance) continue;
+                    List<Segment2d> ordered = prepareSegments(segments, index);
+                    List<Bissector> bissectors = computeBissectors(ordered);
+                    Line2d line = getBissector(bissectors, index);
+                    // Not in selected roof pane (index out of bounds)
+                    if (line == null)
+                        continue;
 
-                // No roof surface for straight segments
-//                if (straightSegments.contains(slope.current())) continue;
+                    // (x, y) must be on left side of every selected bissector (there should be only one + selected segment)
+                    // Determinant is signed distance
+                    if (line.direction.determinant(x - line.origin.x(), y - line.origin.y()) > 0)
+                        continue;
 
-                /*
-                // "Cut" roof plane according to previous slope
-                double previousDistance = slope.previous().signedDistanceTo(x,y);
-                // Never discard slope if distances are equals (this may reject wanted slope)
-                // Keep closest slope if convex, reject it if concave
-//                if (previousDistance != d && (slope.detPrevious() > 0 ^ previousDistance < d))
-                if (slope.detPrevious() > 0 && previousDistance < d)
-                    continue;
+                    selectedSegment = tested;
+                    break;
+                }
 
-                // "Cut" roof plane according to next slope
-                double nextDistance = slope.next().signedDistanceTo(x,y);
-                // Never discard slope if distances are equals (this may reject wanted slope)
-                // Keep closest slope if convex, reject it if concave
-//                if (nextDistance != d && (slope.detNext() > 0 ^ nextDistance < d))
-                if (slope.detNext() > 0 && nextDistance < d)
-                    continue;
-
-                // Ok, now, we select segment if it has a lower distance than previously
-                */
-                if (i == 0 && d < distance) {
-                    distance = d;
-                    d2 = d;
-                    selectedSegment = slope.current();
-                }/*
-                if (i > 0 && d - i > d2) {
-                    distance = d;
-                    d2 = d - i;
-                    selectedSegment = slope.current();
-                }*/
+                if (selectedSegment != null)
+                    break;
             }
 
             if (selectedSegment != null)

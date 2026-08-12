@@ -112,6 +112,11 @@ public class Segment2d implements Bounded2d {
         );
     }
 
+
+    public double nearestPointIndex(Vector2d vector) {
+        return direction.dot(vector);
+    }
+
     /**
      * Returns index of segment nearest point to a given point.
      * <p>
