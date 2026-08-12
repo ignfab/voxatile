@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LuantiVoxelTileTest {
     private static final LuantiVoxel GRASS = new LuantiVoxel("default:dirt_with_grass", (byte) 0, (byte) 0);

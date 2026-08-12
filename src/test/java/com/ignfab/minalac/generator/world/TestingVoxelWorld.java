@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.outputs.testing;
+package com.ignfab.minalac.generator.world;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -6,10 +6,6 @@ import java.util.Collections;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.MapWriteException;
-import com.ignfab.minalac.generator.world.VoxelTile;
-import com.ignfab.minalac.generator.world.VoxelWorld;
-import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
 /**
  * Testing purpose {@link VoxelWorld} intended to be used in unit tests.
@@ -36,7 +32,7 @@ public class TestingVoxelWorld extends VoxelWorld {
     public void initialize() throws MapWriteException {}
 
     @Override
-    public void finalizeAndSave() throws MapWriteException {}
+    public void finalizeAndSave() {}
 
     /**
      * {@inheritDoc}
@@ -46,7 +42,7 @@ public class TestingVoxelWorld extends VoxelWorld {
      */
     @Override
     public VoxelTile newTile(WorldBBox3d limits) {
-        return new TestingVoxelTile(this, limits);
+        return new TestingVoxelTile(limits);
     }
 
     @Override
