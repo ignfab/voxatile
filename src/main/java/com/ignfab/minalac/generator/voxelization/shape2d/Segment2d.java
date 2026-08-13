@@ -114,7 +114,7 @@ public class Segment2d implements Bounded2d {
 
 
     public double nearestPointIndex(Vector2d vector) {
-        return direction.dot(vector);
+        return direction.dot(vector.x() - start.x(), vector.y() - start.y());
     }
 
     /**

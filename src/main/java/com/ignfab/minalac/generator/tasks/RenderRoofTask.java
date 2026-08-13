@@ -1,9 +1,11 @@
 package com.ignfab.minalac.generator.tasks;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.ignfab.minalac.generator.generation.GenerationTile;
@@ -13,7 +15,6 @@ import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.utils.world2d.Vector2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LinearRing2d;
-import com.ignfab.minalac.generator.voxelization.shape2d.Polygon2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Segment2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Shape2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.Shape2dVoxelizer;
@@ -67,20 +68,27 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
         this.heightMetadata = heightMetadata;
     }
 
-    // Beware, direction of line is not normalized (because of record)
+    // Beware, direction of line may be not normalized
     private record Line2d(Vector2d origin, Vector2d direction) {
         Line2d(Segment2d segment) {
             this(segment.start().toVector(), segment.direction());
         }
 
-        Vector2d intersection(Line2d other) {
-            double det = other.direction.determinant(direction);
+        Double intersectionIndex(Line2d other) {
+          double det = direction.determinant(other.direction);
             if (det == 0.0)
                 return null;
 
-            return origin.add(direction.multiply(
-                direction.determinant(other.origin.x() - origin.x(), other.origin.y() - origin.y()) / det
-            ));
+            return other.direction.determinant(origin.x() - other.origin.x(), origin.y() - other.origin.y()) / det;
+        }
+
+        Vector2d at(double index) {
+            return origin.add(direction.multiply(index));
+        }
+
+        Vector2d intersection(Line2d other) {
+            Double index = intersectionIndex(other);
+            return index == null ? null : at(index);
         }
 
         // TODO: Missing slope factor
@@ -88,7 +96,10 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
             Vector2d intersection = intersection(other);
             if (intersection == null)
                 // If lines are parallel, we return a middle line parallel
-                intersection = new Vector2d((origin.x() + other.origin.x()) / 2, (origin.y() + other.origin.y()) / 2);
+                return new Line2d(
+                    new Vector2d((origin.x() + other.origin.x()) / 2, (origin.y() + other.origin.y()) / 2),
+                    other.direction
+                );
 
             // Usual case: bissector is a line passing through the intersection of the two lines
             // With a mean direction.
@@ -124,38 +135,75 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
         return result;
     }
 
+
     // SELECTED SEGMENT IS THE LAST ONE
     private List<Bissector> computeBissectors(List<Segment2d> segments) {
         List<Bissector> result = new LinkedList<>();
 
         Segment2d selected = segments.get(segments.size() - 1);
-        System.out.println("selected="+selected);
 
         List<Line2d> bissectors = new LinkedList<>();
-        Line2d previous = new Line2d(selected);
+        Line2d selectedLine = new Line2d(selected);
+        System.out.println("\nselected="+selected+" "+selectedLine+"\n");
+        System.out.println("Bissectors:"); // Includes selected segment line at the end
         for (Segment2d segment : segments) {
             Line2d line = new Line2d(segment);
-            System.out.println("bissector with="+segment+" "+line);
-            bissectors.add(previous.bissector(line));
-            previous = line;
+            System.out.println("bissector with="+segment+" "+line+" -> "+selectedLine.bissector(line));
+            bissectors.add(selectedLine.bissector(line));
         }
 
         // Selected segment could be excluded from result
         // We start with selected segment as border line
-        Line2d border = new Line2d(selected);
-        double lastIndex = 0.0;
-        for (Line2d bissector : bissectors) {
-            System.out.println("border="+border+" bissector="+bissector);
-            // We always should have intersection between successive bissectors
-            Vector2d intersect = border.intersection(bissector);
-            Double index = selected.nearestPointIndex(intersect);
-            result.add(new Bissector(border, lastIndex, index));
-            lastIndex = index;
-            border = bissector;
+        System.out.println("Indexes:");
+
+        // Walks bissectors, put them on a line string (this will remove some)
+        double startIndex = selected.length();
+        double endIndex = 0;
+
+        int index = 0;
+        Line2d border = null;
+        while (index < bissectors.size()) {
+            border = bissectors.get(index);
+            System.out.println(index + ": " + border);
+            double intersectionIndex = Double.MAX_VALUE;
+            index++;
+            Vector2d intersection = null;
+            for (int next = index; next < bissectors.size(); next ++) {
+                System.out.println("  test " + next);
+                Double ii = border.intersectionIndex(bissectors.get(next));
+                if (ii != null) {
+                    System.out.println("  intersects at " + ii);
+                    if (ii > 0  // Pas prendre le précédent (on est dans un anneau)
+                        && ii < intersectionIndex) {
+                        System.out.println("  selected!");
+                        intersectionIndex = ii;
+                        index = next; // Jump to this line
+                        intersection = border.at(ii);
+                    }
+                }
+            }
+            if (intersection == null)
+                break;
+            System.out.println("==> From "+startIndex + " to "+endIndex+": "+ border);
+
+            endIndex = selected.nearestPointIndex(intersection);
+            result.add(new Bissector(border, startIndex, endIndex));
+            startIndex = endIndex;
         }
+        if (border != null)
+            result.add(new Bissector(border, startIndex, 0.0));
 
         return result;
+    }
 
+    private Map<Segment2d, List<Bissector>> computeRing(LinearRing2d ring) {
+        Map<Segment2d, List<Bissector>> result = new HashMap<>();
+        List<Segment2d> segments = prepareRing(ring);
+
+        for (int index = 0; index < segments.size(); index ++)
+            result.put(segments.get(index), computeBissectors(prepareSegments(segments, index)));
+
+        return result;
     }
 
     private List<Segment2d> prepareRing(LinearRing2d ring) {
@@ -231,6 +279,12 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
 
     private void drawSlopes(GenerationTile tile, Shape2d shape, Set<Segment2d> straightSegments, int altitude, double slopeFactor) {
 //        List<Element> elements = prepareGeometry(shape);
+        System.out.println("\n************************************\n");
+
+        // TODO: Manage multiple polygons
+        // TODO: Manage holes
+        LinearRing2d ring = shape.polygons().iterator().next().shell();
+        Map<Segment2d, List<Bissector>> segmentBissectors = computeRing(ring);
 
 
         for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(shape))) {
@@ -239,36 +293,21 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
 
             Segment2d selectedSegment = null;
 
-            // TODO: TO BE OPTIMIZED
-            // All bissectors could be computed in a first pass and stored per segment
-            for (Polygon2d polygon: shape.polygons()) {
+            for (Segment2d segment: ring.segments()) {
+                double index = segment.nearestPointIndex(x, y);
+                Line2d line = getBissector(segmentBissectors.get(segment), index);
 
-                // TODO: TAKE HOLES IN ACCOUNT
-                List<Segment2d> segments = prepareRing(polygon.shell());
+                // Not in selected roof pane (index out of bounds)
+                if (line == null)
+                    continue;
 
-                for (int index = 0; index < segments.size(); index ++) {
-                    Segment2d tested = segments.get(index);
-                    if (tested.signedDistanceTo(x, y) < -1)
-                        continue;
+                // (x, y) must be on left side of every selected bissector (there should be only one + selected segment)
+                // Determinant is signed distance
+                if (line.direction.determinant(x - line.origin.x(), y - line.origin.y()) > 0)
+                    continue;
 
-                    List<Segment2d> ordered = prepareSegments(segments, index);
-                    List<Bissector> bissectors = computeBissectors(ordered);
-                    Line2d line = getBissector(bissectors, index);
-                    // Not in selected roof pane (index out of bounds)
-                    if (line == null)
-                        continue;
-
-                    // (x, y) must be on left side of every selected bissector (there should be only one + selected segment)
-                    // Determinant is signed distance
-                    if (line.direction.determinant(x - line.origin.x(), y - line.origin.y()) > 0)
-                        continue;
-
-                    selectedSegment = tested;
-                    break;
-                }
-
-                if (selectedSegment != null)
-                    break;
+                selectedSegment = segment;
+                break;
             }
 
             if (selectedSegment != null)
