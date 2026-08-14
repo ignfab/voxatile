@@ -68,10 +68,26 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
         this.heightMetadata = heightMetadata;
     }
 
-    // Beware, direction of line may be not normalized
-    private record Line2d(Vector2d origin, Vector2d direction) {
-        Line2d(Segment2d segment) {
-            this(segment.start().toVector(), segment.direction());
+    public class Line2d {
+        private final Vector2d origin;
+        private final Vector2d direction;
+
+        public Line2d(Vector2d origin, Vector2d direction) {
+            this.origin = origin;
+            this.direction = direction.normalize();
+
+        }
+        public Line2d(Segment2d segment) {
+            this.origin = segment.start().toVector();
+            this.direction = segment.direction(); // Already normalized
+        }
+
+        Vector2d direction() {
+            return direction;
+        }
+
+        Vector2d origin() {
+            return origin;
         }
 
         Double intersectionIndex(Line2d other) {
@@ -83,12 +99,25 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
         }
 
         Vector2d at(double index) {
-            return origin.add(direction.multiply(index));
+            // wont work, not normalized direction!
+            return new Vector2d(
+                direction.x() * index + origin.x(),
+                direction.y() * index + origin.y()
+            );
         }
 
         Vector2d intersection(Line2d other) {
             Double index = intersectionIndex(other);
             return index == null ? null : at(index);
+        }
+
+        public double nearestPointIndex(Vector2d vector) {
+            return direction.dot(vector.x() - origin.x(), vector.y() - origin.y());
+        }
+
+        @Override
+        public String toString() {
+            return "Line2d(org="+origin+" dir="+direction+")";
         }
 
         // TODO: Missing slope factor
@@ -107,24 +136,13 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
         }
     }
 
-    private record Bissector(
-        Line2d bissector,
-        double startIndex,
-        double endIndex
-    ) {
-        boolean includes(double index) {
-            return startIndex < endIndex ?
-                (index >= startIndex && index <= endIndex) :
-                (index >= endIndex && index <= startIndex);
-        }
 
-    }
 
     // Rearange a ring list of segments so it ends with selected segment.
-    private List<Segment2d> prepareSegments(List<Segment2d> segments, int selected) {
+    private List<Segment2d> listOtherSegments(List<Segment2d> segments, int selected) {
         List<Segment2d> result = new LinkedList<>();
         int index = selected + 1;
-        int count = segments.size();
+        int count = segments.size() - 1;
         while(count > 0) {
             if (index >= segments.size())
                 index = 0;
@@ -135,74 +153,109 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
         return result;
     }
 
-
-    // SELECTED SEGMENT IS THE LAST ONE
-    private List<Bissector> computeBissectors(List<Segment2d> segments) {
-        List<Bissector> result = new LinkedList<>();
-
-        Segment2d selected = segments.get(segments.size() - 1);
-
-        List<Line2d> bissectors = new LinkedList<>();
-        Line2d selectedLine = new Line2d(selected);
-        System.out.println("\nselected="+selected+" "+selectedLine+"\n");
-        System.out.println("Bissectors:"); // Includes selected segment line at the end
-        for (Segment2d segment : segments) {
-            Line2d line = new Line2d(segment);
-            System.out.println("bissector with="+segment+" "+line+" -> "+selectedLine.bissector(line));
-            bissectors.add(selectedLine.bissector(line));
+    private record SlopeBorder(
+        Line2d line, // Border line
+        double startIndex, // index interval it applies
+        double endIndex
+    ) {
+        boolean includes(double index) {
+            return startIndex < endIndex ?
+                (index >= startIndex && index <= endIndex) :
+                (index >= endIndex && index <= startIndex);
         }
 
-        // Selected segment could be excluded from result
-        // We start with selected segment as border line
+    }
+
+    // START SEGMENT IS THE LAST ONE
+    private List<SlopeBorder> computeSlope(Segment2d baseSegment, List<Segment2d> otherSegments) {
+
+        // First compute bissectors of starting segment with other segments.
+        List<Line2d> bissectors = new LinkedList<>();
+        Line2d baseLine = new Line2d(baseSegment);
+        System.out.println("\nBase: "+baseSegment+" "+baseLine+"\n");
+        System.out.println("Bissectors:"); // Includes selected segment line at the end
+        for (Segment2d segment : otherSegments) {
+            Line2d line = new Line2d(segment);
+            System.out.println("bissector "+ bissectors.size()+": with="+segment+" "+line+" -> "+baseLine.bissector(line));
+            bissectors.add(baseLine.bissector(line));
+        }
+
+        // Now compute which of these bissecors will form the slope shape.
+
+        // Slope shape is modelized by a list of starting segment index intervals associated with a border line.
+        List<SlopeBorder> result = new LinkedList<>();
+
         System.out.println("Indexes:");
 
-        // Walks bissectors, put them on a line string (this will remove some)
-        double startIndex = selected.length();
+        double startIndex = baseSegment.length();
+        System.out.println("Segment length: " + baseSegment.length());
         double endIndex = 0;
 
+        Line2d border = bissectors.get(0);
         int index = 0;
-        Line2d border = null;
-        while (index < bissectors.size()) {
-            border = bissectors.get(index);
-            System.out.println(index + ": " + border);
-            double intersectionIndex = Double.MAX_VALUE;
-            index++;
+        double startBorderIndex = 0; // First intersection = start of first bissector
+        double det = baseLine.direction().determinant(border.direction());
+        System.out.println("Determinant="+det);
+        if (det > 0) border = new Line2d(border.origin(), border.direction().opposite());
+
+        do {
+            System.out.println(index + ": " + border + " start index = "+startBorderIndex + " "+ border.at(startBorderIndex));
             Vector2d intersection = null;
-            for (int next = index; next < bissectors.size(); next ++) {
-                System.out.println("  test " + next);
+            double score = Double.MAX_VALUE;
+
+            for (int next = index + 1; next < bissectors.size(); next ++) {
                 Double ii = border.intersectionIndex(bissectors.get(next));
                 if (ii != null) {
-                    System.out.println("  intersects at " + ii);
-                    if (ii > 0  // Pas prendre le précédent (on est dans un anneau)
-                        && ii < intersectionIndex) {
-                        System.out.println("  selected!");
-                        intersectionIndex = ii;
+                    System.out.println("  " + next + ": intersects at " + ii + " " + border.at(ii));
+                    boolean selected =
+                       (ii > startBorderIndex && ii < score);
+                    if (selected) {
+                        System.out.println("  "+next+": selected!");
+                        score = ii;
                         index = next; // Jump to this line
                         intersection = border.at(ii);
                     }
-                }
-            }
-            if (intersection == null)
-                break;
-            System.out.println("==> From "+startIndex + " to "+endIndex+": "+ border);
+                } else
+                    System.out.println("  " + next + ": no intersection");
 
-            endIndex = selected.nearestPointIndex(intersection);
-            result.add(new Bissector(border, startIndex, endIndex));
+            }
+            if (intersection == null) {
+                // No more intersection found, we are over for this shape
+                System.out.println("  no more intersection!");
+                break;
+            }
+
+            // Resulting index interval goes from last intersection index (startIndex) to this intersection index
+            endIndex = baseSegment.nearestPointIndex(intersection);
+            System.out.println("==> From "+startIndex + " to "+endIndex+": "+ border);
+            result.add(new SlopeBorder(border, startIndex, endIndex));
+
+            det = border.direction().determinant(bissectors.get(index).direction());
+            System.out.println("Determinant="+det);
+            // Proceed to next border (selected intersector)
+            border = bissectors.get(index);
+            if (det > 0) border = new Line2d(border.origin(), border.direction().opposite());
+
+            // Along border, selected indexes should start from intersection (never go backwards)
+            startBorderIndex = border.nearestPointIndex(intersection);
+            // --> Semble mauvais, ça donne un index qui ne correspond pas à l'intersection :O
+
+            // Keep current intersection index for next border
             startIndex = endIndex;
-        }
-        if (border != null)
-            result.add(new Bissector(border, startIndex, 0.0));
+        } while (true);
+
+        // End shape with last border connecting to starting segment starting index (0)
+        System.out.println("finaly:\n==> From "+startIndex + " to 0.0: "+ border);
+        result.add(new SlopeBorder(border, startIndex, 0));
 
         return result;
     }
 
-    private Map<Segment2d, List<Bissector>> computeRing(LinearRing2d ring) {
-        Map<Segment2d, List<Bissector>> result = new HashMap<>();
-        List<Segment2d> segments = prepareRing(ring);
+    private Map<Segment2d, List<SlopeBorder>> computeSlopes(List<Segment2d> segments) {
+        Map<Segment2d, List<SlopeBorder>> result = new HashMap<>();
 
         for (int index = 0; index < segments.size(); index ++)
-            result.put(segments.get(index), computeBissectors(prepareSegments(segments, index)));
-
+            result.put(segments.get(index), computeSlope(segments.get(index), listOtherSegments(segments, index)));
         return result;
     }
 
@@ -269,10 +322,10 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
 // negative determinant of successive vectors : turns clockwise -> convex angle
 // null determinant means vector are aligned, maybe uturn, maybe contine
 
-    private Line2d getBissector(List<Bissector> bissectors, double index) {
-        for (Bissector bissector : bissectors) {
-            if (bissector.includes(index))
-                return bissector.bissector;
+    private Line2d getSlopeBorder(List<SlopeBorder> borders, double index) {
+        for (SlopeBorder border : borders) {
+            if (border.includes(index))
+                return border.line;
         }
         return null;
     }
@@ -283,8 +336,8 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
 
         // TODO: Manage multiple polygons
         // TODO: Manage holes
-        LinearRing2d ring = shape.polygons().iterator().next().shell();
-        Map<Segment2d, List<Bissector>> segmentBissectors = computeRing(ring);
+        List<Segment2d> segments = prepareRing(shape.polygons().iterator().next().shell());
+        Map<Segment2d, List<SlopeBorder>> segmentBissectors = computeSlopes(segments);
 
 
         for (Positioned2d voxel : tile.limits().to2d().filterInside(voxelizer.voxelize(shape))) {
@@ -293,9 +346,9 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
 
             Segment2d selectedSegment = null;
 
-            for (Segment2d segment: ring.segments()) {
+            for (Segment2d segment: segments) {
                 double index = segment.nearestPointIndex(x, y);
-                Line2d line = getBissector(segmentBissectors.get(segment), index);
+                Line2d line = getSlopeBorder(segmentBissectors.get(segment), index);
 
                 // Not in selected roof pane (index out of bounds)
                 if (line == null)

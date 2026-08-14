@@ -43,6 +43,11 @@ public record Vector2d(double x, double y) {
         return x == 0 && y == 0;
     }
 
+    public Vector2d normalize() {
+        double length = length();
+        return new Vector2d(x / length, y / length);
+    }
+
     /**
      * Returns a new vector resulting from addition of a vector to this vector.
      *
