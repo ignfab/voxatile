@@ -38,7 +38,12 @@ First, read the [How to start from scratch](scratch.md).
 
 Once done, you can read the other howtos in any order unless specified:
 
-* [How to deal with ground](ground.md)
+* [How to build ground](ground.md)
+* [How to render forests](forest.md)
 * [How to render water](water.md)
 * [How to draw roads](roads.md)
 * [How to render simple buildings](simple-buildings.md)
+
+Some more general howtos:
+* [How to start from scratch](scratch.md)
+* [How to deal with huge parameter files](files.md)

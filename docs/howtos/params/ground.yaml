@@ -1,0 +1,54 @@
+worldName: Ground
+format: luanti
+area:
+  center:
+    latitude: 48.8822
+    longitude: 2.3819
+  extentX: 1000
+  extentY: 1000
+
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+  fetch-elevation:
+    type: fetchData
+    modelType: elevation
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+
+  populate-ground:
+    after: fetch-elevation 
+    type: populateHeightmap
+    models:
+      type: elevation
+    heightmap: ground
+
+  spawn:
+    after: populate-ground
+    type: setSpawn
+    heightmap:
+      sum: [ground, 2]
+    x: 0
+    y: 0
+
+  ground:
+    after: populate-ground
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - at: [0, 0, 1]
+          put:
+            pattern:
+              chance: 0.1
+              place: default:grass_1      
+        - at: [0, 0, 0]                 # Notice we added a "-" sign
+          put: default:dirt_with_grass  # we now have a list of at/put
+        - at: [0, 0, -1]                # Under the grass voxel
+          put: default:dirt             # put a dirt voxel
+        - at: [0, 0, -9..-2]            # and under the dirt voxel
+          put: default:stone            # put stone voxels
