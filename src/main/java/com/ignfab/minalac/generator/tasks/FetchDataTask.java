@@ -23,6 +23,7 @@ public class FetchDataTask implements TileTask {
     private final PostProcessor<Model, ?> postProcessor;
     private final int maxTries;
     private final Duration retryDelay;
+    private final Duration delay;
 
     /**
      * Creates a new {@code FetchDataTask}.
@@ -40,7 +41,8 @@ public class FetchDataTask implements TileTask {
         Processor<?, ? extends Model> processor,
         PostProcessor<?, ?> postProcessor,
         int maxTries,
-        Duration retryDelay
+        Duration retryDelay,
+        Duration delay
     ) {
         if (!processor.acceptedType().isAssignableFrom(provider.providedType()))
             throw new IllegalArgumentException("%s cannot treat provided type. Provided = %s, Accepted = %s".formatted(
@@ -61,6 +63,7 @@ public class FetchDataTask implements TileTask {
         this.postProcessor = uncheckedPostProcessor;
         this.maxTries = maxTries;
         this.retryDelay = retryDelay;
+        this.delay = delay;
     }
 
     private void tryOnce(GenerationTile tile) throws RetryableException {
@@ -100,6 +103,15 @@ public class FetchDataTask implements TileTask {
         String taskName = Thread.currentThread().getName();
         List<RetryableException> suppressedRetryableExceptions = new LinkedList<>();
         int tries = 0;
+
+        if (!delay.isZero()) {
+            System.out.printf("%s task will try first fetch in %d seconds.%n", taskName, delay.toSeconds());
+            try {
+                Thread.sleep(delay.toMillis());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         do {
             try {

@@ -22,7 +22,7 @@ public class FetchDataTaskTest {
     public void testRetry() {
         TestingProvider provider = new TestingProvider(null, data, 2, 3); // Three fails after two models
         TestingProcessor processor = new TestingProcessor();
-        FetchDataTask task = new FetchDataTask("test", provider, processor, IdentityPostProcessor.INSTANCE, 10, Duration.ZERO);
+        FetchDataTask task = new FetchDataTask("test", provider, processor, IdentityPostProcessor.INSTANCE, 10, Duration.ZERO, Duration.ZERO);
 
         TestingGenerationTile tile = new TestingGenerationTile(WorldBBox3d.EMPTY);
         assertDoesNotThrow(() -> task.run(tile));
@@ -36,7 +36,7 @@ public class FetchDataTaskTest {
     public void testRetryFail() {
         TestingProvider provider = new TestingProvider(null, data, 2, 3);
         TestingProcessor processor = new TestingProcessor();
-        FetchDataTask task = new FetchDataTask("test", provider, processor, IdentityPostProcessor.INSTANCE, 2, Duration.ZERO);
+        FetchDataTask task = new FetchDataTask("test", provider, processor, IdentityPostProcessor.INSTANCE, 2, Duration.ZERO, Duration.ZERO);
 
         TestingGenerationTile tile = new TestingGenerationTile(WorldBBox3d.EMPTY);
         assertThrows(RuntimeException.class, () -> task.run(tile));
@@ -54,7 +54,8 @@ public class FetchDataTaskTest {
             new TestingProcessor(),
             IdentityPostProcessor.INSTANCE,
             10,
-            Duration.ofMillis(10)
+            Duration.ofMillis(10),
+            Duration.ZERO
         );
 
         assertDoesNotThrow(() -> task.run(new TestingGenerationTile(WorldBBox3d.EMPTY)));

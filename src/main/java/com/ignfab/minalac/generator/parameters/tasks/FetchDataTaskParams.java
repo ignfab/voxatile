@@ -36,6 +36,12 @@ public class FetchDataTaskParams extends TaskParams {
     public int retryDelay = 10;
 
     /**
+     * Initial delay in seconds before first try (optional, default 0).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public int delay = 0;
+
+    /**
      * Data provider (required).
      */
     public ProviderParams provider;
@@ -76,6 +82,9 @@ public class FetchDataTaskParams extends TaskParams {
         if (retryDelay < 0)
             throw new IllegalArgumentException("`retryDelay` must be a positive integer.");
 
+        if (delay < 0)
+            throw new IllegalArgumentException("`delay` must be a positive integer.");
+
         if (processor == null)
             throw new IllegalArgumentException("Missing processor and no default processor");
 
@@ -93,7 +102,8 @@ public class FetchDataTaskParams extends TaskParams {
             processor.create(generation),
             postProcessing.create(),
             retry + 1,
-            Duration.ofSeconds(retryDelay)
+            Duration.ofSeconds(retryDelay),
+            Duration.ofSeconds(delay)
         );
     }
 }
