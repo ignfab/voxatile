@@ -9,6 +9,12 @@
 
 - [ ] How to deal with huge parameter files
 
+# Params
+
+Il faut vérifier le param scratch.
+
+
+## Notes
 
 Les copies d'écrant sont faites avec Luanti 5.10, avec une fenêtre de 1024 par 800 et un champ de vision de 45.
 

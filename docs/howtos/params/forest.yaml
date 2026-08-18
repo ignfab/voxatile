@@ -1,0 +1,67 @@
+worldName: Forest
+format: luanti
+area:
+  center:
+    latitude: 48.8822
+    longitude: 2.3819
+  extentX: 1000
+  extentY: 1000
+
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+  fetch-elevation:
+    type: fetchData
+    modelType: elevation
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+
+  populate-ground:
+    after: fetch-elevation 
+    type: populateHeightmap
+    models:
+      type: elevation
+    heightmap: ground
+
+  spawn:
+    after: populate-ground
+    type: setSpawn
+    heightmap:
+      sum: [ground, 2]
+    x: 0
+    y: 0
+
+  ground:                    # Groud but with no fancy grass
+    after: populate-ground
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - at: [0, 0, 0]
+          put: default:dirt_with_grass
+        - at: [0, 0, -1]
+          put: default:dirt
+        - at: [0, 0, -9..-2]
+          put: default:stone           
+
+  forest:
+    after: ground
+    type: renderHeightmap
+    at:
+      sum: [ground, 1]
+    place:
+      pattern:
+        chance: 0.02
+        place:
+          structure:
+          - at: [-2..2, -2..2, 3..7]
+            put:                 # Put also takes a placeable
+              pattern:           # Use a random pattern
+                chance: 0.7      # With a 70% chance
+                place: default:leaves
+          - at: [0, 0, 0..4]
+            put: default:tree
