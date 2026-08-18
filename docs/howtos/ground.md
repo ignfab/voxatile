@@ -103,12 +103,12 @@ Stacking grass voxel is unusual in game. Groud is usualy made of a stone / dirt 
     at: ground
     place:
       structure:
-        - at: [0, 0, 0]                 # Notice we added a "-" sign
-          put: default:dirt_with_grass  # we now have a list of at/put
-        - at: [0, 0, -1]                # Under the grass voxel
-          put: default:dirt             # put a dirt voxel
-        - at: [0, 0, -9..-2]            # and under the dirt voxel
-          put: default:stone            # put stone voxels
+      - at: [0, 0, 0]                 # Notice we added a "-" sign
+        put: default:dirt_with_grass  # we now have a list of at/put
+      - at: [0, 0, -1]                # Under the grass voxel
+        put: default:dirt             # put a dirt voxel
+      - at: [0, 0, -9..-2]            # and under the dirt voxel
+        put: default:stone            # put stone voxels
 ```
 
 ### Result
@@ -134,17 +134,17 @@ Large grass areas are boring. We could decorate our ground with some random stuf
     at: ground
     place:
       structure:
-        - at: [0, 0, 1]
-          put:
-            pattern:
-              chance: 0.1
-              place: default:grass_1
-        - at: [0, 0, 0]
-          put: default:dirt_with_grass
-        - at: [0, 0, -1]
-          put: default:dirt
-        - at: [0, 0, -9..-2]
-          put: default:stone
+      - at: [0, 0, 1]
+        put:
+          pattern:
+            chance: 0.1
+            place: default:grass_1
+      - at: [0, 0, 0]
+        put: default:dirt_with_grass
+      - at: [0, 0, -1]
+        put: default:dirt
+      - at: [0, 0, -9..-2]
+        put: default:stone
 ```
 
 ### Result
@@ -158,3 +158,7 @@ The rock seen from ground.
 On top of ground, we added a `pattern`. Patterns allows to render voxels that vary according to position. Here we used a random pattern that places `default:grass_1` with a change of one out of ten.
 
 For more information about structures and patterns, you can follow [how to render forests](forests.md).
+
+## Resulting parameter file
+
+You can find the resulting parameter file of this howto [here](params/ground.yaml).

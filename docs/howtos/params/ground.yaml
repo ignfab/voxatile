@@ -41,14 +41,14 @@ forEachTile:
     at: ground
     place:
       structure:
-        - at: [0, 0, 1]
-          put:
-            pattern:
-              chance: 0.1
-              place: default:grass_1      
-        - at: [0, 0, 0]                 # Notice we added a "-" sign
-          put: default:dirt_with_grass  # we now have a list of at/put
-        - at: [0, 0, -1]                # Under the grass voxel
-          put: default:dirt             # put a dirt voxel
-        - at: [0, 0, -9..-2]            # and under the dirt voxel
-          put: default:stone            # put stone voxels
+      - at: [0, 0, 1]
+        put:
+          pattern:
+            chance: 0.1
+            place: default:grass_1      
+      - at: [0, 0, 0]                 # Notice we added a "-" sign
+        put: default:dirt_with_grass  # we now have a list of at/put
+      - at: [0, 0, -1]                # Under the grass voxel
+        put: default:dirt             # put a dirt voxel
+      - at: [0, 0, -9..-2]            # and under the dirt voxel
+        put: default:stone            # put stone voxels
