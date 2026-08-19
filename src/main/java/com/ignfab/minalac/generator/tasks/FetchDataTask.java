@@ -8,10 +8,10 @@ import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
 import com.ignfab.minalac.generator.generation.GenerationTile;
-import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.processors.Processor;
 import com.ignfab.minalac.generator.processors.post.PostProcessor;
+import com.ignfab.minalac.generator.providers.Provider;
 
 /**
  * A {@link TileTask} fetching data from a provider, processing models with a processor applying a post-processor to each model.

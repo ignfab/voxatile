@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.inputs;
+package com.ignfab.minalac.generator.utils.network;
 
 import java.net.MalformedURLException;
 import java.net.URL;

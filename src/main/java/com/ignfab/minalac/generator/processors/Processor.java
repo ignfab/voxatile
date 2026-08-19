@@ -8,7 +8,7 @@ import com.ignfab.minalac.generator.models.Model;
 
 /**
  * A processor is responsible for transforming elements coming from
- * a {@link com.ignfab.minalac.generator.inputs.Provider provider}
+ * a {@link com.ignfab.minalac.generator.providers.Provider provider}
  * into a model.
  * <p>
  * Its main method is {@link #process(Object)}, which take one

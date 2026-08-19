@@ -6,11 +6,11 @@ import tools.jackson.databind.jsontype.NamedType;
 import tools.jackson.dataformat.yaml.YAMLMapper;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
 import com.ignfab.minalac.generator.parameters.providers.ProviderParams;
+import com.ignfab.minalac.generator.providers.Provider;
 
 import static org.junit.jupiter.api.Assertions.*;
 

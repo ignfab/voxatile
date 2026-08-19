@@ -12,7 +12,7 @@ import org.geotools.referencing.CRS;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
-import com.ignfab.minalac.generator.inputs.OsmData;
+import com.ignfab.minalac.generator.geodata.OsmData;
 import com.ignfab.minalac.generator.models.JTSGeometryModel;
 import com.ignfab.minalac.generator.utils.coordinates.TestingConverter;
 import com.ignfab.minalac.generator.voxelization.shape2d.Point2d;

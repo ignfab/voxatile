@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.inputs.Provider;
-import com.ignfab.minalac.generator.inputs.TestingProvider;
 import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.TestingProcessorParams;
+import com.ignfab.minalac.generator.providers.Provider;
+import com.ignfab.minalac.generator.providers.TestingProvider;
 
 public class TestingProviderParams extends ProviderParams {
     /**

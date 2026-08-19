@@ -7,11 +7,11 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.inputs.OsmData;
-import com.ignfab.minalac.generator.inputs.OverpassProvider;
-import com.ignfab.minalac.generator.inputs.Provider;
+import com.ignfab.minalac.generator.geodata.OsmData;
 import com.ignfab.minalac.generator.parameters.processors.OsmProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
+import com.ignfab.minalac.generator.providers.OverpassProvider;
+import com.ignfab.minalac.generator.providers.Provider;
 
 /**
  * Parameters for Overpass provider.

@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.inputs;
+package com.ignfab.minalac.generator.providers;
 
 import java.util.Iterator;
 import java.util.List;

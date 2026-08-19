@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.util.AffineTransformation;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
-import com.ignfab.minalac.generator.inputs.FloatArrayGeographicDataMatrix2d;
-import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
+import com.ignfab.minalac.generator.geodata.FloatArrayGeographicDataMatrix2d;
+import com.ignfab.minalac.generator.geodata.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;

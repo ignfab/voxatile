@@ -14,7 +14,7 @@ import com.ignfab.minalac.generator.utils.coordinates.CoordsConverterProvider;
  * into {@link JTSGeometryModel}.
  * It also copies feature's properties inside model's metadata.
  * <p>
- * This processor pairs well with {@link com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider}.
+ * This processor pairs well with {@link com.ignfab.minalac.generator.providers.WFS1_1_GML3_1_DataProvider}.
  */
 public class GeoToolsVectorProcessor extends ConvertingProcessor<SimpleFeature, JTSGeometryModel> {
     /**

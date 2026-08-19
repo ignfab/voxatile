@@ -13,7 +13,7 @@ import org.locationtech.jts.geom.Geometry;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
-import com.ignfab.minalac.generator.inputs.OsmData;
+import com.ignfab.minalac.generator.geodata.OsmData;
 import com.ignfab.minalac.generator.models.JTSGeometryModel;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 
@@ -21,7 +21,7 @@ import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
  * Processor transforming {@code OsmData} into {@link JTSGeometryModel}.
  * It also copies OSM element tags into model's metadata.
  * <p>
- * This processor pairs well with {@link com.ignfab.minalac.generator.inputs.OverpassProvider}.
+ * This processor pairs well with {@link com.ignfab.minalac.generator.providers.OverpassProvider}.
  */
 public class OsmProcessor implements Processor<OsmData, JTSGeometryModel> {
     private final MapToWorldConverter converter;
