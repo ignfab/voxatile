@@ -1,0 +1,10 @@
+# Dead ends in Saint-Raphael/Boulouris
+worldName: Hyeres
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 43.1238
+    longitude: 6.1280
+  extentX: 1000
+  extentY: 1000

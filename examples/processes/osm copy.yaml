@@ -1,0 +1,242 @@
+heightmaps:
+  ground:
+    default: 0
+  water:
+    default: 0
+
+forEachTile:
+
+  altitude:
+    type: sequence
+    do:
+    - type: fetchData
+      modelType: altitude
+      provider:
+        type: wmsFloat
+        url: https://data.geopf.fr/wms-r/wms
+        layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    - type: populateHeightmap
+      models:
+        type: altitude
+      heightmap: ground
+    - type: setSpawn
+      heightmap:
+        sum: [ground, 1]
+      x: 0
+      y: 0
+
+  # Overpass fetches
+
+  fetchBuildings:
+    type: fetchData
+    modelType: buildings
+    retry: &retry 2
+    retryDelay: &retry-delay 2
+    delay: &delay 2
+    provider:
+      type: overpass
+      url: &overpass-url https://overpass.private.coffee/api/interpreter #https://overpass-api.de/api/interpreter
+      query: nwr[building]
+    postProcessing:
+      - type: copy
+        metadata: hauteur
+        to: height
+      - type: parse
+        metadata: height
+        as: decimal
+        ifMissing: ignore
+        ifNotParsable: removeMetadata
+      - type: truncate
+        metadata: height
+        method: round
+        ifMissing: ignore
+      - type: default
+        metadata: height
+        value: 5
+        as: integer
+
+  fetchWater:
+    type: fetchData
+    modelType: water
+    provider:
+      type: overpass
+      url: *overpass-url
+      query: nwr[natural=water]
+    retry: *retry
+    retryDelay: *retry-delay
+    delay: *delay
+    after: fetchBuildings
+
+  fetchRoads:
+    type: fetchData
+    modelType: road
+    provider:
+      type: overpass
+      url: *overpass-url
+      query: nwr[highway]
+    retry: *retry
+    retryDelay: *retry-delay
+    delay: *delay
+    after: fetchWater
+
+  fetchTrees:
+    type: fetchData
+    modelType: tree
+    provider:
+      type: overpass
+      url: *overpass-url
+      query: nwr[natural=tree]
+    retry: *retry
+    retryDelay: *retry-delay
+    delay: *delay
+    after: fetchRoads
+
+  flattenWater:
+    after:
+      - fetchWater
+      - altitude
+    type: copyHeightmap
+    models:
+      type: water
+    from:
+      localMin: ground
+      range: 9
+    to: ground
+
+  renderGround:
+    after:
+      - altitude
+      - flattenWater
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - put: *voxel-grass
+          at: [0, 0, 0]
+        - put: *voxel-dirt
+          at: [0, 0, -3..-1]
+        - put: *voxel-stone
+          at: [0, 0, -20..-4]
+
+  computeBuildingsAltitude:
+    after:
+      - fetchBuildings
+      - renderGround
+    type: computeHeightmapStats
+    models:
+      type: buildings
+    heightmap: ground
+    compute:
+      minimum: minimum-ground-altitude
+      maximum: ground-floor-altitude
+
+  flattenGroundBuildings:
+    after:
+      - computeBuildingsAltitude
+    type: fillBetweenHeightmapAndMetadata
+    models:
+      type: buildings
+    heightmap: ground
+    altitudeMetadata: ground-floor-altitude
+    placeAbove: *voxel-empty
+    placeBelow: *voxel-building-ground
+
+  renderBuildings:
+    after: flattenGroundBuildings
+    type: renderBuildings
+    models:
+      type: buildings
+      filter:
+        metadata: height
+        greaterThan: 0
+    roof: *voxel-cobble
+    wall: *voxel-stone
+    window: *voxel-glass
+
+  renderTrees:
+    after:
+      - fetchTrees
+      - altitude
+      - renderWater
+    type: renderPoints2d
+    models:
+      type: tree
+    heightmap: ground
+    place:
+      - pattern:
+          seed: forest-tree1
+          chance: 0.5
+          place: *forest-tree1
+      - *forest-tree2
+
+  populateWaterPresence:
+    after: fetchWater
+    type: copyHeightmap
+    models:
+      type: water
+    from: 1
+    to: water
+
+  computeWaterDepth:
+    after: populateWaterPresence
+    type: copyHeightmap
+    models:
+      type: water
+    from:
+      remap:
+        manhattan: water
+        maximumDistance: 12
+        targetValue: 0
+      mapping:
+        0: 0
+        1: 1
+        2: 8
+        3..3: 10
+        4..6: 11
+        7..12: 12
+    to: water
+
+  renderWater:
+    after:
+      - renderGround
+      - computeWaterDepth
+    type: renderHeightmap
+    minimum:
+      sum:
+        - ground
+        - 1
+        - product: [ -1, water ]
+    maximum: ground
+    place:
+      structure:
+        - put: *voxel-water
+          at: [ 0, 0, 0 ]
+        # This a dirt fix to remove vegetation on water
+        - put: *voxel-air
+          at: [ 0, 0, 1..12 ]
+
+  renderRoads:
+    after:
+      - renderGround
+      - fetchRoads
+    type: sequence
+    models:
+      type: road
+    do:
+    - type: renderLines2d
+      heightmap: ground
+      structure:
+        at: [ 0, -4..4, 0 ]
+        put: *road-paint
+    - type: renderLines2d
+      heightmap: ground
+      structure:
+        at: [ 0, -3..3, 0 ]
+        put: *road-tar
+    - type: renderLines2d
+      heightmap: ground
+      structure:
+        axes: x
+        blueprint: "  ==="
+        with:
+          "=": *road-paint
