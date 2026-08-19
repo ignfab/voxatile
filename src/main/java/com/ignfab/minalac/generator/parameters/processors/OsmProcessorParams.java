@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.parameters.processors;
 import org.geotools.api.referencing.FactoryException;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.inputs.OsmData;
+import com.ignfab.minalac.generator.geodata.OsmData;
 import com.ignfab.minalac.generator.models.JTSGeometryModel;
 import com.ignfab.minalac.generator.processors.OsmProcessor;
 import com.ignfab.minalac.generator.processors.Processor;

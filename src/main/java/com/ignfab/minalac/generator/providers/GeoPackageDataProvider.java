@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.inputs;
+package com.ignfab.minalac.generator.providers;
 
 import java.io.File;
 import java.util.Map;

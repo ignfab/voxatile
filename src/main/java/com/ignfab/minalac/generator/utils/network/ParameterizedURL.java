@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.inputs;
+package com.ignfab.minalac.generator.utils.network;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * A URL with query parameters.
- *
+ * <p>
  * This URL is immutable, use {@link #builder()} method to add or update parameters.
  */
 public final class ParameterizedURL {
@@ -18,8 +18,8 @@ public final class ParameterizedURL {
 
     /**
      * Creates a new ParameterizedURL.
-     *
-     * This constructor is private, use {@link #base()} method to start building a URL.
+     * <p>
+     * This constructor is private, use {@link #base(String)} method to start building a URL.
      *
      * @param baseURL base URL
      * @param params query parameters
@@ -122,7 +122,7 @@ public final class ParameterizedURL {
 
         /**
          * Creates a new {@code URL} from this {@code Builder}.
-         *
+         * <p>
          * This is a shortcut for {@code .build().toURL()}.
          *
          * @return resulting {@code URL} object

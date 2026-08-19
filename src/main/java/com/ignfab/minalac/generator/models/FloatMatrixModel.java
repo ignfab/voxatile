@@ -1,7 +1,7 @@
 package com.ignfab.minalac.generator.models;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
-import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
+import com.ignfab.minalac.generator.geodata.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.utils.coordinates.MapCoordinates;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;

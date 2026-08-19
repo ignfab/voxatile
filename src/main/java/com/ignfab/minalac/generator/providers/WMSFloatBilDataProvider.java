@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.inputs;
+package com.ignfab.minalac.generator.providers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,9 +14,12 @@ import org.geotools.referencing.CRS;
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.geodata.FloatArrayGeographicDataMatrix2d;
+import com.ignfab.minalac.generator.geodata.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.utils.Rounding;
 import com.ignfab.minalac.generator.utils.coordinates.EnvelopeProvider;
 import com.ignfab.minalac.generator.utils.iterator.Iterators;
+import com.ignfab.minalac.generator.utils.network.ParameterizedURL;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**

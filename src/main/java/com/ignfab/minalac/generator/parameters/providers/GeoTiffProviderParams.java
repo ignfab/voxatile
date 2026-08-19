@@ -10,11 +10,11 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
-import com.ignfab.minalac.generator.inputs.GeoTiffDataProvider;
-import com.ignfab.minalac.generator.inputs.Provider;
+import com.ignfab.minalac.generator.geodata.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
+import com.ignfab.minalac.generator.providers.GeoTiffDataProvider;
+import com.ignfab.minalac.generator.providers.Provider;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 
 /**

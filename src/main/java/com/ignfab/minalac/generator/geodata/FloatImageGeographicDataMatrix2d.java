@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.inputs;
+package com.ignfab.minalac.generator.geodata;
 
 import org.eclipse.imagen.iterator.RandomIter;
 

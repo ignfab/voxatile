@@ -8,7 +8,7 @@ import org.geotools.referencing.CRS;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
-import com.ignfab.minalac.generator.inputs.FloatGeographicDataMatrix2d;
+import com.ignfab.minalac.generator.geodata.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.models.FloatMatrixModel;
 import com.ignfab.minalac.generator.utils.coordinates.TestingConverter;
 

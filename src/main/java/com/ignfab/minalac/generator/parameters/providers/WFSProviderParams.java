@@ -1,6 +1,7 @@
 package com.ignfab.minalac.generator.parameters.providers;
 
 import java.beans.ConstructorProperties;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -9,11 +10,14 @@ import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
 
+import com.ignfab.minalac.generator.fetchers.Fetcher;
+import com.ignfab.minalac.generator.fetchers.StringReplacementFetcher;
+import com.ignfab.minalac.generator.fetchers.WFS1_1_Fetcher;
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.inputs.Provider;
-import com.ignfab.minalac.generator.inputs.WFS1_1_GML3_1_DataProvider;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
+import com.ignfab.minalac.generator.providers.GML3_1_Provider;
+import com.ignfab.minalac.generator.providers.Provider;
 
 /**
  * Parameters for WFS providers.
@@ -64,7 +68,10 @@ public class WFSProviderParams extends ProviderParams {
         else
             layerCrs = generation.crs();
 
-        return new WFS1_1_GML3_1_DataProvider(url, features, layerCrs, generation::getEnvelopeForCRS, maxFeaturesPerQuery);
+        Fetcher fetcher = new WFS1_1_Fetcher(url, features, layerCrs, generation::getEnvelopeForCRS, maxFeaturesPerQuery);
+        // Invalidate schema declaration because GML version 3.1 is not used in this schema (version is unspecified, defaulting to 3.2)
+        fetcher = new StringReplacementFetcher(fetcher, Map.of("http://BDTOPO_V3", "explicitly-invalid"));
+        return new GML3_1_Provider(fetcher, layerCrs);
     }
 
     @Override

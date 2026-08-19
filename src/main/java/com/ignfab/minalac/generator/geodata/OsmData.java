@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.inputs;
+package com.ignfab.minalac.generator.geodata;
 
 import de.topobyte.osm4j.core.model.iface.OsmEntity;
 import de.topobyte.osm4j.core.resolve.OsmEntityProvider;

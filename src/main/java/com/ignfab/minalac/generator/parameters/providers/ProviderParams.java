@@ -1,9 +1,9 @@
 package com.ignfab.minalac.generator.parameters.providers;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.inputs.Provider;
 import com.ignfab.minalac.generator.parameters.PolymorphicParams;
 import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
+import com.ignfab.minalac.generator.providers.Provider;
 
 /**
  * Represents the parameters of a type of {@link Provider}.

@@ -11,10 +11,10 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.inputs.Provider;
-import com.ignfab.minalac.generator.inputs.ShapefileDataProvider;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
+import com.ignfab.minalac.generator.providers.Provider;
+import com.ignfab.minalac.generator.providers.ShapefileDataProvider;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 
 /**

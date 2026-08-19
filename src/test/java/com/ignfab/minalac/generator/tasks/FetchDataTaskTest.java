@@ -7,9 +7,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.TestingGenerationTile;
-import com.ignfab.minalac.generator.inputs.TestingProvider;
 import com.ignfab.minalac.generator.processors.TestingProcessor;
 import com.ignfab.minalac.generator.processors.post.IdentityPostProcessor;
+import com.ignfab.minalac.generator.providers.TestingProvider;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 import static org.junit.jupiter.api.Assertions.*;
