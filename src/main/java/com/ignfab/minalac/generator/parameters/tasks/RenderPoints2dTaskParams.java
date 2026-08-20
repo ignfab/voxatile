@@ -50,7 +50,7 @@ public class RenderPoints2dTaskParams extends ModelTaskParams {
     @Override
     public Task create(Generation generation) {
         return new RenderPoints2dTask(
-            models.create(),
+            models.create(generation),
             place.create(generation.seed()),
             heightmap.create(generation.heightmaps())
         );

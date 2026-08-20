@@ -110,7 +110,7 @@ public class RenderRoofTaskParams extends ModelTaskParams {
     @Override
     public TileTask create(Generation generation) {
         return new RenderRoofTask(
-            models.create(),
+            models.create(generation),
             roofType.create(),
             altitude,
             height,
