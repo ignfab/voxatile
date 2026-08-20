@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.parameters.models.values.ModelValueParams;
 import com.ignfab.minalac.generator.parameters.placeables.layouts.LayoutBuilderParams;
 import com.ignfab.minalac.generator.tasks.RenderFacadeTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
@@ -41,30 +42,28 @@ public class RenderFacadeTaskParams extends ModelTaskParams {
     public JsonNode references;
 
     /**
-     * Name of metadata containing building height (from wall bottom to wall top).
-     */
-    // TODO: We may need an expression here
-    @JsonSetter(nulls = Nulls.FAIL)
-    public String height;
-
-    /**
      * Name of metadata containing building altitude (altitude of wall bottom).
      */
-    // TODO: We may need an expression here
     @JsonSetter(nulls = Nulls.FAIL)
-    public String altitude;
+    public ModelValueParams altitude;
+
+    /**
+     * Name of metadata containing building height (from wall bottom to wall top).
+     */
+    @JsonSetter(nulls = Nulls.FAIL)
+    public ModelValueParams height;
 
     /**
      * Creates a new {@code RenderFacadeTaskParams} out of mandatory parameters.
      * @param builders builders to try, in order
-     * @param height name of metadata containing building height
      * @param altitude name of metadata containing building altitude
+     * @param height name of metadata containing building height
      */
-    @ConstructorProperties({ "builders", "height", "altitude"})
+    @ConstructorProperties({ "builders", "altitude", "height"})
     public RenderFacadeTaskParams(
         List<LayoutBuilderParams> builders,
-        String height,
-        String altitude
+        ModelValueParams altitude,
+        ModelValueParams height
     ) {
         this.builders = builders;
         this.height = height;
@@ -74,10 +73,8 @@ public class RenderFacadeTaskParams extends ModelTaskParams {
     @Override
     public void validate() {
         super.validate();
-        if (height.isBlank())
-            throw new IllegalArgumentException("Height metadata cannot be blank");
-        if (altitude.isBlank())
-            throw new IllegalArgumentException("Altitude metadata cannot be blank");
+        altitude.validate();
+        height.validate();
         builders.forEach(LayoutBuilderParams::validate);
     }
 
@@ -97,8 +94,8 @@ public class RenderFacadeTaskParams extends ModelTaskParams {
                     throw new IllegalArgumentException(e);
                 }
             }).collect(Collectors.toList()),
-            height,
-            altitude
+            altitude.create(generation),
+            height.create(generation)
         );
     }
 }

@@ -3,9 +3,11 @@ package com.ignfab.minalac.generator.tasks;
 import java.util.Collections;
 import java.util.Set;
 
+import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
+import com.ignfab.minalac.generator.models.values.ModelValue;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.LineString2d;
@@ -40,8 +42,7 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
 
     private final Placeable placeable;
     private final RoofType type;
-    private final String altitudeMetadata;
-    private final String heightMetadata;
+    private final ModelValue altitudeValue;
 
     private final Shape2dVoxelizer voxelizer = new SurfaceVoxelizer2d();
 
@@ -50,16 +51,19 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
      *
      * @param selection the model selection containing the wanted models to render (only ShapesVoxelizable2d ones will be)
      * @param type type of roof to render
-     * @param altitudeMetadata base altitude of the building
-     * @param heightMetadata height of building walls
+     * @param altitudeValue base altitude of the roof
      * @param placeable what to place as roof
      */
-    public RenderRoofTask(ModelSelection selection, RoofType type, String altitudeMetadata, String heightMetadata, Placeable placeable) {
+    public RenderRoofTask(
+        ModelSelection selection,
+        RoofType type,
+        ModelValue altitudeValue,
+        Placeable placeable
+    ) {
         super(Shape2dConvertibleModel.class, selection);
         this.type = type;
         this.placeable = placeable;
-        this.altitudeMetadata = altitudeMetadata;
-        this.heightMetadata = heightMetadata;
+        this.altitudeValue = altitudeValue;
     }
 
 //NOTE:
@@ -168,14 +172,8 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
 */
 
     @Override
-    protected void run(Shape2dConvertibleModel model, GenerationTile tile) {
-
-        if (model.getMetadata(altitudeMetadata) == null || model.getMetadata(heightMetadata) == null)
-            return;
-
-        int altitude = (int) Math.round(((Number) model.getMetadata(altitudeMetadata)).doubleValue()
-            + ((Number) model.getMetadata(heightMetadata)).doubleValue() / tile.generation().getVerticalScale()
-        );
+    protected void run(Shape2dConvertibleModel model, GenerationTile tile) throws IgnorableException {
+        int altitude = altitudeValue.getAsInt(model).orElseThrow(() -> new IgnorableException("Missing altitude"));
 
         Shape2d shape = model.toShape2d();
 

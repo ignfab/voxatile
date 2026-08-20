@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.parameters.models.values.ModelValueParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
 import com.ignfab.minalac.generator.tasks.RenderRoofTask;
 import com.ignfab.minalac.generator.tasks.RenderRoofTask.RoofType;
@@ -66,20 +67,10 @@ public class RenderRoofTaskParams extends ModelTaskParams {
     RoofTypeParams roofType;
 
     /**
-     * Building altitude metadata name.
-     *
-     * TODO: We actually only need roof altitude (altitude + height)
+     * Base roof altitude
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String altitude;
-
-    /**
-     * Building height metadata name.
-     *
-     * TODO: We actually only need roof altitude (altitude + height)
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public String height;
+    public ModelValueParams altitude;
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
@@ -87,23 +78,22 @@ public class RenderRoofTaskParams extends ModelTaskParams {
      * @param place what to place on roof
      * @param roofType type of roof to render
      * @param altitude building altitude metadata name
-     * @param height building height metadata name.
      */
-    @ConstructorProperties({"place", "roofType", "altitude", "height"})
-    public RenderRoofTaskParams(PlaceableParams place, RoofTypeParams roofType, String altitude, String height) {
+    @ConstructorProperties({"place", "roofType", "altitude"})
+    public RenderRoofTaskParams(
+        PlaceableParams place,
+        RoofTypeParams roofType,
+        ModelValueParams altitude
+    ) {
         this.place = place;
         this.roofType = roofType;
         this.altitude = altitude;
-        this.height = height;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
         super.validate();
-        if (altitude.isBlank())
-            throw new IllegalArgumentException("Altitude metadata cannot be blank");
-        if (height.isBlank())
-            throw new IllegalArgumentException("Height metadata cannot be blank");
+        altitude.validate();
         place.validate();
     }
 
@@ -112,8 +102,7 @@ public class RenderRoofTaskParams extends ModelTaskParams {
         return new RenderRoofTask(
             models.create(generation),
             roofType.create(),
-            altitude,
-            height,
+            altitude.create(generation),
             place.create(generation.seed())
         );
     }
