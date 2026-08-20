@@ -201,7 +201,9 @@ public class JTSGeometryModel extends ModelImpl implements Shape2dConvertibleMod
 
         @Override
         public void convert(LinearRing ring) {
-            addShape(LinearRing2d.fromPoints(convertCoordinates(ring)));
+            // TODO: Here we make LinearRing2d clockwise because OSM4J returns simple polygons as linerings
+            // But it may be wrong for other usages.
+            addShape(LinearRing2d.fromPoints(convertCoordinates(ring)).toClockwise());
         }
 
         @Override
