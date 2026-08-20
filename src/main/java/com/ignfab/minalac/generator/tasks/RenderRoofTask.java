@@ -90,6 +90,10 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
             return origin;
         }
 
+        Line2d opposite() {
+            return new Line2d(origin, direction.opposite());
+        }
+
         Double intersectionIndex(Line2d other) {
           double det = direction.determinant(other.direction);
             if (det == 0.0)
@@ -125,6 +129,7 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
             Vector2d intersection = intersection(other);
             if (intersection == null)
                 // If lines are parallel, we return a middle line parallel
+                // TODO: In some cases it should be a normal (ex: same lines, maybe: same way)
                 return new Line2d(
                     new Vector2d((origin.x() + other.origin.x()) / 2, (origin.y() + other.origin.y()) / 2),
                     other.direction
@@ -174,10 +179,19 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
         Line2d baseLine = new Line2d(baseSegment);
         System.out.println("\nBase: "+baseSegment+" "+baseLine+"\n");
         System.out.println("Bissectors:"); // Includes selected segment line at the end
+
+        Line2d current = baseLine;
+
         for (Segment2d segment : otherSegments) {
+
             Line2d line = new Line2d(segment);
-            System.out.println("bissector "+ bissectors.size()+": with="+segment+" "+line+" -> "+baseLine.bissector(line));
-            bissectors.add(baseLine.bissector(line));
+            Line2d bissector = baseLine.bissector(line);
+            double det = current.direction().determinant(line.direction());
+
+            if (det > 0) bissector = bissector.opposite();
+            System.out.println("bissector "+ bissectors.size()+": with="+segment+" "+line+" -> "+bissector);
+            bissectors.add(bissector);
+            current = line;
         }
 
         // Now compute which of these bissecors will form the slope shape.
@@ -194,31 +208,62 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
         Line2d border = bissectors.get(0);
         int index = 0;
         double startBorderIndex = 0; // First intersection = start of first bissector
-        double det = baseLine.direction().determinant(border.direction());
-        System.out.println("Determinant="+det);
-        if (det > 0) border = new Line2d(border.origin(), border.direction().opposite());
 
-        do {
-            System.out.println(index + ": " + border + " start index = "+startBorderIndex + " "+ border.at(startBorderIndex));
+        do { // Loop on borders
+
+            System.out.println("#"+index + ": " + border + " start index = "+startBorderIndex + " "+ border.at(startBorderIndex));
             Vector2d intersection = null;
-            double score = Double.MAX_VALUE;
 
-            for (int next = index + 1; next < bissectors.size(); next ++) {
-                Double ii = border.intersectionIndex(bissectors.get(next));
-                if (ii != null) {
-                    System.out.println("  " + next + ": intersects at " + ii + " " + border.at(ii));
-                    boolean selected =
-                       (ii > startBorderIndex && ii < score);
-                    if (selected) {
-                        System.out.println("  "+next+": selected!");
-                        score = ii;
-                        index = next; // Jump to this line
-                        intersection = border.at(ii);
-                    }
-                } else
+            // TODO: Maybe we could drop the starting at index + 1 and rely only on rejections
+            for (int next = index + 1; next < bissectors.size(); next ++) { // Loop on next border candidates
+                Line2d candidate = bissectors.get(next);
+                Double cbii = candidate.intersectionIndex(border); // Candidate border intersection index
+                if (cbii == null) {
                     System.out.println("  " + next + ": no intersection");
+                    continue; // This candidate does not intersect
+                }
 
+                System.out.println("  #" + next + ": intersects at " + cbii + " " + candidate.at(cbii));
+                Double bcii = border.intersectionIndex(candidate); // Border candidate intersection index
+
+
+                // Now we want to check if there is another segment that crosses candidate and border, both after intersection
+                // or both before intersection
+                boolean reject = false;
+                // TODO: simplify for loop if no more display needs
+                for (int testIx = 0; testIx < bissectors.size(); testIx ++) { // Loop on test lines
+                    Line2d test = bissectors.get(testIx);
+                    Double btii = border.intersectionIndex(test);
+                    if (btii == null) continue;
+                    Double ctii = candidate.intersectionIndex(test);
+                    if (ctii == null) continue;
+                    // Don't care about intersection on the wrong side of baseLine
+                    Vector2d testIntersect = border.at(btii);
+                    if (baseSegment.signedDistanceTo(testIntersect) > 0)
+                        continue;
+
+                    if ((btii > bcii) && (ctii > cbii)) {
+                        System.out.println("  #"+next+": rejected: #"+testIx+" intersected by both border and candidate after interection");
+                        reject = true;
+                        break;
+                    }
+                    if ((btii < bcii) && (ctii < cbii)) {
+                        System.out.println("  #"+next+": rejected: #"+testIx+" intersected by both border and candidate before interection");
+                        reject = true;
+                        break;
+                    }
+                }
+
+                if (reject) {
+                    continue;
+                }
+//TODO: here we should have sorted intersections from near to far
+                System.out.println("  #"+next+": selected!");
+                index = next; // Jump to this line
+                intersection = border.at(bcii);
+                break;
             }
+
             if (intersection == null) {
                 // No more intersection found, we are over for this shape
                 System.out.println("  no more intersection!");
@@ -230,15 +275,11 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
             System.out.println("==> From "+startIndex + " to "+endIndex+": "+ border);
             result.add(new SlopeBorder(border, startIndex, endIndex));
 
-            det = border.direction().determinant(bissectors.get(index).direction());
-            System.out.println("Determinant="+det);
             // Proceed to next border (selected intersector)
             border = bissectors.get(index);
-            if (det > 0) border = new Line2d(border.origin(), border.direction().opposite());
 
             // Along border, selected indexes should start from intersection (never go backwards)
             startBorderIndex = border.nearestPointIndex(intersection);
-            // --> Semble mauvais, ça donne un index qui ne correspond pas à l'intersection :O
 
             // Keep current intersection index for next border
             startIndex = endIndex;
