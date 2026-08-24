@@ -35,7 +35,7 @@ public class PopulateHeightmapTask extends ModelTask<FloatMatrixModel> {
         for (Matrix2d.Value<Float> value : model) {
             WorldCoords2d c = value.coords();
             if (intersection.contains(c))
-                heightmap.set(c, Math.round(value.value()));
+                heightmap.set(c, (int)Math.round(value.value() / tile.generation().getVerticalScale()));
         }
     }
 }
