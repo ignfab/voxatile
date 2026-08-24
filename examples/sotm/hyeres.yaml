@@ -1,0 +1,403 @@
+worldName: Hyeres
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 43.1238
+    longitude: 6.1280
+  extentX: 1000
+  extentY: 1000
+
+format: luanti
+
+references:
+  - &forest-tree1
+    structure:
+      - put:
+          pattern:
+            place: default:leaves
+            chance: 0.8
+        at: [ -3..3, -3..3, 4..10 ]
+      - put: default:tree
+        at: [ 0, 0, 0..5 ]
+  - &forest-tree2
+    structure:
+      - put:
+          pattern:
+            place: default:aspen_leaves
+            chance: 0.8
+        at: [ -3..3, -3..3, 4..10 ]
+      - put: default:aspen_tree
+        at: [ 0, 0, 0..5 ]
+
+heightmaps:
+  ground:
+    default: 0
+  water:
+    default: 0
+
+forEachTile:
+
+  altitude:
+    type: sequence
+    do:
+    - type: fetchData
+      modelType: altitude
+      provider:
+        type: wmsFloat
+        url: https://data.geopf.fr/wms-r/wms
+#        layer: ELEVATION.ELEVATIONGRIDCOVERAGE.SRTM3
+        layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    - type: populateHeightmap
+      models:
+        type: altitude
+      heightmap: ground
+    - type: setSpawn
+      heightmap:
+        sum: [ground, 1]
+      x: 0
+      y: 0
+
+  # Overpass fetches
+
+  fetchOsm:
+    type: fetchData
+    modelType: osm
+    retry: 4
+    retryDelay: 5
+    provider:
+      type: overpass
+#      url: https://overpass.private.coffee/api/interpreter
+      url: https://overpass-api.de/api/interpreter
+      query: (nwr[building];nwr[natural];nwr[highway];nwr[landuse];)
+    postProcessing:
+    - type: parse
+      metadata: building:levels
+      as: decimal
+      ifMissing: ignore
+      ifNotParsable: removeMetadata
+    - type: default
+      metadata: building:levels
+      value: 2
+      as: integer
+      # MISSING OPERATORS
+    - type: set
+      metadata: height
+      value:
+        product:
+        - building:levels
+        - 4
+
+  flattenWater:
+    after:
+    - fetchOsm
+    - altitude
+    type: copyHeightmap
+    models:
+      type: osm
+      filter:
+        metadata: natural
+        equals: water
+    from:
+      localMin: ground
+      range: 9
+    to: ground
+
+  renderGround:
+    after:
+    - altitude
+    - flattenWater
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+      - put: default:dirt_with_coniferous_litter
+        at: [0, 0, 0]
+      - put: default:dirt
+        at: [0, 0, -3..-1]
+      - put: default:stone
+        at: [0, 0, -20..-4]
+
+  renderBuildings:
+    after:
+    - fetchOsm
+    - renderGround
+    type: sequence
+    models:
+      type: osm
+      filter:
+        hasMetadata: building
+    do:
+    - type: computeHeightmapStats
+      heightmap: ground
+      compute:
+        minimum: minimum-ground-altitude
+        maximum: ground-floor-altitude
+    - type: fillBetweenHeightmapAndValue
+      heightmap: ground
+      altitudeValue: ground-floor-altitude
+      placeAbove: air
+      placeBelow: default:sandstone
+    - type: renderFacade
+      altitude: ground-floor-altitude
+      # TODO: Should be multiplied by vertical scale
+      height: height
+      build:
+      - along: z
+        repeat:
+          along: x
+          concatenate:
+          - at: [0, 0, 0]
+            put: default:sandstone
+            stretchX:
+              at: 0
+            stretchZ:
+              at: 0
+          - priority: 2
+            along: x
+            repeat:
+              with:
+                X: default:sandstone
+                O: default:glass
+              axes: [z, x]
+              blueprint: [XXX, XOX, XOX, XXX]
+          - at: [0, 0, 0]
+            put: default:sandstone
+            stretchX:
+              at: 0
+            stretchZ:
+              at: 0
+      - at: [0, 0, 0]
+        put: default:sandstone
+        stretchX:
+          at: 0
+        stretchZ:
+          at: 0
+    - type: renderRoof
+      roofType: hipped
+      models:
+        filter:
+          not:
+            metadata: roof:shape
+            equals: flat
+      altitude:
+        sum:
+         # TODO: Should be multiplied by vertical scale
+        - height
+        - ground-floor-altitude
+      place:
+        structure:
+          - at: [-1..1, -1..1, 0]
+            put: default:desert_stone
+          - at: [0, 0, 1]
+            put: default:desert_stone
+    - type: renderRoof
+      roofType: flat
+      models:
+        filter:
+          metadata: roof:shape
+          equals: flat
+      altitude:
+        sum:
+         # TODO: Should be multiplied by vertical scale
+        - height
+        - ground-floor-altitude
+      place: default:desert_stone
+
+  renderWater:
+    after: fetchOsm
+    using: renderGround
+    type: sequence
+    models:
+      type: osm
+      filter:
+        metadata: natural
+        equals: water
+    do:
+    - type: copyHeightmap
+      from: 1
+      to: water
+    - type: copyHeightmap
+      from:
+        remap:
+          manhattan: water
+          maximumDistance: 12
+          targetValue: 0
+        mapping:
+          0: 0
+          1: 1
+          2: 8
+          3..3: 10
+          4..6: 11
+          7..12: 12
+      to: water
+    - type: renderHeightmap
+      minimum:
+        sum:
+          - ground
+          - 1
+          - product: [ -1, water ]
+      maximum: ground
+      place:
+        structure:
+          - put: default:water_source
+            at: [ 0, 0, 0 ]
+          # This a dirt fix to remove vegetation on water
+          - put: air
+            at: [ 0, 0, 1..12 ]
+
+  renderVegetation:
+    after:
+    - fetchOsm
+    - renderGround
+    - renderWater
+    type: schedule
+    models:
+      type: osm
+    do:
+      renderTrees:
+        type: renderPoints2d
+        models:
+          filter:
+            metadata: natural
+            equals: tree
+        heightmap: ground
+        place:
+        - pattern:
+            seed: forest-tree1
+            chance: 0.5
+            place: *forest-tree1
+        - *forest-tree2
+
+      renderScrub:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: natural
+            equals: scrub
+        heightmap: ground
+        place:
+        - pattern:
+            seed: scrub
+            chance: 0.1
+            place:
+              structure:
+                - at: [0, 0, 1]
+                  put: default:junglegrass
+        - default:dirt_with_grass
+        - pattern:
+            seed: scrub1
+            chance: 0.01
+            place:
+              structure:
+                at: [-1..1, -1..1, 0..2]
+                put:
+                  pattern:
+                    chance: 0.7
+                    place: default:leaves
+        - pattern:
+            seed: scrub2
+            chance: 0.003
+            place:
+              structure:
+                at: [-1..1, -1..1, 0..2]
+                put:
+                  pattern:
+                    chance: 0.7
+                    place: default:aspen_leaves
+
+      renderForest:
+        type: renderSurfaces
+        models:
+          filter:
+            or:
+            - metadata: natural
+              equals: wood
+            - metadata: landuse
+              equals: forest
+        heightmap: ground
+        place:
+        - pattern:
+            seed: forest
+            chance: 0.1
+            place:
+              structure:
+                - at: [0, 0, 1]
+                  put: default:junglegrass
+        - default:dirt_with_grass
+        - pattern:
+            seed: forest1
+            chance: 0.01
+            place: *forest-tree1
+        - pattern:
+            seed: forest2
+            chance: 0.003
+            place: *forest-tree2
+
+      # NOT TESTED
+      renderField:
+        type: renderSurfaces
+        models:
+          filter:
+            metadata: landuse
+            equals: farmland
+        heightmap: ground
+        place:
+          pattern:
+            repeatStructure:
+              axes: [ x, z ]
+              blueprint:
+              - 'I.'
+              - 'XX'
+              with:
+                'X': default:grass
+                'I': farming:wheat_8
+                '.':
+                - pattern:
+                    chance: 0.01
+                    place: default:grass_1
+                - pattern:
+                    chance: 0.001
+                    place: flowers:rose
+
+  renderRoads:
+    after:
+    - fetchOsm
+    - renderGround
+    - renderVegetation
+    type: sequence
+    models:
+      type: osm
+      filter:
+        hasMetadata: highway
+    do:
+    - type: renderLines2d
+      models:
+        filter:
+          metadata: highway
+          equals: footway
+      heightmap: ground
+      structure:
+        - at: [ 0, -1..1, 0 ]
+          put: default:permafrost_with_stones
+        - at: [ 0, -2..2, 1..3 ]
+          put: air
+    - type: sequence
+      models:
+        filter:
+          not:
+            metadata: highway
+            equals: footway
+      do:
+      - type: renderLines2d
+        heightmap: ground
+        structure:
+        - at: [ 0, -3..3, 0 ]
+          put: default:stone_block
+        - at: [ 0, -4..4, 1..5 ]
+          put: air
+      - type: renderLines2d
+        heightmap: ground
+        structure:
+          at: [ 0, -2..2, 0 ]
+          put: default:cobble
