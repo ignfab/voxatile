@@ -36,12 +36,14 @@ import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams
 import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.CopyHeightmapTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.DebugLayoutTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.FillBetweenHeightmapAndMetadataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.HeightmapStatsTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.NoOperationTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.PopulateHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
+import com.ignfab.minalac.generator.parameters.tasks.RenderFacadeTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderLines2dTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderLinesTaskParams;
@@ -133,6 +135,8 @@ public final class MinalacGenerator {
         parser.registerParams("renderPoints", RenderPointsTaskParams.class);
         parser.registerParams("renderPoints2d", RenderPoints2dTaskParams.class);
         parser.registerParams("setSpawn", SetSpawnTaskParams.class);
+        parser.registerParams("renderFacade", RenderFacadeTaskParams.class);
+        parser.registerParams("debugLayout", DebugLayoutTaskParams.class);
 
         parser.registerParams("wfs", WFSProviderParams.class);
         parser.registerParams("gpkg", GeoPackageProviderParams.class);

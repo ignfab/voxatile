@@ -20,6 +20,7 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`fillBetweenHeightmapAndMetadata`](#fillbetweenheightmapandmetadata)
   * [`renderBuildings`](#renderbuildings)
   * [`setSpawn`](#setspawn)
+  * [`renderFacade`](#renderfacade)
 * [Tasks operating on heightmaps](#tasks-operating-on-heightmaps)
   * [`populateHeightmap`](#populateheightmap)
   * [`copyHeightmap`](#copyheightmap)
@@ -275,6 +276,34 @@ type: setSpawn
 heightmap: ground
 x: 2
 y: -1
+```
+
+### `renderFacade`
+
+Renders facades using layouts from 2D shapes. 
+Layouts are tried in order, the first one that can fit the requested space is used.
+
+#### Extra parameters
+
+- `models`: [Selection of models](ModelSelection.md) to render (required, models must be convertible to 2d shapes)
+- `height` (string): Name of the metadata containing the desired height. (required)
+- `altitude` (string): Name of the metadata containing the altitude. (required)
+- `build`: List of layouts to try. Default axis policies are `ADJUST` on `X` and `Z`, `KEEP` on `Y`.
+
+#### Example
+
+```yaml
+models: buildings
+height: height
+altitude: ground-floor-altitude
+build:
+  - structure:
+      at: [ 0, -1..0, 0 ]
+      put: stone
+      stretchableAlongX:
+        at: 0
+      stretchableAlongZ:
+        at: 0
 ```
 
 ## Tasks operating on heightmaps
