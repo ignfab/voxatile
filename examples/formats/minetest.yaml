@@ -3,7 +3,7 @@ references:
   - &voxel-stone default:stone
   - &voxel-dirt default:dirt
   - &voxel-cobble default:cobble
-  - &voxel-empty default:air
+  - &voxel-empty air
   - &voxel-building-ground default:stonebrick
   - &voxel-grass default:dirt_with_grass
   - &voxel-glass default:glass
@@ -32,3 +32,21 @@ references:
         at: [ 0, 0, 0..5 ]
   - &voxel-water default:water_source
   - &voxel-air air
+  - &corner-material default:desert_sandstone_block
+  - &base-material default:sandstone
+  - &other-material default:desert_stone
+  - &borders-material default:desert_sandstone_block
+  - &cornice-material default:desert_sandstone_block
+  - &lintel-material default:sandstonebrick
+  - &facade-residential-materials
+    "-": *base-material
+    "+": *other-material
+    "O": *borders-material
+    "*": default:obsidian_glass
+    "=": *lintel-material
+    "|": default:fence_junglewood
+  - &modern-wall default:clay
+  - &modern-glass default:obsidian_glass
+  - &modern-materials
+    "O": *modern-wall
+    "*": *modern-glass
