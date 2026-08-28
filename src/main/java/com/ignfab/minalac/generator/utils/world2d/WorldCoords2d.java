@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.utils.world2d;
 
+import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.utils.world3d.Positioned3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
@@ -77,6 +78,19 @@ public record WorldCoords2d(int x, int y) implements Positioned2d {
      */
     public static WorldCoords2d ceil(double x, double y) {
         return new WorldCoords2d((int) Math.ceil(x), (int) Math.ceil(y));
+    }
+
+    /**
+     * Returns one of {@code WorldCoords2d} component.
+     * @param axis component axis
+     * @return component value
+     */
+    public int coord(Axis axis) {
+        return switch (axis) {
+            case X -> x;
+            case Y -> y;
+            case Z -> throw new IllegalArgumentException("Does not exist for that axis.");
+        };
     }
 
     @Override

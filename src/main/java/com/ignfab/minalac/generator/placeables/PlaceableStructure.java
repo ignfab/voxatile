@@ -11,7 +11,7 @@ import com.ignfab.minalac.generator.world.VoxelTile;
  * {@code PlaceableStructure} is a {@link Placeable} consisting of placeables at given coordinate offsets.
  * The structure itself is immutable, but can be defined by using the {@link #builder()}.
  */
-public final class PlaceableStructure implements Placeable {
+public final class PlaceableStructure implements Structure {
     private final Map<WorldCoords3d, Placeable> placeables;
     private final WorldBBox3d limits;
 
