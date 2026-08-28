@@ -11,7 +11,7 @@ import com.ignfab.minalac.generator.world.VoxelTile;
  * {@code PlaceableStructure} is a {@link Placeable} consisting of placeables at given coordinate offsets.
  * The structure itself is immutable, but can be defined by using the {@link #builder()}.
  */
-public final class PlaceableStructure implements Placeable {
+public final class PlaceableStructure implements Structure {
     private final Map<WorldCoords3d, Placeable> placeables;
     private final WorldBBox3d limits;
 
@@ -52,29 +52,12 @@ public final class PlaceableStructure implements Placeable {
         return placeables.getOrDefault(coords, Nothing.INSTANCE);
     }
 
-    /**
-     * Returns the placeable at the specified coordinates.
-     *
-     * @param x structure relative x-coordinate
-     * @param y structure relative y-coordinate
-     * @param z structure relative z-coordinate
-     *
-     * @return placeable at relative structure coordinates or {@link Nothing#INSTANCE} if none
-     */
+    @Override
     public Placeable get(int x, int y, int z) {
         return get(new WorldCoords3d(x, y, z));
     }
 
-    /**
-     * {@return the limits of this structure in relative coordinates}
-     * <p>
-     * This is not the bounding box of all that would be placed.
-     * Limits will only contain origin coordinates of contained placeables.
-     * <p>
-     * In other words, limits is the smallest bounding box containing every position
-     * for which {@link #get} returns something other than {@link Nothing#INSTANCE}.
-     * This may be used to know how to repeat this structure.
-     */
+    @Override
     public WorldBBox3d limits() {
         return limits;
     }
