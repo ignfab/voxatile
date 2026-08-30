@@ -1,19 +1,20 @@
 package com.ignfab.minalac.generator.parameters;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 import com.ignfab.minalac.generator.parameters.providers.TestingProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.NoOperationTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.RenderBuildingsTaskParams;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+import com.ignfab.minalac.generator.world.TestingVoxelWorld;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -110,6 +111,7 @@ public class GenerationParamsTest {
     @Test
     public void testCreate() throws ParseException {
         params.worldName = "test";
+        params.minimaps = Map.of("test", new MinimapParams());
         params.verticalScale = 3.0;
         params.horizontalScale = 4.0;
         params.crs = "EPSG:5643";

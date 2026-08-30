@@ -1,15 +1,12 @@
-package com.ignfab.minalac.generator.outputs.testing;
+package com.ignfab.minalac.generator.world;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
-import com.ignfab.minalac.generator.world.MapWriteException;
-import com.ignfab.minalac.generator.world.VoxelTile;
-import com.ignfab.minalac.generator.world.VoxelWorld;
-import com.ignfab.minalac.generator.world.VoxelWorldMetadata;
 
 /**
  * Testing purpose {@link VoxelWorld} intended to be used in unit tests.
@@ -29,7 +26,16 @@ public class TestingVoxelWorld extends VoxelWorld {
      * Creates a new TestingVoxelWorld.
      */
     public TestingVoxelWorld() {
-        super(new VoxelWorldMetadata());
+        super(new VoxelWorldMetadata(), null);
+    }
+
+    /**
+     * Creates a new {@code TestingVoxelWorld}.
+     *
+     * @param destination destination folder for the world
+     */
+    public TestingVoxelWorld(File destination) {
+        super(new VoxelWorldMetadata(), destination);
     }
 
     @Override

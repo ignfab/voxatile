@@ -24,6 +24,8 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`populateHeightmap`](#populateheightmap)
   * [`copyHeightmap`](#copyheightmap)
   * [`computeHeightmapStats`](#computeheightmapstats)
+* [Tasks operating on minimaps](#tasks-operating-on-minimaps)
+  * [`populateMinimap`](#populateminimap)
 
 ## Organizational tasks
 
@@ -341,4 +343,28 @@ heightmap: ground
 compute:
   maximum: maximum-ground-altitude
   minimum: minimum-ground-altitude
+```
+
+## Tasks operating on minimaps
+
+### `populateMinimap`
+
+Populates a minimap from each tile.
+
+This task must be executed for all tiles before calling `saveMinimap`. `populateMinimap` gathers the necessary voxel data into the minimap structure; without this step, `saveMinimap` will produce an empty image.
+
+#### Extra parameters
+
+- `minimap` (required): Name of the minimap to populate.
+- `colors` (required): Mapping of voxel type identifiers to their display colors (RGBA).
+
+#### Example
+
+```yaml
+type: populateMinimap
+minimap: overworld
+colors:
+  water: [64, 64, 255, 180] 
+  white_wool: [255, 255, 255]
+  black_wool: [25, 25, 25]
 ```

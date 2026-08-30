@@ -2,7 +2,6 @@ package com.ignfab.minalac.generator.world;
 
 import java.util.Iterator;
 
-import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 /**
@@ -15,7 +14,7 @@ public class VoxelColumnIterator implements Iterator<PlacedVoxel> {
     private final int y;
     private final int zMin;
     private int currentZ;
-    private Placeable currentVoxel;
+    private Voxel currentVoxel;
 
     /**
      * Constructs a new {@code VoxelColumnIterator}.

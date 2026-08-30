@@ -6,9 +6,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxel;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelTile;
-import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
@@ -47,9 +44,9 @@ public class VoxelWorldTest {
     @Test
     public void testVoxelIterator() {
         TestingVoxelTile tile = new TestingVoxelTile(new WorldBBox3d(new WorldCoords3d(-1, -2, -5), new WorldCoords3d(2, 3, 6)));
-        Placeable a = new TestingVoxel("aa");
-        Placeable b = new TestingVoxel("b");
-        Placeable c = new TestingVoxel("c");
+        Voxel a = new TestingVoxel("aa");
+        Voxel b = new TestingVoxel("b");
+        Voxel c = new TestingVoxel("c");
 
         a.place(tile, -1, 2, 6);
         a.place(tile, -1, 2, -4);
@@ -94,7 +91,7 @@ public class VoxelWorldTest {
     private static class VoxelWorldMock extends VoxelWorld {
 
         protected VoxelWorldMock() {
-            super(new VoxelWorldMetadata());
+            super(new VoxelWorldMetadata(), null);
         }
 
         @Override

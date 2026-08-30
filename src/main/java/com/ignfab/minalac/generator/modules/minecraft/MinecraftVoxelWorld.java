@@ -37,7 +37,6 @@ public class MinecraftVoxelWorld extends VoxelWorld {
         new WorldCoords3d(30_000_000, 30_000_000, 255)
     );
 
-    private final File destination;
     private final File regionDirectory;
 
     /**
@@ -47,8 +46,7 @@ public class MinecraftVoxelWorld extends VoxelWorld {
      * @param destination Directory where to save data to. If null nothing is saved.
      */
     public MinecraftVoxelWorld(File destination) {
-        super(new VoxelWorldMetadata());
-        this.destination = destination;
+        super(new VoxelWorldMetadata(), destination);
 
         if (destination == null)
             regionDirectory = null;

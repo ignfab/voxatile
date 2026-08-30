@@ -4,9 +4,9 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.placeables.voxels.TestingVoxelParams;
 import com.ignfab.minalac.generator.parameters.tasks.TestingTaskParams;
+import com.ignfab.minalac.generator.world.TestingVoxelWorld;
 
 import static org.junit.jupiter.api.Assertions.*;
 

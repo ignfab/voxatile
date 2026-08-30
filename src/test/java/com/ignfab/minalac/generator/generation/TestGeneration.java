@@ -96,7 +96,7 @@ public class TestGeneration {
         private int extentY;
 
         protected EmptyVoxelWorld(int extentX, int extentY) {
-            super(new VoxelWorldMetadata());
+            super(new VoxelWorldMetadata(), null);
             this.extentX = extentX;
             this.extentY = extentY;
         }

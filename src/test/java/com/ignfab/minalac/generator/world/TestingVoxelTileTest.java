@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.outputs.testing;
+package com.ignfab.minalac.generator.world;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
