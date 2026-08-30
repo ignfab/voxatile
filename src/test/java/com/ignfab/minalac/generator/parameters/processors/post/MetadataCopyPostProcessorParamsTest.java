@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.parameters.processors.post;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
 
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,7 +14,7 @@ public class MetadataCopyPostProcessorParamsTest {
     @Test
     public void testCreate() {
         MetadataCopyPostProcessorParams params = new MetadataCopyPostProcessorParams("toto", "tata");
-        assertDoesNotThrow(params::create);
+        assertDoesNotThrow(() -> params.create(TestingGeneration.UNUSED));
     }
 
     @Test

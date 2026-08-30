@@ -3,18 +3,15 @@ package com.ignfab.minalac.generator.parameters.heightmaps;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
-import com.ignfab.minalac.generator.utils.random.TestingSeed;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ConstantHeightmapParamsTest {
     @Test
     public void testDeserialize() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
+        Generation generation = new TestingGeneration();
 
         ReadableHeightmapParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(
             ReadableHeightmapParams.class,

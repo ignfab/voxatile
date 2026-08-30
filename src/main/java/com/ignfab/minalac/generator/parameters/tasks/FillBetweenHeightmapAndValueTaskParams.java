@@ -7,15 +7,16 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.parameters.heightmaps.ReadableHeightmapParams;
+import com.ignfab.minalac.generator.parameters.models.values.ModelValueParams;
 import com.ignfab.minalac.generator.parameters.placeables.NothingParams;
 import com.ignfab.minalac.generator.parameters.placeables.PlaceableParams;
-import com.ignfab.minalac.generator.tasks.FillBetweenHeightmapAndMetadataTask;
+import com.ignfab.minalac.generator.tasks.FillBetweenHeightmapAndValueTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
 
 /**
- * Parameters for creating a {@link FillBetweenHeightmapAndMetadataTask}.
+ * Parameters for creating a {@link FillBetweenHeightmapAndValueTask}.
  */
-public class FillBetweenHeightmapAndMetadataTaskParams extends ModelTaskParams {
+public class FillBetweenHeightmapAndValueTaskParams extends ModelTaskParams {
     /**
      * {@code ReadableHeightmap} to use (required).
      */
@@ -23,10 +24,10 @@ public class FillBetweenHeightmapAndMetadataTaskParams extends ModelTaskParams {
     public ReadableHeightmapParams heightmap;
 
     /**
-     * Name of the model metadata containing the altitude value (required).
+     * Model value to use as altitude (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String altitudeMetadata;
+    public ModelValueParams altitudeValue;
 
     /**
      * {@code Placeable} placed above the altitude value (optional).
@@ -43,15 +44,15 @@ public class FillBetweenHeightmapAndMetadataTaskParams extends ModelTaskParams {
      * deserialization.
      *
      * @param heightmap {@code ReadableHeightmap} to use
-     * @param altitudeMetadata name of the model metadata containing the altitude value
+     * @param altitudeValue model value to use as altitude
      */
-    @ConstructorProperties({ "heightmap", "altitudeMetadata" })
-    public FillBetweenHeightmapAndMetadataTaskParams(
+    @ConstructorProperties({ "heightmap", "altitudeValue" })
+    public FillBetweenHeightmapAndValueTaskParams(
         ReadableHeightmapParams heightmap,
-        String altitudeMetadata
+        ModelValueParams altitudeValue
     ) {
         this.heightmap = heightmap;
-        this.altitudeMetadata = altitudeMetadata;
+        this.altitudeValue = altitudeValue;
     }
 
     @Override
@@ -63,16 +64,15 @@ public class FillBetweenHeightmapAndMetadataTaskParams extends ModelTaskParams {
 
         if (placeAbove instanceof NothingParams && placeBelow instanceof NothingParams)
             throw new IllegalArgumentException("At least the 'placeAbove' or 'placeBelow' field must be specified.");
-        if (altitudeMetadata.isBlank())
-            throw new IllegalArgumentException("The 'altitudeMetadata' field cannot be empty or contain only whitespace.");
+        altitudeValue.validate();
     }
 
     @Override
     public TileTask create(Generation generation) {
-        return new FillBetweenHeightmapAndMetadataTask(
-            models.create(),
+        return new FillBetweenHeightmapAndValueTask(
+            models.create(generation),
             heightmap.create(generation.heightmaps()),
-            altitudeMetadata,
+            altitudeValue.create(generation),
             placeAbove.create(generation.seed()),
             placeBelow.create(generation.seed())
         );

@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.parameters.models.filters;
 
 import java.util.function.Predicate;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.models.filters.TestingModelFilter;
 
@@ -49,7 +50,7 @@ public class TestingModelFilterParams extends ModelFilterParams {
     }
 
     @Override
-    public Predicate<Model> create() {
+    public Predicate<Model> create(Generation generation) {
         return new TestingModelFilter(model);
     }
 }

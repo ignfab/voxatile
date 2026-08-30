@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.Model;
 
 /**
@@ -18,8 +19,10 @@ import com.ignfab.minalac.generator.models.Model;
     @JsonSubTypes.Type(ModelFilterMetadataEqualsParams.class),
     @JsonSubTypes.Type(ModelFilterMetadataInParams.class),
     @JsonSubTypes.Type(ModelFilterHasMetadataParams.class),
-    @JsonSubTypes.Type(ModelFilterMetadataLowerThanParams.class),
-    @JsonSubTypes.Type(ModelFilterMetadataGreaterThanParams.class),
+    @JsonSubTypes.Type(ModelFilterValueEqualsParams.class),
+    @JsonSubTypes.Type(ModelFilterValueLowerThanParams.class),
+    @JsonSubTypes.Type(ModelFilterValueGreaterThanParams.class),
+    @JsonSubTypes.Type(ModelFilterHasValueParams.class),
     @JsonSubTypes.Type(ModelFilterEmptyGeometryParams.class)
 })
 public abstract class ModelFilterParams {
@@ -31,7 +34,8 @@ public abstract class ModelFilterParams {
     /**
      * Creates a {@code Predicate<Model>} out of these params.
      *
+     * @param generation the generation context.
      * @return the resulting predicate.
      */
-    public abstract Predicate<Model> create();
+    public abstract Predicate<Model> create(Generation generation);
 }

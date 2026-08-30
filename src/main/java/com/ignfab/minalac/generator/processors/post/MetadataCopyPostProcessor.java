@@ -10,6 +10,7 @@ import com.ignfab.minalac.generator.models.Model;
  * <p>
  * The same model object is returned after post-processing.
  */
+// TODO once model values can handle any type of values, this won't be necessary anymore
 public class MetadataCopyPostProcessor extends PostProcessor.Generic {
     private final String from;
     private final String to;

@@ -14,16 +14,22 @@ Models are always selected on their type and that selection may be narrowed down
      * [And](#and)
      * [Or](#or)
      * [Combination](#combination)
+  * [Filtering on value](#filtering-on-value)
+    * [Has value](#has-value)
+    * [Value equals](#value-equals)
+    * [Lower Than](#lower-than)
+    * [Greater Than](#greater-than)
+    * [Comparing two dynamic model values](#comparing-two-dynamic-model-values)
   * [Filtering on metadata](#filtering-on-metadata)
-     * [Has](#has)
-     * [Equals](#equals)
+     * [Has metadata](#has-metadata)
+     * [Metadata equals](#metadata-equals)
      * [In](#in)
-     * [Lower Than](#lower-than)
-     * [Greater Than](#greater-than)
   * [Filtering on geometry](#filtering-on-geometry)
     * [Empty](#empty)
 
 ## Example
+
+This model selection will match `buildings` models with `height` metadata defined and `classification` metadata value other than `Monument`, `Castle`, `Chapel` or `Church`.
 
 ```yaml
 models:
@@ -106,11 +112,89 @@ and:
 ```
 This is equivalent to *filter1 AND (NOT filter2) AND (filter3 OR filter4)*.
 
+### Filtering on value
+
+These filters rely on [model values](ModelValues.md).
+
+Keep in mind that model values can only represent numbers!
+To test equality of a textual metadata, use [metadata filters](#filtering-on-metadata).
+
+#### Has value
+
+Returns true if given value is not absent for the model.
+
+Example:
+```yaml
+   hasValue: height
+```
+
+Field:
+- `hasValue` (required): [Model value](ModelValues.md) to check
+
+#### Value equals
+
+Returns true if given value is equals to a given number.
+
+Example:
+```yaml
+   value: height
+   equals: 2
+```
+
+Fields:
+- `value` (required): [Model value](ModelValues.md) to check
+- `equals` (required): Number to compare with
+
+#### Lower Than
+
+Selects models for which the given value is strictly lower than the specified threshold.
+
+Example:
+```yaml
+   value: height
+   lowerThan: 20
+```
+
+Fields:
+- `value` (required): [Model value](ModelValues.md) to check
+- `lowerThan` (required): Threshold value that the model value must be lower than
+
+#### Greater Than
+
+Selects models for which the given value is strictly greater than the specified threshold.
+
+Example:
+```yaml
+   value: height
+   greaterThan: 20
+```
+
+Fields:
+- `value` (required): [Model value](ModelValues.md) to check
+- `greaterThan` (required): Threshold value that the model value must be greater than
+
+#### Comparing two dynamic model values
+
+You can test for equality/inequality between two dynamic values `A` and `B` by testing for equality/inequality between `A - B` and `0`.
+
+Example:
+```yaml
+value:
+  sum:
+    - A
+    - product: [ B, -1 ]
+# or lowerThan or greaterThan
+equals: 0
+```
+
 ### Filtering on metadata
 
 These filters rely on models metadata.
 
-#### Has
+While [model values-based filters](#filtering-on-value) are more powerful for numbers, metadata types are not limited to numbers.
+When working with textual values for example, you must use metadata directly and not through the [metadata model value](ModelValues.md#metadata) that would otherwise be absent.
+
+#### Has metadata
 
 Returns true if given metadata exists for the model.
 
@@ -128,7 +212,7 @@ Fields:
 
 If a list of metadata name is given, model is selected only if it has all given metadata.
 
-#### Equals
+#### Metadata equals
 
 Returns true if given metadata has the given value.
 
@@ -161,34 +245,6 @@ Fields:
   - `metadata` (required): Name of metadata to check
   - `in` (required): List of values to compare with
   - `as` (optional, default `text`): Type of values to compare with (`integer`, `decimal`, `text` or `boolean`)
-
-#### Lower Than
-
-Selects model with given metadata value is strictly less than the specified threshold.
-
-Example:
-```yaml
-   metadata: height
-   lowerThan: 20
-```
-
-Fields:
-  - `metadata` (required): Name of the metadata to check
-  - `lowerThan` (required): Threshold value that the metadata must be lower than. (Only possible to compare numbers with this filter)
-
-#### Greater Than
-
-Selects the model with the given metadata value that is strictly greater than the specified threshold.
-
-Example:
-```yaml
-   metadata: height
-   greaterThan: 20
-```
-
-Fields:
-  - `metadata` (required): Name of the metadata to check
-  - `greaterThan` (required): Threshold value that the metadata must be greater than. (Only possible to compare numbers with this filter)
 
 ### Filtering on geometry
 

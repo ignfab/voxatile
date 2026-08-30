@@ -7,26 +7,23 @@ import tools.jackson.core.JacksonException;
 
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.GenerationTile;
+import com.ignfab.minalac.generator.generation.TestingGeneration;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclaration;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmap;
-import com.ignfab.minalac.generator.outputs.testing.TestingVoxelWorld;
 import com.ignfab.minalac.generator.parameters.ParamsTester;
 import com.ignfab.minalac.generator.parameters.utils.IntegerIntervalParams;
-import com.ignfab.minalac.generator.utils.random.TestingSeed;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RemapHeightmapParamsTest {
 
     @Test
     public void testDeserialize() {
-        Generation generation = new Generation(new TestingVoxelWorld(), TestingSeed.UNUSED, null, 0, 0, 1, 1, 1.0, 1.0, 0.0, 100);
-        HeightmapDeclaration heightmapSpec = (new HeightmapDeclaration("lotad", 0));
+        Generation generation = new TestingGeneration();
+        HeightmapDeclaration heightmapSpec = new HeightmapDeclaration("lotad", 0);
         generation.heightmaps().add(heightmapSpec);
 
         GenerationTile tile = new GenerationTile(generation, new WorldBBox3d(-3, 0, 0, 8, 1, 0));

@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
+import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.parameters.models.filters.ModelFilterAndParams;
 import com.ignfab.minalac.generator.parameters.models.filters.ModelFilterParams;
@@ -56,13 +57,14 @@ public class ModelSelectionParams {
     /**
      * Creates a new {@link ModelSelection} out of params.
      *
+     * @param generation the generation context.
      * @return a model selection.
      */
-    public ModelSelection create() {
+    public ModelSelection create(Generation generation) {
         // Type presence cannot be checked at validation because it could be given later (selection narrowing)
         if (type == null)
             throw new IllegalArgumentException("Model selection must have a model type");
 
-        return new ModelSelection(type, (filter == null) ? null : filter.create());
+        return new ModelSelection(type, (filter == null) ? null : filter.create(generation));
     }
 }
