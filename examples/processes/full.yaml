@@ -114,10 +114,12 @@ forEachTile:
       type: buildings
     heightmap: ground
     altitudeMetadata: ground-floor-altitude
-    placeAbove: *voxel-empty
+    placeAbove: *voxel-air
     placeBelow: *voxel-building-ground
 
-  renderBuildings:
+  # Hacky way to render roofs. Should be removed.
+  # Would have been nice to have a fillBetweenMetadatas
+  renderRoofs:
     after: flattenGroundBuildings
     type: renderBuildings
     models:
@@ -126,8 +128,8 @@ forEachTile:
         metadata: height
         greaterThan: 0
     roof: *voxel-cobble
-    wall: *voxel-stone
-    window: *voxel-glass
+    wall: *voxel-air
+    window: *voxel-air
 
   forest:
     type: sequence
@@ -298,3 +300,197 @@ forEachTile:
       with:
         "█": *road-paint
         "░": *road-tar
+
+  renderResidentialBuildings:
+    after:
+      - flattenGroundBuildings
+      - renderRoofs
+    type: renderFacade
+    models:
+      type: buildings
+      filter:
+        metadata: usage_1
+        equals: Résidentiel
+    height: height
+    altitude: ground-floor-altitude
+    # TODO: Layout should probably be defined on a common.yaml file in format.
+    build:
+     - along: x
+       concatenate:
+         # Left corner
+         - &corner
+           structure:
+             at: [ 0, -1..0, 0 ]
+             put: *corner-material
+           stretchableAlongX:
+             at: 0
+           stretchableAlongZ:
+             at: 0
+           priority: -1
+         - along: z
+           concatenate:
+             # Ground floor
+             - priority: 1
+               along: x
+               concatenate:
+                 - atLeast: 0
+                   along: x
+                   repeat:
+                     structure:
+                       axes: [ z, x ]
+                       blueprint: [ "-O==O", "-O**O", "-O**O", "-O**O", "-O==O", "-O--O" ]
+                       with: *facade-residential-materials
+                     stretchableAlongZ:
+                       at: 0
+                 # Door
+                 - structure:
+                     axes: [ z, x ]
+                     blueprint: [ "-O==O-", "-O  O-", "-O  O-", "-O  O-", "-O  O-", "-O  O-" ]
+                     with: *facade-residential-materials
+                   stretchableAlongZ:
+                     at: 0
+                 # Right ground windows
+                 - along: x
+                   atLeast: 0
+                   repeat:
+                     structure:
+                       axes: [ z, x ]
+                       blueprint: [ "O==O-", "O**O-", "O**O-", "O**O-", "O==O-", "O--O-" ]
+                       with: *facade-residential-materials
+                     stretchableAlongZ:
+                       at: 0
+             # Cornice
+             - structure:
+                 at: [ 0, 0, 0 ]
+                 put: *cornice-material
+               stretchableAlongX:
+                 at: 0
+             # Upper floors
+             - priority: 2
+               along: z
+               atLeast: 0
+               repeat:
+                 along: x
+                 concatenate:
+                   - structure:
+                       at: [ 0, 0, 0..5 ]
+                       put: *other-material
+                   - along: x
+                     repeat:
+                       structure:
+                         axes: [ y, z, x ]
+                         blueprint:
+                           - [ "O==O+", "O**O+", "O**O+", "O**O+", "O==O+", "O--O+" ]
+                           - [ "     ", "     ", "     ", "|||| ", "==== ", "O  O " ]
+                         with: *facade-residential-materials
+                         yOffset: -1
+             # Upper cornice
+             - structure:
+                 at: [ 0, 0, 0 ]
+                 put: *cornice-material
+               stretchableAlongX:
+                 at: 0
+               stretchableAlongZ:
+                 at: 0
+         # Right corner
+         - *corner
+     - structure:
+         at: [ 0, 0, 0 ]
+         put: *corner-material
+       stretchableAlongX:
+         at: 0
+       stretchableAlongZ:
+         at: 0
+
+  renderOfficeBuildings:
+    after:
+      - flattenGroundBuildings
+      - renderRoofs
+    type: renderFacade
+    models:
+      type: buildings
+      filter:
+        not:
+          metadata: usage_1
+          equals: Résidentiel
+    height: height
+    altitude: ground-floor-altitude
+    # TODO: Layout should probably be defined on a common.yaml file in format.
+    build:
+      - along: x
+        concatenate:
+          # Left corner
+          - structure:
+              put: *modern-wall
+              at: [0, 0, 0]
+            stretchableAlongX:
+              at: 0
+            stretchableAlongZ:
+              at: 0
+          # Facade
+          - priority: 1
+            along: z
+            concatenate:
+              # Ground floor
+              - along: x
+                concatenate:
+                  # Left
+                  - along: x
+                    repeat:
+                      structure:
+                        with: *modern-materials
+                        axes: [z, x]
+                        blueprint: [ "O**", "O**", "O**", "OOO", "OOO"]
+                  # Door
+                  - structure:
+                      with: *modern-materials
+                      axes: [z, x]
+                      blueprint: [ "OOOO", "O  O", "O  O", "O  O", "O  O" ]
+                  # Right
+                  - along: x
+                    repeat:
+                      structure:
+                        with: *modern-materials
+                        axes: [z, x]
+                        blueprint: [ "**O", "**O", "**O", "OOO", "OOO" ]
+              # Upper floors
+              - priority: 1
+                along: x
+                concatenate:
+                  - structure:
+                      put: *modern-wall
+                      at: [0, 0, 0 ]
+                    stretchableAlongZ:
+                      at: 0
+                  - along: x
+                    repeat:
+                      structure:
+                        with: *modern-materials
+                        axes: x
+                        blueprint: "**O"
+                      stretchableAlongZ:
+                        at: 0
+              # Top
+              - structure:
+                  put: *modern-wall
+                  at: [0, 0, 0 ]
+                stretchableAlongX:
+                  at: 0
+                stretchableAlongZ:
+                  at: 0
+          # Left corner
+          - structure:
+              put: *modern-wall
+              at: [0, 0, 0]
+            stretchableAlongX:
+              at: 0
+            stretchableAlongZ:
+              at: 0
+      # Default
+      - structure:
+          at: [ 0, 0, 0 ]
+          put: *modern-wall
+        stretchableAlongX:
+          at: 0
+        stretchableAlongZ:
+          at: 0
