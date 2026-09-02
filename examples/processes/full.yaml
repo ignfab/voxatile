@@ -87,11 +87,11 @@ forEachTile:
     at: ground
     place:
       structure:
-        - put: *voxel-grass
+        - place: *voxel-grass
           at: [0, 0, 0]
-        - put: *voxel-dirt
+        - place: *voxel-dirt
           at: [0, 0, -3..-1]
-        - put: *voxel-stone
+        - place: *voxel-stone
           at: [0, 0, -20..-4]
 
   computeBuildingsAltitude:
@@ -160,7 +160,7 @@ forEachTile:
               place:
                 structure:
                   - at: [0, 0, 1]
-                    put: *forest-grass
+                    place: *forest-grass
           - *voxel-forest-ground
           - pattern:
               seed: forest-tree1
@@ -214,10 +214,10 @@ forEachTile:
     maximum: ground
     place:
       structure:
-        - put: *voxel-water
+        - place: *voxel-water
           at: [ 0, 0, 0 ]
         # This a dirt fix to remove vegetation on water
-        - put: *voxel-air
+        - place: *voxel-air
           at: [ 0, 0, 1..12 ]
 
   path:
@@ -232,9 +232,9 @@ forEachTile:
         metadata: nature
         in: [ "Chemin", "Sentier", "Route empierrée" ]
     structure:
-      - put: *path
+      - place: *path
         at: [ 0, -1..1, 0]
-      - put: *voxel-air
+      - place: *voxel-air
         at: [ 0, -1..1, 1..2 ]
 
   renderBridges:

@@ -28,7 +28,7 @@ public class PlaceableStructureParamsTest {
         assertDoesNotThrow(() -> ParamsTester.deserialize(
             PlaceableStructureParams.class, """
               - at: [0, 0, 0]
-                put: A
+                place: A
             """
         ));
 
@@ -71,7 +71,7 @@ public class PlaceableStructureParamsTest {
                   'a': A
                 blueprint: a
               - at: [0, 0, 0]
-                put: A
+                place: A
             """
         ));
     }
@@ -84,7 +84,7 @@ public class PlaceableStructureParamsTest {
         params = ParamsTester.deserialize(
             PlaceableStructureParams.class, """
               - at: [0, 0, 0]
-                put: A
+                place: A
               - axes: x
                 with:
                   'a': A
@@ -97,7 +97,7 @@ public class PlaceableStructureParamsTest {
         params = ParamsTester.deserialize(
             PlaceableStructureParams.class, """
               - at: [0, 0, 0]
-                put: A
+                place: A
               - axes: [ x, y ]
                 with:
                   'a': A
@@ -111,7 +111,7 @@ public class PlaceableStructureParamsTest {
         params = ParamsTester.deserialize(
             PlaceableStructureParams.class, """
               - at: [2..1, 0, 0]
-                put: A
+                place: A
               - axes: x
                 with:
                   'a': A

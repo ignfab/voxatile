@@ -14,7 +14,7 @@ references:
   - &forest-grass minecraft:fern
   - &forest-tree1
     structure:
-      - put:
+      - place:
           pattern:
             place:
               block: minecraft:oak_leaves
@@ -22,11 +22,11 @@ references:
                 persistent: true
             chance: 0.8
         at: [ -3..3, -3..3, 4..10 ]
-      - put: minecraft:oak_log
+      - place: minecraft:oak_log
         at: [ 0, 0, 0..5 ]
   - &forest-tree2
     structure:
-      - put:
+      - place:
           pattern:
             place:
               block: minecraft:birch_leaves
@@ -34,7 +34,7 @@ references:
                 persistent: true
             chance: 0.8
         at: [ -3..3, -3..3, 4..10 ]
-      - put: minecraft:birch_log
+      - place: minecraft:birch_log
         at: [ 0, 0, 0..5 ]
   - &voxel-water minecraft:water
   - &voxel-air minecraft:air
