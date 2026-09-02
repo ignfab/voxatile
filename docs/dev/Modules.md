@@ -10,7 +10,7 @@ In `pom.xml`, add following dependency:
 ```xml
 <dependency>
     <groupId>com.ignfab</groupId>
-    <artifactId>minalac-generator</artifactId>
+    <artifactId>voxatile</artifactId>
     <version>1.0-SNAPSHOT</version>
     <scope>provided</scope>
 </dependency>

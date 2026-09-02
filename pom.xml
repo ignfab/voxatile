@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.ignfab</groupId>
-    <artifactId>minalac-generator</artifactId>
+    <artifactId>voxatile</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>minalac-generator</name>
+    <name>Voxatile</name>
     <description>Minecraft/Minetest world generator from real world geographic data</description>
     <url>https://www.ign.fr/minecraft</url>
 
@@ -23,7 +23,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/ignfab/minalac-generator</url>
+            <url>https://maven.pkg.github.com/ignfab/voxatile</url>
         </repository>
     </distributionManagement>
 
