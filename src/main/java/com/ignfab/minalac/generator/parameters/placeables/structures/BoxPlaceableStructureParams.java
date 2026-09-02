@@ -17,40 +17,39 @@ import com.ignfab.minalac.generator.utils.random.Seed;
  */
 public class BoxPlaceableStructureParams extends PlaceableStructureParams.Variant {
 
-
     /**
-     * Box, in structure relative coordinates, where placeable should be put (required).
+     * Box, in structure relative coordinates, where placeable should be set (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
     public WorldBBox3dParams at;
 
     /**
-     * Placeable to put at each position inside the given box (required).
+     * Placeable to set at each position inside the given box (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public PlaceableParams put;
+    public PlaceableParams place;
 
     /**
      * Creates a new {@code PlaceableStructureParams}.
      *
-     * @param at Box into which put placeables
-     * @param put Placeable to put into given box
+     * @param at Box into which set placeables
+     * @param place Placeable to set into given box
      */
-    @ConstructorProperties({"at", "put"})
-    public BoxPlaceableStructureParams(WorldBBox3dParams at, PlaceableParams put) {
-        this.put = put;
+    @ConstructorProperties({"at", "place"})
+    public BoxPlaceableStructureParams(WorldBBox3dParams at, PlaceableParams place) {
+        this.place = place;
         this.at = at;
     }
 
     @Override
     public void validate() {
         // Only validation propagation
-        put.validate();
+        place.validate();
         at.validate();
     }
 
     @Override
     public void apply(Seed seed, PlaceableStructure.Builder structureBuilder) {
-        structureBuilder.set(at.create(), put.create(seed));
+        structureBuilder.set(at.create(), place.create(seed));
     }
 }

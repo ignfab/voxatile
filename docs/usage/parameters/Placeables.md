@@ -85,7 +85,7 @@ Example of a structure as placeable:
 ```yaml
 place:
   structure:
-    put: default:dirt
+    place: default:dirt
     at: [-1..1, -1..1, -1..1]
 ```
 
@@ -100,17 +100,17 @@ Structure can be described as a list of boxes filled with a placeable (could be 
 ```yaml
 place:
   structure:
-    - put: default:dirt
+    - place: default:dirt
       at: [-1..1, -1..1, -1..0]
-    - put: default:dirt_with_grass
+    - place: default:dirt_with_grass
       at: [-1..1, -1..1, 1]
-    - put: default:tree
+    - place: default:tree
       at: [0, 0, 2]
 ```
 
 Fields:
-- `put`: Placeable to put at given position(s)
-- `at`: Where to put that placeable. Can be a single postion, or a box.
+- `place`: Placeable to set at given position(s)
+- `at`: Where to set that placeable. Can be a single postion, or a box.
 
 Boxes are noted as `[x, y, z]` where `x`, `y` and `z` can be an interval noted `start..end` where `start` and `end` are starting and ending value of the interval, or a single coordinate (`5` is equivalent to `5..5`). All values are integers.
 
@@ -219,9 +219,9 @@ place:
         - "W-O-O-O-OW"
         - "WO-O-O-O-W"
         - "WWWWWWWWWW"
-    - put: default:slab_desert_stone_block
+    - place: default:slab_desert_stone_block
       at: [ 3, 5, 1 ]
-    - put: default:slab_silver_sandstone_block
+    - place: default:slab_silver_sandstone_block
       at: [ 8, 2, 1 ]
 ```
 
@@ -287,7 +287,7 @@ A pattern that repeats a [structure](#structures):
 ```yaml
 place:
   pattern:
-    repeatStructure: 
+    repeatStructure:
       with:
         '░': default:goldblock
         '█': default:desert_stone_block
@@ -305,7 +305,7 @@ When repeating a structure, you can apply a shift to each repetition along the 3
 ```yaml
 place:
   pattern:
-    repeatStructure: 
+    repeatStructure:
       with:
         '░': default:goldblock
         '█': default:desert_stone_block
@@ -325,7 +325,7 @@ Applying a shift in the direction of the axis results in a space between placeme
 ```yaml
 place:
   pattern:
-    repeatStructure: 
+    repeatStructure:
       with:
         '░': default:goldblock
         '█': default:desert_stone_block
@@ -364,7 +364,7 @@ Fields:
 ```yaml
 place:
   pattern:
-    repeatStructure: 
+    repeatStructure:
       with:
         '/': wool:black
       axes: [ x, y ]

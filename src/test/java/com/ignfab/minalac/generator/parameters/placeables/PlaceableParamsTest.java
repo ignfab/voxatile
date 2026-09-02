@@ -99,7 +99,7 @@ public class PlaceableParamsTest {
         params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, """
             structure:
               - at: [0, 0, 0]
-                put: A
+                place: A
         """));
 
         assertInstanceOf(PlaceableStructureParams.class, params);
