@@ -1,0 +1,69 @@
+heightmaps:
+  ground:
+    default: 0
+  water:
+    default: 0
+
+forEachTile:
+
+  fetchAltitude:
+    type: fetchData
+    modelType: altitude
+    provider:
+      type: wmsFloat
+      url: https://data.geopf.fr/wms-r/wms
+      layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    processor:
+      type: floatMatrix
+    retry: 5
+    retryDelay: 1
+
+  setAltitude:
+    after: fetchAltitude
+    type: populateHeightmap
+    models:
+      type: altitude
+    heightmap: ground
+
+  setSpawn:
+    after: setAltitude
+    type: setSpawn
+    heightmap:
+      sum: [ground, 1]
+    x: 0
+    y: 0
+
+  renderGround:
+    after: setAltitude
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - put: *voxel-grass
+          at: [0, 0, 0]
+        - put: *voxel-dirt
+          at: [0, 0, -3..-1]
+        - put: *voxel-stone
+          at: [0, 0, -20..-4]
+
+  fetchBuildings:
+    type: fetchData
+    modelType: buildings
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:batiment
+      maxFeaturesPerQuery: 500
+
+  renderBuildings:
+    after: fetchBuildings
+    type: place
+    models:
+      type: buildings
+    voxels:
+      type: setAltitude
+      voxels:
+        type: surface
+      altitude: ground
+    place: default:sand
+

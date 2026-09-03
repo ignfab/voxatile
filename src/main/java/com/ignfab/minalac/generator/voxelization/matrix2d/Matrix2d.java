@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.voxelization;
+package com.ignfab.minalac.generator.voxelization.matrix2d;
 
 import com.ignfab.minalac.generator.utils.world2d.Bounded2d;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;

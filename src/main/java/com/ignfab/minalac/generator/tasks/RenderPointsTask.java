@@ -5,14 +5,14 @@ import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.Shape3dConvertibleModel;
 import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world3d.Positioned3d;
-import com.ignfab.minalac.generator.voxelization.shape3d.voxelizer.Point3dVoxelizer;
+import com.ignfab.minalac.generator.voxelization.shape3d.voxelizer.PointVoxelizer3d;
 
 /**
  * A task rendering points by placing placeables at them.
  */
 public class RenderPointsTask extends ModelTask<Shape3dConvertibleModel> {
     private final Placeable placeable;
-    private final Point3dVoxelizer voxelizer;
+    private final PointVoxelizer3d voxelizer;
 
     /**
      * Creates a new {@code RenderPointsTask}.
@@ -26,7 +26,7 @@ public class RenderPointsTask extends ModelTask<Shape3dConvertibleModel> {
     ) {
         super(Shape3dConvertibleModel.class, selection);
         this.placeable = placeable;
-        voxelizer = new Point3dVoxelizer();
+        voxelizer = new PointVoxelizer3d();
     }
 
     @Override

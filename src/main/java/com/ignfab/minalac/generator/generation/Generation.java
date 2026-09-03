@@ -51,6 +51,22 @@ public class Generation {
     private final Collection<WorldBBox2d> tiles;
 
     private final Iterator<GenerationTile> tileIterator;
+
+    private static Generation currentGeneration = null;
+
+    /**
+     * @return current generation.
+     */
+    public static Generation current() {
+        if (currentGeneration == null)
+            throw new IllegalStateException("No current generation!");
+        return currentGeneration;
+    }
+
+    /* package private */ static void setCurrent(Generation generation) {
+        currentGeneration = generation;
+    }
+
     /**
      * Constructs a new generation context.
      * It sets {@code VoxelWorld}'s limits in way the center is at {@code WorldCoords2d} (0, 0).
@@ -115,6 +131,9 @@ public class Generation {
         voxelToCrs.rotate(angle);
         voxelToCrs.scale(horizontalScale, horizontalScale);
         voxelToCrs.translate(centerX, centerY);
+
+        // TODO: MANAGE THAT WITH SCOPED VALUES
+        setCurrent(this);
     }
 
     /**

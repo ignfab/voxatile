@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.voxelization.shape2d.voxelizer;
 import com.ignfab.minalac.generator.utils.iterator.Iterables;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Polygon2d;
-import com.ignfab.minalac.generator.voxelization.shape2d.Shape2dConvertible;
+import com.ignfab.minalac.generator.voxelization.shape2d.Shape2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.iterator.Polygon2dIterator;
 
 /**
@@ -21,8 +21,8 @@ public class SurfaceVoxelizer2d implements Shape2dVoxelizer {
     }
 
     @Override
-    public Iterable<Positioned2d> voxelize(Shape2dConvertible convertible) {
-        return Iterables.flatMap(convertible.toShape2d().polygons(), this::voxelize);
+    public Iterable<? extends Positioned2d> voxelizeShape2d(Shape2d shape) {
+        return Iterables.flatMap(shape.polygons(), this::voxelize);
     }
 
 }

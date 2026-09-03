@@ -1,22 +1,19 @@
 package com.ignfab.minalac.generator.voxelization;
 
-import java.util.Iterator;
-
+import com.ignfab.minalac.generator.models.Model;
 import com.ignfab.minalac.generator.utils.world2d.Positioned2d;
 
 /**
- * A 2d voxelizer provides a way to iterate over 2d voxels.
- * This is the minimal voxelizer, which only tells which voxels are in the model.
- * <p>
- * The voxels returned by iterators are not guaranteed to be unique:
- * It may contain duplicate coordinate.
+ * A voxelizer converting a model into 2d voxels.
  */
-public interface Voxelizer2d extends Iterable<Positioned2d> {
+public interface Voxelizer2d {
     /**
-     * Returns an iterator over all the voxels in this object.
+     * Performs voxelization of a {@link Model} into an iterable over 2d positions.
+     * <p>
+     * If unable to voxelize model, returns an empty iterator.
      *
-     * @return the global iterator of this object.
+     * @param model model to voxelize
+     * @return iterable over corresponding voxel positions
      */
-    @Override
-    Iterator<Positioned2d> iterator();
+    Iterable<? extends Positioned2d> voxelize(Model model);
 }

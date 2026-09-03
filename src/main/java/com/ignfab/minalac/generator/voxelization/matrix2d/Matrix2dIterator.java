@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.voxelization;
+package com.ignfab.minalac.generator.voxelization.matrix2d;
 
 import java.util.Iterator;
 
