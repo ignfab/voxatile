@@ -44,7 +44,7 @@ public @interface JsonDelegateDeserialize {
 
     /**
      * Jackson handler to wrap deserializer of annotated beans with the requested one.
-     * This is bundled by default with the {@link com.ignfab.minalac.generator.parameters.ParamsParser.MinalacParserModule}.
+     * This is bundled by default with the {@link com.ignfab.minalac.generator.parameters.ParamsParser.VoxatileParserModule}.
      */
     class BeanModifier extends ValueDeserializerModifier {
         @Override

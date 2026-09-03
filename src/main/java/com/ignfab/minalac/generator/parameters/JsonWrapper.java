@@ -42,7 +42,7 @@ import tools.jackson.databind.util.AccessPattern;
 public @interface JsonWrapper {
     /**
      * Jackson handler to set deserializer of annotated beans with the appropriate one.
-     * This is bundled by default with the {@link com.ignfab.minalac.generator.parameters.ParamsParser.MinalacParserModule}.
+     * This is bundled by default with the {@link com.ignfab.minalac.generator.parameters.ParamsParser.VoxatileParserModule}.
      */
     class BeanModifier extends ValueDeserializerModifier {
         @Override

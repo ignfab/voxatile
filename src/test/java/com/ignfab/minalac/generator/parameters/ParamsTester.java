@@ -42,7 +42,7 @@ public final class ParamsTester {
         builder.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, true);
         builder.enable(StreamReadFeature.STRICT_DUPLICATE_DETECTION);
 
-        builder.addModule(new ParamsParser.MinalacParserModule());
+        builder.addModule(new ParamsParser.VoxatileParserModule());
 
         format.registerPlaceableDeserializer(builder);
 
