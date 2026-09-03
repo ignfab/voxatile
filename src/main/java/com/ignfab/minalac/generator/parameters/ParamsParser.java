@@ -40,8 +40,8 @@ public class ParamsParser {
         GenerationParams params;
 
         // Custom deserializers
-        MinalacParserModule module = new MinalacParserModule();
-        // TODO OutputFormat handling might be relocated to the MinalacParserModule (not sure)
+        VoxatileParserModule module = new VoxatileParserModule();
+        // TODO OutputFormat handling might be relocated to the VoxatileParserModule (not sure)
         module.addDeserializer(OutputFormat.class, formatDeserializer);
         mapperBuilder.addModule(module);
 
@@ -104,12 +104,12 @@ public class ParamsParser {
     /**
      * Jackson module used by this parser.
      */
-    public static class MinalacParserModule extends SimpleModule {
+    public static class VoxatileParserModule extends SimpleModule {
         /**
          * Creates a new instante of this module.
          */
-        public MinalacParserModule() {
-            super("MinalacParserModule");
+        public VoxatileParserModule() {
+            super("VoxatileParserModule");
         }
 
         @Override
