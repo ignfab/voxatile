@@ -8,20 +8,20 @@
 Compile and run from repository root:
 
 ```shell
-mvn -Dmaven.test.skip=true clean package && ./generate.sh minetest full ign $HOME/.minetest/worlds/minalac
+mvn -Dmaven.test.skip=true clean package && ./generate.sh minetest full ign $HOME/.minetest/worlds/voxatile
 ```
 
 Run only (from repository root):
 
 ```shell
-./generate.sh minetest full ign $HOME/.minetest/worlds/minalac
+./generate.sh minetest full ign $HOME/.minetest/worlds/voxatile
 ```
 
 ## generate.sh
 
 `generate.sh` scripts creates yaml configuration from configuration fragments and passes it to `Generator.jar`.
 
-It mimics a simple behavior of future `minalac-configurator` and is only intended to be used for testing purpose.
+It mimics a simple behavior of future `voxatile-configurator` and is only intended to be used for testing purpose.
 
 Usage:
 ```bash
@@ -40,8 +40,8 @@ Where:
 
 While many places are available, there are only two formats (`minecraft`, `minetest`) and one process (`full`) for now.
 
-To perform tiled generation, set `MINALAC_MAX_TILE_SIZE` environment variable to the wanted maximum tile size:
+To perform tiled generation, set `VOXATILE_MAX_TILE_SIZE` environment variable to the wanted maximum tile size:
 
 ```shell
-MINALAC_MAX_TILE_SIZE=512 ./generate.sh minetest full ign $HOME/.minetest/worlds/minalac
+VOXATILE_MAX_TILE_SIZE=512 ./generate.sh minetest full ign $HOME/.minetest/worlds/voxatile
 ```

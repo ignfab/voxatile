@@ -18,13 +18,13 @@ import com.ignfab.minalac.generator.utils.FileHelpers;
 
 /**
  * A command line parser and basic processor.
- * MinalacGeneratorCLI performs parsing, basic validation and some basic tasks such as retrieving generation parameters.
+ * {@code VoxatileCLI} performs parsing, basic validation and some basic tasks such as retrieving generation parameters.
  */
-public class MinalacGeneratorCLI {
+public class VoxatileCLI {
 
-    private static final String PARAMS_ENVVAR_NAME = "MINALAC_PARAMS";
-    private static final String MAX_TILE_SIZE_ENVVAR_NAME = "MINALAC_MAX_TILE_SIZE";
-    private static final String MODULES_PATH_ENVVAR_NAME = "MINALAC_MODULES_PATH";
+    private static final String PARAMS_ENVVAR_NAME = "VOXATILE_PARAMS";
+    private static final String MAX_TILE_SIZE_ENVVAR_NAME = "VOXATILE_MAX_TILE_SIZE";
+    private static final String MODULES_PATH_ENVVAR_NAME = "VOXATILE_MODULES_PATH";
 
     private Path outputPath;
     private Path parametersPath;
@@ -40,7 +40,7 @@ public class MinalacGeneratorCLI {
     /**
      * Creates a new GeneratorCommandLine.
      */
-    public MinalacGeneratorCLI() {
+    public VoxatileCLI() {
         options = new Options();
         options.addOption(new Option("h", "help", false, "Display command usage"));
         options.addOption(new Option("p", "param-file", true, "Get generation params from file"));

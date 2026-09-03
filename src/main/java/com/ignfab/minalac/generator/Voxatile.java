@@ -60,10 +60,10 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 
 /**
- * Main class of Minalac project.
+ * Main class of Voxatile project.
  */
-public final class MinalacGenerator {
-    private MinalacGenerator() {
+public final class Voxatile {
+    private Voxatile() {
         throw new UnsupportedOperationException();
     }
 
@@ -81,7 +81,7 @@ public final class MinalacGenerator {
         // Deserialization duration start
         Instant initializationStart = Instant.now();
         // Command line arguments parsing & basic processing
-        MinalacGeneratorCLI cli = new MinalacGeneratorCLI();
+        VoxatileCLI cli = new VoxatileCLI();
         cli.parse(args);
 
         File destination;
