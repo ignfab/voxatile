@@ -1,0 +1,28 @@
+name: Build Docker image for checking purposes
+run-name: "[docker-build] ${{ github.actor }} from ${{ github.ref }} triggered by ${{ github.event_name }} event"
+
+on:
+  workflow_call:
+
+
+jobs:
+  build-docker-image:
+    name: build-docker-image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Build image without pushing to GitHub registry
+      id: build
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        provenance: false
+        push: false
+        # Caching strategy
+        cache-from: type=gha
+        cache-to: type=gha, mode=max
