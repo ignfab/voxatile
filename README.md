@@ -30,7 +30,7 @@ cd voxatile # All commands are always based on the project root
 
 Compile and run using Maven (Unix only):
 ```shell
-mvn -Dmaven.test.skip=true clean package && ./generate.sh minetest full ign $HOME/.minetest/worlds/minalac
+mvn -Dmaven.test.skip=true clean package && ./generate.sh minetest full ign $HOME/.minetest/worlds/voxatile
 ```
 
 <!--

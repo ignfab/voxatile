@@ -7,7 +7,7 @@ This folder contains additional documentation on various topics. Technical code 
 You may find useful the following links:
 - [`usage/Run.md`](usage/Run.md): How to run the generator?
 - [`tools/Maven.md`](tools/Maven.md): How to use Maven?
-- [Online Javadoc](https://ignfab.github.io/minalac-generator), automatically deployed on GitHub Pages.
+- [Online Javadoc](https://ignfab.github.io/voxatile), automatically deployed on GitHub Pages.
 
 If none of the above helped you, consider searching through the complete documentation. If the information you are looking for does not exist, feel free to add it!
 

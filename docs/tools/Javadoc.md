@@ -1,7 +1,7 @@
 # Javadoc
 
 > [!NOTE]
-> The Javadoc are available on [GitHub Pages](https://ignfab.github.io/minalac-generator).
+> The Javadoc are available on [GitHub Pages](https://ignfab.github.io/voxatile).
 
 We use [Javadoc](https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html) Comments to document our code. If you're already familiar with this tool, skip to the [Usage](#Usage) section.
 

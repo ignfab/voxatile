@@ -45,9 +45,9 @@ RUN mvn -Dmaven.test.skip=true clean package
 FROM $REGISTRY/library/eclipse-temurin:17-jre-jammy
 
 # User and group definition
-ENV USER=minalac
+ENV USER=voxatile
 ENV UID=10001
-ENV GROUP=minalac
+ENV GROUP=voxatile
 ENV GID=10001
 
 # Create user and group

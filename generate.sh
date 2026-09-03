@@ -136,4 +136,4 @@ if [ "$display_only" ]; then
     exit 0
 fi
 
-MINALAC_PARAMS=$params MINALAC_MODULES_PATH=modules $JAVA_CMD -jar $JAR_PATH $generator_opt "$output_dir"
+VOXATILE_PARAMS=$params VOXATILE_MODULES_PATH=modules $JAVA_CMD -jar $JAR_PATH $generator_opt "$output_dir"
