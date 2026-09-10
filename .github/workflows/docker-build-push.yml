@@ -1,0 +1,70 @@
+name: Build and push Docker image to GitHub registry
+run-name: "[docker-build-push] ${{ github.actor }} from ${{ github.ref }} triggered by ${{ github.event_name }} event"
+
+on:
+  workflow_call:
+    inputs:
+      host:
+        description: "registry domain name"
+        required: false
+        type: string
+        default: "ghcr.io"
+      namespace:
+        description: "raw namespace"
+        required: true
+        type: string
+      repository:
+        description: "raw repository name"
+        required: true
+        type: string
+      tag:
+        description: "raw tag"
+        required: true
+        type: string
+
+jobs:
+  sanitization:
+    uses: ./.github/workflows/docker-string-sanitization.yml
+    with:
+      repository: ${{ inputs.repository }}
+      tag: ${{ inputs.tag }}
+
+  build-push-docker-image:
+    name: build-push-docker-image
+    runs-on: ubuntu-latest
+    needs: sanitization
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Log into registry ${{ inputs.host }}
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ inputs.host }}
+        username: ${{ github.actor }}
+        password: ${{ github.token }}
+    - name: Generate labels automatically from GitHub context
+      id: meta
+      uses: docker/metadata-action@v5
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        provenance: false
+        push: true
+        tags: ${{ inputs.host }}/${{ inputs.namespace }}/${{ needs.sanitization.outputs.repository }}:${{ needs.sanitization.outputs.tag }}
+        labels: ${{ steps.meta.outputs.labels }}
+        # Caching strategy
+        cache-from: type=gha
+        cache-to: type=gha, mode=max
+
+  cleanup-registry:
+    needs: build-push-docker-image
+    uses: ./.github/workflows/docker-registry-cleanup.yml
+    with:
+      repository: ${{ inputs.repository }}
+      namespace: ${{ inputs.namespace }}
