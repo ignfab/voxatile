@@ -39,7 +39,7 @@ public class CappedManhattanHeightmapOperator implements UnaryHeightmapOperator 
     }
 
     private boolean isTargetValue(int x, int y, ReadableHeightmap operand) {
-        return operand.bbox().contains(x, y) && operand.get(x, y) == targetValue;
+        return operand.get(x, y) == targetValue;
     }
 }
 

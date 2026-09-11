@@ -38,7 +38,7 @@ public class CopyHeightmapTask extends ModelTask<Shape2dConvertibleModel> {
         WritableHeightmap to = tile.heightmap(toSpec);
 
         WritableHeightmap buffered = to.copy();
-        for (Positioned2d voxel : buffered.bbox().filterInside(voxelizer.voxelize(model)))
+        for (Positioned2d voxel : voxelizer.voxelize(model))
             buffered.set(voxel.coords(), from.get(voxel.coords()));
 
         to.copyValues(buffered);

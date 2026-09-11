@@ -3,7 +3,6 @@ package com.ignfab.minalac.generator.generation.heightmaps.computed.operators;
 import java.util.function.IntUnaryOperator;
 
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 /**
  * An operator on a heightmap.
@@ -19,16 +18,6 @@ public interface UnaryHeightmapOperator {
      * @return Operation result at (x, y)
      */
     int compute(int x, int y, ReadableHeightmap operand);
-
-    /**
-     * Computes bounding box resuling of the operation.
-     *
-     * @param operand heightmap operand
-     * @return 2D bounding box of the result
-     */
-    default WorldBBox2d bbox(ReadableHeightmap operand) {
-        return operand.bbox();
-    };
 
    /**
      * A simple {@code UnaryHeightmapOperator} based on an {@code IntUnaryOperator}.

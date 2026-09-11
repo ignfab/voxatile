@@ -3,7 +3,6 @@ package com.ignfab.minalac.generator.generation.heightmaps.computed;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapStore;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 /**
  * A readable heightmap that always returns the specified value.
@@ -23,11 +22,6 @@ public class ConstantHeightmap extends ReadableHeightmapSpec implements Readable
     @Override
     public int get(int x, int y) {
         return value;
-    }
-
-    @Override
-    public WorldBBox2d bbox() {
-        return WorldBBox2d.INFINITE;
     }
 
     @Override

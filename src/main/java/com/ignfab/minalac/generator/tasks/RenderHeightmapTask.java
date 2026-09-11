@@ -31,12 +31,12 @@ public class RenderHeightmapTask implements TileTask {
     public void run(GenerationTile tile) {
         if (minimum == maximum) {
             ReadableHeightmap heightmap = tile.heightmap(maximum);
-            for (WorldCoords2d c : tile.limits().to2d().intersection(heightmap.bbox()))
+            for (WorldCoords2d c : tile.limits().to2d())
                 placeable.place(tile.voxels(), c.x(), c.y(), heightmap.get(c));
         } else {
             ReadableHeightmap minimum = tile.heightmap(this.minimum);
             ReadableHeightmap maximum = tile.heightmap(this.maximum);
-            for (WorldCoords2d c : tile.limits().to2d().intersection(minimum.bbox()).intersection(maximum.bbox()))
+            for (WorldCoords2d c : tile.limits().to2d())
                 for (int z = minimum.get(c); z <= maximum.get(c); z++)
                     placeable.place(tile.voxels(), c.x(), c.y(), z);
         }
