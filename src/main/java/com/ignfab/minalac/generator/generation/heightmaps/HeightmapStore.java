@@ -35,6 +35,17 @@ public class HeightmapStore {
         });
     }
 
+    // TODO: Javadoc: ensure heightmap includes area
+    public void includeArea(WritableHeightmapSpec spec, WorldBBox2d bbox) {
+         WorldBBox2d existing = limits.get(spec);
+        if (existing == null)
+            throw new IllegalArgumentException("Unknown writable heightmap");
+        if (heightmaps.get(spec) != null)
+            throw new IllegalStateException("Heightmap already instanciated");
+
+        limits.put(spec, WorldBBox2d.surrounding(existing, bbox));
+    }
+
     private WritableHeightmap instanciate(WritableHeightmapSpec spec) {
         WritableHeightmap heightmap;
         HeightmapDeclaration declaration = declarations.get(spec);

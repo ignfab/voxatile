@@ -1,11 +1,17 @@
 package com.ignfab.minalac.generator.generation;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapStore;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.WritableHeightmapSpec;
+import com.ignfab.minalac.generator.models.BBoxModel;
 import com.ignfab.minalac.generator.models.ModelStore;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
 import com.ignfab.minalac.generator.world.VoxelTile;
@@ -18,6 +24,8 @@ public class GenerationTile {
     private final VoxelTile voxels;
     private final HeightmapStore heightmaps;
     private final ModelStore models = new ModelStore();
+
+    private final Map<String, WorldBBox2d> modelTypeBBox = new HashMap<>();
 
     private static GenerationTile currentTile = null;
 
@@ -53,6 +61,12 @@ public class GenerationTile {
 
         // Create heightmap store populated with stored heigthmaps
         heightmaps = new HeightmapStore(generation.heightmaps(), limits.to2d());
+
+        // Create the "tile" model
+        // TODO: mark some model type as readonly to avoid adding models from these types (world, tile)
+        models.add("tile",
+            Collections.singletonList(new BBoxModel(limits.to2d()))
+        );
     }
 
     /**
@@ -63,17 +77,33 @@ public class GenerationTile {
     }
 
     /**
+     * {@return the limits of the tile}
+     */
+    public WorldBBox3d limits() {
+        return voxels.limits();
+    }
+
+    /**
      * {@return the model store}
      */
     public ModelStore models() {
         return models;
     }
 
-    /**
-     * {@return the limits of the tile}
-     */
-    public WorldBBox3d limits() {
-        return voxels.limits();
+    //TODO: Javadoc
+    public WorldBBox2d modelTypeArea(String modelType) {
+        WorldBBox2d bbox = modelTypeBBox.get(modelType);
+        return bbox == null? limits().to2d() : bbox;
+    }
+
+    public WorldBBox3d modelTypeVolume(String modelType) {
+        WorldBBox2d bbox = modelTypeBBox.get(modelType);
+        return bbox == null? limits() : bbox.to3d(limits().minZ(), limits().maxZ());
+    }
+
+    //TODO: Javadoc
+    public void includeBBoxForModelType(String modelType, WorldBBox2d bbox) {
+        modelTypeBBox.put(modelType,  WorldBBox2d.surrounding(modelTypeArea(modelType), bbox));
     }
 
     /**
