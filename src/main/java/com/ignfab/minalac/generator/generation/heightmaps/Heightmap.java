@@ -11,6 +11,7 @@ import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 public class Heightmap implements WritableHeightmap {
     private final WorldBBox2d bbox;
     private final int[] values;
+    private final int defaultValue;
 
     /**
      * Creates a new {@link Heightmap}.
@@ -33,25 +34,25 @@ public class Heightmap implements WritableHeightmap {
      */
     public Heightmap(WorldBBox2d bbox, int defaultValue) {
         this.bbox = bbox;
+        this.defaultValue = defaultValue;
         values = new int[bbox.size().area()];
         if (defaultValue != 0)
             Arrays.fill(values, defaultValue);
     }
 
     /**
-     * Creates a new {@link Heightmap} that is a copy of given {@link ReadableHeightmap}.
+     * Creates a new {@link Heightmap} that is a copy of given {@link Heightmap}.
      *
      * @param other Heightmap to copy
      */
-    public Heightmap(ReadableHeightmap other) {
-        this.bbox = other.bbox();
+    public Heightmap(Heightmap other) {
+        bbox = other.bbox;
+        defaultValue = other.defaultValue;
         values = new int[bbox.size().area()];
         copyValues(other);
     }
 
     private int index(int x, int y) {
-        if (!bbox.contains(x, y))
-            throw new IndexOutOfBoundsException("Index out of range at (x=%d, y=%d)".formatted(x, y));
         return (x - bbox.minX()) * bbox.sizeY() + (y - bbox.minY());
     }
 
@@ -62,11 +63,15 @@ public class Heightmap implements WritableHeightmap {
 
     @Override
     public int get(int x, int y) {
-        return values[index(x, y)];
+        if (bbox.contains(x, y))
+            return values[index(x, y)];
+        return defaultValue;
     }
 
     @Override
     public void set(int x, int y, int height) {
+        if (!bbox.contains(x, y))
+            throw new IndexOutOfBoundsException("Index out of range at (x=%d, y=%d)".formatted(x, y));
         values[index(x, y)] = height;
     }
 

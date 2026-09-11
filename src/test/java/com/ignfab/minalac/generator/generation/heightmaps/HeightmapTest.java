@@ -66,9 +66,9 @@ public class HeightmapTest {
 
     @Test
     public void testOut() {
-        Heightmap heightmap = new Heightmap(0, 0, 3, 2, 0);
+        Heightmap heightmap = new Heightmap(0, 0, 3, 2, 23);
         assertThrows(IndexOutOfBoundsException.class, () -> heightmap.set(25, 25, 0));
-        assertThrows(IndexOutOfBoundsException.class, () -> heightmap.get(25, 25));
+        assertEquals(23, heightmap.get(25, 25));
     }
 
     @Test
