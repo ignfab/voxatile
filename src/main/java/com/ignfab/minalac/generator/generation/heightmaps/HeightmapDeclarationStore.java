@@ -10,7 +10,8 @@ import java.util.Set;
  * {@code HeightmapDeclaration} store by name.
  */
 public class HeightmapDeclarationStore {
-    private final Map<String, HeightmapDeclaration> store = new HashMap<>();
+    private final Map<String, HeightmapDeclaration> byName = new HashMap<>();
+    private final Map<WritableHeightmapSpec, HeightmapDeclaration> bySpec = new HashMap<>();
 
     /**
      * Registers a new declaration in store.
@@ -21,22 +22,39 @@ public class HeightmapDeclarationStore {
     public void add(HeightmapDeclaration declaration) {
         if (declaration.name() == null)
             throw new IllegalArgumentException("Cannot add an declaration with null name");
-        if (store.containsKey(declaration.name()))
-            throw new IllegalArgumentException("An declaration named \"%s\" is already in store".formatted(declaration.name()));
-        store.put(declaration.name(), declaration);
+        if (byName.containsKey(declaration.name()))
+            throw new IllegalArgumentException("A declaration named \"%s\" is already in store".formatted(declaration.name()));
+        if (bySpec.containsKey(declaration.spec()))
+            throw new IllegalArgumentException("Declaration with same spec already in store");
+        byName.put(declaration.name(), declaration);
+        bySpec.put(declaration.spec(), declaration);
     }
 
     /**
-     * Returns the declaration associated to the given name.
+     * Returns the declaration associated to a given name.
      *
-     * @param name the name of the declaration.
+     * @param name the name of the declaration
      * @return the associated declaration
      * @throws NoSuchElementException if no declaration is associated to the specified name
      */
     public HeightmapDeclaration get(String name) {
-        HeightmapDeclaration declaration = store.get(name);
+        HeightmapDeclaration declaration = byName.get(name);
         if (declaration == null)
             throw new NoSuchElementException("Unknown heightmap \"%s\"".formatted(name));
+        return declaration;
+    }
+
+    /**
+     * Returns the declaration associated to a given spec.
+     *
+     * @param spec heightmap spec of the declaration
+     * @return the associated declaration
+     * @throws NoSuchElementException if no declaration is associated to the specified spec
+     */
+    public HeightmapDeclaration get(WritableHeightmapSpec spec) {
+        HeightmapDeclaration declaration = bySpec.get(spec);
+        if (declaration == null)
+            throw new NoSuchElementException("Unknown heightmap spec");
         return declaration;
     }
 
@@ -44,13 +62,13 @@ public class HeightmapDeclarationStore {
      * {@return the set of existing names in store}
      */
     public Set<String> names() {
-        return store.keySet();
+        return byName.keySet();
     }
 
     /**
      * {@return the collection of existing declarations in store}
      */
     public Collection<HeightmapDeclaration> declarations() {
-        return store.values();
+        return byName.values();
     }
 }

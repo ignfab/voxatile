@@ -9,6 +9,11 @@ import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
  * A store of heightmaps, indexed by their specs.
  */
 public class HeightmapStore {
+
+    private final HeightmapDeclarationStore declarations;
+
+    private final Map<WritableHeightmapSpec, WorldBBox2d> limits = new HashMap<>();
+
     /**
      * Known heightmaps indexed by their specs.
      *
@@ -17,15 +22,29 @@ public class HeightmapStore {
     protected final Map<ReadableHeightmapSpec, ReadableHeightmap> heightmaps = new HashMap<>();
 
     /**
-     * Creates a new {@code HeightmapStore} populated with stored heightmaps created from given {@link HeightmapDeclaration}.
+     * Creates a new {@code HeightmapStore} for given {@link HeightmapDeclaration}.
      *
-     * @param heightmaps A store of heightmap declarations
+     * @param declarations A store of heightmap declarations
      * @param bbox The 2d bbox of created heightmaps
      */
-    public HeightmapStore(HeightmapDeclarationStore heightmaps, WorldBBox2d bbox) {
-        heightmaps.declarations().forEach((declaration) -> {
-            this.heightmaps.put(declaration.spec(), declaration.create(bbox));
+    public HeightmapStore(HeightmapDeclarationStore declarations, WorldBBox2d bbox) {
+        this.declarations = declarations;
+
+        declarations.declarations().forEach((declaration) -> {
+            this.limits.put(declaration.spec(), bbox);
         });
+    }
+
+    private WritableHeightmap instanciate(WritableHeightmapSpec spec) {
+        WritableHeightmap heightmap;
+        HeightmapDeclaration declaration = declarations.get(spec);
+        if (declaration == null)
+            throw new IndexOutOfBoundsException("No writable heightmap corresponding to this spec");
+
+        heightmap = declaration.create(limits.get(spec));
+        heightmaps.put(declaration.spec(), heightmap);
+
+        return heightmap;
     }
 
     /**
@@ -37,11 +56,16 @@ public class HeightmapStore {
      */
     public ReadableHeightmap get(ReadableHeightmapSpec spec) {
         ReadableHeightmap heightmap;
+
         synchronized (heightmaps) {
             heightmap = heightmaps.get(spec);
             if (heightmap == null) {
-                heightmap = spec.create(this);
-                heightmaps.put(spec, heightmap);
+                if (spec instanceof WritableHeightmapSpec writableSpec) {
+                    heightmap = instanciate(writableSpec);
+                } else {
+                    heightmap = spec.create(this);
+                    heightmaps.put(spec, heightmap);
+                }
             }
         }
         return heightmap;
@@ -55,11 +79,12 @@ public class HeightmapStore {
      */
     public WritableHeightmap get(WritableHeightmapSpec spec) {
         ReadableHeightmap heightmap;
+
         synchronized (heightmaps) {
             heightmap = heightmaps.get(spec);
+            if (heightmap == null)
+                heightmap = instanciate(spec);
         }
-        if (heightmap == null)
-            throw new IndexOutOfBoundsException("Writable heightmap not found");
 
         // ReadableHeightmap associated to a WritableHeightmapSpec is always a WritableHeightmap
         return (WritableHeightmap) heightmap;
