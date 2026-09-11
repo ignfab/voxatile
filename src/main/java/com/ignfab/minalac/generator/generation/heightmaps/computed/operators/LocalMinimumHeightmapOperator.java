@@ -25,8 +25,7 @@ public class LocalMinimumHeightmapOperator implements UnaryHeightmapOperator {
         int localMin = operand.get(x, y);
         for (int i = x - range; i <= x + range; i++)
             for (int j = y - range; j <= y + range; j++)
-                if (operand.bbox().contains(i, j))
-                    localMin = Math.min(localMin, operand.get(i, j));
+                localMin = Math.min(localMin, operand.get(i, j));
         return localMin;
     }
 }

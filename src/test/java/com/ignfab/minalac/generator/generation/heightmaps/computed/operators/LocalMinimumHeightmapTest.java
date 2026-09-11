@@ -3,6 +3,7 @@ package com.ignfab.minalac.generator.generation.heightmaps.computed.operators;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,7 +18,7 @@ public class LocalMinimumHeightmapTest {
 
     @Test
     public void testGet() {
-        Heightmap heightmap = new Heightmap(-5, -2, 5, 4, 7);
+        Heightmap heightmap = new Heightmap(new WorldBBox2d(-5, -2, 5, 4), 7);
 
         heightmap.set(-4, 0, 1);
         heightmap.set(-5, 1, 0);

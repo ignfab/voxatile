@@ -3,13 +3,14 @@ package com.ignfab.minalac.generator.generation.heightmaps.computed.operators;
 import org.junit.jupiter.api.Test;
 
 import com.ignfab.minalac.generator.generation.heightmaps.Heightmap;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CappedManhattanHeightmapOperatorTest {
     @Test
     public void testGet() {
-        Heightmap heightmap = new Heightmap(-5, -2, 5, 4, 7);
+        Heightmap heightmap = new Heightmap(new WorldBBox2d(-5, -2, 5, 4), 7);
         heightmap.set(-4, 0, 0);
         /*
         +-----------y-->
@@ -46,7 +47,7 @@ public class CappedManhattanHeightmapOperatorTest {
         assertEquals(3, operator.compute(-1, -2, heightmap)); // theoretical manhattan is 5
         assertEquals(5, new CappedManhattanHeightmapOperator(6, 0).compute(-1, -2, heightmap));
 
-        Heightmap secondHeightmap = new Heightmap(-5, -2, 5, 4, 7);
+        Heightmap secondHeightmap = new Heightmap(new WorldBBox2d(-5, -2, 5, 4), 7);
 
         secondHeightmap.set(-4, 0, 0);
         secondHeightmap.set(-4, -1, 0);

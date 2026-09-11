@@ -1,6 +1,5 @@
 package com.ignfab.minalac.generator.generation.heightmaps;
 
-import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 import com.ignfab.minalac.generator.utils.world2d.WorldCoords2d;
 
 /**
@@ -30,9 +29,4 @@ public interface ReadableHeightmap {
     default int get(WorldCoords2d position) {
         return get(position.x(), position.y());
     }
-
-    /**
-     * {@return the bounding box associated to the heightmap}
-     */
-    WorldBBox2d bbox();
 }

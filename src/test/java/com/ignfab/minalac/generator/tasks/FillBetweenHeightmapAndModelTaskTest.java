@@ -23,7 +23,7 @@ public class FillBetweenHeightmapAndModelTaskTest {
         TestingHeightmap heightmap = tile.newStoredHeightmap("heightmap", 0);
 
         // Prepare a diagonal heightmap
-        for (WorldCoords2d pos : heightmap.bbox())
+        for (WorldCoords2d pos : tile.limits().to2d())
             heightmap.set(pos, pos.x());
 
         // Prepare a single square model that has the same size as the tile.

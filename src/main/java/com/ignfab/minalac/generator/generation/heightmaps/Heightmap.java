@@ -22,9 +22,9 @@ public class Heightmap implements WritableHeightmap {
      * @param sizeY Size of heightmap along Y-axis
      * @param defaultValue Default value for all heightmap cells
      */
-    public Heightmap(int originX, int originY, int sizeX, int sizeY, int defaultValue) {
-        this(new WorldBBox2d(originX, originY, sizeX, sizeY), defaultValue);
-    }
+//    public Heightmap(int originX, int originY, int sizeX, int sizeY, int defaultValue) {
+//        this(new WorldBBox2d(originX, originY, sizeX, sizeY), defaultValue);
+//    }
 
     /**
      * Creates a new {@link Heightmap}.
@@ -57,11 +57,6 @@ public class Heightmap implements WritableHeightmap {
     }
 
     @Override
-    public WorldBBox2d bbox() {
-        return bbox;
-    }
-
-    @Override
     public int get(int x, int y) {
         if (bbox.contains(x, y))
             return values[index(x, y)];
@@ -77,14 +72,14 @@ public class Heightmap implements WritableHeightmap {
 
     @Override
     public void copyValues(ReadableHeightmap other) {
-        if (other instanceof Heightmap hm && other.bbox().equals(bbox)) {
-            // If same bbox and same class, we can go faster
-            System.arraycopy(hm.values, 0, values, 0, values.length);
-            return;
-        }
+        if (other instanceof Heightmap hm)
+            if (hm.bbox.equals(bbox)) {
+                // If same bbox and same class, we can go faster
+                System.arraycopy(hm.values, 0, values, 0, values.length);
+                return;
+            }
 
-        WorldBBox2d intersection = other.bbox().intersection(bbox);
-        for (WorldCoords2d position : intersection)
+        for (WorldCoords2d position : bbox)
             set(position, other.get(position));
     }
 
