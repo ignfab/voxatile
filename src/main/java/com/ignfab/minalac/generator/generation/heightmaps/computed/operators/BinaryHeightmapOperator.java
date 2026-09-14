@@ -2,7 +2,10 @@ package com.ignfab.minalac.generator.generation.heightmaps.computed.operators;
 
 import java.util.function.IntBinaryOperator;
 
+import com.ignfab.minalac.generator.generation.heightmaps.AreaNeeds;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 /**
  * An operator on two heightmaps.
@@ -19,6 +22,12 @@ public interface BinaryHeightmapOperator {
      * @return Operation result at (x, y)
      */
     int compute(int x, int y, ReadableHeightmap firstOperand, ReadableHeightmap secondOperand);
+
+    AreaNeeds neededAreas(
+        WorldBBox2d area,
+        ReadableHeightmapSpec firstOperandSpec,
+        ReadableHeightmapSpec secondOperandSpec
+    );
 
     /**
      * A simple {@code BinaryHeightmapOperator} based on an {@code IntBinaryOperator}.
@@ -38,6 +47,17 @@ public interface BinaryHeightmapOperator {
         @Override
         public int compute(int x, int y, ReadableHeightmap firstOperand, ReadableHeightmap secondOperand) {
             return operator.applyAsInt(firstOperand.get(x, y), secondOperand.get(x, y));
+        }
+
+        @Override
+        public AreaNeeds neededAreas(
+            WorldBBox2d area,
+            ReadableHeightmapSpec firstOperandSpec,
+            ReadableHeightmapSpec secondOperandSpec
+        ) {
+            AreaNeeds needed = firstOperandSpec.neededAreas(area);
+            needed.add(secondOperandSpec.neededAreas(area));
+            return needed;
         }
     }
 }

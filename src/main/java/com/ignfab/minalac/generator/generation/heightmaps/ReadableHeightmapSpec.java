@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.generation.heightmaps;
 
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+
 /**
  * Spec for a readable heightmap. This is an abstract class to be derivated for each type of heightmap.
  * <p>
@@ -15,4 +17,7 @@ public abstract class ReadableHeightmapSpec {
      * This method is only intended to be used from {@link HeightmapStore#get(ReadableHeightmapSpec)}.
      */
     protected abstract ReadableHeightmap create(HeightmapStore store);
+
+    public abstract AreaNeeds neededAreas(WorldBBox2d bbox);
+
 }

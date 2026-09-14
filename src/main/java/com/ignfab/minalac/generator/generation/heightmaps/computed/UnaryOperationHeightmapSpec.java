@@ -1,9 +1,11 @@
 package com.ignfab.minalac.generator.generation.heightmaps.computed;
 
+import com.ignfab.minalac.generator.generation.heightmaps.AreaNeeds;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapStore;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
 import com.ignfab.minalac.generator.generation.heightmaps.computed.operators.UnaryHeightmapOperator;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 /**
  * A {@code ReadableHeightmapSpec} representing an operation on a heightmap.
@@ -21,6 +23,11 @@ public class UnaryOperationHeightmapSpec extends ReadableHeightmapSpec {
     public UnaryOperationHeightmapSpec(ReadableHeightmapSpec operandSpec, UnaryHeightmapOperator operator) {
         this.operandSpec = operandSpec;
         this.operator = operator;
+    }
+
+    @Override
+    public AreaNeeds neededAreas(WorldBBox2d area) {
+        return operandSpec.neededAreas(area);
     }
 
     @Override

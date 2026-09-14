@@ -1,6 +1,9 @@
 package com.ignfab.minalac.generator.generation.heightmaps.computed.operators;
 
+import com.ignfab.minalac.generator.generation.heightmaps.AreaNeeds;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 /**
  * Gives the local minimum, around a specified range, at each point of the specified heightmap.
@@ -27,5 +30,10 @@ public class LocalMinimumHeightmapOperator implements UnaryHeightmapOperator {
             for (int j = y - range; j <= y + range; j++)
                 localMin = Math.min(localMin, operand.get(i, j));
         return localMin;
+    }
+
+    @Override
+    public AreaNeeds neededAreas(WorldBBox2d area, ReadableHeightmapSpec operandSpec) {
+        return operandSpec.neededAreas(area).enlarged(new WorldBBox2d(-range, -range, range * 2 + 1, range * 2 +1));
     }
 }

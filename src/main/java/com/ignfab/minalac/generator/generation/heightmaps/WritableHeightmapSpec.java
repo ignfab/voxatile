@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.generation.heightmaps;
 
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
+
 /**
  * Spec for a writable {@link Heightmap}.
  * <p>
@@ -15,5 +17,12 @@ public class WritableHeightmapSpec extends ReadableHeightmapSpec {
     protected WritableHeightmap create(HeightmapStore store) {
         // We will get here if we try to reach an unknown readable stored heightmap
         throw new IndexOutOfBoundsException("Stored heightmap not found");
+    }
+
+    @Override
+    public AreaNeeds neededAreas(WorldBBox2d area) {
+        // We suppose writable heightmaps needs only its own area
+        // TODO: Clarify that comment!
+        return new AreaNeeds(this, area);
     }
 }

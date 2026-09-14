@@ -1,6 +1,9 @@
 package com.ignfab.minalac.generator.generation.heightmaps.computed.operators;
 
+import com.ignfab.minalac.generator.generation.heightmaps.AreaNeeds;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 /**
  * Takes a heightmap and transforms its values to Manhattan distances.
@@ -40,6 +43,11 @@ public class CappedManhattanHeightmapOperator implements UnaryHeightmapOperator 
 
     private boolean isTargetValue(int x, int y, ReadableHeightmap operand) {
         return operand.get(x, y) == targetValue;
+    }
+
+    @Override
+    public AreaNeeds neededAreas(WorldBBox2d area, ReadableHeightmapSpec operandSpec) {
+        return operandSpec.neededAreas(area).enlarged(new WorldBBox2d(-maximumDistance, -maximumDistance, maximumDistance * 2 + 1, maximumDistance * 2 +1));
     }
 }
 

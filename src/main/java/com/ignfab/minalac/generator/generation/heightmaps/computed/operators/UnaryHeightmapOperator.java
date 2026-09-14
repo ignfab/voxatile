@@ -2,7 +2,10 @@ package com.ignfab.minalac.generator.generation.heightmaps.computed.operators;
 
 import java.util.function.IntUnaryOperator;
 
+import com.ignfab.minalac.generator.generation.heightmaps.AreaNeeds;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
+import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
+import com.ignfab.minalac.generator.utils.world2d.WorldBBox2d;
 
 /**
  * An operator on a heightmap.
@@ -18,6 +21,8 @@ public interface UnaryHeightmapOperator {
      * @return Operation result at (x, y)
      */
     int compute(int x, int y, ReadableHeightmap operand);
+
+    AreaNeeds neededAreas(WorldBBox2d area, ReadableHeightmapSpec operandSpec);
 
    /**
      * A simple {@code UnaryHeightmapOperator} based on an {@code IntUnaryOperator}.
@@ -37,6 +42,11 @@ public interface UnaryHeightmapOperator {
         @Override
         public int compute(int x, int y, ReadableHeightmap operand) {
             return operator.applyAsInt(operand.get(x, y));
+        }
+
+        @Override
+        public AreaNeeds neededAreas(WorldBBox2d area, ReadableHeightmapSpec operandSpec) {
+            return operandSpec.neededAreas(area);
         }
     }
 }
