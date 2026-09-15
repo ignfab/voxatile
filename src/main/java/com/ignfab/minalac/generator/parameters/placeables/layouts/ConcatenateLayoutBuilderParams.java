@@ -21,16 +21,7 @@ import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
 /**
- * Parameters for a {@link LayoutBuilder} concatenates different layouts along an axis
- * <p>
- * Usage example:
- * <pre>
- *   place:
- *     - ... first layout description ...
- *     - priority: 2
- *       ... second layout description ...
- *   along: x | y | z
- * </pre>
+ * Parameters for a {@link LayoutBuilder} that concatenates different layouts along an axis.
  */
 public class ConcatenateLayoutBuilderParams implements LayoutBuilderParams {
     /**
@@ -43,25 +34,25 @@ public class ConcatenateLayoutBuilderParams implements LayoutBuilderParams {
      * Axis along which layouts are concatenated.
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    AxisParams along;
+    public AxisParams along;
 
     /**
      * Adjust policy along X-axis (default: inherit).
      */
     @JsonSetter(nulls = Nulls.SKIP)
-    AxisPolicy xPolicy = AxisPolicy.INHERIT;
+    public AxisPolicy xPolicy = AxisPolicy.INHERIT;
 
     /**
      * Adjust policy along Y-axis (default: inherit).
      */
     @JsonSetter(nulls = Nulls.SKIP)
-    AxisPolicy yPolicy = AxisPolicy.INHERIT;
+    public AxisPolicy yPolicy = AxisPolicy.INHERIT;
 
     /**
      * Adjust policy along Z-axis (default: inherit).
      */
     @JsonSetter(nulls = Nulls.SKIP)
-    AxisPolicy zPolicy = AxisPolicy.INHERIT;
+    public AxisPolicy zPolicy = AxisPolicy.INHERIT;
 
     /**
      * Creates a new {@code ConcatenateLayoutBuilderParams} out of mandatory parameters.
@@ -77,7 +68,7 @@ public class ConcatenateLayoutBuilderParams implements LayoutBuilderParams {
     @Override
     public void validate() {
         if (concatenate.isEmpty())
-            throw new IllegalArgumentException("Cannot be empty");
+            throw new IllegalArgumentException("'concatenate' list cannot be empty");
         concatenate.forEach(ConcatenateParams::validate);
     }
 
@@ -91,9 +82,9 @@ public class ConcatenateLayoutBuilderParams implements LayoutBuilderParams {
         }
 
         return DefaultLayoutBuilder.concat(builders, along.create(), priorities,
-            (xPolicy == AxisPolicy.INHERIT ? policies.x() : xPolicy) == AxisPolicy.ADJUST,
-            (yPolicy == AxisPolicy.INHERIT ? policies.y() : yPolicy) == AxisPolicy.ADJUST,
-            (zPolicy == AxisPolicy.INHERIT ? policies.z() : zPolicy) == AxisPolicy.ADJUST
+            xPolicy.inheriting(policies.x()) == AxisPolicy.ADJUST,
+            yPolicy.inheriting(policies.y()) == AxisPolicy.ADJUST,
+            zPolicy.inheriting(policies.z()) == AxisPolicy.ADJUST
         );
     }
 

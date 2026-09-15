@@ -27,13 +27,8 @@ public enum AxisParams {
     /**
      * Actual {@link Axis} associated to parameter.
      */
-    public final Axis axis;
+    private final Axis axis;
 
-    /**
-     * Creates a new axis.
-     *
-     * @param axis Axis associated to parameter
-     */
     AxisParams(Axis axis) {
         this.axis = axis;
     }

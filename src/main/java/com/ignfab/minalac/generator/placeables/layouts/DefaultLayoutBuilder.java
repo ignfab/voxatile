@@ -1,7 +1,5 @@
 package com.ignfab.minalac.generator.placeables.layouts;
 
-import java.util.Arrays;
-
 import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.placeables.EmptyStructure;
 import com.ignfab.minalac.generator.placeables.LayoutStructure;
@@ -25,7 +23,7 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
     private final AxisMapperBuilder zAxisBuilder;
 
     /**
-     * Creates a new {@code DefaultAxisStructureBuilder} with only one, eventually repeated, structure builder.
+     * Creates a new {@code DefaultLayoutBuilder} with only one, eventually repeated, structure builder.
      *
      * @param builder underlying unique builder
      * @param xAxisBuilder axis builder for x-axis
@@ -52,19 +50,23 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
         AxisMapper axisY = yAxisBuilder.build(sizeY);
         AxisMapper axisZ = zAxisBuilder.build(sizeZ);
 
-        if (axisX.intervals().length == 0 || axisY.intervals().length == 0 || axisZ.intervals().length == 0)
+        int[] intervalsX = axisX.intervals();
+        int[] intervalsY = axisY.intervals();
+        int[] intervalsZ = axisZ.intervals();
+
+        if (intervalsX.length == 0 || intervalsY.length == 0 || intervalsZ.length == 0)
             return EmptyStructure.INSTANCE;
 
         Structure[][][] structures = new Structure
-            [axisX.intervals().length]
-            [axisY.intervals().length]
-            [axisZ.intervals().length];
+            [intervalsX.length]
+            [intervalsY.length]
+            [intervalsZ.length];
 
-        for (int iX = 0; iX < axisX.intervals().length; iX++) {
-            for (int iY = 0; iY < axisY.intervals().length; iY++) {
-                for (int iZ = 0; iZ < axisZ.intervals().length; iZ++) {
+        for (int iX = 0; iX < intervalsX.length; iX++) {
+            for (int iY = 0; iY < intervalsY.length; iY++) {
+                for (int iZ = 0; iZ < intervalsZ.length; iZ++) {
                     LayoutBuilder b = provider.get(iX, iY, iZ);
-                    structures[iX][iY][iZ] = b.build(axisX.intervals()[iX], axisY.intervals()[iY], axisZ.intervals()[iZ]);
+                    structures[iX][iY][iZ] = b.build(intervalsX[iX], intervalsY[iY], intervalsZ[iZ]);
                 }
             }
         }
@@ -88,7 +90,7 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
     }
 
     /**
-     * Creates a new {@code AxisStructureBuilder} repeating an {@link LayoutBuilder} along an axis.
+     * Creates a new {@code LayoutBuilder} repeating an {@link LayoutBuilder} along an axis.
      *
      * @param builder builder to repeat
      * @param axis axis of repetition
@@ -113,7 +115,7 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
     }
 
     /**
-     * Creates a new {@code AxisStructureBuilder} concatenating {@link LayoutBuilder}s along an axis, with priorities for repartition.
+     * Creates a new {@code LayoutBuilder} concatenating {@link LayoutBuilder}s along an axis, with priorities for repartition.
      *
      * @param builders builders to concatenate
      * @param axis axis of concatenation
@@ -126,12 +128,18 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
      */
     public static LayoutBuilder concat(LayoutBuilder[] builders, Axis axis, int[] priorities, boolean adjustX, boolean adjustY, boolean adjustZ) throws UnbuildableException {
         if (builders.length == 0 || builders.length != priorities.length)
-            throw new RuntimeException("tab length do not match");
+            throw new IllegalArgumentException("array length do not match");
 
         // Separate in three axis arrays the axes from each builder.
-        AxisMapperBuilder[] tabX = Arrays.stream(builders).map(LayoutBuilder::xAxis).toArray(AxisMapperBuilder[]::new);
-        AxisMapperBuilder[] tabY = Arrays.stream(builders).map(LayoutBuilder::yAxis).toArray(AxisMapperBuilder[]::new);
-        AxisMapperBuilder[] tabZ = Arrays.stream(builders).map(LayoutBuilder::zAxis).toArray(AxisMapperBuilder[]::new);
+        AxisMapperBuilder[] arrayX = new AxisMapperBuilder[builders.length];
+        AxisMapperBuilder[] arrayY = new AxisMapperBuilder[builders.length];
+        AxisMapperBuilder[] arrayZ = new AxisMapperBuilder[builders.length];
+
+        for (int i = 0; i < builders.length; i++) {
+            arrayX[i] = builders[i].xAxis();
+            arrayY[i] = builders[i].yAxis();
+            arrayZ[i] = builders[i].zAxis();
+        }
 
         LayoutBuilderProvider provider = switch (axis) {
             case X -> (x, y, z) -> builders[x];
@@ -143,15 +151,14 @@ public class DefaultLayoutBuilder implements LayoutBuilder {
             // A LayoutBuilderProvider that maps `builders` argument array to the chosen axis:
             provider,
             // PriorityRepartitionAxisMapperBuilder for chosen axis, KeepAxisMapperBuilder or AdjustAxisMapperBuilder for others
-            axis == Axis.X ? new PriorityRepartitionAxisMapperBuilder(tabX, priorities)
-                : adjustX ? new AdjustAxisMapperBuilder(tabX) : new KeepAxisMapperBuilder(tabX),
-            axis == Axis.Y ? new PriorityRepartitionAxisMapperBuilder(tabY, priorities)
-                : adjustY ? new AdjustAxisMapperBuilder(tabY) : new KeepAxisMapperBuilder(tabY),
-            axis == Axis.Z ? new PriorityRepartitionAxisMapperBuilder(tabZ, priorities)
-                : adjustZ ? new AdjustAxisMapperBuilder(tabZ) : new KeepAxisMapperBuilder(tabZ)
+            axis == Axis.X ? new PriorityRepartitionAxisMapperBuilder(arrayX, priorities)
+                : adjustX ? new AdjustAxisMapperBuilder(arrayX) : new KeepAxisMapperBuilder(arrayX),
+            axis == Axis.Y ? new PriorityRepartitionAxisMapperBuilder(arrayY, priorities)
+                : adjustY ? new AdjustAxisMapperBuilder(arrayY) : new KeepAxisMapperBuilder(arrayY),
+            axis == Axis.Z ? new PriorityRepartitionAxisMapperBuilder(arrayZ, priorities)
+                : adjustZ ? new AdjustAxisMapperBuilder(arrayZ) : new KeepAxisMapperBuilder(arrayZ)
         );
     }
-
 
     @FunctionalInterface
     private interface LayoutBuilderProvider {

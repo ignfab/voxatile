@@ -1,11 +1,9 @@
-    package com.ignfab.minalac.generator.parameters.tasks;
+package com.ignfab.minalac.generator.parameters.tasks;
 
 import java.beans.ConstructorProperties;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
@@ -19,17 +17,16 @@ import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 /**
  * Parameters for a {@code DebugStructureBuilderTask}.
  * <p>
- * This task is a helper for working out facade parameters.
+ * This task is a helper for visualizing layouts parameters.
  */
 public class DebugLayoutTaskParams extends TaskParams {
     /**
      * List of builders to use to construct structure.
      * Builders will be tried in list order. First succeeding will be used.
      */
-    @JsonProperty("build")
-    @JsonSetter(nulls = Nulls.FAIL)
+    @JsonSetter(nulls = Nulls.FAIL, contentNulls = Nulls.FAIL)
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    public List<LayoutBuilderParams> builders;
+    public List<LayoutBuilderParams> build;
 
     /**
      * Where to place resulting structure.
@@ -41,16 +38,16 @@ public class DebugLayoutTaskParams extends TaskParams {
      * Desired resulting size.
      */
     @JsonSetter(nulls = Nulls.SKIP)
-    public DebugSizeParams size =  new DebugSizeParams();
+    public DebugSizeParams size = new DebugSizeParams();
 
     /**
-     * Creates a new {@code DebugStructureBuilderTaskParams} out of mandatory parameters.
-     * @param builders list of builders to use
+     * Creates a new {@code DebugLayoutTaskParams} out of mandatory parameters.
+     * @param build list of builders to use
      * @param at position where to place resulting structure
      */
-    @ConstructorProperties({"builders", "at"})
-    public DebugLayoutTaskParams(List<LayoutBuilderParams> builders, WorldCoords3d at) {
-        this.builders = builders;
+    @ConstructorProperties({"build", "at"})
+    public DebugLayoutTaskParams(List<LayoutBuilderParams> build, WorldCoords3d at) {
+        this.build = build;
         this.at = at;
     }
 
@@ -58,7 +55,7 @@ public class DebugLayoutTaskParams extends TaskParams {
     public TileTask create(Generation generation) {
         try {
             return new DebugLayoutTask(
-                builders.stream().map(builder -> {
+                build.stream().map(builder -> {
                     try {
                         return builder.createBuilder(generation.seed(), new LayoutBuilderParams.AxesPolicies(
                             LayoutBuilderParams.AxisPolicy.ADJUST,
@@ -68,7 +65,7 @@ public class DebugLayoutTaskParams extends TaskParams {
                     } catch (UnbuildableException e) {
                         throw new IllegalArgumentException(e);
                     }
-                }).collect(Collectors.toList()),
+                }).toList(),
                 at, size.x, size.y, size.z
             );
         } catch (UnbuildableException e) {
@@ -79,7 +76,7 @@ public class DebugLayoutTaskParams extends TaskParams {
     /**
      * Params for placed structure wanted size.
      * <p>
-     * Size component may be omited. Omiting a component means leaving the builder decide size on corresponding axis.
+     * Size component may be omitted. Omitting a component means leaving the builder decide size on corresponding axis.
      */
     public static class DebugSizeParams {
         /**

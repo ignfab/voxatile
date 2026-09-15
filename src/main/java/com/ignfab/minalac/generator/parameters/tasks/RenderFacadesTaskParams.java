@@ -2,30 +2,21 @@ package com.ignfab.minalac.generator.parameters.tasks;
 
 import java.beans.ConstructorProperties;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.generation.Generation;
-import com.ignfab.minalac.generator.parameters.models.ModelSelectionParams;
 import com.ignfab.minalac.generator.parameters.placeables.layouts.LayoutBuilderParams;
-import com.ignfab.minalac.generator.tasks.RenderFacadeTask;
+import com.ignfab.minalac.generator.tasks.RenderFacadesTask;
 import com.ignfab.minalac.generator.tasks.TileTask;
 
 /**
- * Parameters for a {@link RenderFacadeTask}.
+ * Parameters for a {@link RenderFacadesTask}.
  */
-public class RenderFacadeTaskParams extends ModelTaskParams {
-    /**
-     * Type of models to render (required).
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ModelSelectionParams models;
-
+public class RenderFacadesTaskParams extends ModelTaskParams {
     /**
      * List of builders to try out.
      * <p>
@@ -34,10 +25,9 @@ public class RenderFacadeTaskParams extends ModelTaskParams {
      * If it succeeds, facade is built and next builders won't be used.
      * If all builders fail, nothing will be built.
      */
-    @JsonProperty("build")
-    @JsonSetter(nulls = Nulls.FAIL)
+    @JsonSetter(nulls = Nulls.FAIL, contentNulls = Nulls.FAIL)
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-    public List<LayoutBuilderParams> builders;
+    public List<LayoutBuilderParams> build;
 
     /**
      * Name of metadata containing building height (from wall bottom to wall top).
@@ -58,35 +48,32 @@ public class RenderFacadeTaskParams extends ModelTaskParams {
      * @param height name of metadata containing building height
      * @param altitude name of metadata containing building altitude
      */
-    @ConstructorProperties({ "models", "builders", "height", "altitude"})
-    public RenderFacadeTaskParams(
-        ModelSelectionParams models,
-        List<LayoutBuilderParams> builders,
+    @ConstructorProperties({ "build", "height", "altitude"})
+    public RenderFacadesTaskParams(
+        List<LayoutBuilderParams> build,
         String height,
         String altitude
     ) {
-        this.models = models;
-        this.builders = builders;
+        this.build = build;
         this.height = height;
         this.altitude = altitude;
     }
 
-
     @Override
     public void validate() {
+        super.validate();
         if (height.isBlank())
             throw new IllegalArgumentException("Height metadata cannot be blank");
         if (altitude.isBlank())
             throw new IllegalArgumentException("Altitude metadata cannot be blank");
-        models.validate();
-        builders.forEach(LayoutBuilderParams::validate);
+        build.forEach(LayoutBuilderParams::validate);
     }
 
     @Override
     public TileTask create(Generation generation) {
-        return new RenderFacadeTask(
+        return new RenderFacadesTask(
             models.create(generation),
-            builders.stream().map(builder -> {
+            build.stream().map(builder -> {
                 try {
                     return builder.createBuilder(generation.seed(), new LayoutBuilderParams.AxesPolicies(
                         LayoutBuilderParams.AxisPolicy.ADJUST,
@@ -96,7 +83,7 @@ public class RenderFacadeTaskParams extends ModelTaskParams {
                 } catch (UnbuildableException e) {
                     throw new IllegalArgumentException(e);
                 }
-            }).collect(Collectors.toList()),
+            }).toList(),
             height,
             altitude
         );

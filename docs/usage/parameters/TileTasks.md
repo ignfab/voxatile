@@ -20,7 +20,7 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`fillBetweenHeightmapAndValue`](#fillbetweenheightmapandvalue)
   * [`renderBuildings`](#renderbuildings)
   * [`setSpawn`](#setspawn)
-  * [`renderFacade`](#renderfacade)
+  * [`renderFacades`](#renderfacades)
 * [Tasks operating on heightmaps](#tasks-operating-on-heightmaps)
   * [`populateHeightmap`](#populateheightmap)
   * [`copyHeightmap`](#copyheightmap)
@@ -163,7 +163,7 @@ The blueprint shows five successive vertical slices of the structure. This will 
 
 ### `renderPoints`
 
-Renders 3d points as a placeable. 
+Renders 3d points as a placeable.
 
 #### Extra parameters
 
@@ -279,9 +279,9 @@ x: 2
 y: -1
 ```
 
-### `renderFacade`
+### `renderFacades`
 
-Renders facades using layouts from 2D shapes. 
+Renders facades using layouts from 2D shapes.
 Layouts are tried in order, the first one that can fit the requested space is used.
 
 #### Extra parameters
@@ -294,6 +294,7 @@ Layouts are tried in order, the first one that can fit the requested space is us
 #### Example
 
 ```yaml
+type: renderFacades
 models: buildings
 height: height
 altitude: ground-floor-altitude

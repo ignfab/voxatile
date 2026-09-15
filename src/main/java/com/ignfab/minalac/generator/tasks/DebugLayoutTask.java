@@ -22,7 +22,7 @@ public class DebugLayoutTask implements TileTask {
     private final Integer sizeZ;
 
     /**
-     * Creates an new {@code DebugStructureBuilderTask}.
+     * Creates an new {@code DebugLayoutTask}.
      * @param builders list of builders to use for construction (first succeeding will be used)
      * @param position where to place built structure in world
      * @param sizeX x-axis component of wanted resulting size or null

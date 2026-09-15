@@ -1,9 +1,9 @@
 package com.ignfab.minalac.generator.exceptions;
 
 /**
- * An exception thrown when a builder cannot build.
+ * An exception thrown when a layout builder cannot build.
  * <p>
- * This may happen when building or as soon as the impossibility is detected.
+ * This may happen when building or as soon as the situation is detected.
  */
 public class UnbuildableException extends Exception {
 

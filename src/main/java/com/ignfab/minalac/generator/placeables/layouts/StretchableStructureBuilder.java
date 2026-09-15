@@ -31,7 +31,7 @@ public class StretchableStructureBuilder implements LayoutBuilder {
      * @param axisZ the band along z-axis to make stretchable. A {@code null} value make it not stretchable along z-axis.
      * @throws UnbuildableException if unable to create with provided arguments.
      */
-    public StretchableStructureBuilder(PlaceableStructure structure, StretchAxis axisX, StretchAxis axisY, StretchAxis axisZ) throws UnbuildableException {
+    public StretchableStructureBuilder(Structure structure, StretchAxis axisX, StretchAxis axisY, StretchAxis axisZ) throws UnbuildableException {
         this.structure = structure;
         ConstantAxisMapperBuilder xBase = new ConstantAxisMapperBuilder(structure.limits().sizeX(), structure.limits().minX());
         ConstantAxisMapperBuilder yBase = new ConstantAxisMapperBuilder(structure.limits().sizeY(), structure.limits().minY());

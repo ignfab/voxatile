@@ -19,7 +19,7 @@ import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.ThickLinearIn
 /**
  * A {@link ModelTask} rendering facades from 2d shapes, using {@link LayoutBuilder}s.
  */
-public class RenderFacadeTask  extends ModelTask<Shape2dConvertibleModel> {
+public class RenderFacadesTask  extends ModelTask<Shape2dConvertibleModel> {
 
     private final List<LayoutBuilder> builders;
     private final String heightMetadata;
@@ -34,7 +34,7 @@ public class RenderFacadeTask  extends ModelTask<Shape2dConvertibleModel> {
      * @param heightMetadata Name of metadata holding building height
      * @param baseAltitudeMetadata Name of metadata holding building base altitude (altitude of walls bottom)
      */
-    public RenderFacadeTask(
+    public RenderFacadesTask(
         ModelSelection selection,
         List<LayoutBuilder> builders,
         String heightMetadata,

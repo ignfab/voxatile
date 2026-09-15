@@ -20,7 +20,9 @@ import com.ignfab.minalac.generator.utils.random.Seed;
 public interface LayoutBuilderParams {
 
     /**
-     * Validates layout builder or throws runtime exception.
+     * Validates layout builder.
+     *
+     * @throws IllegalArgumentException if layout is invalid
      */
     default void validate() {}
 
@@ -54,8 +56,17 @@ public interface LayoutBuilderParams {
          * Adjust policy: Adjust axis so it starts at 0 and has the desired size.
          */
         @JsonProperty("adjust")
-        ADJUST
-    };
+        ADJUST;
+
+        /**
+         * {@returns this if different from INHERIT else policy given as argument}
+         *
+         * @param policy parent policy
+         */
+        public AxisPolicy inheriting(AxisPolicy policy) {
+            return this == INHERIT ? policy : this;
+        }
+    }
 
     /**
      * Ajust policies for the three axes.
@@ -63,5 +74,5 @@ public interface LayoutBuilderParams {
      * @param y y-axis adjustment policy
      * @param z z-axis adjustment policy
      */
-    record AxesPolicies(AxisPolicy x, AxisPolicy y, AxisPolicy z) {};
+    record AxesPolicies(AxisPolicy x, AxisPolicy y, AxisPolicy z) {}
 }
