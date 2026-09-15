@@ -68,4 +68,4 @@ public void registerParams(ParamsParser parser) {
 
 Of course, `MyOperationTaskParams` class and probably other classes have to be defined in the module project. Classes from the Generator jar may also be used.
 
-Refer to [parameters](Parameters.md) documentation for further information.
+Refer to [parameters](parameters/Parameters.md#adding-custom-parameters) developer documentation for further information.
