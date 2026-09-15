@@ -89,7 +89,7 @@ public record WorldCoords2d(int x, int y) implements Positioned2d {
         return switch (axis) {
             case X -> x;
             case Y -> y;
-            case Z -> throw new IllegalArgumentException("Does not exist for that axis.");
+            case Z -> throw new IllegalArgumentException("2d position has no Z coordinate.");
         };
     }
 

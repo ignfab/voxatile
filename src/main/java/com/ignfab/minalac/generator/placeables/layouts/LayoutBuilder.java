@@ -1,6 +1,5 @@
 package com.ignfab.minalac.generator.placeables.layouts;
 
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.placeables.Structure;
 import com.ignfab.minalac.generator.utils.axis.mappers.builders.AxisMapperBuilder;
 
@@ -17,22 +16,22 @@ public interface LayoutBuilder {
      *
      * @return built structure
      *
-     * @throws UnbuildableException if structure cannot be built
+     * @throws UnbuildableLayoutException if structure cannot be built
      */
-    Structure build(int sizeX, int sizeY, int sizeZ) throws UnbuildableException;
+    Structure build(int sizeX, int sizeY, int sizeZ) throws UnbuildableLayoutException;
 
     /**
-     * @return X-axis mapper builder.
+     * {@return X-axis mapper builder}
      */
     AxisMapperBuilder xAxis();
 
     /**
-     * @return Y-axis mapper builder.
+     * {@return Y-axis mapper builder}
      */
     AxisMapperBuilder yAxis();
 
     /**
-     * @return Z-axis mapper builder.
+     * {@return Z-axis mapper builder}
      */
     AxisMapperBuilder zAxis();
 }

@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.utils.axis.mappers.builders;
 
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
+import com.ignfab.minalac.generator.placeables.layouts.UnbuildableLayoutException;
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
 import com.ignfab.minalac.generator.utils.axis.mappers.IdentityAxisMapper;
 
@@ -33,12 +33,12 @@ public class KeepAxisMapperBuilder implements AxisMapperBuilder {
     }
 
     @Override
-    public AxisMapper build(int size) throws UnbuildableException {
+    public AxisMapper build(int size) throws UnbuildableLayoutException {
         if (size < 0)
             throw new IllegalArgumentException("Size must be positive or zero");
         // Must be quite permissive or won't be able to render stuff with various sizes
         if (size < minimumSize)
-            throw new UnbuildableException("Impossible to build for this size (%d, must be at least %d)".formatted(size, minimumSize));
+            throw new UnbuildableLayoutException("Impossible to build for this size (%d, must be at least %d)".formatted(size, minimumSize));
 
         return new IdentityAxisMapper(origin, size);
     }

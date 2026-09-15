@@ -3,7 +3,7 @@ package com.ignfab.minalac.generator.utils.axis.mappers;
 /**
  * An {@link AxisMapper} that maps position into one stretched interval.
  */
-public class StretcherIndexMapper implements AxisMapper {
+public class StretcherAxisMapper implements AxisMapper {
     private final int size;
     private final int[] intervals;
     private final int stretchablePosition;
@@ -11,14 +11,14 @@ public class StretcherIndexMapper implements AxisMapper {
     private final int minimum;
 
     /**
-     * Creates a new {@code AxisMapper}.
+     * Creates a new {@code StretcherAxisMapper}.
      *
      * @param origin the origin of this mapper
      * @param stretchablePosition Position where the underlying interval is stretched (must be in the underlying interval)
      * @param baseSize Size of the underlying interval
      * @param size Stretched size (size of this mapper)
      */
-    public StretcherIndexMapper(int origin, int stretchablePosition, int baseSize, int size) {
+    public StretcherAxisMapper(int origin, int stretchablePosition, int baseSize, int size) {
         if (baseSize <= 0)
             throw new IllegalArgumentException("Base size can not be negative or zero");
         if (size < 0)
@@ -33,7 +33,7 @@ public class StretcherIndexMapper implements AxisMapper {
         this.size = size;
         this.minimum = origin;
 
-        intervals = new int[]{ baseSize };
+        intervals = new int[] { baseSize };
     }
 
     @Override

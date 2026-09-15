@@ -1,7 +1,6 @@
 package com.ignfab.minalac.generator.placeables;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
@@ -27,7 +26,7 @@ public class LayoutStructure implements Structure {
     /**
      * Creates a new {@code LayoutStructure}.
      *
-     * @param structures Three dimensional array of structures. Array dimentions must correspond to AxisMappers sizes.
+     * @param structures Three dimensional array of structures. Array dimensions must correspond to AxisMappers sizes.
      * @param axisX axis mapper for X-axis
      * @param axisY axis mapper for Y-axis
      * @param axisZ axis mapper for Z-axis
@@ -77,7 +76,7 @@ public class LayoutStructure implements Structure {
      * @return a {@link LayoutStructure} concatenating structures
      */
     public static LayoutStructure concatenate(List<Structure> structures, Axis axis) {
-        WorldBBox3d limits = WorldBBox3d.surrounding(structures.stream().map(Structure::limits).collect(Collectors.toList()));
+        WorldBBox3d limits = WorldBBox3d.surrounding(structures.stream().map(Structure::limits).toList());
 
         AxisMapper axisX = axis == Axis.X
             ? new SizesAxisMapper(structures.stream().mapToInt(s -> s.limits().sizeX()).toArray())

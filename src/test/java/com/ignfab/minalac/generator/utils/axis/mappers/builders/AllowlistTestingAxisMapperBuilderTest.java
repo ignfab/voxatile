@@ -7,12 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AllowlistTestingAxisMapperBuilderTest {
     @Test
     public void testMaxSizeUnder() {
-        assertEquals(50, new AllowlistTestingAxisMapperBuilder(new int[]{2, 5, 50}).maxSizeUnder(50));
-        assertEquals(50, new AllowlistTestingAxisMapperBuilder(new int[]{2, 5, 50}).maxSizeUnder(60));
-        assertEquals(5, new AllowlistTestingAxisMapperBuilder(new int[]{2, 5, 50}).maxSizeUnder(49));
-        assertEquals(2, new AllowlistTestingAxisMapperBuilder(new int[]{2, 5, 50}).maxSizeUnder(3));
-        assertEquals(2, new AllowlistTestingAxisMapperBuilder(new int[]{2, 5, 50}).maxSizeUnder(2));
-        assertEquals(-1, new AllowlistTestingAxisMapperBuilder(new int[]{2, 5, 50}).maxSizeUnder(1));
+        int[] array = new int[]{2, 5, 50};
+        AllowlistTestingAxisMapperBuilder allowlist = new AllowlistTestingAxisMapperBuilder(new int[]{2, 5, 50});
+        assertEquals(50, allowlist.maxSizeUnder(50));
+        assertEquals(50, allowlist.maxSizeUnder(60));
+        assertEquals(5, allowlist.maxSizeUnder(49));
+        assertEquals(2, allowlist.maxSizeUnder(3));
+        assertEquals(2, allowlist.maxSizeUnder(2));
+        assertEquals(-1, allowlist.maxSizeUnder(1));
     }
 
     @Test

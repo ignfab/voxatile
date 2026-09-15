@@ -17,5 +17,5 @@ public enum Axis {
     /**
      * Z axis (vertical axis in generator).
      */
-    Z;
+    Z
 }

@@ -4,23 +4,14 @@ import java.beans.ConstructorProperties;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.parameters.utils.AxisParams;
 import com.ignfab.minalac.generator.placeables.layouts.DefaultLayoutBuilder;
 import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
+import com.ignfab.minalac.generator.placeables.layouts.UnbuildableLayoutException;
 import com.ignfab.minalac.generator.utils.random.Seed;
 
 /**
  * Parameters for a {@link LayoutBuilder} that repeats a layout along an axis.
- * <p>
- * Usage example:
- * <pre>
- *   repeat:
- *     ... layout description ...
- *   along: x | y | z
- *   atLeast: 1
- * </pre>
  */
 public class RepeatLayoutBuilderParams implements LayoutBuilderParams {
     /**
@@ -42,7 +33,7 @@ public class RepeatLayoutBuilderParams implements LayoutBuilderParams {
     public int atLeast = 1;
 
     /**
-     * Maxiumum number of repetitions (default infinite).
+     * Maximum number of repetitions (default infinite).
      */
     @JsonSetter(nulls = Nulls.SKIP)
     public int atMost = Integer.MAX_VALUE;
@@ -52,7 +43,6 @@ public class RepeatLayoutBuilderParams implements LayoutBuilderParams {
      * @param repeat layout to repeat
      * @param along axis along which layout is repeated
      */
-
     @ConstructorProperties({ "repeat", "along" })
     public RepeatLayoutBuilderParams(LayoutBuilderParams repeat, AxisParams along) {
         this.repeat = repeat;
@@ -62,14 +52,14 @@ public class RepeatLayoutBuilderParams implements LayoutBuilderParams {
     @Override
     public void validate() {
         if (atLeast < 0)
-            throw new IllegalArgumentException("atLeast field must be a positive integer");
+            throw new IllegalArgumentException("'atLeast' must be a positive integer");
         if (atMost < atLeast)
-            throw new IllegalArgumentException("atMost must be greater than atLeast");
+            throw new IllegalArgumentException("'atMost' must be greater than or equals to 'atLeast'");
         repeat.validate();
     }
 
     @Override
-    public LayoutBuilder createBuilder(Seed seed, AxesPolicies policies) throws UnbuildableException {
+    public LayoutBuilder createBuilder(Seed seed, AxesPolicies policies) throws UnbuildableLayoutException {
         return DefaultLayoutBuilder.repeat(
             repeat.createBuilder(seed, policies),
             along.create(),

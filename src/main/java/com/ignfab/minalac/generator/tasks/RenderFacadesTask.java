@@ -3,13 +3,13 @@ package com.ignfab.minalac.generator.tasks;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.models.ModelSelection;
 import com.ignfab.minalac.generator.models.Shape2dConvertibleModel;
 import com.ignfab.minalac.generator.placeables.LayoutStructure;
 import com.ignfab.minalac.generator.placeables.Structure;
 import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
+import com.ignfab.minalac.generator.placeables.layouts.UnbuildableLayoutException;
 import com.ignfab.minalac.generator.utils.axis.Axis;
 import com.ignfab.minalac.generator.voxelization.shape2d.LineString2d;
 import com.ignfab.minalac.generator.voxelization.shape2d.Segment2d;
@@ -19,7 +19,7 @@ import com.ignfab.minalac.generator.voxelization.shape2d.voxelizer.ThickLinearIn
 /**
  * A {@link ModelTask} rendering facades from 2d shapes, using {@link LayoutBuilder}s.
  */
-public class RenderFacadeTask  extends ModelTask<Shape2dConvertibleModel> {
+public class RenderFacadesTask  extends ModelTask<Shape2dConvertibleModel> {
 
     private final List<LayoutBuilder> builders;
     private final String heightMetadata;
@@ -27,14 +27,14 @@ public class RenderFacadeTask  extends ModelTask<Shape2dConvertibleModel> {
     private final ThickLinearIndexedVoxelizer2d voxelizer;
 
     /**
-     * Creates a new {@code RenderFacadeTask}.
+     * Creates a new {@code RenderFacadesTask}.
      *
      * @param selection Selection of models to render
      * @param builders Layout builder to use to render facades
      * @param heightMetadata Name of metadata holding building height
      * @param baseAltitudeMetadata Name of metadata holding building base altitude (altitude of walls bottom)
      */
-    public RenderFacadeTask(
+    public RenderFacadesTask(
         ModelSelection selection,
         List<LayoutBuilder> builders,
         String heightMetadata,
@@ -58,10 +58,8 @@ public class RenderFacadeTask  extends ModelTask<Shape2dConvertibleModel> {
         // Process metadata
         Integer height = model.getMetadata(heightMetadata);
         Integer baseAltitude = model.getMetadata(baseAltitudeMetadata);
-        if (height == null || baseAltitude == null || height < 0)
+        if (height == null || baseAltitude == null || height <= 0)
             return;
-
-        height = (int) Math.round(height / tile.generation().getVerticalScale());
 
         // Process each lineString (actually linearRing) separately
         for (LineString2d lineString : model.toShape2d().lineStrings()) {
@@ -95,12 +93,9 @@ public class RenderFacadeTask  extends ModelTask<Shape2dConvertibleModel> {
 
                 for (LayoutBuilder builder : builders) {
                     try {
-                        structure = builder.build(
-                            (int) Math.ceil(length),
-                            builder.yAxis().minimumSize(),
-                            height);
+                        structure = builder.build(length, builder.yAxis().minimumSize(), height);
                         break;
-                    } catch (UnbuildableException e) {}
+                    } catch (UnbuildableLayoutException ignored) {}
                 }
 
                 if (structure == null) {

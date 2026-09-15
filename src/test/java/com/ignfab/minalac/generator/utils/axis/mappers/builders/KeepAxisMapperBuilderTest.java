@@ -13,7 +13,7 @@ public class KeepAxisMapperBuilderTest {
             new RangeTestingAxisMapperBuilder(7),
             new RangeTestingAxisMapperBuilder(5)
         ));
-        // Any size greater or equal to min is fine
+        // Any size greater than or equal to min is fine
         assertEquals(7, fixed.maxSizeUnder(7));
         assertEquals(8, fixed.maxSizeUnder(8));
         assertEquals(25, fixed.maxSizeUnder(25));

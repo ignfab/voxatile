@@ -10,7 +10,7 @@ public interface AxisMapper {
      * Maps given position on axis to an underlying interval.
      *
      * @param position position to map
-     * @return {@link Mapped} combining the interval index and in interval position.
+     * @return {@link Mapped} combining the interval index and in-interval position.
      */
     Mapped map(int position);
 
@@ -30,7 +30,7 @@ public interface AxisMapper {
      */
     default int maximum() {
         return minimum() + size() - 1;
-    };
+    }
 
     /**
      * {@return size of the axis mapper}
@@ -50,8 +50,8 @@ public interface AxisMapper {
     /**
      * A mapped index.
      *
-     * @param index Structure index (which structure index is mapped to)
+     * @param index Structure index (telling which structure index is mapped to)
      * @param position In structure position
      */
-    record Mapped(int index, int position){};
+    record Mapped(int index, int position) {}
 }

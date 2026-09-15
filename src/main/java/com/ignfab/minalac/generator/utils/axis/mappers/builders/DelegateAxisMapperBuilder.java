@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.utils.axis.mappers.builders;
 
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
+import com.ignfab.minalac.generator.placeables.layouts.UnbuildableLayoutException;
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
 import com.ignfab.minalac.generator.utils.axis.mappers.IdentityAxisMapper;
 
@@ -20,9 +20,9 @@ public class DelegateAxisMapperBuilder implements AxisMapperBuilder {
     }
 
     @Override
-    public AxisMapper build(int size) throws UnbuildableException {
+    public AxisMapper build(int size) throws UnbuildableLayoutException {
         if (delegatee.maxSizeUnder(size) > size)
-            throw new UnbuildableException("Builder could not fit size=%d (Builder is %s)".formatted(size, delegatee));
+            throw new UnbuildableLayoutException("Builder could not fit size=%d (Builder is %s)".formatted(size, delegatee));
         return new IdentityAxisMapper(delegatee.origin(), size);
     }
 

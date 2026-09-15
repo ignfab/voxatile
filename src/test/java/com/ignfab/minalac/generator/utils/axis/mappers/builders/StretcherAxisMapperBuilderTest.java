@@ -2,7 +2,7 @@ package com.ignfab.minalac.generator.utils.axis.mappers.builders;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
+import com.ignfab.minalac.generator.placeables.layouts.UnbuildableLayoutException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,13 +10,13 @@ public class StretcherAxisMapperBuilderTest {
     @Test
     public void testBuild() {
         // Not enough space
-        assertThrows(UnbuildableException.class, () -> new StretcherAxisMapperBuilder(new RangeTestingAxisMapperBuilder(3), 0, 1, 2).build(2));
+        assertThrows(UnbuildableLayoutException.class, () -> new StretcherAxisMapperBuilder(new RangeTestingAxisMapperBuilder(3), 0, 1, 2).build(2));
         // Requested size too much
-        assertThrows(UnbuildableException.class, () -> new StretcherAxisMapperBuilder(new RangeTestingAxisMapperBuilder(3), 0, 1, 2).build(5));
+        assertThrows(UnbuildableLayoutException.class, () -> new StretcherAxisMapperBuilder(new RangeTestingAxisMapperBuilder(3), 0, 1, 2).build(5));
 
         // Underlying builder with min size of 0
-        assertThrows(UnbuildableException.class, () -> new StretcherAxisMapperBuilder(new RangeTestingAxisMapperBuilder(0, 3), 0, 0, 0));
-        assertThrows(UnbuildableException.class, () -> new StretcherAxisMapperBuilder(new RangeTestingAxisMapperBuilder(0), 0, 0, 0));
+        assertThrows(UnbuildableLayoutException.class, () -> new StretcherAxisMapperBuilder(new RangeTestingAxisMapperBuilder(0, 3), 0, 0, 0));
+        assertThrows(UnbuildableLayoutException.class, () -> new StretcherAxisMapperBuilder(new RangeTestingAxisMapperBuilder(0), 0, 0, 0));
     }
 
     @Test

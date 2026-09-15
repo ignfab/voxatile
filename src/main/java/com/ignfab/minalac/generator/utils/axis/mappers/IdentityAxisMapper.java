@@ -11,7 +11,7 @@ public class IdentityAxisMapper implements AxisMapper {
     private final int[] intervals;
 
     /**
-     * Creates a new {@code IdentityIndexMapper}.
+     * Creates a new {@code IdentityAxisMapper}.
      *
      * @param minimum Start position of the underlying interval
      * @param size Size of the underlying (and so mapper) interval

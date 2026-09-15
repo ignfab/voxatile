@@ -1,7 +1,7 @@
 
-# Layout
+# Layouts
 
-Layout is a kind of structure that can resize itself to fit a requested space. 
+Layouts are a kind of structure that can adapt itself to fit a requested space.
 
 ## Table of contents
 
@@ -11,15 +11,15 @@ Layout is a kind of structure that can resize itself to fit a requested space.
 
 ## Stretchable Layout
 
-Makes a structure stretchable by having one band per axis (row, column or layer) that gets repeated or ommited to fit the requested size.
+Makes a structure stretchable by having one band per axis (row, column or layer) that gets repeated or omitted to fit the requested size.
 
 ```yaml
 structure:
   axes: x
-  blueprint: "rvb"
+  blueprint: "rgb"
   with:
     "r": wool:red
-    "v": wool:green
+    "g": wool:green
     "b": wool:blue
 stretchableAlongX:
   at: 2
@@ -31,19 +31,15 @@ stretchableAlongY:
 
 Fields:
   - `structure` (required) : The structure to make stretchable
-  - `stretchableAlongX` (optional): Strech parameters along x-axis. Leaving it out keeps that axis fixed.
-  - `stretchableAlongY` (optional): Strech parameters along y-axis. Leaving it out keeps that axis fixed.
-  - `stretchableAlongZ` (optional): Strech parameters along z-axis. Leaving it out keeps that axis fixed.
-
-Each `stretchableAlong` have:
-  - `at` (required): coordinate of the band to stretch
-  - `atLeast` (optional, default `1`): Minimum repetition of the band. `0` allows squeezing.
-  - `atMost` (optional, default `infinite`): Maximum repetition of the band.
+  - `stretchableAlongX`/`Y`/`Z` (each optional): Strech parameters along x/y/z-axis. Omit to keep that fixed (non-stretchable).
+    - `at` (required): coordinate of the band to stretch
+    - `atLeast` (optional, default `1`): Minimum repetition of the band. `0` allows squeezing.
+    - `atMost` (optional, default `infinite`): Maximum repetition of the band.
 
 ## Repeat Layout
 
-Repeats a layout along a given axis. If the repeated layout is resizable on that axis, 
-the repeated may be stretched to fill the requested size.
+Repeats a layout along a given axis. If the repeated layout is resizable on that axis,
+it may be stretched to fill the requested size.
 
 ```yaml
 repeat: otherLayout
@@ -53,38 +49,40 @@ atMost: 2
 ```
 
 Fields:
-  - `repeat` (required): The layout to repeat. 
-  - `along` (required): Axis which the layout is repeated (`x`, `y` or `z`)
-  - `atLeast` (optional, default `1`): Minimum repetition of repetition. `0` allows the layout to be empty.
-  - `atMost` (optional, default `infinite`): Maximum repetition of the layout.
+  - `repeat` (required): The layout to repeat.
+  - `along` (required): Axis along which the layout is repeated (`x`, `y` or `z`)
+  - `atLeast` (optional, default `1`): Minimum repetitions of the layout. `0` allows the layout to be empty.
+  - `atMost` (optional, default `infinite`): Maximum repetitions of the layout.
 
 ## Concatenate Layout
 
-Places several layout side by side on a given axis. 
-Available space is distributed by priority.
-Layout having the same priority get space distributed as evenly as possibly.
-If layouts of same priority can not use all the space, the rest is passed to next priority.
+Places several layouts side by side on a given axis, with priorities.
+
+It proceeds that way:
+1. All layouts gets their minimal required space (minimum size).
+1. Higher priority layouts (higher number) start first and get as much remaining space as possible.
+1. If space still remains, continue with lower priorities until no space left.
+
+If serveral layouts have the same priority, the available space is distributed between them as evenly as possible.
 
 ```yaml
 concatenate:
-  - priority: 1 # Défaut: 0
+  - priority: 1
     otherLayout
-  - priority: 2 # Défaut: 0
+  - priority: 2
     anotherLayout
 along: y
-zPolicy: KEEP
+zPolicy: keep
 ```
-Policies are used to control how non concatenate axes are sized.
 
 Fields:
-- `concatenate` (required): List of layouts to place side by side.
-  - `priority` (optional, default `1`): Priority level. Layout with higher values get space first.  
+- `concatenate` (required): List of layouts to place side by side. Each layout definition may have an extra `priority`  field (default `0`) to set its order of priority (higher values get space first).
 - `along` (required): Axis which the layouts are placed (`x`, `y` or `z`)
-- `xPolicy` (optional, default `INHERIT`): Policy for the x-axis.
-- `yPolicy` (optional, default `INHERIT`): Policy for the y-axis.
-- `zPolicy` (optional, default `INHERIT`): Policy for the z-axis.
+- `x`/`y`/`zPolicy` (optional, default `inherit`): Policy for the x/y/z-axis (only for axes other than `along` axis).
 
-Policies values:
-- `INHERIT`: Uses the policy set by the parent (Parent layout or parent task).
-- `KEEP`: Each layout keep its own size on that axis. Layout may have different sizes on that axis.
-- `ADJUST`: All layout are forced to have the same size.
+Policies control how other axes are sized:
+| Policy    | Constraint on concerned axis                            |
+|:----------|:--------------------------------------------------------|
+| `inherit` | Use parent policy (layout or task).                     |
+| `adjust`  | Force same size for all child layouts.                  |
+| `keep`    | Keep child layouts sizes (different sizes are allowed). |

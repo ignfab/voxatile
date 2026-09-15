@@ -2,7 +2,7 @@ package com.ignfab.minalac.generator.utils.axis.mappers.builders;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
+import com.ignfab.minalac.generator.placeables.layouts.UnbuildableLayoutException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,7 +10,7 @@ public class AdjustAxisMapperBuilderTest {
     @Test
     public void testBuild() {
         assertThrows(
-            UnbuildableException.class,
+            UnbuildableLayoutException.class,
             () -> new AdjustAxisMapperBuilder(
                 new RangeTestingAxisMapperBuilder(1, 5, 0),
                 new RangeTestingAxisMapperBuilder(1, 5, 1)
@@ -19,7 +19,7 @@ public class AdjustAxisMapperBuilderTest {
         );
 
         assertThrows(
-            UnbuildableException.class,
+            UnbuildableLayoutException.class,
             () -> new AdjustAxisMapperBuilder(
                 new RangeTestingAxisMapperBuilder(1, 5),
                 new RangeTestingAxisMapperBuilder(6, 9)
@@ -45,7 +45,7 @@ public class AdjustAxisMapperBuilderTest {
     @Test
     public void testMaxSizeUnder() {
         assertThrows(
-            UnbuildableException.class,
+            UnbuildableLayoutException.class,
             () -> new AdjustAxisMapperBuilder(
                 new RangeTestingAxisMapperBuilder(1, 5),
                 new RangeTestingAxisMapperBuilder(7, 8))
