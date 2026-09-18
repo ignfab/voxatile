@@ -2,19 +2,18 @@ package com.ignfab.minalac.generator.tasks;
 
 import java.util.List;
 
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.placeables.Structure;
 import com.ignfab.minalac.generator.placeables.layouts.LayoutBuilder;
+import com.ignfab.minalac.generator.placeables.layouts.UnbuildableLayoutException;
 import com.ignfab.minalac.generator.utils.world3d.WorldCoords3d;
 
 /**
- * A task helping working out layout builders.
+ * A task building a structure from a layout builder and placing it in the world.
  * <p>
- * This task places a structure resulting from builders with a desired size.
  * It is not intended to be used to create worlds from geographical data but rather to visualize how layout builders behave.
  */
-public class DebugLayoutTask implements TileTask {
+public class BuildLayoutTask implements TileTask {
     private final List<LayoutBuilder> builders;
     private final WorldCoords3d position;
     private final Integer sizeX;
@@ -22,14 +21,14 @@ public class DebugLayoutTask implements TileTask {
     private final Integer sizeZ;
 
     /**
-     * Creates an new {@code DebugStructureBuilderTask}.
+     * Creates a new {@code DebugLayoutTask}.
      * @param builders list of builders to use for construction (first succeeding will be used)
      * @param position where to place built structure in world
      * @param sizeX x-axis component of wanted resulting size or null
      * @param sizeY y-axis component of wanted resulting size or null
      * @param sizeZ z-axis component of wanted resulting size or null
      */
-    public DebugLayoutTask(List<LayoutBuilder> builders, WorldCoords3d position, Integer sizeX, Integer sizeY, Integer sizeZ) throws UnbuildableException {
+    public BuildLayoutTask(List<LayoutBuilder> builders, WorldCoords3d position, Integer sizeX, Integer sizeY, Integer sizeZ) throws UnbuildableLayoutException {
         this.builders = builders;
         this.position = position;
         this.sizeX = sizeX;
@@ -42,29 +41,31 @@ public class DebugLayoutTask implements TileTask {
         Structure structure = null;
         int number = 0;
 
+        String prefix = String.format("(%d, %d, %d)", position.x(), position.y(), position.z());
+
         for (LayoutBuilder builder : builders) {
             number++;
-            int x = this.sizeX != null ? this.sizeX : builder.xAxis().minimumSize();
-            int y = this.sizeY != null ? this.sizeY : builder.yAxis().minimumSize();
-            int z = this.sizeZ != null ? this.sizeZ : builder.zAxis().minimumSize();
-            System.out.println(builder.xAxis() + ", " + builder.xAxis().minimumSize() + ", " + builder.xAxis().maxSizeUnder(x));
-            System.out.println(builder.yAxis() + ", " + builder.yAxis().minimumSize() + ", " + builder.yAxis().maxSizeUnder(y));
-            System.out.println(builder.zAxis() + ", " + builder.zAxis().minimumSize() + ", " + builder.zAxis().maxSizeUnder(z));
-            System.out.println("Builder #%d buid(%d, %d, %d)".formatted(number, x, y, z));
+            int x = sizeX != null ? sizeX : builder.xAxis().minimumSize();
+            int y = sizeY != null ? sizeY : builder.yAxis().minimumSize();
+            int z = sizeZ != null ? sizeZ : builder.zAxis().minimumSize();
+            System.out.printf("%s: Try builder #%d with size (x=%d, y=%d, z=%d)%n", prefix, number, x, y, z);
+            System.out.printf("%s: On x-axis: minimum=%d max-under=%d%n", prefix, builder.xAxis().minimumSize(), builder.xAxis().maxSizeUnder(x));
+            System.out.printf("%s: On y-axis: minimum=%d max-under=%d%n", prefix, builder.yAxis().minimumSize(), builder.yAxis().maxSizeUnder(y));
+            System.out.printf("%s: On z-axis: minimum=%d max-under=%d%n", prefix, builder.zAxis().minimumSize(), builder.zAxis().maxSizeUnder(z));
             try {
                 structure = builder.build(x, y, z);
                 break;
-            } catch (UnbuildableException e) {
-                System.out.println("Failed:");
+            } catch (UnbuildableLayoutException e) {
+                System.out.printf("%s: Failed:%n", prefix);
                 e.printStackTrace();
             }
         }
 
         if (structure == null) {
-            System.out.println("Could not build facade structure");
+            System.out.println("%s: No builder worked".formatted(prefix));
             return;
         }
-        System.out.println(structure.limits());
+        System.out.printf("%s: Resulting structure size: (x=%d, y=%d, z=%d)%d", prefix, structure.limits().size().x(), structure.limits().size().y(), structure.limits().size().z());
         structure.place(tile.voxels(), position.x(), position.y(), position.z());
     }
 }

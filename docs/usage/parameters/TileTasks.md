@@ -20,11 +20,13 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`fillBetweenHeightmapAndValue`](#fillbetweenheightmapandvalue)
   * [`renderBuildings`](#renderbuildings)
   * [`setSpawn`](#setspawn)
-  * [`renderFacade`](#renderfacade)
+  * [`renderFacades`](#renderfacades)
 * [Tasks operating on heightmaps](#tasks-operating-on-heightmaps)
   * [`populateHeightmap`](#populateheightmap)
   * [`copyHeightmap`](#copyheightmap)
   * [`computeHeightmapStats`](#computeheightmapstats)
+* [Tool tasks](#tool-tasks)
+  * [`buildLayout`](#buildlayout)
 
 ## Organizational tasks
 
@@ -163,7 +165,7 @@ The blueprint shows five successive vertical slices of the structure. This will 
 
 ### `renderPoints`
 
-Renders 3d points as a placeable. 
+Renders 3d points as a placeable.
 
 #### Extra parameters
 
@@ -279,9 +281,9 @@ x: 2
 y: -1
 ```
 
-### `renderFacade`
+### `renderFacades`
 
-Renders facades using layouts from 2D shapes. 
+Renders facades using layouts from 2D shapes.
 Layouts are tried in order, the first one that can fit the requested space is used.
 
 #### Extra parameters
@@ -294,6 +296,7 @@ Layouts are tried in order, the first one that can fit the requested space is us
 #### Example
 
 ```yaml
+type: renderFacades
 models: buildings
 height: height
 altitude: ground-floor-altitude
@@ -301,10 +304,10 @@ build:
   - structure:
       at: [ 0, -1..0, 0 ]
       put: stone
-      stretchableAlongX:
-        at: 0
-      stretchableAlongZ:
-        at: 0
+    stretchableAlongX:
+      at: 0
+    stretchableAlongZ:
+      at: 0
 ```
 
 ## Tasks operating on heightmaps
@@ -323,7 +326,7 @@ Populates a heightmap with models data. Existing data is overwritten.
 ```yaml
 type: populateHeightmap
 models:
-  type: altitude
+  type: altitudesrc/main/java/com/ignfab/minalac/generator/Voxatile.java
 heightmap: ground
 ```
 
@@ -371,4 +374,35 @@ heightmap: ground
 compute:
   maximum: maximum-ground-altitude
   minimum: minimum-ground-altitude
+```
+
+## Tool tasks
+
+These tasks are not intended to be used to create worlds from geographical data but rather to help parameter files development.
+
+### `buildLayout`
+
+This taks builds a structure of a given size from a layout (or a fallback list of layouts) and places it into the world at a given position.
+
+#### Extra parameters
+
+- `build` (required) : [Layout](Layout.md) or list of layouts to build (first buildable will be used).
+- `size` (optional): wanted size:
+  - `x` / `y` / `z` (optional, defaults to minimum layout size): wanted size in each dimension
+- `policies` (optional): size policies to apply in each three dimensions:
+  - `x` / `y` / `z` (optional, default `adjust`): `keep` means layout sizes are kept as is, `adjust` meands layout sizes should adjust to content.
+
+See [Layout](Layout.md) for more information about layouts and policies.
+
+#### Example
+```
+type: buildLayout
+build:
+  - ... # First layout candidate
+  - ... # Second layout candidate (fallback)
+  - ...
+size:
+  x: 4
+policies:
+  x: keep
 ```
