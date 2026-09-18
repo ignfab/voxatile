@@ -5,37 +5,69 @@ package com.ignfab.minalac.generator.utils.axis.mappers;
  * <p>
  * It also provides a list of intervals with their sizes. This could represent a list of dimension, on the given axis, of repeated or placed structures.
  */
-public interface AxisMapper {
+public abstract class AxisMapper {
+    private final int minimum;
+    private final int size;
+    private final int[] intervals;
+
+
+    protected AxisMapper(int minimum, int size, int[] intervals) {
+        if (size < 0)
+            throw new IllegalArgumentException("length can not be negative");
+
+        this.minimum = minimum;
+        this.size = size;
+        this.intervals = intervals;
+    }
+
     /**
      * Maps given position on axis to an underlying interval.
      *
      * @param position position to map
-     * @return {@link Mapped} combining the interval index and in interval position.
+     * @return {@link Mapped} combining the interval index and in-interval position.
      */
-    Mapped map(int position);
+    public Mapped map(int position) {
+        if (!contains(position))
+            throw new IndexOutOfBoundsException("%s Provided position is out of bounds (position %d, min %d, size %d)".formatted(this, position, minimum(), size()));
+        return mapUnchecked(position);
+
+    };
+
+    /**
+     * Same as {@code map} but does not check position is in axis mapper.
+     *
+     * @param position position to map
+     * @return {@link Mapped} combining the interval index and in-interval position.
+     */
+    protected abstract Mapped mapUnchecked(int position);
 
     /**
      *{@return list of underlying intervals sizes}
      */
-    int[] intervals();
-
-
-    /**
-     * {@return minimum valid position for this axis mapper}
-     */
-    int minimum();
-
-    /**
-     * {@return maximum valid position for this axis mapper}
-     */
-    default int maximum() {
-        return minimum() + size() - 1;
-    };
+    public int[] intervals() {
+        return intervals;
+    }
 
     /**
      * {@return size of the axis mapper}
      */
-    int size();
+    public int size() {
+        return size;
+    }
+
+    /**
+     * {@return minimum valid position for this axis mapper}
+     */
+    public int minimum() {
+        return minimum;
+    }
+
+    /**
+     * {@return maximum valid position for this axis mapper}
+     */
+    public int maximum() {
+        return minimum + size - 1;
+    }
 
     /**
      * Tells if position could be mapped.
@@ -43,15 +75,15 @@ public interface AxisMapper {
      * @param position position to test
      * @return true if position could be mapped
      */
-    default boolean contains(int position) {
-        return position >= minimum() && position <= maximum();
+    public boolean contains(int position) {
+        return position >= minimum && position <= maximum();
     }
 
     /**
      * A mapped index.
      *
-     * @param index Structure index (which structure index is mapped to)
+     * @param index Structure index (telling which structure index is mapped to)
      * @param position In structure position
      */
-    record Mapped(int index, int position){};
+    public record Mapped(int index, int position) {}
 }

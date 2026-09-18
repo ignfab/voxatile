@@ -1,6 +1,6 @@
 package com.ignfab.minalac.generator.utils.axis.mappers.builders;
 
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
+import com.ignfab.minalac.generator.placeables.layouts.UnbuildableLayoutException;
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
 import com.ignfab.minalac.generator.utils.axis.mappers.IdentityAxisMapper;
 
@@ -16,11 +16,11 @@ public class AdjustAxisMapperBuilder implements AxisMapperBuilder {
     private final int origin;
 
     /**
-     * Creates a new {@code OverlayAxisMapperBuilder}.
-     * @param builders underlying {@link AxisMapperBuilder} to overlay
-     * @throws UnbuildableException
+     * Creates a new {@code AdjustAxisMapperBuilder}.
+     * @param builders underlying {@link AxisMapperBuilder} to adjust
+     * @throws UnbuildableLayoutException if underlying builders can't adjust to each other
      */
-    public AdjustAxisMapperBuilder(AxisMapperBuilder... builders) throws UnbuildableException {
+    public AdjustAxisMapperBuilder(AxisMapperBuilder... builders) throws UnbuildableLayoutException {
         this.builders = builders;
 
         if (builders.length == 0) {
@@ -34,7 +34,7 @@ public class AdjustAxisMapperBuilder implements AxisMapperBuilder {
 
         for (AxisMapperBuilder builder : builders) {
             if (origin != builder.origin())
-                throw new UnbuildableException("All origins must be the same");
+                throw new UnbuildableLayoutException("All origins must be the same");
             minimumSize = Math.max(minimumSize, builder.minimumSize());
         }
 
@@ -42,20 +42,20 @@ public class AdjustAxisMapperBuilder implements AxisMapperBuilder {
         minimumSize = maxSizeUnder(minimumSize);
 
         if (minimumSize < 0)
-            throw new UnbuildableException("Unable to adjust dimensions (builders don't agree)");
+            throw new UnbuildableLayoutException("Unable to adjust dimensions (builders don't agree)");
 
         this.minimumSize = minimumSize;
         this.origin = origin;
     }
 
     @Override
-    public AxisMapper build(int size) throws UnbuildableException {
+    public AxisMapper build(int size) throws UnbuildableLayoutException {
         if (size < 0)
             throw new IllegalArgumentException("Size must be positive or zero");
 
         int possible = maxSizeUnder(size);
         if (size != possible)
-            throw new UnbuildableException("Impossible to build for this size (%d, possible %d)".formatted(size, possible));
+            throw new UnbuildableLayoutException("Impossible to build for this size (%d, possible %d)".formatted(size, possible));
 
         return new IdentityAxisMapper(origin, size);
     }

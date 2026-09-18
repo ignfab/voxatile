@@ -1,8 +1,8 @@
 package com.ignfab.minalac.generator.utils.axis.mappers.builders;
 
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
+import com.ignfab.minalac.generator.placeables.layouts.UnbuildableLayoutException;
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
-import com.ignfab.minalac.generator.utils.axis.mappers.StretcherIndexMapper;
+import com.ignfab.minalac.generator.utils.axis.mappers.StretcherAxisMapper;
 
 /**
  * Builder for an {@link AxisMapper} that stretches an interval at a given coordinate.
@@ -24,12 +24,12 @@ public class StretcherAxisMapperBuilder implements AxisMapperBuilder {
      * @param stretchableCoord coordinate where to stretch {@code underlying}
      * @param minRepetition minimum possible repetitions of stretchable coordinate
      * @param maxRepetition maximum possible repetitions of stretchable coordinate
-     * @throws UnbuildableException if underlying builder is not adjustable
+     * @throws UnbuildableLayoutException if underlying builder is not adjustable
      */
-    public StretcherAxisMapperBuilder(AxisMapperBuilder underlying, int stretchableCoord, int minRepetition, int maxRepetition) throws UnbuildableException {
+    public StretcherAxisMapperBuilder(AxisMapperBuilder underlying, int stretchableCoord, int minRepetition, int maxRepetition) throws UnbuildableLayoutException {
         // If changed, RepeatAxisMapperBuilder should have same behavior
         if (underlying.minimumSize() <= 0)
-            throw new UnbuildableException("Underlying has a minimum size of zero. Can not be stretched");
+            throw new UnbuildableLayoutException("Underlying has a minimum size of zero. Can not be stretched");
         this.underlying = underlying;
         this.stretchableCoord = stretchableCoord;
         int underlyingMin = underlying.minimumSize();
@@ -38,12 +38,12 @@ public class StretcherAxisMapperBuilder implements AxisMapperBuilder {
     }
 
     @Override
-    public AxisMapper build(int size) throws UnbuildableException {
+    public AxisMapper build(int size) throws UnbuildableLayoutException {
         if (size < minSize)
-            throw new UnbuildableException("Not enough space");
+            throw new UnbuildableLayoutException("Not enough space");
         if (size > maxSize)
-            throw new UnbuildableException("Requested size is too large");
-        return new StretcherIndexMapper(underlying.origin(), stretchableCoord, underlying.minimumSize(), size);
+            throw new UnbuildableLayoutException("Requested size is too large");
+        return new StretcherAxisMapper(underlying.origin(), stretchableCoord, underlying.minimumSize(), size);
     }
 
     @Override

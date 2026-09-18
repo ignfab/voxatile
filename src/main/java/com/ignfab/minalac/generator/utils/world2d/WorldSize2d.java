@@ -65,7 +65,7 @@ public record WorldSize2d(int x, int y) {
         return switch (axis) {
             case X -> x;
             case Y -> y;
-            case Z -> throw new IllegalArgumentException("Does not exist for that axis.");
+            case Z -> throw new IllegalArgumentException("2d size has not Z coordinate.");
         };
     }
 }

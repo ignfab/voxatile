@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
+import com.ignfab.minalac.generator.placeables.layouts.UnbuildableLayoutException;
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
 import com.ignfab.minalac.generator.utils.axis.mappers.SizesAxisMapper;
 
@@ -31,11 +31,11 @@ public class PriorityRepartitionAxisMapperBuilder implements AxisMapperBuilder {
      *
      * @param builders   underlying builders, must have the same length as {@code priorities}
      * @param priorities corresponding priorities, must have the same length as {@code builders}
-     * @throws UnbuildableException if underlying builders are not adjustable
+     * @throws UnbuildableLayoutException if underlying builders are not adjustable
      */
-    public PriorityRepartitionAxisMapperBuilder(AxisMapperBuilder[] builders, int[] priorities) throws UnbuildableException {
+    public PriorityRepartitionAxisMapperBuilder(AxisMapperBuilder[] builders, int[] priorities) {
         if (builders.length != priorities.length)
-            throw new IllegalArgumentException("Provide array must be same length");
+            throw new IllegalArgumentException("Provided arrays must have the same length");
 
         int sum = 0;
         minLengths = new int[builders.length];
@@ -46,20 +46,20 @@ public class PriorityRepartitionAxisMapperBuilder implements AxisMapperBuilder {
             this.priorities.computeIfAbsent(priorities[i], k -> new ArrayList<>()).add(i);
 
             minLengths[i] = builders[i].minimumSize();
-            sum = sum + minLengths[i];
+            sum += minLengths[i];
         }
         minimalSize = sum;
     }
 
     @Override
-    public AxisMapper build(int size) throws UnbuildableException {
+    public AxisMapper build(int size) throws UnbuildableLayoutException {
         if (size < minimalSize)
-            throw new UnbuildableException("Requested size is not enough");
+            throw new UnbuildableLayoutException("Requested size is not enough");
 
         DistributionResult result = compute(size);
 
         if (result.remainder != 0)
-            throw new UnbuildableException("Could not distribute remainder");
+            throw new UnbuildableLayoutException("Could not distribute remainder");
 
         return new SizesAxisMapper(result.lengths);
     }
@@ -75,6 +75,11 @@ public class PriorityRepartitionAxisMapperBuilder implements AxisMapperBuilder {
     @Override
     public int minimumSize() {
         return minimalSize;
+    }
+
+    @Override
+    public int origin() {
+        return 0;
     }
 
     private DistributionResult compute(int size) {
@@ -109,20 +114,20 @@ public class PriorityRepartitionAxisMapperBuilder implements AxisMapperBuilder {
                         int toEat = builders[index].maxSizeUnder(fairShare);
                         // Should eat if its allocated minimal size is inferior to what it could have eaten with no min size.
                         if (toEat > lengths[index]) {
-                            remaining = remaining - (toEat - lengths[index]);
+                            remaining -= toEat - lengths[index];
                             lengths[index] = toEat;
                         }
                         continue;
                     }
                     int toEat = builders[index].maxSizeUnder(lengths[index] + Math.min(remaining, fairShare));
                     if (toEat > lengths[index]) {
-                        remaining = remaining - (toEat - lengths[index]);
+                        remaining -= toEat - lengths[index];
                         lengths[index] = toEat;
-                    // Can not eat, it is no longer a candidate
                     } else if (builders[index].maxSizeUnder(lengths[index] + remaining) == lengths[index]) {
+                        // Can not eat, it is no longer a candidate
                         candidateIterator.remove();
-                    // Can potentially eat, will go on phase 2
                     } else {
+                        // Can potentially eat, will go on phase 2
                         starved.add(index);
                     }
                 }
@@ -142,7 +147,7 @@ public class PriorityRepartitionAxisMapperBuilder implements AxisMapperBuilder {
                             int toEat = builders[currentIndex].maxSizeUnder(lengths[currentIndex] + Math.min(remaining, share));
 
                             if (toEat > lengths[currentIndex]) {
-                                remaining = remaining - (toEat - lengths[currentIndex]);
+                                remaining -= (toEat - lengths[currentIndex]);
                                 lengths[currentIndex] = toEat;
                                 starvedIterator.remove();
                                 break;
@@ -173,11 +178,5 @@ public class PriorityRepartitionAxisMapperBuilder implements AxisMapperBuilder {
         return new DistributionResult(lengths, remaining);
     }
 
-    private record DistributionResult(int[] lengths, int remainder) {
-    }
-
-    @Override
-    public int origin() {
-        return 0;
-    }
+    private record DistributionResult(int[] lengths, int remainder) {}
 }

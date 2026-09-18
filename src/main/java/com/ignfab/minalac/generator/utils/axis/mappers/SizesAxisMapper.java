@@ -6,10 +6,7 @@ package com.ignfab.minalac.generator.utils.axis.mappers;
  * {@code SizesAxisMapper} does not manage origins of underlying intervals.
  * They would be moved anyway. So origin of this {@link AxisMapper} is always 0.
  */
-public class SizesAxisMapper implements AxisMapper {
-    private final int size;
-    private final int[] intervals;
-
+public class SizesAxisMapper extends AxisMapper {
     /**
      * Creates a new {@code SizesAxisMapper}.
      * <p>
@@ -18,24 +15,23 @@ public class SizesAxisMapper implements AxisMapper {
      * @param sizes list of sizes of intervals composing the axis.
      */
     public SizesAxisMapper(int... sizes) {
-        intervals = sizes;
+        super(0, computeSize(sizes), sizes);
+    }
 
+    private static int computeSize(int[] intervals) {
         int size = 0;
         for (int index = 0; index < intervals.length; index++) {
             if (intervals[index] < 0)
                 throw new IllegalArgumentException("length can not be negative");
             size += intervals[index];
         }
-        this.size = size;
+        return size;
     }
 
     @Override
-    public Mapped map(int position) {
-        if (0 > position || position >= size)
-            throw new IndexOutOfBoundsException("Provided position is out of bounds");
-
-        for (int index = 0; index < intervals.length; index++) {
-            int size = intervals[index];
+    protected Mapped mapUnchecked(int position) {
+        for (int index = 0; index < intervals().length; index++) {
+            int size = intervals()[index];
             if (position < size)
                 return new Mapped(index, position);
             position -= size;
@@ -43,20 +39,5 @@ public class SizesAxisMapper implements AxisMapper {
 
         // Will never be reached
         throw new IndexOutOfBoundsException("This is a bug");
-    }
-
-    @Override
-    public int[] intervals() {
-        return intervals;
-    }
-
-    @Override
-    public int minimum() {
-        return 0;
-    }
-
-    @Override
-    public int size() {
-        return size;
     }
 }

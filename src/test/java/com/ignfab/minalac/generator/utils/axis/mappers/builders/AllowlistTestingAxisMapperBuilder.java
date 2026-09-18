@@ -2,7 +2,7 @@ package com.ignfab.minalac.generator.utils.axis.mappers.builders;
 
 import java.util.Arrays;
 
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
+import com.ignfab.minalac.generator.placeables.layouts.UnbuildableLayoutException;
 import com.ignfab.minalac.generator.utils.axis.mappers.AxisMapper;
 
 public class AllowlistTestingAxisMapperBuilder implements AxisMapperBuilder {
@@ -22,7 +22,7 @@ public class AllowlistTestingAxisMapperBuilder implements AxisMapperBuilder {
     }
 
     @Override
-    public AxisMapper build(int size) throws UnbuildableException {
+    public AxisMapper build(int size) throws UnbuildableLayoutException {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 

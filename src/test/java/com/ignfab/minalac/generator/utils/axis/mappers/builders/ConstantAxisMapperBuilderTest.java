@@ -2,16 +2,16 @@ package com.ignfab.minalac.generator.utils.axis.mappers.builders;
 
 import org.junit.jupiter.api.Test;
 
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
+import com.ignfab.minalac.generator.placeables.layouts.UnbuildableLayoutException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ConstantAxisMapperBuilderTest {
     @Test
     public void testBuild() {
-        assertThrows(UnbuildableException.class, () -> new ConstantAxisMapperBuilder(7, 0).build(8));
-        assertThrows(UnbuildableException.class, () -> new ConstantAxisMapperBuilder(6, 0).build(8));
-        assertThrows(UnbuildableException.class, () -> new ConstantAxisMapperBuilder(9, 0).build(8));
+        assertThrows(UnbuildableLayoutException.class, () -> new ConstantAxisMapperBuilder(7, 0).build(8));
+        assertThrows(UnbuildableLayoutException.class, () -> new ConstantAxisMapperBuilder(6, 0).build(8));
+        assertThrows(UnbuildableLayoutException.class, () -> new ConstantAxisMapperBuilder(9, 0).build(8));
 
         assertDoesNotThrow(() -> new ConstantAxisMapperBuilder(0, 0).build(0));
         assertDoesNotThrow(() -> new ConstantAxisMapperBuilder(6, 2).build(6));

@@ -1,13 +1,16 @@
 package com.ignfab.minalac.generator.placeables.layouts;
 
-import com.ignfab.minalac.generator.exceptions.UnbuildableException;
 import com.ignfab.minalac.generator.placeables.Structure;
 import com.ignfab.minalac.generator.utils.axis.mappers.builders.AxisMapperBuilder;
 
 /**
  * A structure layout builder based on axis mappers.
  */
-public interface LayoutBuilder {
+public abstract class LayoutBuilder {
+    private final AxisMapperBuilder xAxis;
+    private final AxisMapperBuilder yAxis;
+    private final AxisMapperBuilder zAxis;
+
     /**
      * Builds a structure of given size.
      *
@@ -17,22 +20,45 @@ public interface LayoutBuilder {
      *
      * @return built structure
      *
-     * @throws UnbuildableException if structure cannot be built
+     * @throws UnbuildableLayoutException if structure cannot be built
      */
-    Structure build(int sizeX, int sizeY, int sizeZ) throws UnbuildableException;
+    public abstract Structure build(int sizeX, int sizeY, int sizeZ) throws UnbuildableLayoutException;
 
     /**
-     * @return X-axis mapper builder.
+     * Creates a new {@code LayoutBuilder}.
+     *
+     * @param xAxis axis builder for x-axis
+     * @param yAxis axis builder for y-axis
+     * @param zAxis axis builder for z-axis
      */
-    AxisMapperBuilder xAxis();
+    protected LayoutBuilder(
+        AxisMapperBuilder xAxis,
+        AxisMapperBuilder yAxis,
+        AxisMapperBuilder zAxis
+    ) {
+        this.xAxis = xAxis;
+        this.yAxis = yAxis;
+        this.zAxis = zAxis;
+    }
 
     /**
-     * @return Y-axis mapper builder.
+     * {@return X-axis mapper builder}
      */
-    AxisMapperBuilder yAxis();
+    public AxisMapperBuilder xAxis() {
+        return xAxis;
+    }
 
     /**
-     * @return Z-axis mapper builder.
+     * {@return Y-axis mapper builder}
      */
-    AxisMapperBuilder zAxis();
+    public AxisMapperBuilder yAxis() {
+        return yAxis;
+    }
+
+    /**
+     * {@return Z-axis mapper builder}
+     */
+    public AxisMapperBuilder zAxis() {
+        return zAxis;
+    }
 }
