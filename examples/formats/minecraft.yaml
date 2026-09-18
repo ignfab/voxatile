@@ -3,7 +3,6 @@ references:
   - &voxel-stone minecraft:stone
   - &voxel-dirt minecraft:dirt
   - &voxel-cobble minecraft:cobblestone
-  - &voxel-empty minecraft:air
   - &voxel-building-ground minecraft:stone_bricks
   - &voxel-grass minecraft:grass_block
   - &voxel-glass minecraft:glass
@@ -38,3 +37,21 @@ references:
         at: [ 0, 0, 0..5 ]
   - &voxel-water minecraft:water
   - &voxel-air minecraft:air
+  - &corner-material minecraft:smooth_red_sandstone
+  - &base-material minecraft:sandstone
+  - &other-material minecraft:red_sandstone
+  - &borders-material minecraft:smooth_red_sandstone
+  - &cornice-material minecraft:smooth_red_sandstone
+  - &lintel-material minecraft:cut_sandstone
+  - &facade-residential-materials
+    "-": *base-material
+    "+": *other-material
+    "O": *borders-material
+    "*": minecraft:tinted_glass
+    "=": *lintel-material
+    "|": minecraft:jungle_fence
+  - &modern-wall minecraft:clay
+  - &modern-glass minecraft:tinted_glass
+  - &modern-materials
+    "O": *modern-wall
+    "*": *modern-glass
