@@ -70,7 +70,7 @@ public class MinecraftVoxelWorld extends VoxelWorld {
         if (!destination.exists() || !destination.isDirectory())
             throw new MapWriteException("Directory %s cannot be accessed".formatted(destination));
 
-        if (!regionDirectory.mkdir())
+        if (!regionDirectory.isDirectory() && !regionDirectory.mkdir())
             throw new MapWriteException("Region directory %s cannot be created".formatted(regionDirectory));
     }
 
