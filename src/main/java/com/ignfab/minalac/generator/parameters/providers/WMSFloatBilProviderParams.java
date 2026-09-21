@@ -33,7 +33,7 @@ public class WMSFloatBilProviderParams extends ProviderParams {
     public String crs;
 
     /**
-     * Creates a new WFSProviderParams with mandatory fields.
+     * Creates a new WMSFloatBilProviderParams with mandatory fields.
      *
      * @param url Base URL for WFS queries (including protocol, port, domain name and directories but not query arguments)
      * @param layer Type of features to ask for

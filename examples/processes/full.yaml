@@ -29,10 +29,17 @@ forEachTile:
     type: fetchData
     modelType: buildings
     provider:
-      type: wfs
-      url: https://data.geopf.fr/wfs/wfs
-      features: BDTOPO_V3:batiment
-      maxFeaturesPerQuery: 500
+      type: gml
+      fetcher:
+        # Invalidate schema declaration because GML version 3.1 is not used in this schema (version is unspecified, defaulting to 3.2)
+        type: stringReplacement
+        fetcher:
+          type: wfs
+          url: https://data.geopf.fr/wfs/wfs
+          features: BDTOPO_V3:batiment
+          maxFeaturesPerQuery: 500
+        replacements:
+          "http://BDTOPO_V3": explicitly-invalid
     postProcessing:
       - type: copy
         metadata: hauteur
@@ -55,17 +62,31 @@ forEachTile:
     type: fetchData
     modelType: water
     provider:
-      type: wfs
-      url: https://data.geopf.fr/wfs/wfs
-      features: BDTOPO_V3:surface_hydrographique
+      type: gml
+      fetcher:
+        # Invalidate schema declaration because GML version 3.1 is not used in this schema (version is unspecified, defaulting to 3.2)
+        type: stringReplacement
+        fetcher:
+          type: wfs
+          url: https://data.geopf.fr/wfs/wfs
+          features: BDTOPO_V3:surface_hydrographique
+        replacements:
+          "http://BDTOPO_V3": explicitly-invalid
 
   fetchRoads:
     type: fetchData
     modelType: road
     provider:
-      type: wfs
-      url: https://data.geopf.fr/wfs/wfs
-      features: BDTOPO_V3:troncon_de_route
+      type: gml
+      fetcher:
+        # Invalidate schema declaration because GML version 3.1 is not used in this schema (version is unspecified, defaulting to 3.2)
+        type: stringReplacement
+        fetcher:
+          type: wfs
+          url: https://data.geopf.fr/wfs/wfs
+          features: BDTOPO_V3:troncon_de_route
+        replacements:
+          "http://BDTOPO_V3": explicitly-invalid
 
   flattenWater:
     after:
@@ -138,9 +159,16 @@ forEachTile:
       - type: fetchData
         modelType: vegetation
         provider:
-          type: wfs
-          url: https://data.geopf.fr/wfs/wfs
-          features: BDTOPO_V3:zone_de_vegetation
+          type: gml
+          fetcher:
+            # Invalidate schema declaration because GML version 3.1 is not used in this schema (version is unspecified, defaulting to 3.2)
+            type: stringReplacement
+            fetcher:
+              type: wfs
+              url: https://data.geopf.fr/wfs/wfs
+              features: BDTOPO_V3:zone_de_vegetation
+            replacements:
+              "http://BDTOPO_V3": explicitly-invalid
       - type: renderSurfaces
         after: renderGround
         models:

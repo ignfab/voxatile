@@ -1,6 +1,8 @@
 package com.ignfab.minalac.generator.utils.network;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -50,19 +52,35 @@ public final class ParameterizedURL {
     }
 
     /**
-     * Converts URL into a {@code java.net.URL} object.
+     * Converts URL into a {@link URL} object.
      *
      * @return URL object
      *
      * @throws MalformedURLException if URL is invalid (most likely due to incorrect base URL)
      */
     public URL toURL() throws MalformedURLException {
+        return new URL(toString());
+    }
+
+    /**
+     * Converts URL into a {@link URI} object.
+     *
+     * @return URI object
+     *
+     * @throws URISyntaxException if URI is invalid (most likely due to incorrect base URL)
+     */
+    public URI toURI() throws URISyntaxException {
+        return new URI(toString());
+    }
+
+    @Override
+    public String toString() {
         StringBuilder suffix = new StringBuilder();
         params.forEach((key, value) -> suffix.append(suffix.isEmpty() ? '?' : '&')
             .append(URLEncoder.encode(key, StandardCharsets.UTF_8))
             .append('=')
             .append(URLEncoder.encode(value, StandardCharsets.UTF_8)));
-        return new URL(url + suffix);
+        return url + suffix;
     }
 
     /**
@@ -121,7 +139,7 @@ public final class ParameterizedURL {
         }
 
         /**
-         * Creates a new {@code URL} from this {@code Builder}.
+         * Creates a new {@link URL} from this {@code Builder}.
          * <p>
          * This is a shortcut for {@code .build().toURL()}.
          *
@@ -133,5 +151,17 @@ public final class ParameterizedURL {
             return build().toURL();
         }
 
+        /**
+         * Creates a new {@link URI} from this {@code Builder}.
+         * <p>
+         * This is a shortcut for {@code .build().toURI()}.
+         *
+         * @return resulting {@code URI} object
+         *
+         * @throws URISyntaxException if URI is invalid (most likely due to incorrect base URL)
+         */
+        public URI buildURI() throws URISyntaxException {
+            return build().toURI();
+        }
     }
 }

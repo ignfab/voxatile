@@ -38,20 +38,31 @@ public class HttpTrustAllSSL extends X509ExtendedTrustManager {
         return new X509Certificate[0];
     }
 
+    private static SSLContext context;
+
     /**
-     * Disable SSL checks by applying a trust-all policy.
+     * {@return an all-trusting SSL context}
+     */
+    public static SSLContext getContext() {
+        if (context != null)
+            return context;
+        try {
+            TrustManager[] trustAllCerts = { new HttpTrustAllSSL() };
+            context = SSLContext.getInstance("SSL");
+            context.init(null, trustAllCerts, new SecureRandom());
+            return context;
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            throw new RuntimeException("Unable to create all-trusting policy", e);
+        }
+    }
+
+    /**
+     * Disables SSL checks by applying a trust-all policy.
      */
     public static void applyGlobally() {
-        try {
-            // Create & install the all-trusting trust manager
-            TrustManager[] trustAllCerts = { new HttpTrustAllSSL() };
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            // Create & install the all-trusting host verifier
-            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            throw new RuntimeException("Unable to apply all-trusting policy", e);
-        }
+        // Create & install the all-trusting trust manager
+        HttpsURLConnection.setDefaultSSLSocketFactory(getContext().getSocketFactory());
+        // Create & install the all-trusting host verifier
+        HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
     }
 }

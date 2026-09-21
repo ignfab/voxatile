@@ -2,6 +2,8 @@ package com.ignfab.minalac.generator.fetchers;
 
 import java.io.InputStream;
 
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
@@ -10,6 +12,11 @@ public interface Fetcher {
     FetchResult fetch(WorldBBox3d bbox) throws RetryableException, GenerationFailedException;
 
     interface FetchResult {
+        /**
+         * {@return the coordinate reference system of fetched data, or {@code null} if unknown}
+         */
+        CoordinateReferenceSystem crs();
+
         /**
          * Tells if more results are available for iteration.
          *
@@ -40,6 +47,11 @@ public interface Fetcher {
         }
 
         protected abstract InputStream modify(InputStream stream) throws GenerationFailedException, RetryableException;
+
+        @Override
+        public CoordinateReferenceSystem crs() {
+            return delegate.crs();
+        }
 
         @Override
         public boolean hasNext() throws GenerationFailedException, RetryableException {

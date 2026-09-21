@@ -17,6 +17,9 @@ import com.ignfab.minalac.generator.modules.luanti.LuantiOutputModule;
 import com.ignfab.minalac.generator.modules.minecraft.MinecraftOutputModule;
 import com.ignfab.minalac.generator.parameters.ParamsParser;
 import com.ignfab.minalac.generator.parameters.ParseException;
+import com.ignfab.minalac.generator.parameters.fetchers.FileFetcherParams;
+import com.ignfab.minalac.generator.parameters.fetchers.StringReplacementFetcherParams;
+import com.ignfab.minalac.generator.parameters.fetchers.WFSFetcherParams;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.OsmProcessorParams;
@@ -30,11 +33,11 @@ import com.ignfab.minalac.generator.parameters.processors.post.MetadataParsePost
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataSetPostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataTruncatePostProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.post.MetadataValueMappingPostProcessorParams;
+import com.ignfab.minalac.generator.parameters.providers.GMLProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.GeoTiffProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.OverpassProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams;
-import com.ignfab.minalac.generator.parameters.providers.WFSProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.CopyHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
@@ -118,6 +121,8 @@ public final class Voxatile {
 
         // TODO: Static method that provides a ParamsParser with all default renderers
         // If those name values are modified, update the documentation accordingly
+
+        // Tasks
         parser.registerParams("noOperation", NoOperationTaskParams.class);
         parser.registerParams("sequence", SequenceTaskParams.class);
         parser.registerParams("schedule", ScheduleTaskParams.class);
@@ -135,17 +140,25 @@ public final class Voxatile {
         parser.registerParams("renderPoints2d", RenderPoints2dTaskParams.class);
         parser.registerParams("setSpawn", SetSpawnTaskParams.class);
 
-        parser.registerParams("wfs", WFSProviderParams.class);
+        // Fetchers
+        parser.registerParams("wfs", WFSFetcherParams.class);
+        parser.registerParams("file", FileFetcherParams.class);
+        parser.registerParams("stringReplacement", StringReplacementFetcherParams.class);
+
+        // Providers
+        parser.registerParams("gml", GMLProviderParams.class);
         parser.registerParams("gpkg", GeoPackageProviderParams.class);
         parser.registerParams("shapefile", ShapefileProviderParams.class);
         parser.registerParams("wmsFloat", WMSFloatBilProviderParams.class);
         parser.registerParams("geotiff", GeoTiffProviderParams.class);
         parser.registerParams("overpass", OverpassProviderParams.class);
 
+        // Processors
         parser.registerParams("floatMatrix", FloatMatrixProcessorParams.class);
         parser.registerParams("geoToolsVector", GeoToolsVectorProcessorParams.class);
         parser.registerParams("osm", OsmProcessorParams.class);
 
+        // Post-processors
         parser.registerParams("identity", IdentityPostProcessorParams.class);
         parser.registerParams("discard", DiscardPostProcessorParams.class);
         parser.registerParams("conditional", ConditionalPostProcessorParams.class);
@@ -157,6 +170,7 @@ public final class Voxatile {
         parser.registerParams("geometryBuffer", JTSGeometryBufferPostProcessorParams.class);
         parser.registerParams("remap", MetadataValueMappingPostProcessorParams.class);
 
+        // Modules
         modules.registerParams(parser);
 
         Generation generation = parser.parse(parameters).create(destination, maxTileSize);

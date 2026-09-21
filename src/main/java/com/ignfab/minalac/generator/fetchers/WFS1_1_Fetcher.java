@@ -2,7 +2,8 @@ package com.ignfab.minalac.generator.fetchers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.http.HttpResponse;
 import java.util.NoSuchElementException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -27,11 +28,10 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
  * Fetcher using WFS 1.1.
  */
 @SuppressWarnings("checkstyle:TypeName") // Underscore character used to better identify "WFS 1.1"
-public class WFS1_1_Fetcher implements Fetcher {
+public class WFS1_1_Fetcher extends HttpFetcher {
     private static final String SERVICE = "WFS";
     private static final String VERSION = "2.0.0";
 
-    private final ParameterizedURL url;
     private final CoordinateReferenceSystem crs;
     private final EnvelopeProvider envelopeProvider;
     private final int maxFeaturePerQuery;
@@ -40,6 +40,7 @@ public class WFS1_1_Fetcher implements Fetcher {
     /**
      * Constructs a new {@code WFS1_1_Fetcher}.
      *
+     * @param init HTTP init info for parent class
      * @param baseURL the base URL
      * @param type Name of the WFS feature type to query
      * @param crs coordinate reference system to use for this source
@@ -48,23 +49,28 @@ public class WFS1_1_Fetcher implements Fetcher {
      *
      * @throws IllegalArgumentException if SRS name could not be retrieved from envelope.
      */
-    public WFS1_1_Fetcher(String baseURL, String type, CoordinateReferenceSystem crs, EnvelopeProvider envelopeProvider, int maxFeaturePerQuery) {
-        this.maxFeaturePerQuery = maxFeaturePerQuery;
-        this.crs = crs;
-        this.envelopeProvider = envelopeProvider;
-
-        srsName = CRS.toSRS(crs);
-        if (srsName == null)
-            throw new IllegalArgumentException("Could not retrieve SRS name for layer");
-
-        url = ParameterizedURL.base(baseURL)
+    public WFS1_1_Fetcher(
+        HttpInit init,
+        String baseURL,
+        String type,
+        CoordinateReferenceSystem crs,
+        EnvelopeProvider envelopeProvider,
+        int maxFeaturePerQuery
+    ) {
+        super(init, ParameterizedURL.base(baseURL)
             .parameter("SERVICE", SERVICE)
             .parameter("VERSION", VERSION)
             .parameter("REQUEST", "GetFeature")
             .parameter("OUTPUTFORMAT", "gml3")
             .parameter("TYPENAMES", type)
-            .parameter("SRSNAME", srsName)
-            .build();
+            .build());
+        this.crs = crs;
+        this.envelopeProvider = envelopeProvider;
+        this.maxFeaturePerQuery = maxFeaturePerQuery;
+
+        srsName = CRS.toSRS(crs);
+        if (srsName == null)
+            throw new IllegalArgumentException("Could not retrieve SRS name for layer");
     }
 
     @Override
@@ -76,55 +82,45 @@ public class WFS1_1_Fetcher implements Fetcher {
             throw new GenerationFailedException(e);
         }
 
-        ParameterizedURL url = this.url.builder()
+        ParameterizedURL url = baseURL.builder()
             .parameter("BBOX", envelope.getMinX()
                 + "," + envelope.getMinY()
                 + "," + envelope.getMaxX()
                 + "," + envelope.getMaxY()
                 + "," + srsName)
+            .parameter("SRSNAME", srsName)
             .build();
 
         // First we need to know total feature count
-        int count;
-        InputStream stream;
+        HttpResponse<InputStream> response;
         try {
-            stream = url.builder()
+            response = executeGet(url.builder()
                 .parameter("resultType", "hits")
-                .buildURL().openStream(); // TODO Replace with an HTTP requesting tool to allow unit testing and snapshots
-        } catch (MalformedURLException e) {
+                .buildURI());
+        } catch (URISyntaxException e) {
             throw new GenerationFailedException("Invalid URL for layer", e);
-        } catch (IOException e) {
-            throw new RetryableException("Error opening connection", e);
         }
 
-        SAXParserFactory factory = SAXParserFactory.newInstance();
-        factory.setValidating(true);
-        GetHitsHandler handler = new GetHitsHandler();
-        try {
-            SAXParser saxParser = factory.newSAXParser();
-            saxParser.parse(stream, handler);
-            count = handler.getCount();
-        } catch (SAXException | IOException e) {
-            throw new RetryableException(e);
-        } catch (ParserConfigurationException e) {
-            throw new GenerationFailedException(e);
-        }
+        int count = decodeGetHitsResponse(response.body());
 
         // Then we give hand to `WFSResult` class for the rest.
-        return new WFSResult(url, count, maxFeaturePerQuery);
+        return new WFSResult(url, count);
     }
 
-    private static class WFSResult implements FetchResult {
+    private class WFSResult implements FetchResult {
         private final ParameterizedURL url;
         private final int total;
-        private final int count;
         private int startIndex;
 
-        WFSResult(ParameterizedURL url, int total, int maxFeaturePerQuery) {
+        WFSResult(ParameterizedURL url, int total) {
             this.url = url;
             this.total = total;
-            count = maxFeaturePerQuery;
             startIndex = 0;
+        }
+
+        @Override
+        public CoordinateReferenceSystem crs() {
+            return crs;
         }
 
         @Override
@@ -132,27 +128,39 @@ public class WFS1_1_Fetcher implements Fetcher {
             if (startIndex >= total)
                 throw new NoSuchElementException("No more elements!");
 
-            InputStream stream;
-
+            HttpResponse<InputStream> response;
             try {
-                stream = url.builder()
+                response = executeGet(url.builder()
                     .parameter("STARTINDEX", startIndex)
-                    .parameter("COUNT", count)
-                    .buildURL().openStream(); // TODO Replace with an HTTP requesting tool to allow unit testing and snapshots
-            } catch (MalformedURLException e) {
+                    .parameter("COUNT", maxFeaturePerQuery)
+                    .buildURI());
+            } catch (URISyntaxException e) {
                 throw new GenerationFailedException("Invalid URL for layer", e);
-            } catch (IOException e) {
-                throw new RetryableException("Error opening WFS connection", e);
             }
 
-            startIndex += count;
+            startIndex += maxFeaturePerQuery;
 
-            return stream;
+            return response.body();
         }
 
         @Override
         public boolean hasNext() {
             return startIndex < total;
+        }
+    }
+
+    private static int decodeGetHitsResponse(InputStream stream) throws GenerationFailedException, RetryableException {
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setValidating(true);
+        GetHitsHandler handler = new GetHitsHandler();
+        try {
+            SAXParser saxParser = factory.newSAXParser();
+            saxParser.parse(stream, handler);
+            return handler.getCount();
+        } catch (SAXException | IOException e) {
+            throw new RetryableException(e);
+        } catch (ParserConfigurationException e) {
+            throw new GenerationFailedException(e);
         }
     }
 

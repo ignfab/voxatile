@@ -14,6 +14,7 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.gml2.FeatureTypeCache;
 import org.geotools.xsd.Parser;
 import org.geotools.xsd.impl.ParserHandler.ContextCustomizer;
+import org.locationtech.jts.geom.Geometry;
 import org.picocontainer.MutablePicoContainer;
 import org.xml.sax.SAXException;
 
@@ -28,17 +29,14 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 @SuppressWarnings("checkstyle:TypeName") // Underscore character used to better identify "GML 3.1"
 public class GML3_1_Provider implements Provider<SimpleFeature> {
     private final Fetcher fetcher;
-    private final CoordinateReferenceSystem crs;
 
     /**
      * Constructs a new {@code GML3_1_Provider}.
      *
      * @param fetcher fetcher to use to get GML-encoded data
-     * @param crs coordinate reference system to use for this source
      */
-    public GML3_1_Provider(Fetcher fetcher, CoordinateReferenceSystem crs) {
+    public GML3_1_Provider(Fetcher fetcher) {
         this.fetcher = fetcher;
-        this.crs = crs;
     }
 
     @Override
@@ -48,18 +46,27 @@ public class GML3_1_Provider implements Provider<SimpleFeature> {
 
     @Override
     public Result<SimpleFeature> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
-        return new GMLResult(fetcher.fetch(bbox), crs);
+        return new GMLResult(fetcher.fetch(bbox));
     }
 
     private static class GMLResult implements Result<SimpleFeature> {
         private final Fetcher.FetchResult fetchResult;
         private final CoordinateReferenceSystem crs;
-        private SimpleFeatureIterator iterator;
+        private SimpleFeatureIterator iterator = null;
+        private SimpleFeature forcedNext = null;
 
-        GMLResult(Fetcher.FetchResult fetchResult, CoordinateReferenceSystem crs) {
+        GMLResult(Fetcher.FetchResult fetchResult) throws GenerationFailedException, RetryableException {
             this.fetchResult = fetchResult;
-            this.crs = crs;
-            iterator = null;
+            crs = fetchResult.crs() == null ? findCRS() : fetchResult.crs();
+        }
+
+        private CoordinateReferenceSystem findCRS() throws GenerationFailedException, RetryableException {
+            if (hasNext()) {
+                forcedNext = next();
+                if (forcedNext.getDefaultGeometry() instanceof Geometry geom && geom.getUserData() instanceof CoordinateReferenceSystem geomCrs)
+                    return geomCrs;
+            }
+            throw new GenerationFailedException("Unable to retrieve CRS");
         }
 
         @Override
@@ -74,15 +81,14 @@ public class GML3_1_Provider implements Provider<SimpleFeature> {
             }
         }
 
-        private void nextIterator() throws RetryableException, GenerationFailedException {
+        private void nextIterator() throws GenerationFailedException, RetryableException {
             closeCurrentIterator();
             if (!fetchResult.hasNext())
                 return;
 
-            InputStream stream = fetchResult.next();
-            try {
+            try (InputStream stream = fetchResult.next()) {
                 // This is the "clean but not working" (see below) way to do things:
-                // SimpleFeatureCollection collection = new GML(GML.Version.GML3).decodeFeatureCollection(replacedStream);
+                // SimpleFeatureCollection collection = new GML(GML.Version.GML3).decodeFeatureCollection(stream);
 
                 // This is the "dirty but working" way:
                 SimpleFeatureCollection collection = decodeFeatureCollection(stream);
@@ -96,7 +102,10 @@ public class GML3_1_Provider implements Provider<SimpleFeature> {
         }
 
         @Override
-        public boolean hasNext() throws RetryableException, GenerationFailedException {
+        public boolean hasNext() throws GenerationFailedException, RetryableException {
+            if (forcedNext != null)
+                return true;
+
             if (iterator == null || !iterator.hasNext())
                 nextIterator();
 
@@ -104,7 +113,13 @@ public class GML3_1_Provider implements Provider<SimpleFeature> {
         }
 
         @Override
-        public SimpleFeature next() throws RetryableException, GenerationFailedException {
+        public SimpleFeature next() throws GenerationFailedException, RetryableException {
+            if (forcedNext != null) {
+                SimpleFeature next = forcedNext;
+                forcedNext = null;
+                return next;
+            }
+
             if (!hasNext())
                 throw new NoSuchElementException("No more elements!");
 
@@ -114,6 +129,7 @@ public class GML3_1_Provider implements Provider<SimpleFeature> {
         @Override
         public void close() {
             closeCurrentIterator();
+            forcedNext = null;
         }
     }
 
