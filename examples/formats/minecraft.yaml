@@ -10,7 +10,7 @@ references:
   - &voxel-forest-ground minecraft:podzol
   - &road-paint minecraft:white_concrete
   - &road-tar minecraft:black_concrete
-  - &path minecraft:grass_path
+  - &path minecraft:dirt_path
   - &forest-grass minecraft:fern
   - &forest-tree1
     structure:
