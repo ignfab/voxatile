@@ -1,0 +1,9 @@
+worldName: Les 3 frontieres - OME2
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 49.546362045180494 
+    longitude: 5.818680636660437
+  extentX: 2000
+  extentY: 2000
