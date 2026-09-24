@@ -1,0 +1,160 @@
+heightmaps:
+  ground:
+    default: 0
+  water:
+    default: 0
+
+forEachTile:
+
+  altitude:
+    type: sequence
+    models:
+      type: altitude
+    do:
+    - type: fetchData
+      modelType: altitude
+      provider:
+        type: geotiff
+        filePath: data/eurodem.tif
+    - type: populateHeightmap
+      heightmap: ground
+    - type: setSpawn
+      heightmap:
+        sum: [ground, 1]
+      x: 0
+      y: 0
+    - type: renderHeightmap
+      at: ground
+      place:
+        structure:
+          - place: *voxel-grass
+            at: [0, 0, 0]
+          - place: *voxel-dirt
+            at: [0, 0, -3..-1]
+          - place: *voxel-stone
+            at: [0, 0, -20..-4]
+
+  water:
+    after: altitude
+    type: sequence
+    do:
+    - type: fetchData
+      modelType: water
+      provider:
+        type: wfs
+        url: https://www.mapsforeurope.org/maps/wfs
+        features: ome:hvlsp_wfs_hy_watercourse
+        token: 
+      retry: 3
+    - type: fetchData
+      modelType: water_area
+      provider:
+        type: wfs
+        url: https://www.mapsforeurope.org/maps/wfs
+        features: ome:hvlsp_wfs_hy_watercourse_area
+        token: 
+      retry: 3
+    - type: copyHeightmap
+      models:
+        type: water
+      from:
+        localMin: ground
+        range: 9
+      to: ground
+    - type: copyHeightmap
+      models:
+        type: water
+      from: 1
+      to: water
+    - type: copyHeightmap
+      models:
+        type: water_area
+      from: 1
+      to: water
+    # Depth grows with the distance from the bank.
+    - type: copyHeightmap
+      models:
+        type: water
+      from:
+        remap:
+          manhattan: water
+        mapping:
+          0: 0
+          1: 1
+          2: 2
+          3..3: 3
+          4..6: 4
+          7..10: 5
+      to: water
+    - type: copyHeightmap
+      models:
+        type: water_area
+      from:
+        remap:
+          manhattan: water
+        mapping:
+          0: 0
+          1: 1
+          2: 2
+          3..3: 3
+          4..6: 4
+          7..10: 5
+      to: water
+    - type: renderHeightmap
+      minimum:
+        sum:
+          - ground
+          - 1
+          - product: [-1, water]
+      maximum:
+        sum:
+          - ground
+          - -1
+      place:
+        structure:
+          - place: *voxel-water
+            at: [ 0, 0, 0 ]
+          # This a dirt fix to remove vegetation on water
+          - place: *voxel-air
+            at: [ 0, 0, 1..12 ]
+
+  road:
+    after: altitude
+    type: sequence
+    models:
+      type: road
+    do:
+    - type: fetchData
+      modelType: road
+      provider:
+        type: wfs
+        url: https://www.mapsforeurope.org/maps/wfs
+        features: ome:hvlsp_wfs_tn_road
+        token: 
+      retry: 3
+    - type: renderLines2d
+      structure:
+        # Road border lines and air to clean eventual voxels (sectional view)
+        axes: [ z, y ]
+        blueprint:
+          - "·········"
+          - "·········"
+          - "█·······█"
+        with:
+          "█": *road-paint
+          "·": *voxel-air
+      heightmap: ground
+    - type: renderLines2d
+      structure:
+        # Road central line and tar (view from above)
+        axes: [ x, y ]
+        blueprint:
+          - "░░░█░░░"
+          - "░░░█░░░"
+          - "░░░█░░░"
+          - "░░░░░░░"
+          - "░░░░░░░"
+        with:
+          "█": *road-paint
+          "░": *road-tar
+      heightmap: ground
