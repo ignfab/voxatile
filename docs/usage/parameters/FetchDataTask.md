@@ -89,6 +89,7 @@ Provider of type `wfs` fetches vector data from a [Web Feature Service](https://
 - `features` (required): Name of WFS feature type to fetch
 - `crs` (optional): Wanted CRS for these features (defaults to target CRS)
 - `maxFeaturesPerQuery` (optional): Maximum number of features fetched per query (default 1000)
+- `token` (optional): Token for authentication.
 
 **Default processor**: `geoToolsVector`
 
