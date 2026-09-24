@@ -34,6 +34,7 @@ import fr.ign.voxatile.core.parameters.providers.OverpassProviderParams;
 import fr.ign.voxatile.core.parameters.providers.ShapefileProviderParams;
 import fr.ign.voxatile.core.parameters.providers.WFSProviderParams;
 import fr.ign.voxatile.core.parameters.providers.WMSFloatBilProviderParams;
+import fr.ign.voxatile.core.parameters.providers.XYZTilesProviderParams;
 import fr.ign.voxatile.core.parameters.tasks.BuildLayoutTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.CopyHeightmapTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.FetchDataTaskParams;
@@ -139,6 +140,7 @@ public final class Voxatile {
         parser.registerParams("renderFacades", RenderFacadesTaskParams.class);
         parser.registerParams("buildLayout", BuildLayoutTaskParams.class);
 
+        parser.registerParams("xyz", XYZTilesProviderParams.class);
         parser.registerParams("wfs", WFSProviderParams.class);
         parser.registerParams("gpkg", GeoPackageProviderParams.class);
         parser.registerParams("shapefile", ShapefileProviderParams.class);
