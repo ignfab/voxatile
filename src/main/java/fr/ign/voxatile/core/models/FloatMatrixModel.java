@@ -35,8 +35,8 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
 
         this.data = data;
 
-        double maxX = data.offsetX() + data.sizeX() * data.cellSizeX() - 1.0;
-        double maxY = data.offsetY() + data.sizeY() * data.cellSizeY() - 1.0;
+        double maxX = data.offsetX() + (data.sizeX() - 1) * data.cellSizeX();
+        double maxY = data.offsetY() + (data.sizeY() - 1) * data.cellSizeY();
 
         this.bbox = new WorldBBox2d(
             mapToWorld.convert(new MapCoordinates(data.offsetX(), data.offsetY())),
@@ -63,8 +63,8 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
         }
 
         // We interpolate between cell centers (not cell upper left corner)
-        float x = (float) ((coordinates.x() + 0.5 - data.offsetX()) / data.cellSizeX() - 0.5);
-        float y = (float) ((coordinates.y() + 0.5 - data.offsetY()) / data.cellSizeY() - 0.5);
+        float x = (float) ((coordinates.x() - data.offsetX()) / data.cellSizeX());
+        float y = (float) ((coordinates.y() - data.offsetY()) / data.cellSizeY());
 
         // Using separate ceil & floor allows a good management of integer coordinates
         int xf = (int) Math.floor(x);
