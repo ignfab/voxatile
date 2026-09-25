@@ -1,5 +1,7 @@
 package com.ignfab.minalac.generator.parameters;
 
+import java.awt.Color;
+
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.StreamReadFeature;
 import tools.jackson.databind.DeserializationFeature;
@@ -114,6 +116,7 @@ public class ParamsParser {
 
         @Override
         public void setupModule(SetupContext context) {
+            addDeserializer(Color.class, new ColorDeserializer());
             super.setupModule(context);
             context.addDeserializerModifier(new JsonDelegateDeserialize.BeanModifier());
             context.addDeserializerModifier(new JsonWrapper.BeanModifier());

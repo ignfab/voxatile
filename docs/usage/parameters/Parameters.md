@@ -14,10 +14,12 @@ Generator makes a heavy use of parameters. Generation is described in Yaml (or J
 Only root Yaml parameters are described here. More specific aspects could be found in these other files:
 
 * [FetchDataTask.md](FetchDataTask.md): Description of tasks for fetching data (see [TileTasks.md](TileTasks.md)).
+* [Minimap.md](Minimap.md).
 * [Heightmaps.md](Heightmaps.md): Declaration and usage of heightmaps.
 * [ModelSelection.md](ModelSelection.md): Selection of models (see [TileTasks.md](TileTasks.md)).
 * [ModelValues.md](ModelValues.md): Dynamic numeric values computed from models (see [TileTasks.md](TileTasks.md)).
 * [Placeables.md](Placeables.md): Description of things that can be placed in resulting world (see [TileTasks.md](TileTasks.md)).
+* [Tasks.md](Tasks.md): Tasks that are executes anywhere.
 * [TileTasks.md](TileTasks.md): Tasks that can be run on a generation tile.
 
 ## Example
@@ -34,6 +36,10 @@ references:
         at: [ 0, 0, 0 ]
       - put: default:dirt
         at: [ 0, 0, -10..-1 ]
+
+minimaps:
+  world: {}
+
 area:
   center:
     latitude: 48.845
@@ -98,6 +104,7 @@ forEachTile:
 
 - `worldName`: World name (text, default `Minalac`)
 - `references`: Ignored field where references (or other content) can be put in
+- `minimaps`: [Minimaps](Minimap.md) to be created and accessible throughout the generation
 - `area`: Area to be rendered
   - `center`: Coordinates of the area's center point, expressed in the commonly used coordinate system (EPSG:4326)
     - `latitude`: latitude in decimal degrees

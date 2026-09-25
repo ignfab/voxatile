@@ -11,9 +11,9 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
-import com.ignfab.minalac.generator.placeables.Placeable;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
+import com.ignfab.minalac.generator.world.Voxel;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
@@ -129,13 +129,13 @@ public class MinecraftVoxelTile extends VoxelTile {
 
     /**
      * {@inheritDoc}
-     * The returned voxel is not necessarily one placed using {@link Placeable#place}.
+     * The returned voxel is not necessarily one placed using {@link Voxel#place}.
      * It may be an air block created when the world is initialized.
      * <p>
      * If you try to get a voxel outside the tile limits, it will return {@link MinecraftVoxel#DEFAULT_VOXEL}.
      */
     @Override
-    public Placeable getVoxel(int x, int y, int z) {
+    public Voxel getVoxel(int x, int y, int z) {
         // (World coords to In-Game coords) X/Y/Z => X/Z/-Y-1
         int blockX = x;
         int blockY = z;

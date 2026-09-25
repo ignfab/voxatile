@@ -7,14 +7,14 @@ import java.util.Objects;
 import io.github.ensgijs.nbt.tag.CompoundTag;
 import io.github.ensgijs.nbt.tag.StringTag;
 
-import com.ignfab.minalac.generator.placeables.Placeable;
+import com.ignfab.minalac.generator.world.Voxel;
 import com.ignfab.minalac.generator.world.VoxelTile;
 
 /**
- * {@code MinecraftVoxel} class implements a {@link Placeable} voxel for Minecraft.
+ * {@code MinecraftVoxel} class implements a {@link Voxel} for Minecraft.
  * A voxel in Minecraft, known as block, consists of two parameters: type and state properties.
  */
-public class MinecraftVoxel implements Placeable {
+public class MinecraftVoxel implements Voxel {
     private final String type;
     private final Map<String, String> properties;
 
@@ -59,6 +59,11 @@ public class MinecraftVoxel implements Placeable {
      */
     public Map<String, String> properties() {
         return properties;
+    }
+
+    @Override
+    public String getTypeIdentifier() {
+        return type;
     }
 
     @Override
