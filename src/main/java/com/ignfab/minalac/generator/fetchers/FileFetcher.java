@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.List;
 
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
@@ -13,18 +12,18 @@ import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
-public class FileFetcher implements Fetcher {
-    private final List<File> files;
-    private final CoordinateReferenceSystem crs;
+public abstract class FileFetcher implements Fetcher {
+    private final CoordinateReferenceSystem crsOverride;
 
-    public FileFetcher(List<File> files, CoordinateReferenceSystem crs) {
-        this.files = files;
-        this.crs = crs;
+    public FileFetcher(CoordinateReferenceSystem crsOverride) {
+        this.crsOverride = crsOverride;
     }
+
+    protected abstract Iterator<File> files(WorldBBox3d bbox);
 
     @Override
     public FetchResult fetch(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
-        return new FileResult(files.iterator(), crs);
+        return new FileResult(files(bbox), crsOverride);
     }
 
     private record FileResult(Iterator<File> iterator, CoordinateReferenceSystem crsHint) implements FetchResult {

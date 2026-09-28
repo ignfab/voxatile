@@ -12,7 +12,7 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
 
 import com.ignfab.minalac.generator.fetchers.Fetcher;
-import com.ignfab.minalac.generator.fetchers.FileFetcher;
+import com.ignfab.minalac.generator.fetchers.StaticFileFetcher;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.utils.FileHelpers;
 
@@ -54,6 +54,6 @@ public class FileFetcherParams extends FetcherParams {
             }
         }
 
-        return new FileFetcher(files, crs);
+        return new StaticFileFetcher(files, crs);
     }
 }

@@ -2,6 +2,7 @@ package com.ignfab.minalac.generator.parameters.providers;
 
 import java.beans.ConstructorProperties;
 import java.io.File;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -9,6 +10,7 @@ import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
 
+import com.ignfab.minalac.generator.fetchers.StaticFileFetcher;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.geodata.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
@@ -62,7 +64,7 @@ public class GeoTiffProviderParams extends ProviderParams {
         if (!FileHelpers.isReadableRegularFile(file))
             throw new IllegalArgumentException("File \"%s\" does not exist".formatted(file.getAbsolutePath()));
 
-        return new GeoTiffDataProvider(file, crsOverride, generation::getEnvelopeForCRS);
+        return new GeoTiffDataProvider(new StaticFileFetcher(List.of(file), crsOverride), generation::getEnvelopeForCRS);
     }
 
     @Override

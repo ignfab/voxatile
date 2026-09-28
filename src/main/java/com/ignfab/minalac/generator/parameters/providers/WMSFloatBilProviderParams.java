@@ -1,17 +1,21 @@
 package com.ignfab.minalac.generator.parameters.providers;
 
 import java.beans.ConstructorProperties;
+import java.net.http.HttpClient;
+import java.util.Map;
 
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.referencing.CRS;
 
+import com.ignfab.minalac.generator.fetchers.HttpFetcher;
+import com.ignfab.minalac.generator.fetchers.WMSFetcher;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.geodata.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.ProcessorParams;
+import com.ignfab.minalac.generator.providers.GeoTiffDataProvider;
 import com.ignfab.minalac.generator.providers.Provider;
-import com.ignfab.minalac.generator.providers.WMSFloatBilDataProvider;
 
 /**
  * Parameters for WMS float providers.
@@ -56,7 +60,13 @@ public class WMSFloatBilProviderParams extends ProviderParams {
         else
             layerCrs = generation.crs();
 
-        return new WMSFloatBilDataProvider(url, layer, layerCrs, generation::getEnvelopeForCRS);
+        return new GeoTiffDataProvider(new WMSFetcher(
+            new HttpFetcher.HttpInit(HttpClient.newHttpClient(), Map.of(), Map.of()),
+            url,
+            layer,
+            layerCrs,
+            generation::getEnvelopeForCRS
+        ), generation::getEnvelopeForCRS);
     }
 
     @Override

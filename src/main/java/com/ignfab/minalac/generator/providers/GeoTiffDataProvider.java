@@ -1,6 +1,5 @@
 package com.ignfab.minalac.generator.providers;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.imagen.iterator.RandomIter;
@@ -16,30 +15,27 @@ import org.geotools.util.factory.Hints;
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.RetryableException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.fetchers.Fetcher;
 import com.ignfab.minalac.generator.geodata.FloatGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.geodata.FloatImageGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.utils.coordinates.EnvelopeProvider;
-import com.ignfab.minalac.generator.utils.iterator.Iterators;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * Data provider for GeoTiff files (raster data).
  */
 public class GeoTiffDataProvider implements Provider<FloatGeographicDataMatrix2d> {
-    private final File file;
-    private final CoordinateReferenceSystem crsOverride;
+    private final Fetcher fetcher;
     private final EnvelopeProvider envelopeProvider;
 
     /**
      * Creates a new {@code GeoTiffDataProvider}.
      *
-     * @param file the GeoTiff file
-     * @param crsOverride the CRS to use regardless of one found in data.
+     * @param fetcher the fetcher for GeoTiff data
      * @param envelopeProvider function to use to compute envelopes from bounding boxes
      */
-    public GeoTiffDataProvider(File file, CoordinateReferenceSystem crsOverride, EnvelopeProvider envelopeProvider) {
-        this.file = file;
-        this.crsOverride = crsOverride;
+    public GeoTiffDataProvider(Fetcher fetcher, EnvelopeProvider envelopeProvider) {
+        this.fetcher = fetcher;
         this.envelopeProvider = envelopeProvider;
     }
 
@@ -50,42 +46,99 @@ public class GeoTiffDataProvider implements Provider<FloatGeographicDataMatrix2d
 
     @Override
     public Provider.Result<FloatGeographicDataMatrix2d> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
-        GridCoverage2D grid;
-        try {
-            // This hint must remain enabled
-            Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, true);
-            if (crsOverride != null)
-                hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crsOverride);
-            grid = new GeoTiffReader(file, hints).read();
-        } catch (IOException e) {
-            throw new RetryableException(e);
+        Fetcher.FetchResult result = fetcher.fetch(bbox);
+
+        // This hint must remain enabled
+        Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, true);
+        if (result.crsHint() != null)
+            hints.put(Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, result.crsHint());
+
+        return new GeoTiffResult(result, hints, bbox);
+    }
+
+    private class GeoTiffResult implements Result<FloatGeographicDataMatrix2d> {
+        private final Fetcher.FetchResult fetchResult;
+        private final Hints hints;
+        private final WorldBBox3d bbox;
+        private final CoordinateReferenceSystem crs;
+        private GridCoverage2D prefetched = null;
+
+        private GeoTiffResult(Fetcher.FetchResult fetchResult, Hints hints, WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
+            this.fetchResult = fetchResult;
+            this.hints = hints;
+            this.bbox = bbox;
+            crs = findCRS(fetchResult.crsHint());
         }
-        CoordinateReferenceSystem crs = grid.getCoordinateReferenceSystem();
 
-        ReferencedEnvelope envelope;
-        GridEnvelope2D gridEnvelope;
-        try {
-            envelope = envelopeProvider.computeForCRS(crs, bbox).intersection(grid.getGridGeometry().getEnvelope2D());
-            gridEnvelope = grid.getGridGeometry().worldToGrid(envelope);
-        } catch (FactoryException | TransformException | org.geotools.api.referencing.operation.TransformException e) {
-            throw new GenerationFailedException(e);
+        private CoordinateReferenceSystem findCRS(CoordinateReferenceSystem crsHint) throws GenerationFailedException, RetryableException {
+            if (crsHint != null)
+                return crsHint;
+            if (hasNext()) {
+                prefetched = fetch();
+                return prefetched.getCoordinateReferenceSystem();
+            }
+            throw new GenerationFailedException("Unable to retrieve CRS");
         }
 
-        // RandomIter provides a view of the underlying image to read arbitrary pixel values
-        RandomIter data = RandomIterFactory.create(grid.getRenderedImage(), gridEnvelope);
+        @Override
+        public CoordinateReferenceSystem crs() {
+            return crs;
+        }
 
-        FloatGeographicDataMatrix2d result = new FloatImageGeographicDataMatrix2d(
-            data,
-            gridEnvelope.x,
-            gridEnvelope.y,
-            gridEnvelope.width,
-            gridEnvelope.height,
-            envelope.getMinX(),
-            envelope.getMinY(),
-            envelope.getWidth() / gridEnvelope.width,
-            envelope.getHeight() / gridEnvelope.height
-        );
+        @Override
+        public boolean hasNext() throws GenerationFailedException, RetryableException {
+            return prefetched != null || fetchResult.hasNext();
+        }
 
-        return new SimpleResult<>(crs, Iterators.iterator(result));
+        private GridCoverage2D fetch() throws GenerationFailedException, RetryableException {
+            if (prefetched != null) {
+                GridCoverage2D fetched = prefetched;
+                prefetched = null;
+                return fetched;
+            }
+
+            try {
+                return new GeoTiffReader(fetchResult.next(), hints).read();
+            } catch (IOException e) {
+                throw new RetryableException(e);
+            }
+        }
+
+        @Override
+        public FloatGeographicDataMatrix2d next() throws GenerationFailedException, RetryableException {
+            GridCoverage2D grid = fetch();
+            CoordinateReferenceSystem crs = grid.getCoordinateReferenceSystem();
+            if (crs != this.crs)
+                throw new GenerationFailedException("Mixed-CRS data returned from fetcher");
+
+            ReferencedEnvelope envelope;
+            GridEnvelope2D gridEnvelope;
+            try {
+                envelope = envelopeProvider.computeForCRS(crs, bbox).intersection(grid.getGridGeometry().getEnvelope2D());
+                gridEnvelope = grid.getGridGeometry().worldToGrid(envelope);
+            } catch (FactoryException | TransformException | org.geotools.api.referencing.operation.TransformException e) {
+                throw new GenerationFailedException(e);
+            }
+
+            // RandomIter provides a view of the underlying image to read arbitrary pixel values
+            RandomIter data = RandomIterFactory.create(grid.getRenderedImage(), gridEnvelope);
+
+            return new FloatImageGeographicDataMatrix2d(
+                data,
+                gridEnvelope.x,
+                gridEnvelope.y,
+                gridEnvelope.width,
+                gridEnvelope.height,
+                envelope.getMinX(),
+                envelope.getMinY(),
+                envelope.getWidth() / gridEnvelope.width,
+                envelope.getHeight() / gridEnvelope.height
+            );
+        }
+
+        @Override
+        public void close() {
+            // TODO Do we have something to close? Should input streams be closed sooner?
+        }
     }
 }
