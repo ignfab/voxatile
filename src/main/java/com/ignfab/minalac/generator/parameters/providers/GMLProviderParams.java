@@ -18,7 +18,7 @@ import com.ignfab.minalac.generator.providers.Provider;
  */
 public class GMLProviderParams extends ProviderParams {
     /**
-     * Fetcher to get data from.
+     * Fetcher to get data from (required).
      */
     @JsonSetter(nulls = Nulls.FAIL)
     public FetcherParams fetcher;

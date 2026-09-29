@@ -12,9 +12,11 @@ forEachTile:
     - type: fetchData
       modelType: altitude
       provider:
-        type: wmsFloat
-        url: https://data.geopf.fr/wms-r/wms
-        layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+        type: geotiff
+        fetcher:
+          type: wms
+          url: https://data.geopf.fr/wms-r/wms
+          layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
     - type: populateHeightmap
       models:
         type: altitude

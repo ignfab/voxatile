@@ -66,14 +66,15 @@ public class WFSFetcherParams extends HttpFetcherParams {
     @Override
     public Fetcher create(Generation generation) {
         CoordinateReferenceSystem layerCrs;
-        if (crs != null) {
+        if (crs == null)
+            layerCrs = generation.crs();
+        else {
             try {
                 layerCrs = CRS.decode(crs);
             } catch (FactoryException e) {
                 throw new IllegalArgumentException("CRS code \"%s\" is invalid".formatted(crs), e);
             }
-        } else
-            layerCrs = generation.crs();
+        }
 
         return new WFS1_1_Fetcher(createHttpInit(), url, features, layerCrs, generation::getEnvelopeForCRS, maxFeaturesPerQuery);
     }

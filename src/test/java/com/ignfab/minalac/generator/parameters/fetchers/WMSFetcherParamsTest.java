@@ -1,4 +1,4 @@
-package com.ignfab.minalac.generator.parameters.providers;
+package com.ignfab.minalac.generator.parameters.fetchers;
 
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.referencing.CRS;
@@ -9,13 +9,13 @@ import com.ignfab.minalac.generator.generation.TestingGeneration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class WMSFloatBilProviderParamsTest {
+public class WMSFetcherParamsTest {
     @Test
     public void testCreate() throws FactoryException {
         Generation generation = new TestingGeneration(CRS.decode("EPSG:2154"));
 
         // A simple OK test
-        WMSFloatBilProviderParams params = new WMSFloatBilProviderParams("https://example.org", "layer1");
+        WMSFetcherParams params = new WMSFetcherParams("https://example.org", "layer1");
         assertDoesNotThrow(() -> params.create(generation));
 
         // Wrong CRS test

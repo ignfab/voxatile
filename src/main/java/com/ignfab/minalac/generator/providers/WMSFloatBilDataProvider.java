@@ -24,7 +24,9 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 
 /**
  * Data provider for Web Map Service (raster data).
+ * @deprecated Replaced by {@link com.ignfab.minalac.generator.fetchers.WMSFetcher} and {@link GeoTiffProvider}
  */
+@Deprecated(forRemoval = true)
 public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatrix2d> {
     private static final String SERVICE = "WMS";
     private static final String VERSION = "1.3.0";

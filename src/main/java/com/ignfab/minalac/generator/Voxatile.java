@@ -7,8 +7,6 @@ import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.geotools.api.referencing.FactoryException;
-
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
 import com.ignfab.minalac.generator.generation.Generation;
@@ -20,6 +18,7 @@ import com.ignfab.minalac.generator.parameters.ParseException;
 import com.ignfab.minalac.generator.parameters.fetchers.FileFetcherParams;
 import com.ignfab.minalac.generator.parameters.fetchers.StringReplacementFetcherParams;
 import com.ignfab.minalac.generator.parameters.fetchers.WFSFetcherParams;
+import com.ignfab.minalac.generator.parameters.fetchers.WMSFetcherParams;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.GeoToolsVectorProcessorParams;
 import com.ignfab.minalac.generator.parameters.processors.OsmProcessorParams;
@@ -38,7 +37,6 @@ import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParam
 import com.ignfab.minalac.generator.parameters.providers.GeoTiffProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.OverpassProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams;
-import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.CopyHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.FillBetweenHeightmapAndValueTaskParams;
@@ -62,6 +60,7 @@ import com.ignfab.minalac.generator.utils.modules.ModulesManager;
 import com.ignfab.minalac.generator.utils.network.HttpTrustAllSSL;
 import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 import com.ignfab.minalac.generator.world.MapWriteException;
+import org.geotools.api.referencing.FactoryException;
 
 /**
  * Main class of Voxatile project.
@@ -142,6 +141,7 @@ public final class Voxatile {
 
         // Fetchers
         parser.registerParams("wfs", WFSFetcherParams.class);
+        parser.registerParams("wms", WMSFetcherParams.class);
         parser.registerParams("file", FileFetcherParams.class);
         parser.registerParams("stringReplacement", StringReplacementFetcherParams.class);
 
@@ -149,7 +149,6 @@ public final class Voxatile {
         parser.registerParams("gml", GMLProviderParams.class);
         parser.registerParams("gpkg", GeoPackageProviderParams.class);
         parser.registerParams("shapefile", ShapefileProviderParams.class);
-        parser.registerParams("wmsFloat", WMSFloatBilProviderParams.class);
         parser.registerParams("geotiff", GeoTiffProviderParams.class);
         parser.registerParams("overpass", OverpassProviderParams.class);
 
