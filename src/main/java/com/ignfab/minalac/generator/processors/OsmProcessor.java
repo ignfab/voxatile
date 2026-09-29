@@ -21,7 +21,7 @@ import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
  * Processor transforming {@code OsmData} into {@link JTSGeometryModel}.
  * It also copies OSM element tags into model's metadata.
  * <p>
- * This processor pairs well with {@link com.ignfab.minalac.generator.providers.OverpassProvider}.
+ * This processor pairs well with {@link com.ignfab.minalac.generator.providers.OsmXmlProvider}.
  */
 public class OsmProcessor implements Processor<OsmData, JTSGeometryModel> {
     private final MapToWorldConverter converter;

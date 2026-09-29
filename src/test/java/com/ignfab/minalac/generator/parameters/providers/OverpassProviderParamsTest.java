@@ -16,7 +16,7 @@ public class OverpassProviderParamsTest {
         Generation generation = new TestingGeneration(CRS.decode("EPSG:2154"));
 
         // A simple OK test
-        OverpassProviderParams params = new OverpassProviderParams("https://example.org", "feature1");
+        OsmXmlProviderParams params = new OsmXmlProviderParams("https://example.org", "feature1");
         assertDoesNotThrow(() -> params.create(generation));
     }
 }

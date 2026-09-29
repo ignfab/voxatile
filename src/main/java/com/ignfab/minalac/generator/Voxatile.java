@@ -18,6 +18,7 @@ import com.ignfab.minalac.generator.modules.minecraft.MinecraftOutputModule;
 import com.ignfab.minalac.generator.parameters.ParamsParser;
 import com.ignfab.minalac.generator.parameters.ParseException;
 import com.ignfab.minalac.generator.parameters.fetchers.FileFetcherParams;
+import com.ignfab.minalac.generator.parameters.fetchers.OverpassFetcherParams;
 import com.ignfab.minalac.generator.parameters.fetchers.StringReplacementFetcherParams;
 import com.ignfab.minalac.generator.parameters.fetchers.WFSFetcherParams;
 import com.ignfab.minalac.generator.parameters.processors.FloatMatrixProcessorParams;
@@ -36,7 +37,7 @@ import com.ignfab.minalac.generator.parameters.processors.post.MetadataValueMapp
 import com.ignfab.minalac.generator.parameters.providers.GMLProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.GeoTiffProviderParams;
-import com.ignfab.minalac.generator.parameters.providers.OverpassProviderParams;
+import com.ignfab.minalac.generator.parameters.providers.OsmXmlProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.CopyHeightmapTaskParams;
@@ -143,6 +144,7 @@ public final class Voxatile {
         // Fetchers
         parser.registerParams("wfs", WFSFetcherParams.class);
         parser.registerParams("file", FileFetcherParams.class);
+        parser.registerParams("overpass", OverpassFetcherParams.class);
         parser.registerParams("stringReplacement", StringReplacementFetcherParams.class);
 
         // Providers
@@ -151,7 +153,7 @@ public final class Voxatile {
         parser.registerParams("shapefile", ShapefileProviderParams.class);
         parser.registerParams("wmsFloat", WMSFloatBilProviderParams.class);
         parser.registerParams("geotiff", GeoTiffProviderParams.class);
-        parser.registerParams("overpass", OverpassProviderParams.class);
+        parser.registerParams("osmxml", OsmXmlProviderParams.class);
 
         // Processors
         parser.registerParams("floatMatrix", FloatMatrixProcessorParams.class);

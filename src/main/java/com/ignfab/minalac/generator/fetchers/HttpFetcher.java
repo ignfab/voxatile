@@ -46,6 +46,10 @@ public abstract class HttpFetcher implements Fetcher {
         return execute(HttpRequest.newBuilder().GET().uri(uri));
     }
 
+    protected final HttpResponse<InputStream> executePost(URI uri, String body) throws GenerationFailedException, RetryableException {
+        return execute(HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(body)).uri(uri));
+    }
+
     protected final HttpRequest.Builder addHeaders(HttpRequest.Builder request) {
         headers.forEach(request::header);
         return request;
