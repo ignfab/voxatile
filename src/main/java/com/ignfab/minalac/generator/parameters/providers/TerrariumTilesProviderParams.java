@@ -45,7 +45,6 @@ public class TerrariumTilesProviderParams extends ProviderParams {
         if (!url.contains("{z}") || !url.contains("{x}") || !url.contains("{y}"))
             throw new IllegalArgumentException("The url must carry the {z}, {x} and {y} placeholders, got \"%s\"".formatted(url));
 
-        // L'instanciation est grandement simplifiée
         return new XYZTilesProvider(url, zoom, generation::getEnvelopeForCRS);
     }
 

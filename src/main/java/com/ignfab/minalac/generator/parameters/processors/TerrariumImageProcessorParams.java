@@ -12,12 +12,6 @@ import com.ignfab.minalac.generator.processors.TerrariumImageProcessor;
 public class TerrariumImageProcessorParams extends ProcessorParams {
 @Override
     public Processor<BufferedImage, FloatMatrixModel> create(Generation generation) {
-        return new TerrariumImageProcessor(crs -> {
-            try {
-                return generation.makeCoordsConverter(crs);
-            } catch (org.geotools.api.referencing.FactoryException e) {
-                throw new RuntimeException("Failed to create coordinates converter", e);
-            }
-        });
+        return new TerrariumImageProcessor(generation::makeCoordsConverter);
     }
 }

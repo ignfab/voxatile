@@ -1,26 +1,21 @@
 package com.ignfab.minalac.generator.processors;
 
 import java.awt.image.BufferedImage;
-import java.util.function.Function;
-
-import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.IgnorableException;
 import com.ignfab.minalac.generator.inputs.FloatArrayGeographicDataMatrix2d;
 import com.ignfab.minalac.generator.models.FloatMatrixModel;
-import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
+import com.ignfab.minalac.generator.utils.coordinates.CoordsConverterProvider;
 
 /**
  * Processor transforming raw Terrarium images into a queryable elevation model.
  */
-public class TerrariumImageProcessor implements Processor<BufferedImage, FloatMatrixModel> {
+public class TerrariumImageProcessor extends ConvertingProcessor<BufferedImage, FloatMatrixModel> {
+    // private MapToWorldConverter converter;
 
-    private final Function<CoordinateReferenceSystem, MapToWorldConverter> converterFactory;
-    private MapToWorldConverter converter;
-
-    public TerrariumImageProcessor(Function<CoordinateReferenceSystem, MapToWorldConverter> converterFactory) {
-        this.converterFactory = converterFactory;
+    public TerrariumImageProcessor(CoordsConverterProvider converterFactory) {
+        super(converterFactory);
     }
 
     @Override
@@ -31,15 +26,6 @@ public class TerrariumImageProcessor implements Processor<BufferedImage, FloatMa
     @Override
     public Class<FloatMatrixModel> modelType() {
         return FloatMatrixModel.class;
-    }
-
-    @Override
-    public void initialize(CoordinateReferenceSystem layerCrs) throws GenerationFailedException {
-        try {
-            this.converter = converterFactory.apply(layerCrs);
-        } catch (Exception e) {
-            throw new GenerationFailedException("Failed to initialize coordinates converter", e);
-        }
     }
 
     @Override

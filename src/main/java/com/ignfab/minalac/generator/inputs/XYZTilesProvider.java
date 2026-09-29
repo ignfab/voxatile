@@ -31,7 +31,7 @@ public class XYZTilesProvider implements Provider<BufferedImage> {
     private final int zoom;
 
     /**
-     * Creates a new {@code XYZTilesDataProvider} instance.
+     * Creates a new {@code XYZTilesProvider} instance.
      *
      * @param urlTemplate the URL template for the XYZ tiles, with placeholders {z}, {x}, and {y}
      * @param zoom the zoom level for the tiles
@@ -63,7 +63,6 @@ public class XYZTilesProvider implements Provider<BufferedImage> {
 
         int minTileX = WebMercatorUtils.clamp((int) Math.floor(WebMercatorUtils.fractionalX(wgs84Envelope.getMinX(), zoom)), zoom);
         int maxTileX = WebMercatorUtils.clamp((int) Math.floor(WebMercatorUtils.fractionalX(wgs84Envelope.getMaxX(), zoom)), zoom);
-        
         int minTileY = WebMercatorUtils.clamp((int) Math.floor(WebMercatorUtils.fractionalY(wgs84Envelope.getMaxY(), zoom)), zoom); 
         int maxTileY = WebMercatorUtils.clamp((int) Math.floor(WebMercatorUtils.fractionalY(wgs84Envelope.getMinY(), zoom)), zoom);
 
