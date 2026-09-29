@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.parameters.fetchers;
 
+import java.beans.ConstructorProperties;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,11 @@ public class FileFetcherParams extends FetcherParams {
      */
     @JsonSetter(nulls = Nulls.SKIP)
     public String crsOverride;
+
+    @ConstructorProperties("files")
+    public FileFetcherParams(List<String> files) {
+        this.files = files;
+    }
 
     @Override
     public void validate() throws IllegalArgumentException {

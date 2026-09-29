@@ -11,6 +11,7 @@ import org.geotools.api.referencing.FactoryException;
 
 import com.ignfab.minalac.generator.exceptions.GenerationFailedException;
 import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.fetchers.WMSFetcherParams;
 import com.ignfab.minalac.generator.generation.Generation;
 import com.ignfab.minalac.generator.generation.GenerationTile;
 import com.ignfab.minalac.generator.modules.luanti.LuantiOutputModule;
@@ -38,7 +39,6 @@ import com.ignfab.minalac.generator.parameters.providers.GeoPackageProviderParam
 import com.ignfab.minalac.generator.parameters.providers.GeoTiffProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.OverpassProviderParams;
 import com.ignfab.minalac.generator.parameters.providers.ShapefileProviderParams;
-import com.ignfab.minalac.generator.parameters.providers.WMSFloatBilProviderParams;
 import com.ignfab.minalac.generator.parameters.tasks.CopyHeightmapTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.FetchDataTaskParams;
 import com.ignfab.minalac.generator.parameters.tasks.FillBetweenHeightmapAndValueTaskParams;
@@ -142,6 +142,7 @@ public final class Voxatile {
 
         // Fetchers
         parser.registerParams("wfs", WFSFetcherParams.class);
+        parser.registerParams("wms", WMSFetcherParams.class);
         parser.registerParams("file", FileFetcherParams.class);
         parser.registerParams("stringReplacement", StringReplacementFetcherParams.class);
 
@@ -149,7 +150,6 @@ public final class Voxatile {
         parser.registerParams("gml", GMLProviderParams.class);
         parser.registerParams("gpkg", GeoPackageProviderParams.class);
         parser.registerParams("shapefile", ShapefileProviderParams.class);
-        parser.registerParams("wmsFloat", WMSFloatBilProviderParams.class);
         parser.registerParams("geotiff", GeoTiffProviderParams.class);
         parser.registerParams("overpass", OverpassProviderParams.class);
 

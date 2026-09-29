@@ -24,17 +24,17 @@ import com.ignfab.minalac.generator.utils.world3d.WorldBBox3d;
 /**
  * Data provider for GeoTiff files (raster data).
  */
-public class GeoTiffDataProvider implements Provider<FloatGeographicDataMatrix2d> {
+public class GeoTiffProvider implements Provider<FloatGeographicDataMatrix2d> {
     private final Fetcher fetcher;
     private final EnvelopeProvider envelopeProvider;
 
     /**
-     * Creates a new {@code GeoTiffDataProvider}.
+     * Creates a new {@code GeoTiffProvider}.
      *
      * @param fetcher the fetcher for GeoTiff data
      * @param envelopeProvider function to use to compute envelopes from bounding boxes
      */
-    public GeoTiffDataProvider(Fetcher fetcher, EnvelopeProvider envelopeProvider) {
+    public GeoTiffProvider(Fetcher fetcher, EnvelopeProvider envelopeProvider) {
         this.fetcher = fetcher;
         this.envelopeProvider = envelopeProvider;
     }
@@ -138,7 +138,7 @@ public class GeoTiffDataProvider implements Provider<FloatGeographicDataMatrix2d
 
         @Override
         public void close() {
-            // TODO Do we have something to close? Should input streams be closed sooner?
+            // TODO Do we have something to close? Should/could input streams be closed sooner?
         }
     }
 }
