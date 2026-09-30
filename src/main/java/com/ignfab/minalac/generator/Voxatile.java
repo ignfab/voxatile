@@ -18,6 +18,7 @@ import com.ignfab.minalac.generator.modules.minecraft.MinecraftOutputModule;
 import com.ignfab.minalac.generator.parameters.ParamsParser;
 import com.ignfab.minalac.generator.parameters.ParseException;
 import com.ignfab.minalac.generator.parameters.fetchers.FileFetcherParams;
+import com.ignfab.minalac.generator.parameters.fetchers.MyHttpFetcherParams;
 import com.ignfab.minalac.generator.parameters.fetchers.OverpassFetcherParams;
 import com.ignfab.minalac.generator.parameters.fetchers.StringReplacementFetcherParams;
 import com.ignfab.minalac.generator.parameters.fetchers.WFSFetcherParams;
@@ -144,6 +145,7 @@ public final class Voxatile {
         // Fetchers
         parser.registerParams("wfs", WFSFetcherParams.class);
         parser.registerParams("file", FileFetcherParams.class);
+        parser.registerParams("http", MyHttpFetcherParams.class); // PROBABLY TO BE REMOVED
         parser.registerParams("overpass", OverpassFetcherParams.class);
         parser.registerParams("stringReplacement", StringReplacementFetcherParams.class);
 

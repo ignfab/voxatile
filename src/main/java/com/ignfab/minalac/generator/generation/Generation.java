@@ -13,6 +13,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.util.AffineTransformation;
 
 import com.ignfab.minalac.generator.exceptions.TransformException;
+import com.ignfab.minalac.generator.fetchers.OverpassPoolSpec;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapDeclarationStore;
 import com.ignfab.minalac.generator.utils.coordinates.MapToWorldConverter;
 import com.ignfab.minalac.generator.utils.coordinates.WorldToMapConverter;
@@ -51,6 +52,10 @@ public class Generation {
     private final Collection<WorldBBox2d> tiles;
 
     private final Iterator<GenerationTile> tileIterator;
+
+    // TODO: REMOVE THAT UGLY HACK
+    public OverpassPoolSpec overpassPoolSpec;
+
     /**
      * Constructs a new generation context.
      * It sets {@code VoxelWorld}'s limits in way the center is at {@code WorldCoords2d} (0, 0).

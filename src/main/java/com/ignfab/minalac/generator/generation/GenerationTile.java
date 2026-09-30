@@ -1,5 +1,6 @@
 package com.ignfab.minalac.generator.generation;
 
+import com.ignfab.minalac.generator.fetchers.OverpassPool;
 import com.ignfab.minalac.generator.generation.heightmaps.HeightmapStore;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmap;
 import com.ignfab.minalac.generator.generation.heightmaps.ReadableHeightmapSpec;
@@ -20,6 +21,11 @@ public class GenerationTile {
     private final ModelStore models = new ModelStore();
 
     private static GenerationTile currentTile = null;
+
+    // TODO: REMOVE THAT UGLY HACK
+    // We could have a "pool" store
+    // These are the tile bound variables of pools
+    public final OverpassPool overpassPool;
 
     /**
      * @return current tile.
@@ -53,6 +59,12 @@ public class GenerationTile {
 
         // Create heightmap store populated with stored heigthmaps
         heightmaps = new HeightmapStore(generation.heightmaps(), limits.to2d());
+
+        // TODO: REMOVE THAT UGLY HACK
+        if (generation.overpassPoolSpec != null)
+            overpassPool = new OverpassPool(generation.overpassPoolSpec);
+        else
+            overpassPool = null;
     }
 
     /**

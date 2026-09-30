@@ -1,0 +1,52 @@
+format: luanti
+
+overpass:
+  from:
+    type: http
+    url: https://overpass-api.de/api/interpreter
+
+worldName: Test OSM
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 48.845
+    longitude: 2.425
+  extentX: 300
+  extentY: 300
+
+forEachTile:
+
+  bati:
+    type: sequence
+    do:
+    - type: fetchData
+      modelType: bati
+      provider:
+        type: osmxml
+        fetcher:
+          type: overpass
+          query: nwr[building]
+    - type: renderSurfaces
+      models:
+        type: bati
+      heightmap: 0
+      place: default:stone
+
+  route:
+    type: sequence
+    do:
+    - type: fetchData
+      modelType: route
+      provider:
+        type: osmxml
+        fetcher:
+          type: overpass
+          query: way[highway]
+    - type: renderLines2d
+      models:
+        type: route
+      heightmap: 0
+      structure:
+        at: [ 0,0,0 ]
+        place: default:tree

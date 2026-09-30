@@ -20,6 +20,7 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import tools.jackson.databind.JsonNode;
 
 import com.ignfab.minalac.generator.generation.Generation;
+import com.ignfab.minalac.generator.parameters.fetchers.OverpassPoolParams;
 import com.ignfab.minalac.generator.utils.random.Seed;
 import com.ignfab.minalac.generator.world.VoxelWorld;
 
@@ -60,6 +61,7 @@ public class GenerationParams {
      */
     @JsonSetter(nulls = Nulls.SKIP)
     public Double horizontalScale = 1.0;
+
 
     /**
      * The area of generation.
@@ -103,6 +105,10 @@ public class GenerationParams {
      */
     @JsonSetter(nulls = Nulls.SKIP)
     public ScheduleParams afterAllTiles = new ScheduleParams();
+
+    // TODO: REMOVE THAT UGLY HACK
+    @JsonSetter(nulls = Nulls.SKIP)
+    public OverpassPoolParams overpass = null;
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
@@ -183,6 +189,10 @@ public class GenerationParams {
             Math.toRadians(area.angle),
             maxTileSize == null || maxTileSize <= 0 ? Math.max(area.extentX, area.extentY) : maxTileSize
         );
+
+        // TODO: REMOVE THAT UGLY HACK
+        if (overpass != null)
+            generation.overpassPoolSpec = overpass.create(generation);
 
         heightmaps.forEach((name, heightmapParams) ->
             generation.heightmaps().add(heightmapParams.create(name))
