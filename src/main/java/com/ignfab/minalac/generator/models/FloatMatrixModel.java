@@ -53,6 +53,7 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
 
     @Override
     public Float get(WorldCoords2d coords) {
+        System.out.println(coords);
         // Here we perform coordinates conversion and value interpolation
 
         MapCoordinates coordinates;
@@ -71,13 +72,17 @@ public class FloatMatrixModel extends ModelImpl implements Matrix2d<Float> {
         int yf = (int) Math.floor(y);
         int xc = (int) Math.ceil(x);
         int yc = (int) Math.ceil(y);
+        System.out.println("aaa");
         if (xf < 0 || yf < 0 || xc >= data.sizeX() || yc >= data.sizeY())
             return null;
+        System.out.println("aaa");
 
         // Basic bilinear interpolation
         float fx = x - xf;
         float fy = y - yf;
-
+        System.out.println("Interpolating at local coordinates: x=" + x + ", y=" + y + " with floor: xf=" + xf + ", yf=" + yf + " and ceil: xc=" + xc + ", yc=" + yc);
+        System.out.println( (1 - fy) * ((1 - fx) * data.getFloat(xf, yf) + fx * data.getFloat(xc, yf))
+            + fy * ((1 - fx) * data.getFloat(xf, yc) + fx * data.getFloat(xc, yc)));
         return (1 - fy) * ((1 - fx) * data.getFloat(xf, yf) + fx * data.getFloat(xc, yf))
             + fy * ((1 - fx) * data.getFloat(xf, yc) + fx * data.getFloat(xc, yc));
     }
