@@ -41,6 +41,12 @@ public class WFSProviderParams extends ProviderParams {
     public int maxFeaturesPerQuery = 1000;
 
     /**
+     * Token for authentication (optional).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public String token;
+
+    /**
      * Creates a new WFSProviderParams with mandatory fields.
      *
      * @param url Base URL for WFS queries (including protocol, port, domain name and path but not query arguments)
@@ -64,7 +70,7 @@ public class WFSProviderParams extends ProviderParams {
         else
             layerCrs = generation.crs();
 
-        return new WFS1_1_GML3_1_DataProvider(url, features, layerCrs, generation::getEnvelopeForCRS, maxFeaturesPerQuery);
+        return new WFS1_1_GML3_1_DataProvider(url, features, layerCrs, generation::getEnvelopeForCRS, maxFeaturesPerQuery, token);
     }
 
     @Override
