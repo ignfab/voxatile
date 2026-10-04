@@ -1,6 +1,6 @@
 # Tile tasks cookbook
 
-Tile tasks are tasks performed on each map tile. They are described by classes extending `TileTask` or `ModelTask` if they process models one by one. All work in generator is done by different tasks.
+Tile tasks are tasks performed on each map tile. They are described by classes extending `TileTask` or `ModelTask` if they process models one by one. All work in Voxatile is done by different tasks.
 
 ## Deserialization from Yaml/Json
 

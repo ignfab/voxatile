@@ -5,7 +5,7 @@ This folder contains additional documentation on various topics. Technical code 
 ## Quick links
 
 You may find useful the following links:
-- [`usage/Run.md`](usage/Run.md): How to run the generator?
+- [`usage/Run.md`](usage/Run.md): How to run Voxatile?
 - [`tools/Maven.md`](tools/Maven.md): How to use Maven?
 - [Online Javadoc](https://ignfab.github.io/voxatile), automatically deployed on GitHub Pages.
 
@@ -14,8 +14,9 @@ If none of the above helped you, consider searching through the complete documen
 ## Overview
 
 - `/`: Important and generic documentation.
+  - `usage`: How to use Voxatile, without looking at the code.
   - `tools`: You can find explanation about the dev tools used.
-  - `usage`: How to use the generator, without looking at the code.
+  - `dev`: Developer-oriented documentation to understand the code and create modules.
 
 ## Redaction
 

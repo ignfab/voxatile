@@ -24,7 +24,7 @@ jobs:
         run: |
           mvn --batch-mode --no-transfer-progress --update-snapshots -Dmaven.test.skip=true package
 
-      - name: Run generator to validate example parameters
+      - name: Run Voxatile to validate example parameters
         run: |
           FORMATS=$(./generate.sh -l formats)
           PLACES=$(./generate.sh -l places)

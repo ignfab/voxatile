@@ -1,9 +1,9 @@
 # Overview
 
-<!-- TODO Move interesting content to docs/usage/Examples.md and rewrite a more accurate quick start -->
+<!-- TODO Delete this file when adding "How To" guides -->
 
 > [!WARNING]
-> This document is not completely up-to-date! It should be reviewed / rewritten and then moved out of the `legacy` folder.
+> This document is completely out-of-date! It should be removed and replaced by "How To" guides.
 
 The generator has three main interfaces:
 - `VoxelWorld`: Its two main methods are:
