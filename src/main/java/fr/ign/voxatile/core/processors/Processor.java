@@ -1,0 +1,56 @@
+package fr.ign.voxatile.core.processors;
+
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+
+import fr.ign.voxatile.core.exceptions.GenerationFailedException;
+import fr.ign.voxatile.core.exceptions.IgnorableException;
+import fr.ign.voxatile.core.models.Model;
+
+/**
+ * A processor is responsible for transforming elements coming from
+ * a {@link fr.ign.voxatile.core.inputs.Provider provider}
+ * into a model.
+ * <p>
+ * Its main method is {@link #process(Object)}, which take one
+ * element and return the corresponding model.
+ * <p>
+ * The type of processable elements and models returned are defined
+ * by the generic types {@code T} and {@code M} (compile-time check)
+ * and must also be returned by the {@link #acceptedType()} and
+ * {@link #modelType()} methods to allow runtime check.
+ *
+ * @param <T> The type of processable elements
+ * @param <M> The type of created models
+ */
+public interface Processor<T, M extends Model> {
+    /**
+     * Returns the type of processable elements.
+     *
+     * @return the type of processable elements
+     */
+    Class<T> acceptedType();
+
+    /**
+     * Returns the type of created models.
+     *
+     * @return the type of created models
+     */
+    Class<M> modelType();
+
+    /**
+     * Initializes this processor with the given CRS.
+     * @param layerCrs CRS of the layer to be processed
+     * @throws GenerationFailedException If unable to initialize
+     */
+    void initialize(CoordinateReferenceSystem layerCrs) throws GenerationFailedException;
+
+    /**
+     * Processes an element and creates a corresponding model.
+     *
+     * @param object The element to process
+     * @return The created model
+     * @throws GenerationFailedException If a fatal error occurs while processing data
+     * @throws IgnorableException If an error occurs but the element may be ignored
+     */
+    M process(T object) throws GenerationFailedException, IgnorableException;
+}

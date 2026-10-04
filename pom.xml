@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.ignfab</groupId>
+    <groupId>fr.ign</groupId>
     <artifactId>voxatile</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>Voxatile</name>
@@ -280,7 +280,7 @@
                         <!-- Ensures the JAR comes with a proper MANIFEST.MF file -->
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <!-- With at least an entry "Main-Class: ..." to make it executable -->
-                            <mainClass>com.ignfab.minalac.generator.Voxatile</mainClass>
+                            <mainClass>fr.ign.voxatile.core.Voxatile</mainClass>
                         </transformer>
                         <!-- Properly shades all resources, required for GeoTools HSQL embedded databases and GeoTIFF module -->
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />

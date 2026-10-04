@@ -130,15 +130,15 @@
     <!-- See https://checkstyle.org/config_imports.html -->
     <module name="AvoidStarImport">
       <property name="excludes" value="org.junit.jupiter.api.Assertions"/>
-      <property name="excludes" value="com.ignfab.minalac.generator.utils.iterator.IteratorTester"/>
-      <property name="excludes" value="com.ignfab.minalac.generator.parameters.tasks.ScheduleParamsTester"/>
-      <property name="excludes" value="com.ignfab.minalac.generator.models.values.ModelValueTester"/>
+      <property name="excludes" value="fr.ign.voxatile.core.utils.iterator.IteratorTester"/>
+      <property name="excludes" value="fr.ign.voxatile.core.parameters.tasks.ScheduleParamsTester"/>
+      <property name="excludes" value="fr.ign.voxatile.core.models.values.ModelValueTester"/>
     </module>
     <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
     <module name="RedundantImport"/>
     <module name="UnusedImports"/>
     <module name="ImportOrder">
-      <property name="groups" value="/javax?/,*,com.ignfab.minalac.generator"/>
+      <property name="groups" value="/javax?/,*,fr.ign.voxatile"/>
       <property name="ordered" value="true"/>
       <property name="separated" value="true"/>
       <property name="separatedStaticGroups" value="true"/>

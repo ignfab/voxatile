@@ -1,0 +1,44 @@
+package fr.ign.voxatile.core.utils.axis.mappers.builders;
+
+import org.junit.jupiter.api.Test;
+
+import fr.ign.voxatile.core.placeables.layouts.UnbuildableLayoutException;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ConstantAxisMapperBuilderTest {
+    @Test
+    public void testBuild() {
+        assertThrows(UnbuildableLayoutException.class, () -> new ConstantAxisMapperBuilder(7, 0).build(8));
+        assertThrows(UnbuildableLayoutException.class, () -> new ConstantAxisMapperBuilder(6, 0).build(8));
+        assertThrows(UnbuildableLayoutException.class, () -> new ConstantAxisMapperBuilder(9, 0).build(8));
+
+        assertDoesNotThrow(() -> new ConstantAxisMapperBuilder(0, 0).build(0));
+        assertDoesNotThrow(() -> new ConstantAxisMapperBuilder(6, 2).build(6));
+    }
+
+    @Test
+    public void testMaxSizeFittingUnder() {
+        assertEquals(-1, new ConstantAxisMapperBuilder(3, 0).maxSizeFittingUnder(-1));
+
+        assertEquals(3, new ConstantAxisMapperBuilder(3, 0).maxSizeFittingUnder(4));
+        assertEquals(3, new ConstantAxisMapperBuilder(3, 0).maxSizeFittingUnder(3));
+        assertEquals(-1, new ConstantAxisMapperBuilder(3, 0).maxSizeFittingUnder(2));
+
+        assertEquals(0, new ConstantAxisMapperBuilder(0, 0).maxSizeFittingUnder(0));
+        assertEquals(0, new ConstantAxisMapperBuilder(0, 0).maxSizeFittingUnder(1));
+    }
+
+    @Test
+    public void testMinimumSize() {
+        assertEquals(7, new ConstantAxisMapperBuilder(7, 0).minimumSize());
+        assertEquals(0, new ConstantAxisMapperBuilder(0, 0).minimumSize());
+    }
+
+    @Test
+    public void testOrigin() {
+        assertEquals(-5, (new ConstantAxisMapperBuilder(7, -5)).origin());
+        assertEquals(0, (new ConstantAxisMapperBuilder(7, 0)).origin());
+        assertEquals(3, (new ConstantAxisMapperBuilder(7, 3)).origin());
+    }
+}

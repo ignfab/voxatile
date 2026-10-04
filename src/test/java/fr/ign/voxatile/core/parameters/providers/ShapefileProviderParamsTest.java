@@ -1,0 +1,37 @@
+package fr.ign.voxatile.core.parameters.providers;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.referencing.CRS;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import fr.ign.voxatile.core.generation.Generation;
+import fr.ign.voxatile.core.generation.TestingGeneration;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ShapefileProviderParamsTest {
+    @Test
+    public void testCreate(@TempDir File tmp) throws FactoryException, IOException {
+        Generation generation = new TestingGeneration(CRS.decode("EPSG:2154"));
+        File file = new File(tmp, "fake.shp");
+        if (!file.createNewFile())
+            fail("Unable to setup test file");
+
+        // A simple OK test
+        ShapefileProviderParams params = new ShapefileProviderParams(file.getAbsolutePath());
+        assertDoesNotThrow(() -> params.create(generation));
+
+        // Missing file test
+        params.filePath = "/tmp/invalid/path.shp";
+        assertThrows(IllegalArgumentException.class, () -> params.create(generation));
+        params.filePath = file.getAbsolutePath();
+
+        // Wrong CRS test
+        params.crsOverride = "ThisIsNotACrs";
+        assertThrows(IllegalArgumentException.class, () -> params.create(generation));
+    }
+}
