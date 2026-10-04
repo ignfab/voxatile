@@ -6,7 +6,7 @@ cd "$SCRIPT_DIR" || exit
 
 # Check if JAVA_CMD is set, if not, set it to java
 JAVA_CMD=${JAVA_CMD:-java}
-JAR_PATH=./target/Generator.jar
+JAR_PATH=./target/voxatile.jar
 PARAMS_DIR=./examples
 FORMATS_DIR=$PARAMS_DIR/formats
 PROCESSES_DIR=$PARAMS_DIR/processes

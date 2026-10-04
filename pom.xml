@@ -225,8 +225,8 @@
     </dependencies>
 
     <build>
-        <!-- Final JAR will be named Generator.jar -->
-        <finalName>Generator</finalName>
+        <!-- Final JAR will be named voxatile.jar -->
+        <finalName>voxatile</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>

@@ -4,7 +4,7 @@ Generator features can be extended with modules. Typical usage of modules is add
 
 ## Set up development environment
 
-Module project must have a dependency to `Generator.jar`. This file could be copied locally but it's preferable to tell `maven` where to fetch it from.
+Module project must have a dependency to `voxatile.jar`. This file could be copied locally, but it's preferable to tell `maven` where to fetch it from.
 
 In `pom.xml`, add following dependency:
 ```xml
@@ -20,7 +20,7 @@ Don't forget the `<scope>provided</scope>` to avoid shading the generator classe
 
 Add eventual corresponding `repository`.
 
-If you use a `Generator.jar` from a GitHub repository, you should create a personal access token (classic) with `read:package` permission and modify your `~/.m2/settings.xml` according to [GitHub instructions](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry#authenticating-with-a-personal-access-token).
+If you use a `voxatile.jar` from a GitHub repository, you should create a personal access token (classic) with `read:package` permission and modify your `~/.m2/settings.xml` according to [GitHub instructions](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry#authenticating-with-a-personal-access-token).
 
 ## Minimal module
 
@@ -50,7 +50,7 @@ Example of corresponding `module.properties`:
 class=fr.ign.voxatile.modules.helloworld.HelloWorldModule
 ```
 
-Now, a module Jar file has to be created from these two files. This is achieved with usual build tools like [Maven](https://maven.apache.org/) or [Gradle](https://gradle.org/). The only specific need is that `Generator.jar` should be added as a compile-only dependency (and not included in final module Jar).
+Now, a module Jar file has to be created from these two files. This is achieved with usual build tools like [Maven](https://maven.apache.org/) or [Gradle](https://gradle.org/). The only specific need is that `voxatile.jar` should be added as a compile-only dependency (and not included in final module Jar).
 
 Once Jar created, put it in the appropriate module directory and you are done!
 
