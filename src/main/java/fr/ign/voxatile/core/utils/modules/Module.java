@@ -15,7 +15,7 @@ import fr.ign.voxatile.core.parameters.ParamsParser;
 public abstract class Module implements ModuleCreator {
     /**
      * Registers parameters for the module.
-     * This will be called before generator reads parameters. This is the place to register new parameter classes into parser.
+     * This will be called before Voxatile reads parameters. This is the place to register new parameter classes into parser.
      *
      * @param parser Parameter parser to use
      */

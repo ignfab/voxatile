@@ -32,17 +32,17 @@ usage() {
 }
 
 output_dir_needed=1
-generator_opt=""
+voxatile_opt=""
 
 while [[ "$1" == "-"* ]]; do
     opt=$1
     shift
     case $opt in
         -g)
-            generator_opt="$generator_opt --generation-disabled"
+            voxatile_opt="$voxatile_opt --generation-disabled"
             ;;
         -s)
-            generator_opt="$generator_opt --save-disabled"
+            voxatile_opt="$voxatile_opt --save-disabled"
             unset output_dir_needed
             ;;
         -y)
@@ -136,4 +136,4 @@ if [ "$display_only" ]; then
     exit 0
 fi
 
-VOXATILE_PARAMS=$params VOXATILE_MODULES_PATH=modules $JAVA_CMD -jar $JAR_PATH $generator_opt "$output_dir"
+VOXATILE_PARAMS=$params VOXATILE_MODULES_PATH=modules $JAVA_CMD -jar $JAR_PATH $voxatile_opt "$output_dir"

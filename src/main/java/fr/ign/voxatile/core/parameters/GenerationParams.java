@@ -38,7 +38,7 @@ public class GenerationParams {
      * World name.
      */
     @JsonSetter(nulls = Nulls.SKIP)
-    public String worldName = "Minalac";
+    public String worldName = "Voxatile";
 
     /**
      * A placeholder for Yaml references than does not go anywhere else.

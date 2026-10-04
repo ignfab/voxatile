@@ -8,8 +8,8 @@
     <artifactId>voxatile</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>Voxatile</name>
-    <description>Minecraft/Minetest world generator from real world geographic data</description>
-    <url>https://www.ign.fr/minecraft</url>
+    <description>Voxel world generator from real world geographic data</description>
+    <url>https://github.com/ignfab/voxatile</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -3,7 +3,7 @@
 > [!IMPORTANT]
 > Don't forget to configure your [proxy](../Proxy.md) if needed!
 
-This page is about different methods for building and running Generator. They are provided for informational purpose. If you just want to run the generator, please refer to [Run.md](Run.md).
+This page is about different methods for building and running Voxatile. They are provided for informational purpose. If you just want to run Voxatile, please refer to [Run.md](Run.md).
 
 ## Generation parameters
 
@@ -76,7 +76,7 @@ mvn clean compile exec:java \
 
 # Modules
 
-Modules are Jar files adding features to generator (output formats, source types, task types, ...).
+Modules are Jar files adding features to Voxatile (output formats, source types, task types, ...).
 
 They should be placed in a directory specified either by `--modules-path` command line option or `VOXATILE_MODULES_PATH` environment variable. If command line option is set, environment variable is ignored. If none set, no modules will be loaded.
 

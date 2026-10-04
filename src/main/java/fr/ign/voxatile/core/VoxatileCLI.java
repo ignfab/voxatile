@@ -38,7 +38,7 @@ public class VoxatileCLI {
     private final Options options;
 
     /**
-     * Creates a new GeneratorCommandLine.
+     * Creates a new {@code VoxatileCLI}.
      */
     public VoxatileCLI() {
         options = new Options();
@@ -181,7 +181,7 @@ public class VoxatileCLI {
 
     /**
      * Returns output path.
-     * Allows saving the result of the generator.
+     * Allows saving the result of the generation.
      *
      * @return output path
      */
@@ -191,7 +191,7 @@ public class VoxatileCLI {
 
     /**
      * Returns generation disabled.
-     * Allows stopping execution when the generator finishes deserializing the parameters.
+     * Allows stopping execution when parameters are deserialized (before actual generation).
      *
      * @return generation disabled flag
      */

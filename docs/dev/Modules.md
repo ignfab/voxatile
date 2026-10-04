@@ -1,6 +1,6 @@
 # Module development
 
-Generator features can be extended with modules. Typical usage of modules is adding new task types (see [Generator.md](../usage/Generator.md#modules)).
+Voxatile features can be extended with modules. Typical usage of modules is adding new task types (see [Voxatile.md](../usage/Voxatile.md#modules)).
 
 ## Set up development environment
 
@@ -16,7 +16,7 @@ In `pom.xml`, add following dependency:
 </dependency>
 ```
 
-Don't forget the `<scope>provided</scope>` to avoid shading the generator classes into the module's JAR file!
+Don't forget the `<scope>provided</scope>` to avoid shading Voxatile classes into the module's JAR file!
 
 Add eventual corresponding `repository`.
 
@@ -42,7 +42,7 @@ public class HelloWorldModule extends Module {
 }
 ```
 
-This class **must** have a public no-argument constructor that will be used by the generator to instantiate it!
+This class **must** have a public no-argument constructor that will be used by Voxatile to instantiate it!
 
 Example of corresponding `module.properties`:
 
@@ -56,7 +56,7 @@ Once Jar created, put it in the appropriate module directory and you are done!
 
 ## Go further
 
-`Module` subclass is the module entrypoint. In that class, it is possible to add new capabilities to Generator by making it able to understand new parameters.
+`Module` subclass is the module entrypoint. In that class, it is possible to add new capabilities to Voxatile by making it able to understand new parameters.
 
 Override `registerParams` method to add, for example, new tasks:
 ```java
@@ -66,6 +66,6 @@ public void registerParams(ParamsParser parser) {
 }
 ```
 
-Of course, `MyOperationTaskParams` class and probably other classes have to be defined in the module project. Classes from the Generator jar may also be used.
+Of course, `MyOperationTaskParams` class and probably other classes have to be defined in the module project. Classes from Voxatile jar may also be used.
 
 Refer to [parameters](Parameters.md) documentation for further information.

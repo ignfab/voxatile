@@ -1,6 +1,6 @@
 # Generation parameters
 
-Generator makes a heavy use of parameters. Generation is described in Yaml (or Json).
+Voxatile makes a heavy use of parameters. Generation is described in Yaml (or Json).
 
 ## Table of contents
 
@@ -96,7 +96,7 @@ forEachTile:
 
 ## Fields description
 
-- `worldName`: World name (text, default `Minalac`)
+- `worldName`: World name (text, default `Voxatile`)
 - `references`: Ignored field where references (or other content) can be put in
 - `area`: Area to be rendered
   - `center`: Coordinates of the area's center point, expressed in the commonly used coordinate system (EPSG:4326)
@@ -125,4 +125,4 @@ forEachTile:
 
 ## References
 
-YAML references are processed by the generator. They can be defined anywhere in parameters. A `references` field is available at root to put references not going anywhere else.
+YAML references are processed by Voxatile. They can be defined anywhere in parameters. A `references` field is available at root to put references not going anywhere else.
