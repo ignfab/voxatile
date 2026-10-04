@@ -1,0 +1,70 @@
+package fr.ign.voxatile.core.parameters.models;
+
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+
+import fr.ign.voxatile.core.generation.Generation;
+import fr.ign.voxatile.core.models.ModelSelection;
+import fr.ign.voxatile.core.parameters.models.filters.ModelFilterAndParams;
+import fr.ign.voxatile.core.parameters.models.filters.ModelFilterParams;
+
+/**
+ * Parameters for a {@link ModelSelection}.
+ */
+public class ModelSelectionParams {
+    /**
+     * Type of model (optional).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public String type;
+
+    /**
+     * Extra filter (optional).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public ModelFilterParams filter = null;
+
+    /**
+     * Narrows this selection params down according to the given selection params
+     * This will select only models also fitting other selection params.
+     *
+     * @param params other selection params
+     * @throws IllegalArgumentException if other selection params has a different model type than this.
+     */
+    public void narrowDown(ModelSelectionParams params) {
+        if (type != null && params.type != null && !type.equals(params.type))
+            throw new IllegalArgumentException("Model selection cannot have two different model types (it would select nothing)");
+
+        if (type == null)
+            type = params.type;
+
+        if (params.filter != null)
+            filter = filter == null ? params.filter : new ModelFilterAndParams(List.of(filter, params.filter));
+    }
+
+    /**
+     * Validates params.
+     */
+    public void validate() {
+        if (type != null && type.isBlank())
+            throw new IllegalArgumentException("Model type cannot be blank");
+        if (filter != null)
+            filter.validate();
+    }
+
+    /**
+     * Creates a new {@link ModelSelection} out of params.
+     *
+     * @param generation the generation context.
+     * @return a model selection.
+     */
+    public ModelSelection create(Generation generation) {
+        // Type presence cannot be checked at validation because it could be given later (selection narrowing)
+        if (type == null)
+            throw new IllegalArgumentException("Model selection must have a model type");
+
+        return new ModelSelection(type, (filter == null) ? null : filter.create(generation));
+    }
+}

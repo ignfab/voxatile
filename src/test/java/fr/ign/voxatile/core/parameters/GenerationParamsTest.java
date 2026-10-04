@@ -1,0 +1,146 @@
+package fr.ign.voxatile.core.parameters;
+
+import java.util.HashMap;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import fr.ign.voxatile.core.generation.Generation;
+import fr.ign.voxatile.core.generation.heightmaps.HeightmapDeclaration;
+import fr.ign.voxatile.core.parameters.placeables.voxels.TestingVoxelParams;
+import fr.ign.voxatile.core.parameters.providers.TestingProviderParams;
+import fr.ign.voxatile.core.parameters.tasks.FetchDataTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.NoOperationTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.RenderBuildingsTaskParams;
+import fr.ign.voxatile.core.utils.world2d.WorldBBox2d;
+import fr.ign.voxatile.core.world.TestingVoxelWorld;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class GenerationParamsTest {
+    private GenerationParams params;
+
+    @BeforeEach
+    void setUp() {
+        GenerationParams.Area.LatitudeLongitude center = new GenerationParams.Area.LatitudeLongitude(5.8, 2.4);
+        GenerationParams.Area area = new GenerationParams.Area(center, 50, 75);
+        OutputFormat format = new OutputFormat((destination) -> new TestingVoxelWorld(), TestingVoxelParams.class, TestingVoxelParams::new);
+        params = new GenerationParams(area, format);
+        params.heightmaps = new HashMap<>();
+        params.forEachTile = new ScheduleParams();
+    }
+
+    @Test
+    public void testValidateValidParams() {
+        assertDoesNotThrow(params::validate);
+    }
+
+    @Test
+    public void testValidateVerticalScale() {
+        params.verticalScale = 0.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+
+        params.verticalScale = -5.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
+    public void testValidateHorizontalScale() {
+        params.horizontalScale = 0.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+
+        params.horizontalScale = -1.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
+    public void testValidateLatitude() {
+        params.area.center.latitude = 90.0;
+        assertDoesNotThrow(params::validate);
+
+        params.area.center.latitude = 91.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+
+        params.area.center.latitude = -90.0;
+        assertDoesNotThrow(params::validate);
+
+        params.area.center.latitude = -91.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
+    public void testValidateLongitude() {
+        params.area.center.longitude = 180.0;
+        assertDoesNotThrow(params::validate);
+
+        params.area.center.longitude = 181.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+
+        params.area.center.longitude = -180.0;
+        assertDoesNotThrow(params::validate);
+
+        params.area.center.longitude = -181.0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
+    public void testValidateExtentX() {
+        params.area.extentX = 0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+
+        params.area.extentX = -500;
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
+    public void testValidateExtentY() {
+        params.area.extentY = 0;
+        assertThrows(IllegalArgumentException.class, params::validate);
+
+        params.area.extentY = -10;
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
+    public void testValidateWorldName() {
+        params.worldName = " ";
+        assertThrows(IllegalArgumentException.class, params::validate);
+    }
+
+    @Test
+    public void testCreate() throws ParseException {
+        params.worldName = "test";
+        params.verticalScale = 3.0;
+        params.horizontalScale = 4.0;
+        params.crs = "EPSG:5643";
+        params.heightmaps.put("ground", new HeightmapDeclarationParams("3"));
+        params.heightmaps.put("altitude", new HeightmapDeclarationParams("minimal"));
+        params.forEachTile.tasks.put("task1", new NoOperationTaskParams());
+        params.forEachTile.tasks.put("task2", new NoOperationTaskParams());
+        params.forEachTile.tasks.put("source1", new FetchDataTaskParams("models1", new TestingProviderParams("value1")));
+        params.forEachTile.tasks.put("source2", new FetchDataTaskParams("models2", new TestingProviderParams("value3")));
+
+        TestingVoxelParams placeable = new TestingVoxelParams("voxel");
+        RenderBuildingsTaskParams task = new RenderBuildingsTaskParams(
+            placeable,
+            placeable,
+            placeable
+        );
+        task.models.type = "building";
+
+        params.forEachTile.tasks.put("building", task);
+        Generation generation = params.create(null, 100);
+
+        assertNotNull(generation);
+        assertEquals("test", generation.world().getMetadata().getWorldName());
+        assertEquals(50, generation.world().limits().sizeX());
+        assertEquals(75, generation.world().limits().sizeY());
+        assertEquals(3.0, generation.getVerticalScale(), 0.001);
+
+        HeightmapDeclaration ground = assertDoesNotThrow(() -> generation.heightmaps().get("ground"));
+        assertEquals(3, ground.create(WorldBBox2d.ORIGIN).get(0, 0));
+
+        HeightmapDeclaration altitude = assertDoesNotThrow(() -> generation.heightmaps().get("altitude"));
+        assertEquals(Integer.MIN_VALUE, altitude.create(WorldBBox2d.ORIGIN).get(0, 0));
+    }
+}

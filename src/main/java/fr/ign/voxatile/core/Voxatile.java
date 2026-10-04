@@ -1,0 +1,233 @@
+package fr.ign.voxatile.core;
+
+import java.io.File;
+import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import org.geotools.api.referencing.FactoryException;
+
+import fr.ign.voxatile.core.exceptions.GenerationFailedException;
+import fr.ign.voxatile.core.exceptions.TransformException;
+import fr.ign.voxatile.core.generation.Generation;
+import fr.ign.voxatile.core.generation.GenerationTile;
+import fr.ign.voxatile.core.parameters.ParamsParser;
+import fr.ign.voxatile.core.parameters.ParseException;
+import fr.ign.voxatile.core.parameters.processors.FloatMatrixProcessorParams;
+import fr.ign.voxatile.core.parameters.processors.GeoToolsVectorProcessorParams;
+import fr.ign.voxatile.core.parameters.processors.OsmProcessorParams;
+import fr.ign.voxatile.core.parameters.processors.post.ConditionalPostProcessorParams;
+import fr.ign.voxatile.core.parameters.processors.post.DiscardPostProcessorParams;
+import fr.ign.voxatile.core.parameters.processors.post.IdentityPostProcessorParams;
+import fr.ign.voxatile.core.parameters.processors.post.JTSGeometryBufferPostProcessorParams;
+import fr.ign.voxatile.core.parameters.processors.post.MetadataCopyPostProcessorParams;
+import fr.ign.voxatile.core.parameters.processors.post.MetadataDefaultPostProcessorParams;
+import fr.ign.voxatile.core.parameters.processors.post.MetadataParsePostProcessorParams;
+import fr.ign.voxatile.core.parameters.processors.post.MetadataSetPostProcessorParams;
+import fr.ign.voxatile.core.parameters.processors.post.MetadataTruncatePostProcessorParams;
+import fr.ign.voxatile.core.parameters.processors.post.MetadataValueMappingPostProcessorParams;
+import fr.ign.voxatile.core.parameters.providers.GeoPackageProviderParams;
+import fr.ign.voxatile.core.parameters.providers.GeoTiffProviderParams;
+import fr.ign.voxatile.core.parameters.providers.OverpassProviderParams;
+import fr.ign.voxatile.core.parameters.providers.ShapefileProviderParams;
+import fr.ign.voxatile.core.parameters.providers.WFSProviderParams;
+import fr.ign.voxatile.core.parameters.providers.WMSFloatBilProviderParams;
+import fr.ign.voxatile.core.parameters.tasks.BuildLayoutTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.CopyHeightmapTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.FetchDataTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.FillBetweenHeightmapAndValueTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.HeightmapStatsTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.NoOperationTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.PopulateHeightmapTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.RenderBuildingsTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.RenderFacadesTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.RenderHeightmapTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.RenderLines2dTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.RenderLinesTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.RenderPoints2dTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.RenderPointsTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.RenderSurfacesTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.ScheduleTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.SequenceTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.SetSpawnTaskParams;
+import fr.ign.voxatile.core.utils.FileHelpers;
+import fr.ign.voxatile.core.utils.execution.TaskFailedException;
+import fr.ign.voxatile.core.utils.modules.ModulesLoader;
+import fr.ign.voxatile.core.utils.modules.ModulesManager;
+import fr.ign.voxatile.core.utils.network.HttpTrustAllSSL;
+import fr.ign.voxatile.core.utils.world3d.WorldBBox3d;
+import fr.ign.voxatile.core.world.MapWriteException;
+import fr.ign.voxatile.modules.luanti.LuantiOutputModule;
+import fr.ign.voxatile.modules.minecraft.MinecraftOutputModule;
+
+/**
+ * Main class of Voxatile project.
+ */
+public final class Voxatile {
+    private Voxatile() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Serves as the entry point for the program.
+     *
+     * @param args command line arguments
+     */
+    @SuppressWarnings("checkstyle:MethodLength")
+    public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException, TimeoutException, GenerationFailedException {
+        // Execution duration start
+        Instant start = Instant.now();
+        HttpTrustAllSSL.applyGlobally();
+
+        // Deserialization duration start
+        Instant initializationStart = Instant.now();
+        // Command line arguments parsing & basic processing
+        VoxatileCLI cli = new VoxatileCLI();
+        cli.parse(args);
+
+        File destination;
+        String parameters = cli.readParameters();
+        if (cli.saveDisabled())
+            destination = null;
+        else {
+            destination = cli.outputPath().toFile();
+            // Write the parameters file in the world root directory
+            try {
+                FileHelpers.write(new File(destination, "parameters.yaml"), parameters);
+            } catch (IOException e) {
+                throw new MapWriteException("Failed to write parameters.yaml", e);
+            }
+        }
+
+        Integer maxTileSize = cli.maxTileSize();
+
+        ModulesLoader loader = new ModulesLoader();
+
+        // Built-in modules
+        loader.add(new LuantiOutputModule());
+        loader.add(new MinecraftOutputModule());
+
+        // External modules
+        if (cli.modulesPath() != null)
+            loader.loadModulesDirectory(cli.modulesPath().toFile());
+
+        ModulesManager modules = loader.create();
+
+        // Generation parsing
+        ParamsParser parser = new ParamsParser();
+
+        // TODO: Static method that provides a ParamsParser with all default renderers
+        // If those name values are modified, update the documentation accordingly
+        parser.registerParams("noOperation", NoOperationTaskParams.class);
+        parser.registerParams("sequence", SequenceTaskParams.class);
+        parser.registerParams("schedule", ScheduleTaskParams.class);
+        parser.registerParams("copyHeightmap", CopyHeightmapTaskParams.class);
+        parser.registerParams("computeHeightmapStats", HeightmapStatsTaskParams.class);
+        parser.registerParams("fetchData", FetchDataTaskParams.class);
+        parser.registerParams("fillBetweenHeightmapAndValue", FillBetweenHeightmapAndValueTaskParams.class);
+        parser.registerParams("populateHeightmap", PopulateHeightmapTaskParams.class);
+        parser.registerParams("renderBuildings", RenderBuildingsTaskParams.class);
+        parser.registerParams("renderHeightmap", RenderHeightmapTaskParams.class);
+        parser.registerParams("renderSurfaces", RenderSurfacesTaskParams.class);
+        parser.registerParams("renderLines", RenderLinesTaskParams.class);
+        parser.registerParams("renderLines2d", RenderLines2dTaskParams.class);
+        parser.registerParams("renderPoints", RenderPointsTaskParams.class);
+        parser.registerParams("renderPoints2d", RenderPoints2dTaskParams.class);
+        parser.registerParams("setSpawn", SetSpawnTaskParams.class);
+        parser.registerParams("renderFacades", RenderFacadesTaskParams.class);
+        parser.registerParams("buildLayout", BuildLayoutTaskParams.class);
+
+        parser.registerParams("wfs", WFSProviderParams.class);
+        parser.registerParams("gpkg", GeoPackageProviderParams.class);
+        parser.registerParams("shapefile", ShapefileProviderParams.class);
+        parser.registerParams("wmsFloat", WMSFloatBilProviderParams.class);
+        parser.registerParams("geotiff", GeoTiffProviderParams.class);
+        parser.registerParams("overpass", OverpassProviderParams.class);
+
+        parser.registerParams("floatMatrix", FloatMatrixProcessorParams.class);
+        parser.registerParams("geoToolsVector", GeoToolsVectorProcessorParams.class);
+        parser.registerParams("osm", OsmProcessorParams.class);
+
+        parser.registerParams("identity", IdentityPostProcessorParams.class);
+        parser.registerParams("discard", DiscardPostProcessorParams.class);
+        parser.registerParams("conditional", ConditionalPostProcessorParams.class);
+        parser.registerParams("set", MetadataSetPostProcessorParams.class);
+        parser.registerParams("copy", MetadataCopyPostProcessorParams.class);
+        parser.registerParams("default", MetadataDefaultPostProcessorParams.class);
+        parser.registerParams("parse", MetadataParsePostProcessorParams.class);
+        parser.registerParams("truncate", MetadataTruncatePostProcessorParams.class);
+        parser.registerParams("geometryBuffer", JTSGeometryBufferPostProcessorParams.class);
+        parser.registerParams("remap", MetadataValueMappingPostProcessorParams.class);
+
+        modules.registerParams(parser);
+
+        Generation generation = parser.parse(parameters).create(destination, maxTileSize);
+
+        System.out.printf("Generation initialization took %ds.%n", Duration.between(initializationStart, Instant.now()).toSeconds());
+        if (cli.generationDisabled()) {
+            System.out.printf("Total: %ds.%nDone (stopped before map generation).%n", Duration.between(start, Instant.now()).toSeconds());
+            return;
+        }
+
+        Instant worldInitializationStart = Instant.now();
+
+        // Initialize world
+        generation.world().initialize();
+        System.out.printf("World initialization took %ds.%n", Duration.between(worldInitializationStart, Instant.now()).toSeconds());
+
+        int numberOfTiles = generation.numberOfTiles();
+        System.out.printf("Generation will be performed in %d tiles of maximum %d voxels by side.%n", numberOfTiles, generation.maxTileSize());
+
+        // Start generating tiles
+        Duration generatingDuration = Duration.ZERO; // This will hold total generation time
+        Duration mapSavingDuration = Duration.ZERO; // This will hold total map saving time
+
+        int currentTile = 0;
+
+        try {
+            while (generation.nextTile()) {
+                currentTile++;
+                WorldBBox3d limits = GenerationTile.current().limits();
+                String tileString = "%d/%d (x=%d..%d, y=%d..%d)".formatted(currentTile, numberOfTiles, limits.minX(), limits.maxX(), limits.minY(), limits.maxY());
+                System.out.printf("%nTile %s.%n", tileString);
+
+                // Generate tile
+                Instant tileGenerationStart = Instant.now();
+
+                generation.forEachTileScheduler().run(5, TimeUnit.MINUTES);
+                Duration tileGenerationDuration = Duration.between(tileGenerationStart, Instant.now());
+
+                generatingDuration = generatingDuration.plus(tileGenerationDuration);
+                System.out.printf("Tile %s generated in %ds.%n", tileString, tileGenerationDuration.toSeconds());
+
+                // Save tile
+                Instant tileSavingStart = Instant.now();
+                GenerationTile.current().save();
+                Duration tileSavingDuration = Duration.between(tileSavingStart, Instant.now());
+
+                mapSavingDuration = mapSavingDuration.plus(tileSavingDuration);
+                System.out.printf("Tile %s saved in %ds.%n", tileString, tileSavingDuration.toSeconds());
+            }
+        } finally {
+            generation.forEachTileScheduler().shutdown();
+        }
+
+        System.out.printf("%nAll %d tiles generated and saved.%nSpent %ds generating and %ds saving.%n", numberOfTiles, generatingDuration.toSeconds(), mapSavingDuration.toSeconds());
+
+        try {
+            Instant afterAllTilesStart = Instant.now();
+            generation.afterAllTilesScheduler().run(5, TimeUnit.MINUTES);
+            Duration afterAllTilesDuration = Duration.between(afterAllTilesStart, Instant.now());
+            System.out.printf("Tasks executed after all tiles took %ds.%n", afterAllTilesDuration.toSeconds());
+        } finally {
+            generation.afterAllTilesScheduler().shutdown();
+        }
+
+        Instant finalizationStart = Instant.now();
+        generation.world().finalizeAndSave();
+        System.out.printf("Generation finalization took %ds.%n", Duration.between(finalizationStart, Instant.now()).toSeconds());
+        System.out.printf("Total: %ds.%nDone.%n", Duration.between(start, Instant.now()).toSeconds());
+    }
+}

@@ -1,0 +1,239 @@
+package fr.ign.voxatile.core;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
+import fr.ign.voxatile.core.utils.FileHelpers;
+
+/**
+ * A command line parser and basic processor.
+ * {@code VoxatileCLI} performs parsing, basic validation and some basic tasks such as retrieving generation parameters.
+ */
+public class VoxatileCLI {
+
+    private static final String PARAMS_ENVVAR_NAME = "VOXATILE_PARAMS";
+    private static final String MAX_TILE_SIZE_ENVVAR_NAME = "VOXATILE_MAX_TILE_SIZE";
+    private static final String MODULES_PATH_ENVVAR_NAME = "VOXATILE_MODULES_PATH";
+
+    private Path outputPath;
+    private Path parametersPath;
+
+    private boolean generationDisabled;
+    private boolean saveDisabled;
+
+    private Integer maxTileSize = null;
+    private Path modulesPath = null;
+
+    private final Options options;
+
+    /**
+     * Creates a new GeneratorCommandLine.
+     */
+    public VoxatileCLI() {
+        options = new Options();
+        options.addOption(new Option("h", "help", false, "Display command usage"));
+        options.addOption(new Option("p", "param-file", true, "Get generation params from file"));
+        options.addOption(new Option(null, "generation-disabled", false, "Stop before starting generation, after parameters parsed"));
+        options.addOption(new Option(null, "save-disabled", false, "Stop before saving output file, after generation done"));
+        options.addOption(new Option(null, "max-tile-size", true, "Set maximum tile size (may be passed using %s environment variable)".formatted(MAX_TILE_SIZE_ENVVAR_NAME)));
+        options.addOption(new Option(null, "modules-path", true, "Directory where to look for modules (may be passed using %s environment variable)".formatted(MODULES_PATH_ENVVAR_NAME)));
+    }
+
+    /**
+     * Parses given arguments.
+     *
+     * @param args Argument array (usually those from main method)
+     */
+    public void parse(String[] args) {
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd;
+        try {
+            cmd = parser.parse(options, args);
+        } catch (ParseException e) {
+            System.err.println(e.getMessage());
+            usage();
+            System.exit(1);
+            return; // Must please linter with uninitialized cmd
+        }
+
+        if (cmd.hasOption("h")) {
+            usage();
+            System.exit(0);
+        }
+
+        if (cmd.hasOption("p")) {
+            try {
+                parametersPath = Paths.get(cmd.getOptionValue("p"));
+            } catch (InvalidPathException e) {
+                System.err.println("Invalid parameters file path");
+                System.err.println(e.getMessage());
+                System.exit(1);
+            }
+        }
+
+        if (cmd.hasOption("--max-tile-size")) {
+            try {
+                maxTileSize = parseStrictPositiveInteger(cmd.getOptionValue("--max-tile-size"));
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid value for --max-tile-size: should be a positive integer number");
+                System.exit(1);
+            }
+        } else {
+            String envvar = System.getenv(MAX_TILE_SIZE_ENVVAR_NAME);
+            if (envvar != null && !envvar.isBlank()) {
+                try {
+                    maxTileSize = parseStrictPositiveInteger(envvar);
+                } catch (NumberFormatException e) {
+                    System.out.printf("Warning: Omitting invalid value '%s' in %s environment variable (should have been a positive integer number).%n", envvar, MAX_TILE_SIZE_ENVVAR_NAME);
+                }
+            }
+        }
+
+
+        if (cmd.hasOption("--modules-path")) {
+            try {
+                modulesPath = parseDirectory(cmd.getOptionValue("--modules-path"));
+            } catch (InvalidPathException e) {
+                System.err.println("Invalid value for --modules-path: should be an existing directory path");
+                System.exit(1);
+            }
+        } else {
+            String envvar = System.getenv(MODULES_PATH_ENVVAR_NAME);
+            if (envvar != null && !envvar.isBlank()) {
+                try {
+                    modulesPath = parseDirectory(envvar);
+                } catch (InvalidPathException e) {
+                    System.out.printf("Warning: Omitting invalid value '%s' in %s environment variable (should have been an existing directory path).%n", envvar, MODULES_PATH_ENVVAR_NAME);
+                }
+            }
+        }
+
+        generationDisabled = cmd.hasOption("--generation-disabled");
+        saveDisabled = cmd.hasOption("--save-disabled");
+
+        if (cmd.getArgs().length != 1) {
+            System.err.println("Please provide output path");
+            usage();
+            System.exit(1);
+        }
+
+        try {
+            outputPath = Paths.get(cmd.getArgs()[0]);
+        } catch (InvalidPathException e) {
+            System.err.println("Invalid output path");
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    /**
+     * Prints command line usage.
+     */
+    public void usage() {
+        HelpFormatter helper = new HelpFormatter();
+        helper.printHelp("[-h] [-p <parametersFilePath>] <outputPath>", options);
+    }
+
+    /**
+     * Reads generation parameters from where they are (file or environment variable).
+     *
+     * @return Content of parameters file/variable
+     */
+    public String readParameters() {
+        String parameters;
+
+        if (parametersPath != null) {
+            if (!FileHelpers.isReadableRegularFile(parametersPath)) {
+                System.err.printf("%s is not a regular readable file%n", parametersPath);
+                System.exit(1);
+            }
+
+            try {
+                parameters = Files.readString(parametersPath);
+            } catch (IOException e) {
+                System.err.printf("Error reading parameters from %s%n", parametersPath);
+                e.printStackTrace();
+                System.exit(1);
+                return null; // never actually reached
+            }
+        } else {
+            parameters = System.getenv(PARAMS_ENVVAR_NAME);
+            if (parameters == null || parameters.isBlank()) {
+                System.err.printf("Please provide generation parameters (either with -p option or using %s environment variable)%n", PARAMS_ENVVAR_NAME);
+                usage();
+                System.exit(1);
+            }
+        }
+
+        return parameters;
+    }
+
+    /**
+     * Returns output path.
+     * Allows saving the result of the generator.
+     *
+     * @return output path
+     */
+    public Path outputPath() {
+        return outputPath;
+    }
+
+    /**
+     * Returns generation disabled.
+     * Allows stopping execution when the generator finishes deserializing the parameters.
+     *
+     * @return generation disabled flag
+     */
+    public boolean generationDisabled() {
+        return generationDisabled;
+    }
+
+    /**
+     * Returns save disabled.
+     * Allows stopping execution after the game map generation.
+     *
+     * @return save disabled flag
+     */
+    public boolean saveDisabled() {
+        return saveDisabled;
+    }
+
+    /**
+     * {@return the wanted tiles size if any}
+     */
+    public Integer maxTileSize() {
+        return maxTileSize;
+    }
+
+    /**
+     * {@return the modules directory path}
+     */
+    public Path modulesPath() {
+        return modulesPath;
+    }
+
+    private static int parseStrictPositiveInteger(String value) throws NumberFormatException {
+        int result = Integer.parseInt(value);
+        if (result <= 0)
+            throw new NumberFormatException("Not a positive integer");
+        return result;
+    }
+
+    private static Path parseDirectory(String value) {
+        Path path = Path.of(value);
+        if (!FileHelpers.isReadableDirectory(path))
+            throw new InvalidPathException("Not a readable directory", value);
+        return path;
+    }
+}

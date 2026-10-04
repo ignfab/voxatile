@@ -9,7 +9,7 @@ Module project must have a dependency to `Generator.jar`. This file could be cop
 In `pom.xml`, add following dependency:
 ```xml
 <dependency>
-    <groupId>com.ignfab</groupId>
+    <groupId>fr.ign</groupId>
     <artifactId>voxatile</artifactId>
     <version>1.0-SNAPSHOT</version>
     <scope>provided</scope>
@@ -31,9 +31,9 @@ Minimal module consists of two files:
 Example of `HelloWorldModule` subclass:
 
 ```java
-package com.ignfab.minalac.helloworld;
+package fr.ign.voxatile.modules.helloworld;
 
-import com.ignfab.minalac.generator.Module;
+import fr.ign.voxatile.core.utils.modules.Module;
 
 public class HelloWorldModule extends Module {
     public HelloWorldModule() {
@@ -47,7 +47,7 @@ This class **must** have a public no-argument constructor that will be used by t
 Example of corresponding `module.properties`:
 
 ```properties
-class=com.ignfab.minalac.helloworld.HelloWorldModule
+class=fr.ign.voxatile.modules.helloworld.HelloWorldModule
 ```
 
 Now, a module Jar file has to be created from these two files. This is achieved with usual build tools like [Maven](https://maven.apache.org/) or [Gradle](https://gradle.org/). The only specific need is that `Generator.jar` should be added as a compile-only dependency (and not included in final module Jar).

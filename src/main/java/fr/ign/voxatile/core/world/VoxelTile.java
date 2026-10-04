@@ -1,0 +1,124 @@
+package fr.ign.voxatile.core.world;
+
+import java.util.Collections;
+import java.util.Iterator;
+
+import fr.ign.voxatile.core.generation.heightmaps.Heightmap;
+import fr.ign.voxatile.core.generation.heightmaps.ReadableHeightmap;
+import fr.ign.voxatile.core.placeables.Placeable;
+import fr.ign.voxatile.core.utils.world3d.WorldBBox3d;
+
+/**
+ * {@code VoxelTile} represents a part of a {@link VoxelWorld} to be generated.
+ */
+public abstract class VoxelTile {
+    /**
+     * The limits of the tile.
+     */
+    private WorldBBox3d limits;
+    /**
+     * Heightmap below which no voxel has been placed.
+     * It keeps track of the lowest voxels ever placed, but does not necessarily represent the current lowest voxels.
+     */
+    protected Heightmap minimum;
+
+    /**
+     * Heightmap above which no voxel has been placed.
+     * It keeps track of the highest voxels ever placed, but does not necessarily represent the current highest voxels.
+     */
+    protected Heightmap maximum;
+
+    /**
+     * Creates a new {@code VoxelTile}.
+     *
+     * @param limits Limits of the tile
+     */
+    protected VoxelTile(WorldBBox3d limits) {
+        this.limits = limits;
+        minimum = new Heightmap(limits.to2d(), limits.maxZ());
+        maximum = new Heightmap(limits.to2d(), limits.minZ());
+    }
+
+    /**
+     * {@return the limits of this tile}
+     */
+    public WorldBBox3d limits() {
+        return limits;
+    }
+
+    /**
+     * Saves {@code VoxelTile} contents to its final destination so tile could be freed.
+     *
+     * @throws MapWriteException if an error occurs while writing to destination.
+     */
+    public abstract void save() throws MapWriteException;
+
+    /**
+     * Returns the voxel located at the given coordinates as a new {@code Placeable}.
+     *
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @param z z-coordinate
+     * @return the corresponding voxel
+     */
+    public abstract Placeable getVoxel(int x, int y, int z);
+
+    /**
+     * Returns a descending iterator over the voxels and associated coordinates of a column of this world.
+     *
+     * @param x x-coordinate of the column to iterate over
+     * @param y y-coordinate of the column to iterate over
+     * @return an iterator for the pair of voxels and coordinates
+     */
+    public Iterator<PlacedVoxel> voxelIterator(int x, int y) {
+        int minZ = minimum.get(x, y);
+        int maxZ = maximum.get(x, y);
+        if (maxZ < minZ)
+            return Collections.emptyIterator();
+
+        return new VoxelColumnIterator(this, x, y, minZ, maxZ);
+    }
+
+    /**
+     * Returns an iterable over the voxels and associated coordinates of a column of this world.
+     *
+     * @param x x-coordinate of the column to iterate over
+     * @param y y-coordinate of the column to iterate over
+     * @return an iterable for the pair of voxels and coordinates
+     */
+    public Iterable<PlacedVoxel> voxels(int x, int y) {
+        return () -> this.voxelIterator(x, y);
+    }
+
+    /**
+     * Updates the internal minimum or maximum heightmap at the coordinate (x, y) based on the provided z-coordinate value.
+     *
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @param z z-coordinate
+     */
+    protected void updateHeightmaps(int x, int y, int z) {
+        if (z > maximum.get(x, y))
+            maximum.set(x, y, z);
+        if (z < minimum.get(x, y))
+            minimum.set(x, y, z);
+    }
+
+    /**
+     * {@return a read-only heightmap below which no voxel has been placed}
+     * Can be used as a starting point to find the lowest voxels.
+     * Please note that its values might decrease as it is updated when voxels are placed.
+     */
+    public ReadableHeightmap minimum() {
+        return minimum;
+    }
+
+    /**
+     * {@return a read-only heightmap above which no voxel has been placed}
+     * Can be used as a starting point to find the highest voxels.
+     * Please note that its values might increase as it is updated when voxels are placed.
+     */
+    public ReadableHeightmap maximum() {
+        return maximum;
+    }
+}

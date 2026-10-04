@@ -1,0 +1,107 @@
+package fr.ign.voxatile.core.parameters.placeables;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DatabindException;
+
+import fr.ign.voxatile.core.parameters.OutputFormat;
+import fr.ign.voxatile.core.parameters.ParamsTester;
+import fr.ign.voxatile.core.parameters.placeables.structures.PlaceableStructureParams;
+import fr.ign.voxatile.core.parameters.placeables.voxels.TestingVoxelParams;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class PlaceableParamsTest {
+
+    // Voxel deserialization
+
+    @Test
+    @DisplayName("Test voxel deserialization")
+    public void testPlaceableParamsDeserializerShortcut() throws DatabindException, JacksonException {
+        PlaceableParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, "test"));
+        TestingVoxelParams voxelParams = assertInstanceOf(TestingVoxelParams.class, params);
+        assertEquals(voxelParams.name, "test");
+    }
+
+    @Test
+    @DisplayName("Test voxel deserialization using shortcut without existing shortcut")
+    public void testPlaceableParamsDeserializerNoShortcut() throws DatabindException, JacksonException {
+
+        OutputFormat format = new OutputFormat(null, TestingVoxelParams.class, null);
+        assertThrows(IllegalArgumentException.class, () -> ParamsTester.deserialize(PlaceableParams.class, "test", format));
+    }
+
+    @Test
+    @DisplayName("Test voxel deserialization using default")
+    public void testPlaceableParamsDeserializerDefault() throws DatabindException, JacksonException {
+
+        PlaceableParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, "name: tata"));
+        TestingVoxelParams voxelParams = assertInstanceOf(TestingVoxelParams.class, params);
+        assertEquals(voxelParams.name, "tata");
+    }
+
+    @Test
+    @DisplayName("Test voxel deserialization using default without existing default")
+    public void testPlaceableParamsDeserializerNoDefault() throws DatabindException, JacksonException {
+
+        OutputFormat format = new OutputFormat(null, null, TestingVoxelParams::new);
+        assertThrows(IllegalArgumentException.class, () -> ParamsTester.deserialize(PlaceableParams.class, "name: tata", format));
+    }
+
+    @Test
+    @DisplayName("Test voxel deserialization using `voxel:` field")
+    public void testPlaceableParamsVoxelDeserialization() {
+        PlaceableParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, """
+            voxel:
+                name: tata
+        """));
+        TestingVoxelParams voxelParams = assertInstanceOf(TestingVoxelParams.class, params);
+        assertEquals(voxelParams.name, "tata");
+    }
+
+    // Combined deserialization
+
+    @Test
+    @DisplayName("Test placeable deserialization using combined params")
+    public void testPlaceableParamsDeserializerCombined() throws DatabindException, JacksonException {
+
+        PlaceableParams params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, "[ titi, toto, tata ]"));
+
+        CombinedPlaceableParams combinedParams = assertInstanceOf(CombinedPlaceableParams.class, params);
+        assertEquals(3, combinedParams.placeableParams.size());
+    }
+
+    // NoVoxel deserialization
+
+    @Test
+    @DisplayName("Test nothing deserialization")
+    public void testPlaceableParamsNothingDeserialization() {
+        PlaceableParams params;
+
+        // Canonical test
+        params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, """
+            nothing:
+        """));
+        assertInstanceOf(NothingParams.class, params);
+
+        // Shortcut test
+        params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, "nothing"));
+        assertInstanceOf(NothingParams.class, params);
+    }
+
+    // Structure deserialization
+
+    @Test
+    @DisplayName("Test structure deserialization")
+    public void testPlaceableParamsStructureDeserialization() throws DatabindException, JacksonException {
+        PlaceableParams params;
+        params = assertDoesNotThrow(() -> ParamsTester.deserialize(PlaceableParams.class, """
+            structure:
+              - at: [0, 0, 0]
+                place: A
+        """));
+
+        assertInstanceOf(PlaceableStructureParams.class, params);
+    }
+}

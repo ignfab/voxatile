@@ -21,7 +21,7 @@ Optional `validate()` method can perform some more checks that *Jackson* could n
 
 *Example of parameter class implementation:*
 ```java
-package com.ignfab.minalac.generator.parameters.tasks;
+package fr.ign.voxatile.core.parameters.tasks;
 ...
 
 public class FooTaskParams extends TileTaskParam {
