@@ -16,7 +16,7 @@ To avoid useless efforts building a parameter file, you can use provided `genera
 ## Command line arguments
 Usage:
 ```
-java -jar Generator.jar [OPTIONS] <outputPath>
+java -jar voxatile.jar [OPTIONS] <outputPath>
 ```
 
 Options:
@@ -49,7 +49,7 @@ Path to modules directory (see [modules](#modules)).
 
 If you have cloned the project repository, you can [build the JAR using Maven](../tools/Maven.md#create-an-executable-jar) and run it:
 ```shell
-mvn -Dmaven.test.skip=true clean package && java -jar target/Generator.jar -p parameters.yaml $HOME/.minetest/worlds/voxatile
+mvn -Dmaven.test.skip=true clean package && java -jar target/voxatile.jar -p parameters.yaml $HOME/.minetest/worlds/voxatile
 ```
 
 ## Download workflow artifact
@@ -59,9 +59,9 @@ mvn -Dmaven.test.skip=true clean package && java -jar target/Generator.jar -p pa
 
 If you just want to test the JAR from a different branch (e.g. to validate a PR), you can just download the [JAR built by the GitHub workflow](../tools/GitHub-workflows.md#build-jar), available as an artifact. You can find the link in the PR discussion or in the commit comments if no PR is open for the desired branch.
 
-Once you downloaded (and extracted) the artifact, you should have the `Generator.jar` file and will be able to run it:
+Once you downloaded (and extracted) the artifact, you should have the `voxatile.jar` file and will be able to run it:
 ```shell
-java -jar Generator.jar -p parameters.yaml $HOME/.minetest/worlds/voxatile
+java -jar voxatile.jar -p parameters.yaml $HOME/.minetest/worlds/voxatile
 ```
 
 ## Run using Maven

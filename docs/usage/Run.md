@@ -19,7 +19,7 @@ Run only (from repository root):
 
 ## generate.sh
 
-`generate.sh` scripts creates yaml configuration from configuration fragments and passes it to `Generator.jar`.
+`generate.sh` scripts creates yaml configuration from configuration fragments and passes it to `voxatile.jar`.
 
 It mimics a simple behavior of future `voxatile-configurator` and is only intended to be used for testing purpose.
 

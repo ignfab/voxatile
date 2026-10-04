@@ -66,12 +66,12 @@ EOF
 
 # Pick results from builder
 WORKDIR /app
-COPY --from=builder /root/target/Generator.jar Generator.jar
+COPY --from=builder /root/target/voxatile.jar voxatile.jar
 
 # Run as user and group
 USER ${USER}:${GROUP}
 
-# Generator as entrypoint
-ENTRYPOINT ["java", "-jar", "/app/Generator.jar"]
+# Voxatile as entrypoint
+ENTRYPOINT ["java", "-jar", "/app/voxatile.jar"]
 # Output directory default value
 CMD ["/output"]

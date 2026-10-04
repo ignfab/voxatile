@@ -77,7 +77,7 @@ mvn -Dtest="my.package.MyClassTest#testMyMethod" clean test
 
 ### Create an executable JAR
 
-To build the project into a dependency-shaded, executable JAR (to [execute it](../usage/Run.md) locally, for example), you can run the `package` phase. It will compile the source and bundle all the dependencies into a single JAR (`target/Generator.jar`).
+To build the project into a dependency-shaded, executable JAR (to [execute it](../usage/Run.md) locally, for example), you can run the `package` phase. It will compile the source and bundle all the dependencies into a single JAR (`target/voxatile.jar`).
 
 Because this phase is after the `test` one, they will be executed as well. If you want to speed up the process, you can explicitly ignore them using `-DskipTests=true`.
 

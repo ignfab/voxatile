@@ -31,7 +31,7 @@ env:
   # Markdown template of the artifact download extra information
   # {0}: Artifact download URL
   ARTIFACT_DOWNLOAD_TEMPLATE: |
-    📦 **Download artifact**: [Generator.jar]({0})
+    📦 **Download artifact**: [voxatile.jar]({0})
   # Markdown template of the build logs extra information
   # {0}: Build logs
   BUILD_LOGS_TEMPLATE: |
@@ -86,12 +86,12 @@ jobs:
           } >> "$GITHUB_OUTPUT"
           echo "date=$(TZ=Europe/Paris date +'%Y-%m-%dT%H:%M:%S (%Z)')" >> "$GITHUB_OUTPUT"
           exit $code
-      - name: Upload Generator.jar as build artifact
+      - name: Upload voxatile.jar as build artifact
         uses: actions/upload-artifact@v4
         id: upload-artifact
         with:
-          name: Generator.jar
-          path: target/Generator.jar
+          name: voxatile.jar
+          path: target/voxatile.jar
           if-no-files-found: error
       - name: Find PR with commit
         id: find-pr
