@@ -30,6 +30,9 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
     private final CoordinateReferenceSystem crs;
     private final EnvelopeProvider envelopeProvider;
     private final String srsName;
+    // Voxel size in map coordinates
+    private final double voxelSizeX;
+    private final double voxelSizeY;
 
     /**
      * Creates a new {@code WMSDataProvider}.
@@ -38,6 +41,7 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
      * @param layer name of the WMS layer to query
      * @param crs coordinate reference system to use for this source
      * @param envelopeProvider function to use to compute envelopes from bounding boxes
+     * @throws GenerationFailedException
      */
     public WMSFloatBilDataProvider(String baseURL, String layer, CoordinateReferenceSystem crs, EnvelopeProvider envelopeProvider) {
         this.crs = crs;
@@ -55,6 +59,18 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
             .parameter("FORMAT", "image/x-bil;bits=32")
             .parameter("STYLES", "")
             .build();
+
+        // Compute voxel size in map coordinates
+        try {
+            // Beware, we use world center voxel to get voxel size.
+            // This would cause stitching problems if we ever want to merge two adjacent generated worlds.
+            ReferencedEnvelope voxelEnvelope = envelopeProvider.computeForCRS(crs, WorldBBox3d.ORIGIN);
+            voxelSizeX = voxelEnvelope.getWidth();
+            voxelSizeY = voxelEnvelope.getHeight();
+
+        } catch (FactoryException | TransformException e) {
+            throw new IllegalStateException("Unable to compute voxel size in map coordinate", e);
+        }
     }
 
     @Override
@@ -72,27 +88,21 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
             throw new GenerationFailedException(e);
         }
 
-        // Pixel size in map units
-        // TODO: Should be computed from capabilities and voxel size in realworld
-        // (we don't need information more accurate than voxel size neither information more
-        // accurate than capabilities)
-        double pixelSize = 1;
-
         // This is the WMS bbox expressed in map coordinates.
         // It is used below to deduce matrix offset and cell size.
         // WMS matrix is aligned in the same way in all tiles (use of floor/ceil).
         // This prevents glitches between tiles.
 
-        // We need margin for interpolation (-1/+1 expressed in pixelSize)
+        // We need margin for interpolation (-1/+1 expressed in voxel size)
         // TODO: Margin size should come from processor (may be with PR#123?)
-        double minX = Rounding.floor(envelope.getMinX(), pixelSize, -1);
-        double minY = Rounding.floor(envelope.getMinY(), pixelSize, -1);
-        double maxX = Rounding.ceil(envelope.getMaxX(), pixelSize, 1);
-        double maxY = Rounding.ceil(envelope.getMaxY(), pixelSize, 1);
+        double minX = Rounding.floor(envelope.getMinX(), voxelSizeX, -1);
+        double minY = Rounding.floor(envelope.getMinY(), voxelSizeX, -1);
+        double maxX = Rounding.ceil(envelope.getMaxX(), voxelSizeY, 1);
+        double maxY = Rounding.ceil(envelope.getMaxY(), voxelSizeY, 1);
 
         // Formulas give integer numbers, we round them to avoid surprises with floating points
-        int width  = (int) Math.round((maxX - minX) / pixelSize);
-        int height = (int) Math.round((maxY - minY) / pixelSize);
+        int width  = (int) Math.round((maxX - minX) / voxelSizeX);
+        int height = (int) Math.round((maxY - minY) / voxelSizeY);
 
         // Perform WMS query
         ParameterizedURL url = baseURL.builder()
@@ -130,7 +140,7 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
         if (total != size)
             throw new RetryableException("Incomplete data read from stream");
 
-        FloatArrayGeographicDataMatrix2d result = new FloatArrayGeographicDataMatrix2d(width, height, minX, minY, pixelSize, pixelSize);
+        FloatArrayGeographicDataMatrix2d result = new FloatArrayGeographicDataMatrix2d(width, height, minX, minY, voxelSizeX, voxelSizeY);
 
         // Decode binary data into float matrix
         ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer().get(result.data());
