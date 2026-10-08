@@ -30,6 +30,7 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
     private final CoordinateReferenceSystem crs;
     private final EnvelopeProvider envelopeProvider;
     private final String srsName;
+
     // Voxel size in map coordinates
     private final double voxelSizeX;
     private final double voxelSizeY;
@@ -41,7 +42,6 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
      * @param layer name of the WMS layer to query
      * @param crs coordinate reference system to use for this source
      * @param envelopeProvider function to use to compute envelopes from bounding boxes
-     * @throws GenerationFailedException
      */
     public WMSFloatBilDataProvider(String baseURL, String layer, CoordinateReferenceSystem crs, EnvelopeProvider envelopeProvider) {
         this.crs = crs;
@@ -140,7 +140,14 @@ public class WMSFloatBilDataProvider implements Provider<FloatGeographicDataMatr
         if (total != size)
             throw new RetryableException("Incomplete data read from stream");
 
-        FloatArrayGeographicDataMatrix2d result = new FloatArrayGeographicDataMatrix2d(width, height, minX, minY, voxelSizeX, voxelSizeY);
+        FloatArrayGeographicDataMatrix2d result = new FloatArrayGeographicDataMatrix2d(
+            width,
+            height,
+            minX,
+            minY,
+            voxelSizeX,
+            voxelSizeY
+        );
 
         // Decode binary data into float matrix
         ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer().get(result.data());
