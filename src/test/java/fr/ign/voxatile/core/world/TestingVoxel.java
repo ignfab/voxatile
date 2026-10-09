@@ -2,13 +2,11 @@ package fr.ign.voxatile.core.world;
 
 import java.util.Objects;
 
-import fr.ign.voxatile.core.placeables.Placeable;
-
 /**
  * A dummy voxel for {@code TestingVoxelWorld} and {@code TestingVoxelTile}.
  * All testing voxels are represented by simple strings.
  */
-public class TestingVoxel implements Placeable {
+public class TestingVoxel implements Voxel {
     /**
      * Name of the voxel.
      */
@@ -40,7 +38,8 @@ public class TestingVoxel implements Placeable {
      *
      * @return Voxel as string
      */
-    protected String getName() {
+    @Override
+    public String getTypeIdentifier() {
         return name;
     }
 

@@ -1,5 +1,6 @@
 package fr.ign.voxatile.core.world;
 
+import java.io.File;
 import java.util.Collection;
 
 import fr.ign.voxatile.core.utils.world2d.WorldBBox2d;
@@ -19,10 +20,15 @@ public abstract class VoxelWorld {
      * The metadata of the world.
      */
     protected final VoxelWorldMetadata metadata;
+    /**
+     * The directory where to save data to. If null nothing is saved.
+     */
+    protected final File destination;
 
-    protected VoxelWorld(VoxelWorldMetadata metadata) {
+    protected VoxelWorld(VoxelWorldMetadata metadata, File destination) {
         limits = WorldBBox3d.EMPTY;
         this.metadata = metadata;
+        this.destination = destination;
     }
 
     /**
@@ -59,6 +65,13 @@ public abstract class VoxelWorld {
      */
     public VoxelWorldMetadata getMetadata() {
         return metadata;
+    }
+
+    /**
+     * {@return the directory where to save data to. If null nothing is saved}
+     */
+    public File destination() {
+        return this.destination;
     }
 
     /**

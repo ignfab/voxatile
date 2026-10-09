@@ -4,9 +4,9 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
-import fr.ign.voxatile.core.placeables.Placeable;
 import fr.ign.voxatile.core.utils.world3d.WorldBBox3d;
 import fr.ign.voxatile.core.world.MapWriteException;
+import fr.ign.voxatile.core.world.Voxel;
 import fr.ign.voxatile.core.world.VoxelTile;
 import fr.ign.voxatile.modules.luanti.utils.SQLiteMapWriter;
 
@@ -79,13 +79,13 @@ public class LuantiVoxelTile extends VoxelTile {
 
     /**
      * {@inheritDoc}
-     * The returned voxel is not necessarily one placed using {@link Placeable#place}.
+     * The returned voxel is not necessarily one placed using {@link Voxel#place}.
      * It may be an air node created when the world is initialized.
      * <p>
      * If you try to get a voxel outside the tile limits, it will return {@link LuantiVoxel#DEFAULT_VOXEL}.
      */
     @Override
-    public Placeable getVoxel(int x, int y, int z) {
+    public Voxel getVoxel(int x, int y, int z) {
         // X/Y/Z => X/Z/Y
         Block block = getBlock(x >> 4, z >> 4, y >> 4);
 
