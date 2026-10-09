@@ -38,6 +38,8 @@ public record FloatArrayGeographicDataMatrix2d(
 
     @Override
     public float getFloat(int x, int y) {
+        if (x < 0 || x >= sizeX || y < 0 || y >= sizeY)
+            throw new IndexOutOfBoundsException();
         return data[x + (sizeY - y - 1) * sizeX];
     }
 }
