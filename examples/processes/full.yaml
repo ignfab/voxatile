@@ -388,11 +388,7 @@ forEachTile:
                 stretchableAlongZ: { at: 0 }
           # Right corner
           - *corner
-      - structure:
-          at: [ 0, 0, 0 ]
-          place: *corner-material
-        stretchableAlongX: { at: 0 }
-        stretchableAlongZ: { at: 0 }
+      - fillWith: *corner-material
 
   renderOfficeBuildings:
     after:
@@ -412,13 +408,7 @@ forEachTile:
       - along: x
         concatenate:
           # Left corner
-          - structure:
-              place: *modern-wall
-              at: [0, 0, 0]
-            stretchableAlongX:
-              at: 0
-            stretchableAlongZ:
-              at: 0
+          - fillWith: *modern-wall
           # Facade
           - priority: 1
             along: z
@@ -463,26 +453,10 @@ forEachTile:
                       stretchableAlongZ:
                         at: 0
               # Top
-              - structure:
-                  place: *modern-wall
-                  at: [0, 0, 0 ]
-                stretchableAlongX:
-                  at: 0
-                stretchableAlongZ:
-                  at: 0
+              - fillWith: *modern-wall
+                yOffset: 0
           # Left corner
-          - structure:
-              place: *modern-wall
-              at: [0, 0, 0]
-            stretchableAlongX:
-              at: 0
-            stretchableAlongZ:
-              at: 0
+          - fillWith: *modern-wall
       # Default
-      - structure:
-          at: [ 0, 0, 0 ]
-          place: *modern-wall
-        stretchableAlongX:
-          at: 0
-        stretchableAlongZ:
-          at: 0
+      - fillWith: *modern-wall
+        yOffset: 1

@@ -14,6 +14,7 @@ import fr.ign.voxatile.core.utils.random.Seed;
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION, defaultImpl = StructureLayoutBuilderParams.class)
 @JsonSubTypes({
     @JsonSubTypes.Type(ConcatenateLayoutBuilderParams.class),
+    @JsonSubTypes.Type(FillWithLayoutBuilderParams.class),
     @JsonSubTypes.Type(RepeatLayoutBuilderParams.class),
     @JsonSubTypes.Type(StructureLayoutBuilderParams.class),
 })

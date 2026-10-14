@@ -36,6 +36,21 @@ Fields:
     - `atLeast` (optional, default `1`): Minimum repetition of the band. `0` allows squeezing.
     - `atMost` (optional, default `infinite`): Maximum repetition of the band.
 
+## Fill Layout
+
+Makes a single placeable structure stretchable along each "adjust" axis. This a convenient way to fill remaining (or all) space of a layout.
+
+```yaml
+fillWith: default:stone
+yOffset: 1
+```
+
+Fields:
+  - `fillWith` (required): Placable to use to fill space
+  - `xOffset` (optional, default 0): Placement offset along x-axis
+  - `yOffset` (optional, default 0): Placement offset along y-axis
+  - `zOffset` (optional, default 0): Placement offset along z-axis
+
 ## Repeat Layout
 
 Repeats a layout along a given axis. If the repeated layout is resizable on that axis,
