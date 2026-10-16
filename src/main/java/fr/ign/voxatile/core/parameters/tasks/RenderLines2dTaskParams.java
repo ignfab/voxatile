@@ -7,19 +7,34 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import fr.ign.voxatile.core.generation.Generation;
 import fr.ign.voxatile.core.parameters.heightmaps.ReadableHeightmapParams;
+import fr.ign.voxatile.core.parameters.placeables.PlaceableParams;
 import fr.ign.voxatile.core.parameters.placeables.structures.PlaceableStructureParams;
+import fr.ign.voxatile.core.placeables.PlaceableStructure;
 import fr.ign.voxatile.core.tasks.RenderLines2dTask;
 import fr.ign.voxatile.core.tasks.TileTask;
+import fr.ign.voxatile.core.utils.world3d.WorldBBox3d;
 
 /**
  * Parameters for {@link RenderLines2dTask}.
  */
 public class RenderLines2dTaskParams extends ModelTaskParams {
     /**
-     * Structure to place and repeat along lines (required).
+     * Width of lines to render (optional, default 1).
      */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public PlaceableStructureParams structure;
+    @JsonSetter(nulls = Nulls.SKIP)
+    public int width = 1;
+
+    /**
+     * What to place on line (optional).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public PlaceableParams place = null;
+
+    /**
+     * Structure to place and repeat along lines (optional).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public PlaceableStructureParams structure = null;
 
     /**
      * Heightmap on which draw lines (from which Z is taken according to X and Y).
@@ -30,27 +45,50 @@ public class RenderLines2dTaskParams extends ModelTaskParams {
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
-     * @param structure structure to place along lines
      * @param heightmap heightmap on which draw lines (from which Z is taken according to X and Y)
      */
-    @ConstructorProperties({"structure", "heightmap"})
-    public RenderLines2dTaskParams(PlaceableStructureParams structure, ReadableHeightmapParams heightmap) {
-        this.structure = structure;
+    @ConstructorProperties({"heightmap"})
+    public RenderLines2dTaskParams(ReadableHeightmapParams heightmap) {
         this.heightmap = heightmap;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
-        structure.validate();
-        models.validate();
+        super.validate();
+
+        if (width < 1)
+            throw new IllegalArgumentException("Width should be greater than 0");
+
+        if (place != null && structure != null)
+            throw new IllegalArgumentException("Can not have both place and structure fields");
+
+        if (place == null && structure == null)
+            throw new IllegalArgumentException("There must be a place or a structure field");
+
+        if (structure != null)
+            structure.validate();
+
+        if (place != null)
+            place.validate();
+
         heightmap.validate();
     }
 
     @Override
     public TileTask create(Generation generation) {
+        PlaceableStructure drawnStructure;
+
+        if (place != null) {
+            PlaceableStructure.Builder builder = PlaceableStructure.builder();
+            builder.set(new WorldBBox3d(0, 0, 0, 1, width, 1), place.create(generation.seed()));
+            drawnStructure = builder.build();
+        } else {
+            drawnStructure = structure.create(generation.seed());
+        }
+
         return new RenderLines2dTask(
             models.create(generation),
-            structure.create(generation.seed()),
+            drawnStructure,
             heightmap.create(generation.heightmaps())
         );
     }

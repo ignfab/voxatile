@@ -229,17 +229,15 @@ forEachTile:
       - fetchRoads
       - renderGround
       - forest
-    type: renderLines3d
+    type: renderLines2d
     models:
       type: road
       filter:
         metadata: nature
         in: [ "Chemin", "Sentier", "Route empierrée" ]
-    structure:
-      - place: *path
-        at: [ 0, -1..1, 0]
-      - place: *voxel-air
-        at: [ 0, -1..1, 1..2 ]
+    width: 3
+    place: *path
+    heightmap: ground
 
   renderBridges:
     after: path
