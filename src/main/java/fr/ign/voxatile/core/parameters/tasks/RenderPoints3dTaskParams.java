@@ -7,13 +7,13 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import fr.ign.voxatile.core.generation.Generation;
 import fr.ign.voxatile.core.parameters.placeables.PlaceableParams;
-import fr.ign.voxatile.core.tasks.RenderPointsTask;
+import fr.ign.voxatile.core.tasks.RenderPoints3dTask;
 import fr.ign.voxatile.core.utils.execution.Task;
 
 /**
  * Parameters for {@link RenderPointsTask}.
  */
-public class RenderPointsTaskParams extends ModelTaskParams {
+public class RenderPoints3dTaskParams extends ModelTaskParams {
 
     /**
      * Placeable to place at points (required).
@@ -27,7 +27,7 @@ public class RenderPointsTaskParams extends ModelTaskParams {
      * @param place placeable to place at points
      */
     @ConstructorProperties({"place"})
-    public RenderPointsTaskParams(PlaceableParams place) {
+    public RenderPoints3dTaskParams(PlaceableParams place) {
         this.place = place;
     }
 
@@ -39,7 +39,7 @@ public class RenderPointsTaskParams extends ModelTaskParams {
 
     @Override
     public Task create(Generation generation) {
-        return new RenderPointsTask(
+        return new RenderPoints3dTask(
             models.create(generation),
             place.create(generation.seed())
         );

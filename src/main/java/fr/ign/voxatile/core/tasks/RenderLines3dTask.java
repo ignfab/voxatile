@@ -14,7 +14,7 @@ import fr.ign.voxatile.core.voxelization.shape3d.voxelizer.ThickLinearIndexedVox
 /**
  * A task rendering lines by placing structure along them.
  */
-public class RenderLinesTask extends ModelTask<Shape3dConvertibleModel> {
+public class RenderLines3dTask extends ModelTask<Shape3dConvertibleModel> {
     // In structure, X is for linear direction (starting at 0, looping over bbox max x), Y for both orthogonal directions (0 is central axis).
     private final PlaceableStructure structure;
     private final ReadableHeightmapSpec renderOnlyWhenAboveSpec;
@@ -31,7 +31,7 @@ public class RenderLinesTask extends ModelTask<Shape3dConvertibleModel> {
      * @param structure structure placed along the lines
      * @param heightmapSpec if not null, only parts of the lines over that heightmap are rendered
      */
-    public RenderLinesTask(
+    public RenderLines3dTask(
         ModelSelection selection,
         PlaceableStructure structure,
         ReadableHeightmapSpec heightmapSpec

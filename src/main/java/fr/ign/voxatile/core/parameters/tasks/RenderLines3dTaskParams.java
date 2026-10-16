@@ -8,13 +8,13 @@ import com.fasterxml.jackson.annotation.Nulls;
 import fr.ign.voxatile.core.generation.Generation;
 import fr.ign.voxatile.core.parameters.heightmaps.ReadableHeightmapParams;
 import fr.ign.voxatile.core.parameters.placeables.structures.PlaceableStructureParams;
-import fr.ign.voxatile.core.tasks.RenderLinesTask;
+import fr.ign.voxatile.core.tasks.RenderLines3dTask;
 import fr.ign.voxatile.core.tasks.TileTask;
 
 /**
- * Parameters for {@link RenderLinesTask}.
+ * Parameters for {@link RenderLines3dTask}.
  */
-public class RenderLinesTaskParams extends ModelTaskParams {
+public class RenderLines3dTaskParams extends ModelTaskParams {
     /**
      * Structure to place and repeat along lines (required).
      */
@@ -33,7 +33,7 @@ public class RenderLinesTaskParams extends ModelTaskParams {
      * @param structure structure to place along lines
      */
     @ConstructorProperties({"structure"})
-    public RenderLinesTaskParams(PlaceableStructureParams structure) {
+    public RenderLines3dTaskParams(PlaceableStructureParams structure) {
         this.structure = structure;
     }
 
@@ -47,7 +47,7 @@ public class RenderLinesTaskParams extends ModelTaskParams {
 
     @Override
     public TileTask create(Generation generation) {
-        return new RenderLinesTask(
+        return new RenderLines3dTask(
             models.create(generation),
             structure.create(generation.seed()),
             renderOnlyWhenAbove == null ? null : renderOnlyWhenAbove.create(generation.heightmaps())

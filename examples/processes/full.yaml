@@ -229,7 +229,7 @@ forEachTile:
       - fetchRoads
       - renderGround
       - forest
-    type: renderLines
+    type: renderLines3d
     models:
       type: road
       filter:
@@ -243,7 +243,7 @@ forEachTile:
 
   renderBridges:
     after: path
-    type: renderLines
+    type: renderLines3d
     models:
       type: road
       filter:
@@ -265,7 +265,7 @@ forEachTile:
 
   renderRoadsPass1:
     after: renderBridges
-    type: renderLines
+    type: renderLines3d
     models:
       type: road
       filter:
@@ -284,7 +284,7 @@ forEachTile:
 
   renderRoadsPass2:
     after: renderRoadsPass1
-    type: renderLines
+    type: renderLines3d
     models:
       type: road
       filter:

@@ -14,8 +14,10 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`fetchData`](#fetchdata)
 * [Tasks operating on world](#tasks-operating-on-world)
   * [`renderHeightmap`](#renderheightmap)
-  * [`renderLines`](#renderlines)
-  * [`renderPoints`](#renderpoints)
+  * [`renderPoints2d`](#renderpoints2d)
+  * [`renderPoints3d`](#renderpoints3d)
+  * [`renderLines2d`](#renderlines2d)
+  * [`renderLines3d`](#renderlines3d)
   * [`renderSurfaces`](#rendersurfaces)
   * [`fillBetweenHeightmapAndValue`](#fillbetweenheightmapandvalue)
   * [`renderBuildings`](#renderbuildings)
@@ -75,7 +77,59 @@ maximum: ground
 place: default:water
 ```
 
-### `renderLines`
+### `renderPoints2d`
+
+Places something on 2d points. Altitude is given by a heightmap.
+
+#### Extra parameters
+
+- `models`: [Selection of models](ModelSelection.md) to render (required, models must be convertible to 2d shapes)
+- `heightmap`: [Heightmap](Heightmaps.md) giving altitude
+- `place`: [Placeable](Placeables.md) to use (required)
+
+#### Example
+
+```yaml
+type: renderPoints2d
+models:
+  type: trees
+heightmap: ground
+place: default:tree
+```
+
+### `renderPoints3d`
+
+Places something on 3d points.
+
+#### Extra parameters
+
+- `models`: [Selection of models](ModelSelection.md) to render (required, models must be convertible to 3d shapes)
+- `place`: [Placeable](Placeables.md) to use (required)
+
+#### Example
+
+```yaml
+type: renderPoints3d
+models:
+  type: trees
+place: default:tree
+```
+
+### `renderLines2d`
+
+Renders 2-D linearities (line strings, linear rings, polygon borders). Altitude is taken from a heightmap.
+
+#### Extra parameters
+
+- `models`: [Selection of models](ModelSelection.md) to render (required, models must be convertible to 2d shapes)
+- `heightmap`: [Heightmap](Heightmaps.md) giving altitude
+- `structure`: [Structure](Placeables.md#structures) to use (required, see below for explanations)
+
+For `structure` see [`renderLines3d`](#renderlines3d), it's meaning is the same.
+
+The only difference with `renderLine3d` is that z (altitude) will be taken from heightmap and not from geometry. It is possible to use `renderLines3d` on three dimensional geometries. Vertical coordinate will then be ignored and replaced by heightmap value.
+
+### `renderLines3d`
 
 Renders 3-D linearities (line strings, linear rings, polygon borders), repeating a given [structure](Placeables.md#structures) along them.
 
@@ -96,7 +150,7 @@ Note that:
 #### Example
 
 ```yaml
-type: renderLines
+type: renderLines3d
 models:
   type: roads
 structure:
@@ -126,6 +180,14 @@ Here, we use a structure in zy-plane (so along height and width):
 structure:
   axes: [ z, y ]
   blueprint:
+In given structure, x-axis is along the line, y-axis is in line wideness and z-axis is vertical.
+
+Note that:
+- Z-axis is always vertical, regardless of line pitch.
+- Y-axis symmetric structures usage is recommended for all linear features which orientation has no meaning (most cases) or it may end yp with messy results (unwanted orientation change on junctions).
+
+![A line to draw zigzaging away with drawn structure repeated along and structure axes following the line](img/render-line-axes.svg)
+
     - "==    =="
     - "|      |"
     - "|      |"
@@ -162,24 +224,6 @@ Three-dimensional structures can be used and same rules apply. X-axis is repeate
 The blueprint shows five successive vertical slices of the structure. This will form a sort of long building with windows:
 
 ![Several long building-like structures with glass window, stone top and bottom, floating in the air](img/render-line-zyx.png)
-
-### `renderPoints`
-
-Renders 3d points as a placeable.
-
-#### Extra parameters
-
-- `models`: [Selection of models](ModelSelection.md) to render (required, models must be convertible to 3d shapes)
-- `place`: [Placeable](Placeables.md) to use (required)
-
-#### Example
-
-```yaml
-type: renderPoints
-models:
-  type: points
-place: default:stone
-```
 
 ### `renderSurfaces`
 
