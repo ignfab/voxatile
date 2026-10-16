@@ -15,7 +15,7 @@ import fr.ign.voxatile.core.voxelization.shape2d.voxelizer.SurfaceVoxelizer2d;
 /**
  * A {@link TileTask} placing things on a 2d surface shape at heighmap height.
  */
-public class RenderSurfacesTask extends ModelTask<Shape2dConvertibleModel> {
+public class RenderSurfaces2dTask extends ModelTask<Shape2dConvertibleModel> {
     private final ReadableHeightmapSpec heightmapSpec;
     private final ModelValue altitudeOffset;
     private final Placeable placeable;
@@ -30,7 +30,7 @@ public class RenderSurfacesTask extends ModelTask<Shape2dConvertibleModel> {
      * @param altitudeOffset a model value added to heightmap altitude for placing
      * @param placeable what to place on surface
      */
-    public RenderSurfacesTask(ModelSelection selection, ReadableHeightmapSpec heightmapSpec, ModelValue altitudeOffset, Placeable placeable) {
+    public RenderSurfaces2dTask(ModelSelection selection, ReadableHeightmapSpec heightmapSpec, ModelValue altitudeOffset, Placeable placeable) {
         super(Shape2dConvertibleModel.class, selection);
         this.heightmapSpec = heightmapSpec;
         this.altitudeOffset = altitudeOffset;

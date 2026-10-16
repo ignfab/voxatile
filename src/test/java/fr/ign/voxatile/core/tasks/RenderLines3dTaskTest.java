@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  Here we try not to test voxelization but only rendering.
  This means that we won't test correct voxelization results but only that rendering is ok according to parameters.
 */
-class RenderLinesTaskTest {
+class RenderLines3dTaskTest {
     private WorldBBox3d bbox;
     private TestingGenerationTile tile;
     private ModelSelection modelSelection;
@@ -36,8 +36,8 @@ class RenderLinesTaskTest {
 
     @Test
     public void testConstructor() {
-        assertDoesNotThrow(() -> new RenderLinesTask(modelSelection, PlaceableStructure.EMPTY, new ConstantHeightmap(0)));
-        assertDoesNotThrow(() -> new RenderLinesTask(modelSelection, PlaceableStructure.EMPTY, null));
+        assertDoesNotThrow(() -> new RenderLines3dTask(modelSelection, PlaceableStructure.EMPTY, new ConstantHeightmap(0)));
+        assertDoesNotThrow(() -> new RenderLines3dTask(modelSelection, PlaceableStructure.EMPTY, null));
     }
 
     @Test
@@ -49,7 +49,7 @@ class RenderLinesTaskTest {
             .build();
 
         // Test rendering works
-        assertDoesNotThrow(() -> new RenderLinesTask(modelSelection, structure, null).run(tile), "Render should not throw");
+        assertDoesNotThrow(() -> new RenderLines3dTask(modelSelection, structure, null).run(tile), "Render should not throw");
 
         // Test some voxels are rendered
         assertDoesNotThrow(() -> {
@@ -78,7 +78,7 @@ class RenderLinesTaskTest {
             .build();
 
         // Test rendering works
-        assertDoesNotThrow(() -> new RenderLinesTask(modelSelection, structure, new ConstantHeightmap(-1)).run(tile), "Render should not throw");
+        assertDoesNotThrow(() -> new RenderLines3dTask(modelSelection, structure, new ConstantHeightmap(-1)).run(tile), "Render should not throw");
 
         // Test some voxels are rendered
         assertDoesNotThrow(() -> {

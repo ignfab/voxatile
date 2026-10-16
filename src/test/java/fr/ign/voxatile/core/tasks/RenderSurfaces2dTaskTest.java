@@ -19,7 +19,7 @@ import fr.ign.voxatile.core.world.TestingVoxel;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RenderSurfacesTaskTest {
+class RenderSurfaces2dTaskTest {
     private WorldBBox3d bbox;
     private TestingGenerationTile tile;
     private ModelSelection modelSelection;
@@ -38,7 +38,7 @@ class RenderSurfacesTaskTest {
 
     @Test
     public void testConstructor() {
-        assertDoesNotThrow(() -> new RenderSurfacesTask(modelSelection, heightmap.spec(), new FixedValue(0.0), voxel));
+        assertDoesNotThrow(() -> new RenderSurfaces2dTask(modelSelection, heightmap.spec(), new FixedValue(0.0), voxel));
     }
 
     @Test
@@ -48,7 +48,7 @@ class RenderSurfacesTaskTest {
         WorldBBox2d modelBbox = new WorldBBox2d(0, -1, 3, 4);
         tile.models().add("testing", List.of(new TestingRectangleShape2dModel(modelBbox)));
 
-        new RenderSurfacesTask(modelSelection, heightmap.spec(), new FixedValue(2.0), voxel).run(tile);
+        new RenderSurfaces2dTask(modelSelection, heightmap.spec(), new FixedValue(2.0), voxel).run(tile);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == 2 && modelBbox.contains(pos.to2d()))
@@ -69,7 +69,7 @@ class RenderSurfacesTaskTest {
         // Add one model covering the whole map
         tile.models().add("testing", List.of(new TestingRectangleShape2dModel(bbox.to2d())));
 
-        new RenderSurfacesTask(modelSelection, heightmap.spec(), new FixedValue(3.0), voxel).run(tile);
+        new RenderSurfaces2dTask(modelSelection, heightmap.spec(), new FixedValue(3.0), voxel).run(tile);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == (pos.x() + pos.y()) / 2 + 3)
@@ -91,7 +91,7 @@ class RenderSurfacesTaskTest {
         // Add one model covering the whole map with BORDER voxels
         tile.models().add("testing", List.of(new TestingRectangleShape2dModel(bbox.to2d())));
 
-        new RenderSurfacesTask(modelSelection, heightmap.spec(), new FixedValue(0.0), voxel).run(tile);
+        new RenderSurfaces2dTask(modelSelection, heightmap.spec(), new FixedValue(0.0), voxel).run(tile);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == pos.x() + pos.y() * 2)
@@ -108,7 +108,7 @@ class RenderSurfacesTaskTest {
         WorldBBox2d modelBbox = new WorldBBox2d(bbox.minX() - 1, bbox.minY() - 1, bbox.sizeX() + 2, bbox.sizeY() + 2);
         tile.models().add("testing", List.of(new TestingRectangleShape2dModel(modelBbox)));
 
-        new RenderSurfacesTask(modelSelection, heightmap.spec(), new FixedValue(0.0), voxel).run(tile);
+        new RenderSurfaces2dTask(modelSelection, heightmap.spec(), new FixedValue(0.0), voxel).run(tile);
 
         for (WorldCoords3d pos : bbox) {
             if (pos.z() == 0)

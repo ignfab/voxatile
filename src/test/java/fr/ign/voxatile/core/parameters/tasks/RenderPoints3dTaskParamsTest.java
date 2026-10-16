@@ -1,6 +1,5 @@
 package fr.ign.voxatile.core.parameters.tasks;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 
 import fr.ign.voxatile.core.parameters.models.TestingModelSelectionParams;
@@ -8,21 +7,22 @@ import fr.ign.voxatile.core.parameters.placeables.structures.TestingPlaceableStr
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RenderLinesTaskParamsTest {
+public class RenderPoints3dTaskParamsTest {
 
     @Test
-    public void testValidate() throws JsonProcessingException {
-        RenderLinesTaskParams params;
+    public void testValidate() {
+        RenderPoints3dTaskParams params;
 
-        // Test required arguments
-        params = new RenderLinesTaskParams(TestingPlaceableStructureParams.VALID);
+        // Check any invalid member makes validation throw
+        params = new RenderPoints3dTaskParams(TestingPlaceableStructureParams.VALID);
         params.models = TestingModelSelectionParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderLinesTaskParams(TestingPlaceableStructureParams.INVALID);
+        params = new RenderPoints3dTaskParams(TestingPlaceableStructureParams.INVALID);
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderLinesTaskParams(TestingPlaceableStructureParams.VALID);
+        // All valid
+        params = new RenderPoints3dTaskParams(TestingPlaceableStructureParams.VALID);
         assertDoesNotThrow(params::validate);
     }
 }

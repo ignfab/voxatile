@@ -11,13 +11,13 @@ import fr.ign.voxatile.core.parameters.heightmaps.ReadableHeightmapParams;
 import fr.ign.voxatile.core.parameters.models.values.AbsentValueParams;
 import fr.ign.voxatile.core.parameters.models.values.ModelValueParams;
 import fr.ign.voxatile.core.parameters.placeables.PlaceableParams;
-import fr.ign.voxatile.core.tasks.RenderSurfacesTask;
+import fr.ign.voxatile.core.tasks.RenderSurfaces2dTask;
 import fr.ign.voxatile.core.tasks.TileTask;
 
 /**
  * Parameters for creating a {@link RenderSurfacesTask}.
  */
-public class RenderSurfacesTaskParams extends ModelTaskParams {
+public class RenderSurfaces2dTaskParams extends ModelTaskParams {
     /**
      * Heightmap to render on (optional default 0).
      */
@@ -42,7 +42,7 @@ public class RenderSurfacesTaskParams extends ModelTaskParams {
      * @param place what to place on surface.
      */
     @ConstructorProperties({ "place" })
-    public RenderSurfacesTaskParams(PlaceableParams place) {
+    public RenderSurfaces2dTaskParams(PlaceableParams place) {
         this.place = place;
     }
 
@@ -56,7 +56,7 @@ public class RenderSurfacesTaskParams extends ModelTaskParams {
 
     @Override
     public TileTask create(Generation generation) {
-        return new RenderSurfacesTask(
+        return new RenderSurfaces2dTask(
             models.create(generation),
             heightmap.create(generation.heightmaps()),
             altitudeOffset.create(generation),

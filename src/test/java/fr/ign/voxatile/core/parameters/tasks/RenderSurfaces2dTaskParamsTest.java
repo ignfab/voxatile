@@ -9,28 +9,28 @@ import fr.ign.voxatile.core.parameters.placeables.TestingPlaceableParams;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RenderSurfacesTaskParamsTest {
+public class RenderSurfaces2dTaskParamsTest {
     @Test
     public void testValidate() {
-        RenderSurfacesTaskParams params;
+        RenderSurfaces2dTaskParams params;
 
         // Test required arguments
-        params = new RenderSurfacesTaskParams(TestingPlaceableParams.VALID);
+        params = new RenderSurfaces2dTaskParams(TestingPlaceableParams.VALID);
         params.models = TestingModelSelectionParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderSurfacesTaskParams(TestingPlaceableParams.VALID);
+        params = new RenderSurfaces2dTaskParams(TestingPlaceableParams.VALID);
         params.heightmap = TestingHeightmapParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderSurfacesTaskParams(TestingPlaceableParams.VALID);
+        params = new RenderSurfaces2dTaskParams(TestingPlaceableParams.VALID);
         params.altitudeOffset = TestingModelValueParams.INVALID;
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderSurfacesTaskParams(TestingPlaceableParams.INVALID);
+        params = new RenderSurfaces2dTaskParams(TestingPlaceableParams.INVALID);
         assertThrows(IllegalArgumentException.class, params::validate);
 
-        params = new RenderSurfacesTaskParams(TestingPlaceableParams.VALID);
+        params = new RenderSurfaces2dTaskParams(TestingPlaceableParams.VALID);
         assertDoesNotThrow(params::validate);
     }
 }

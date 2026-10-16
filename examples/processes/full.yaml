@@ -120,7 +120,7 @@ forEachTile:
 
   renderRoofs:
     after: flattenGroundBuildings
-    type: renderSurfaces
+    type: renderSurfaces2d
     models:
       type: buildings
     altitudeOffset:
@@ -139,7 +139,7 @@ forEachTile:
           type: wfs
           url: https://data.geopf.fr/wfs/wfs
           features: BDTOPO_V3:zone_de_vegetation
-      - type: renderSurfaces
+      - type: renderSurfaces2d
         after: renderGround
         models:
           type: vegetation
@@ -225,7 +225,7 @@ forEachTile:
       - fetchRoads
       - renderGround
       - forest
-    type: renderLines
+    type: renderLines3d
     models:
       type: road
       filter:
@@ -239,7 +239,7 @@ forEachTile:
 
   renderBridges:
     after: path
-    type: renderLines
+    type: renderLines3d
     models:
       type: road
       filter:
@@ -261,7 +261,7 @@ forEachTile:
 
   renderRoadsPass1:
     after: renderBridges
-    type: renderLines
+    type: renderLines3d
     models:
       type: road
       filter:
@@ -280,7 +280,7 @@ forEachTile:
 
   renderRoadsPass2:
     after: renderRoadsPass1
-    type: renderLines
+    type: renderLines3d
     models:
       type: road
       filter:
