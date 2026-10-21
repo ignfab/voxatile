@@ -76,5 +76,9 @@ public class StructureLayoutBuilder extends LayoutBuilder {
      * @param minStretch minimum repetitions. May be 0 if the structure size along the given axis is greater than 0. On that particular case, the structure may be squeezed.
      * @param maxStretch maximum repetitions.
      */
-    public record StretchAxis(int stretchPosition, int minStretch, int maxStretch) {}
+    public record StretchAxis(int stretchPosition, int minStretch, int maxStretch) {
+        public StretchAxis(int stretchPosition) {
+            this(stretchPosition, 1, Integer.MAX_VALUE);
+        }
+    }
 }
