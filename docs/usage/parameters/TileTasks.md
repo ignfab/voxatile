@@ -119,40 +119,73 @@ place: default:tree
 
 Renders 2-D linearities (line strings, linear rings, polygon borders). Altitude is taken from a heightmap.
 
+This task is similar to `renderLine3d` except that z (altitude) will be taken from heightmap and not from geometry. It is possible to use `renderLines3d` on three dimensional geometries. Vertical coordinate will then be ignored and replaced by heightmap value.
+
 #### Extra parameters
 
 - `models`: [Selection of models](ModelSelection.md) to render (required, models must be convertible to 2d shapes)
 - `heightmap`: [Heightmap](Heightmaps.md) giving altitude
-- `structure`: [Structure](Placeables.md#structures) to use (required, see below for explanations)
+- `width` : [Model value](ModelValues.md) giving the width of lines to draw in voxels (optional, see below for default value).
+- `place`: [Placeable](Placeables.md) to use to draw line (required if `build` is absent)
+- `build`: [layouts](Layouts.md) to draw along line (required, if `place` is absent, see below for explanations)
 
-For `structure` see [`renderLines3d`](#renderlines3d), it's meaning is the same.
+If `place` is present, `width` will have a default value of 1.
 
-The only difference with `renderLine3d` is that z (altitude) will be taken from heightmap and not from geometry. It is possible to use `renderLines3d` on three dimensional geometries. Vertical coordinate will then be ignored and replaced by heightmap value.
+If `build` is present and `width` is not specified, the natural layout width will be used. If present, layout width will be forced to that value.
+
+`build` is a list of possible layouts. The first fitting line length and width (if `width` present) will be used.
+
+In given layouts, x-axis is along the line, y-axis is in line wideness and z-axis is vertical.
+
+Note that:
+- Z-axis is always vertical, regardless of line pitch.
+- Y-axis symmetric layouts are recommended for all linear features which orientation has no meaning (most cases) or it may end up with messy results (unwanted orientation change on junctions).
 
 ### `renderLines3d`
 
-Renders 3-D linearities (line strings, linear rings, polygon borders), repeating a given [structure](Placeables.md#structures) along them.
+Renders 2-D linearities (line strings, linear rings, polygon borders).
 
 #### Extra parameters
 
 - `models`: [Selection of models](ModelSelection.md) to render (required, models must be convertible to 3d shapes)
-- `structure`: [Structure](Placeables.md#structures) to use (required, see below for explanations)
+- `width` : [Model value](ModelValues.md) giving the width of lines to draw in voxels (optional, see below for default value).
+- `place`: [Placeable](Placeables.md) to use to draw line (required if `build` is absent)
+- `build`: [layouts](Layouts.md) to draw along line (required, if `place` is absent, see below for explanations)
 - `renderOnlyWhenAbove`: If this [heightmap](Heightmaps.md) is specified, only parts of that model over it will be rendered (optional)
 
-In given structure, x-axis is along the line, y-axis is in line wideness and z-axis is vertical.
+If `place` is present, `width` will have a default value of 1.
+
+If `build` is present and `width` is not specified, the natural layout width will be used. If present, layout width will be forced to that value.
+
+`build` is a list of possible layouts. The first fitting line length and width (if `width` present) will be used.
+
+In given layouts, x-axis is along the line, y-axis is in line wideness and z-axis is vertical.
 
 Note that:
 - Z-axis is always vertical, regardless of line pitch.
-- Y-axis symmetric structures usage is recommended for all linear features which orientation has no meaning (most cases) or it may end yp with messy results (unwanted orientation change on junctions).
+- Y-axis symmetric layouts are recommended for all linear features which orientation has no meaning (most cases) or it may end up with messy results (unwanted orientation change on junctions).
 
 ![A line to draw zigzaging away with drawn structure repeated along and structure axes following the line](img/render-line-axes.svg)
 
 #### Example
+```yaml
+type: renderLines3d
+models:
+  type: road
+width:
+  firstOf:
+    - metadata:
+      largeur_de_chaussee
+place: default:sandstone
+```
+
+
+#### Example - TODO: UPDATE EXAMPLES!
 
 ```yaml
 type: renderLines3d
 models:
-  type: roads
+  type: road
 structure:
   axes: [ y, x ]
   blueprint:

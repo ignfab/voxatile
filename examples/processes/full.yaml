@@ -251,15 +251,18 @@ forEachTile:
       sum:
         - ground
         - 1
-    structure:
-      # Half bridge structure (sectional view)
-      axes: [ z, y ]
-      blueprint:
-        - "▒▒         ▒▒"
-        - "▒▒▒▒▒▒▒▒▒▒▒▒▒"
-      with:
-        "▒": *voxel-stone
-      zOffset: -1
+    build:
+      structure:
+        # Half bridge structure (sectional view)
+        axes: [ z, y ]
+        blueprint:
+          - "▒▒         ▒▒"
+          - "▒▒▒▒▒▒▒▒▒▒▒▒▒"
+        with:
+          "▒": *voxel-stone
+        zOffset: -1
+      stretchableAlongX: { at: 0 }
+    # separateSegments: true
 
   renderRoadsPass1:
     after: renderBridges
@@ -269,16 +272,24 @@ forEachTile:
       filter:
         metadata: nature
         in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
-    structure:
-      # Road border lines and air to clean eventual voxels (sectional view)
-      axes: [ z, y ]
-      blueprint:
-        - "·········"
-        - "·········"
-        - "█·······█"
-      with:
-        "█": *road-paint
-        "·": *voxel-air
+    width:
+      firstOf:
+        - metadata:
+            largeur_de_chaussee
+        - 7
+    build:
+      structure:
+        # Road border lines and air to clean eventual voxels (sectional view)
+        axes: [ z, y ]
+        blueprint:
+          - "·········"
+          - "·········"
+          - "█·······█"
+        with:
+          "█": *road-paint
+          "·": *voxel-air
+      stretchableAlongX: { at: 0 }
+      stretchableAlongY: { at: 0 }
 
   renderRoadsPass2:
     after: renderRoadsPass1
@@ -288,18 +299,39 @@ forEachTile:
       filter:
         metadata: nature
         in: [ "Bretelle", "Rond-point", "Route à 1 chaussée", "Route à 2 chaussées", "Type autoroutier"]
-    structure:
-      # Road central line and tar (view from above)
-      axes: [ x, y ]
-      blueprint:
-        - "░░░█░░░"
-        - "░░░█░░░"
-        - "░░░█░░░"
-        - "░░░░░░░"
-        - "░░░░░░░"
-      with:
-        "█": *road-paint
-        "░": *road-tar
+    width:
+      firstOf:
+        - metadata:
+            largeur_de_chaussee
+        - 7
+    build:
+      along: x
+      concatenate:
+        - structure:
+            at: [0, 0..6, 0]
+            place: *road-tar
+          stretchableAlongX: { at: 0, atLeast: 0 }
+          priority: -1
+        - along: x
+          repeat:
+            structure:
+              # Road central line and tar (view from above)
+              axes: [ x, y ]
+              blueprint:
+                - "░░░█░░░"
+                - "░░░█░░░"
+                - "░░░█░░░"
+                - "░░░░░░░"
+                - "░░░░░░░"
+              with:
+                "█": *road-paint
+                "░": *road-tar
+            stretchableAlongY: { at: 0 }
+        - structure:
+            at: [0, 0..6, 0]
+            place: *road-tar
+          stretchableAlongX: { at: 0, atLeast: 0 }
+          priority: -1
 
   renderResidentialBuildings:
     after:
