@@ -200,6 +200,12 @@
             <artifactId>osm4j-geometry</artifactId>
             <version>${osm4j.version}</version>
         </dependency>
+        <!-- TwelveMonkeys library for WebP support in ImageIO -->
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-webp</artifactId>
+            <version>3.9.4</version>
+        </dependency>
 
         <!--
         TEST DEPENDENCIES
