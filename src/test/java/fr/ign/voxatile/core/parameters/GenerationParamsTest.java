@@ -11,7 +11,7 @@ import fr.ign.voxatile.core.parameters.placeables.voxels.TestingVoxelParams;
 import fr.ign.voxatile.core.parameters.providers.TestingProviderParams;
 import fr.ign.voxatile.core.parameters.tasks.FetchDataTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.NoOperationTaskParams;
-import fr.ign.voxatile.core.parameters.tasks.RenderBuildingsTaskParams;
+import fr.ign.voxatile.core.parameters.tasks.RenderSurfacesTaskParams;
 import fr.ign.voxatile.core.utils.world2d.WorldBBox2d;
 import fr.ign.voxatile.core.world.TestingVoxelWorld;
 
@@ -121,11 +121,7 @@ public class GenerationParamsTest {
         params.forEachTile.tasks.put("source2", new FetchDataTaskParams("models2", new TestingProviderParams("value3")));
 
         TestingVoxelParams placeable = new TestingVoxelParams("voxel");
-        RenderBuildingsTaskParams task = new RenderBuildingsTaskParams(
-            placeable,
-            placeable,
-            placeable
-        );
+        RenderSurfacesTaskParams task = new RenderSurfacesTaskParams(placeable);
         task.models.type = "building";
 
         params.forEachTile.tasks.put("building", task);
