@@ -41,7 +41,6 @@ import fr.ign.voxatile.core.parameters.tasks.FillBetweenHeightmapAndValueTaskPar
 import fr.ign.voxatile.core.parameters.tasks.HeightmapStatsTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.NoOperationTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.PopulateHeightmapTaskParams;
-import fr.ign.voxatile.core.parameters.tasks.RenderBuildingsTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.RenderFacadesTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.RenderHeightmapTaskParams;
 import fr.ign.voxatile.core.parameters.tasks.RenderLines2dTaskParams;
@@ -128,7 +127,6 @@ public final class Voxatile {
         parser.registerParams("fetchData", FetchDataTaskParams.class);
         parser.registerParams("fillBetweenHeightmapAndValue", FillBetweenHeightmapAndValueTaskParams.class);
         parser.registerParams("populateHeightmap", PopulateHeightmapTaskParams.class);
-        parser.registerParams("renderBuildings", RenderBuildingsTaskParams.class);
         parser.registerParams("renderHeightmap", RenderHeightmapTaskParams.class);
         parser.registerParams("renderSurfaces", RenderSurfacesTaskParams.class);
         parser.registerParams("renderLines", RenderLinesTaskParams.class);
