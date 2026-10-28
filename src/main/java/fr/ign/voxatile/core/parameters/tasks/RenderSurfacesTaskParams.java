@@ -6,7 +6,10 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import fr.ign.voxatile.core.generation.Generation;
+import fr.ign.voxatile.core.parameters.heightmaps.ConstantHeightmapParams;
 import fr.ign.voxatile.core.parameters.heightmaps.ReadableHeightmapParams;
+import fr.ign.voxatile.core.parameters.models.values.FixedValueParams;
+import fr.ign.voxatile.core.parameters.models.values.ModelValueParams;
 import fr.ign.voxatile.core.parameters.placeables.PlaceableParams;
 import fr.ign.voxatile.core.tasks.RenderSurfacesTask;
 import fr.ign.voxatile.core.tasks.TileTask;
@@ -16,10 +19,17 @@ import fr.ign.voxatile.core.tasks.TileTask;
  */
 public class RenderSurfacesTaskParams extends ModelTaskParams {
     /**
-     * Heightmap to render on (required).
+     * Heightmap to render on (optional default 0).
      */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public ReadableHeightmapParams heightmap;
+    @JsonSetter(nulls = Nulls.SKIP)
+    public ReadableHeightmapParams heightmap = new ConstantHeightmapParams(0);
+
+    /**
+     * Vertivcal offset to add (optional default 0).
+     */
+    @JsonSetter(nulls = Nulls.SKIP)
+    public ModelValueParams altitudeOffset = new FixedValueParams(0.0);
+
     /**
      * What to place on surface (required).
      */
@@ -29,12 +39,10 @@ public class RenderSurfacesTaskParams extends ModelTaskParams {
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
      *
-     * @param heightmap heightmap to render on.
      * @param place what to place on surface.
      */
-    @ConstructorProperties({ "heightmap", "place"})
-    public RenderSurfacesTaskParams(ReadableHeightmapParams heightmap, PlaceableParams place) {
-        this.heightmap = heightmap;
+    @ConstructorProperties({ "place"})
+    public RenderSurfacesTaskParams(PlaceableParams place) {
         this.place = place;
     }
 
@@ -42,6 +50,7 @@ public class RenderSurfacesTaskParams extends ModelTaskParams {
     public void validate() throws IllegalArgumentException {
         super.validate();
         heightmap.validate();
+        altitudeOffset.validate();
         place.validate();
     }
 
@@ -50,6 +59,7 @@ public class RenderSurfacesTaskParams extends ModelTaskParams {
         return new RenderSurfacesTask(
             models.create(generation),
             heightmap.create(generation.heightmaps()),
+            altitudeOffset.create(generation),
             place.create(generation.seed())
         );
     }

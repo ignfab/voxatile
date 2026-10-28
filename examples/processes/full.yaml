@@ -118,20 +118,18 @@ forEachTile:
     placeAbove: *voxel-air
     placeBelow: *voxel-building-ground
 
-  # Hacky way to render roofs. Should be removed.
-  # Would have been nice to have a fillBetweenMetadatas
   renderRoofs:
     after: flattenGroundBuildings
-    type: renderBuildings
+    type: renderSurfaces
     models:
       type: buildings
-      filter:
-        value:
-          metadata: height
-        greaterThan: 0
-    roof: *voxel-cobble
-    wall: *voxel-air
-    window: *voxel-air
+    heightmap: 0
+    altitudeOffset:
+      sum:
+        - metadata: ground-floor-altitude
+        - metadata: height
+        - -1
+    place: *voxel-cobble
 
   forest:
     type: sequence

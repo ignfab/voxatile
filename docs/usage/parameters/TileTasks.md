@@ -20,7 +20,6 @@ Each task has a `type`, optional dependencies to other tasks (in `after`), and o
   * [`renderLines3d`](#renderlines3d)
   * [`renderSurfaces`](#rendersurfaces)
   * [`fillBetweenHeightmapAndValue`](#fillbetweenheightmapandvalue)
-  * [`renderBuildings`](#renderbuildings)
   * [`setSpawn`](#setspawn)
   * [`renderFacades`](#renderfacades)
 * [Tasks operating on heightmaps](#tasks-operating-on-heightmaps)
@@ -260,13 +259,16 @@ The blueprint shows five successive vertical slices of the structure. This will 
 
 ### `renderSurfaces`
 
-Renders 2-D shapes surfaces with [placeables](Placeables.md) on a given [heightmap](Heightmaps.md).
+Renders 2-D shapes surfaces with [placeables](Placeables.md) on a given [heightmap](Heightmaps.md) and/or at an altitude given by model.
 
 #### Extra parameters
 
 - `models`: [Selection of models](ModelSelection.md) to render (required, models must be convertible to 2d shapes)
-- `heightmap`: [Heightmap](Heightmaps.md) to use (required)
+- `heightmap`: [Heightmap](Heightmaps.md) to use (optional, default 0)
+- `altitudelOffset`: A [ModelValue](ModelValues.md) which value will be added to altitude (optional, default 0)
 - `place`: [Placeable](Placeables.md) to place on each voxel of shapes (required)
+
+If both `heightmap` and `altitudeOffset` are present, the resulting placement altitude will be the addition of both.
 
 #### Examples
 
@@ -306,36 +308,6 @@ altitudeValue:
   metadata: maximum-ground-altitude
 placeAbove: air
 placeBelow: default:cobble
-```
-
-### `renderBuildings`
-
-Renders buildings using selected models as buildings footprint.
-
-Building height is given by `height` metadata (This task does nothing if the value is not an integer, missing, negative, or zero).
-
-#### Extra parameters
-
-- `models` (required, models must be convertible to 2d shapes): [Selection of models](ModelSelection.md) to render
-- `roof`: [Placeable](Placeables.md) used to render roofs.
-- `wall`: [Placeable](Placeables.md) used to render walls.
-- `window`: [Placeable](Placeables.md) used to render windows.
-
-#### Required model metadata
-
-- `height`: Height of the building to render (must be a positive integer). The height is defined as the distance between the minimum ground altitude and the gutter altitude.
-- `minimum-ground-altitude`: Minimum altitude inside the shape of the model.
-- `ground-floor-altitude`: Ground floor altitude of the model.
-
-#### Example
-
-```yaml
-type: renderBuildings
-models:
-  type: buildings
-roof: default:cobble
-wall: default:brick
-window: default:glass
 ```
 
 ### `setSpawn`
