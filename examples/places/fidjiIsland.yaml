@@ -1,0 +1,9 @@
+worldName: Fidji Island
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: -17.995446622149704
+    longitude: 178.0001233157514
+  extentX: 1000
+  extentY: 1000

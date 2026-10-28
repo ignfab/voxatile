@@ -12,7 +12,7 @@ forEachTile:
       provider:
         type: xyz
         url: https://tiles.mapterhorn.com/{z}/{x}/{y}.webp
-        zoom: 16
+        zoomMax: 19
     - type: populateHeightmap
       models:
         type: altitude

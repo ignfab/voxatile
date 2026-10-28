@@ -132,11 +132,11 @@ Provider of type `geotiff` reads **float** (for now) raster data from a [GeoTiff
 **Default processor**: `floatMatrix`
 
 ### `xyz` (XYZ Tiles)
-Provider of type `xyz` fetches **image** data from a generic XYZ tile URL endpoint and decodes it into a floating-point data matrix.
+Provider of type `xyz` fetches **image** data from a generic XYZ tile URL endpoint and decodes it into a **float** data matrix (typically used for elevation data).
 
 **Extra parameters**:
-- `url` (required): URL containing the `{z}`, `{x}`, and `{y}` placeholders. Example : `https://tiles.mapterhorn.com/{z}/{x}/{y}.webp`
-- `zoom` (required): Zoom level for the tiles (must be a non-negative integer)
+- `url` (required): URL of the tile server containing the `{z}`, `{x}`, and `{y}` placeholders. Example: `https://tiles.mapterhorn.com/{z}/{x}/{y}.webp`
+- `zoom` (required): Zoom level used to fetch the tiles. It defines the scale or detail level of the data. Typically, `0` defines the whole world, and `18` or higher defines street level (maximum available level depends on the provider). Must be a non-negative integer.
 
 **Default processor**: `floatMatrix`
 
