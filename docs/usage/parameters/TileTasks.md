@@ -183,13 +183,16 @@ place: default:stone
 
 ### `renderSurfaces`
 
-Renders 2-D shapes surfaces with [placeables](Placeables.md) on a given [heightmap](Heightmaps.md).
+Renders 2-D shapes surfaces with [placeables](Placeables.md) on a given [heightmap](Heightmaps.md) and/or at an altitude given by model.
 
 #### Extra parameters
 
 - `models`: [Selection of models](ModelSelection.md) to render (required, models must be convertible to 2d shapes)
-- `heightmap`: [Heightmap](Heightmaps.md) to use (required)
+- `heightmap`: [Heightmap](Heightmaps.md) to use (optional, default 0)
+- `altitudelOffset`: A [ModelValue](ModelValues.md) which value will be added to altitude (optional, default 0)
 - `place`: [Placeable](Placeables.md) to place on each voxel of shapes (required)
+
+If both `heightmap` and `altitudeOffset` are present, the resulting placement altitude will be the addition of both.
 
 #### Examples
 
