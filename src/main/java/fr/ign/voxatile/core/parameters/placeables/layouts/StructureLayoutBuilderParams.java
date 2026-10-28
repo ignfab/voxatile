@@ -10,7 +10,6 @@ import fr.ign.voxatile.core.placeables.PlaceableStructure;
 import fr.ign.voxatile.core.placeables.layouts.LayoutBuilder;
 import fr.ign.voxatile.core.placeables.layouts.StructureLayoutBuilder;
 import fr.ign.voxatile.core.placeables.layouts.UnbuildableLayoutException;
-import fr.ign.voxatile.core.utils.axis.Axis;
 import fr.ign.voxatile.core.utils.random.Seed;
 
 /**
@@ -62,9 +61,9 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
 
         return new StructureLayoutBuilder(
             structure,
-            stretchableAlongX.create(Axis.X),
-            stretchableAlongY.create(Axis.Y),
-            stretchableAlongZ.create(Axis.Z)
+            stretchableAlongX.create(),
+            stretchableAlongY.create(),
+            stretchableAlongZ.create()
         );
     }
 
@@ -108,8 +107,8 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
          * @param axis axis to create
          * @return created {@link StructureLayoutBuilder.StretchAxis}
          */
-        public StructureLayoutBuilder.StretchAxis create(Axis axis) {
-            return new StructureLayoutBuilder.StretchAxis(axis, at, atLeast, atMost);
+        public StructureLayoutBuilder.StretchAxis create() {
+            return new StructureLayoutBuilder.StretchAxis(at, atLeast, atMost);
         }
     }
 
@@ -121,7 +120,7 @@ public class StructureLayoutBuilderParams implements LayoutBuilderParams {
         public void validate() {}
 
         @Override
-        public StructureLayoutBuilder.StretchAxis create(Axis axis) {
+        public StructureLayoutBuilder.StretchAxis create() {
             return null;
         }
     }

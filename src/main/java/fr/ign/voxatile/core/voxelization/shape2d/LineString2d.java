@@ -100,6 +100,17 @@ public class LineString2d implements Shape2d {
     }
 
     /**
+     * {@return the linestring length (sum of underlying segments lenghts)}
+     */
+    // TODO: Cache length if necessary
+    public double length() {
+        double length = 0d;
+        for (Segment2d segment: segments)
+            length += segment.length();
+        return length;
+    }
+
+    /**
      * Returns an iterable over all segments in the {@code LineString2d}.
      * <p>
      * Segments are given in such order that end of previous correspond to start of next.
