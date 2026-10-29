@@ -105,7 +105,7 @@ public class RenderLines3dTask extends ModelTask<Shape3dConvertibleModel> {
             }
 
             if (structure == null) {
-                System.out.println("Could not build linear structure");
+//                System.out.println("Could not build linear structure");
                 return;
             }
 

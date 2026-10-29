@@ -110,7 +110,7 @@ public class RenderLines2dTask extends ModelTask<Shape2dConvertibleModel> {
             }
 
             if (structure == null) {
-                System.out.println("Could not build linear structure");
+//                System.out.println("Could not build linear structure");
                 return;
             }
 
