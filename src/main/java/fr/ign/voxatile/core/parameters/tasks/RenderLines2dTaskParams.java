@@ -66,7 +66,8 @@ public class RenderLines2dTaskParams extends ModelTaskParams {
     public void validate() throws IllegalArgumentException {
         super.validate();
 
-        width.validate();
+        if (width != null)
+            width.validate();
 
         if (place != null && build != null)
             throw new IllegalArgumentException("Can not have both place and structure fields");
