@@ -1,11 +1,13 @@
 package fr.ign.voxatile.core.tasks;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 import fr.ign.voxatile.core.generation.GenerationTile;
 import fr.ign.voxatile.core.models.ModelSelection;
 import fr.ign.voxatile.core.models.Shape2dConvertibleModel;
+import fr.ign.voxatile.core.models.values.ModelValue;
 import fr.ign.voxatile.core.placeables.Placeable;
 import fr.ign.voxatile.core.utils.world2d.Positioned2d;
 import fr.ign.voxatile.core.voxelization.shape2d.LineString2d;
@@ -41,8 +43,7 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
 
     private final Placeable placeable;
     private final RoofType type;
-    private final String altitudeMetadata;
-    private final String heightMetadata;
+    private final ModelValue altitudeValue;
 
     private final Shape2dVoxelizer voxelizer = new SurfaceVoxelizer2d();
 
@@ -55,12 +56,11 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
      * @param heightMetadata height of building walls
      * @param placeable what to place as roof
      */
-    public RenderRoofTask(ModelSelection selection, RoofType type, String altitudeMetadata, String heightMetadata, Placeable placeable) {
+    public RenderRoofTask(ModelSelection selection, RoofType type, ModelValue altitudeValue, Placeable placeable) {
         super(Shape2dConvertibleModel.class, selection);
         this.type = type;
         this.placeable = placeable;
-        this.altitudeMetadata = altitudeMetadata;
-        this.heightMetadata = heightMetadata;
+        this.altitudeValue = altitudeValue;
     }
 
 //NOTE:
@@ -171,12 +171,11 @@ public class RenderRoofTask extends ModelTask<Shape2dConvertibleModel> {
     @Override
     protected void run(Shape2dConvertibleModel model, GenerationTile tile) {
 
-        if (model.getMetadata(altitudeMetadata) == null || model.getMetadata(heightMetadata) == null)
+        Optional<Double> optAltitude = altitudeValue.get(model);
+        if (!optAltitude.isPresent())
             return;
 
-        int altitude = (int) Math.round(((Number) model.getMetadata(altitudeMetadata)).doubleValue()
-            + ((Number) model.getMetadata(heightMetadata)).doubleValue() / tile.generation().getVerticalScale()
-        );
+        int altitude = (int) Math.round(optAltitude.get() / tile.generation().getVerticalScale());
 
         Shape2d shape = model.toShape2d();
 

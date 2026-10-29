@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import fr.ign.voxatile.core.generation.Generation;
+import fr.ign.voxatile.core.parameters.models.values.ModelValueParams;
 import fr.ign.voxatile.core.parameters.placeables.PlaceableParams;
 import fr.ign.voxatile.core.tasks.RenderRoofTask;
 import fr.ign.voxatile.core.tasks.RenderRoofTask.RoofType;
@@ -67,20 +68,10 @@ public class RenderRoofTaskParams extends ModelTaskParams {
     RoofTypeParams roofType;
 
     /**
-     * Building altitude metadata name.
-     *
-     * TODO: We actually only need roof altitude (altitude + height)
+     * Roof base altitude
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String altitude;
-
-    /**
-     * Building height metadata name.
-     *
-     * TODO: We actually only need roof altitude (altitude + height)
-     */
-    @JsonSetter(nulls = Nulls.FAIL)
-    public String height;
+    public ModelValueParams altitude;
 
     /**
      * Constructor used to ensure that the required fields are present during deserialization.
@@ -90,21 +81,17 @@ public class RenderRoofTaskParams extends ModelTaskParams {
      * @param altitude building altitude metadata name
      * @param height building height metadata name.
      */
-    @ConstructorProperties({"place", "roofType", "altitude", "height"})
-    public RenderRoofTaskParams(PlaceableParams place, RoofTypeParams roofType, String altitude, String height) {
+    @ConstructorProperties({"place", "roofType", "altitude"})
+    public RenderRoofTaskParams(PlaceableParams place, RoofTypeParams roofType, ModelValueParams altitude) {
         this.place = place;
         this.roofType = roofType;
         this.altitude = altitude;
-        this.height = height;
     }
 
     @Override
     public void validate() throws IllegalArgumentException {
         super.validate();
-        if (altitude.isBlank())
-            throw new IllegalArgumentException("Altitude metadata cannot be blank");
-        if (height.isBlank())
-            throw new IllegalArgumentException("Height metadata cannot be blank");
+        altitude.validate();
         place.validate();
     }
 
@@ -113,8 +100,7 @@ public class RenderRoofTaskParams extends ModelTaskParams {
         return new RenderRoofTask(
             models.create(generation),
             roofType.create(),
-            altitude,
-            height,
+            altitude.create(generation),
             place.create(generation.seed())
         );
     }
