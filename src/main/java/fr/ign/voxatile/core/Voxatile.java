@@ -6,6 +6,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotools.api.referencing.FactoryException;
 
@@ -77,6 +79,9 @@ public final class Voxatile {
      */
     @SuppressWarnings("checkstyle:MethodLength")
     public static void main(String[] args) throws FactoryException, InterruptedException, MapWriteException, ParseException, TaskFailedException, TransformException, TimeoutException, GenerationFailedException {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
+        Logger.getLogger("").setLevel(Level.SEVERE);
+
         // Execution duration start
         Instant start = Instant.now();
         HttpTrustAllSSL.applyGlobally();

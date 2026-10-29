@@ -281,6 +281,9 @@
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <!-- With at least an entry "Main-Class: ..." to make it executable -->
                             <mainClass>fr.ign.voxatile.core.Voxatile</mainClass>
+                            <manifestEntries>
+                                <Enable-Native-Access>ALL-UNNAMED</Enable-Native-Access>
+                            </manifestEntries>
                         </transformer>
                         <!-- Properly shades all resources, required for GeoTools HSQL embedded databases and GeoTIFF module -->
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
