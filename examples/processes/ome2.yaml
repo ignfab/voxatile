@@ -44,7 +44,7 @@ forEachTile:
         type: wfs
         url: https://www.mapsforeurope.org/maps/wfs
         features: ome:hvlsp_wfs_hy_watercourse
-        token: 
+        token: ImV1cm9nZW9ncmFwaGljc19yZWdpc3RlcmVkXzgyMzc5OCI.HS1Sgg._s2SSfxvXP88IxKhKBL6zz5Y1Do
       retry: 3
     - type: fetchData
       modelType: water_area
@@ -52,7 +52,7 @@ forEachTile:
         type: wfs
         url: https://www.mapsforeurope.org/maps/wfs
         features: ome:hvlsp_wfs_hy_watercourse_area
-        token: 
+        token: ImV1cm9nZW9ncmFwaGljc19yZWdpc3RlcmVkXzgyMzc5OCI.HS1Sgg._s2SSfxvXP88IxKhKBL6zz5Y1Do
       retry: 3
     - type: copyHeightmap
       models:
@@ -130,7 +130,7 @@ forEachTile:
         type: wfs
         url: https://www.mapsforeurope.org/maps/wfs
         features: ome:hvlsp_wfs_tn_road
-        token: 
+        token: ImV1cm9nZW9ncmFwaGljc19yZWdpc3RlcmVkXzgyMzc5OCI.HS1Sgg._s2SSfxvXP88IxKhKBL6zz5Y1Do
       retry: 3
     - type: renderLines2d
       structure:
