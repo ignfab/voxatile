@@ -10,9 +10,9 @@ public class TerrariumFloatDecoder implements IntToDoubleFunction {
     @Override
     public double applyAsDouble(int value) {
         /*
-        Terrarium format documentation:
-            https://github.com/tilezen/joerd/blob/master/docs/formats.md#terrarium
-        */
+         * Terrarium format documentation:
+         *   https://github.com/tilezen/joerd/blob/master/docs/formats.md#terrarium
+         */
         int r = (value >> 16) & 0xFF;
         int g = (value >> 8) & 0xFF;
         int b = value & 0xFF;

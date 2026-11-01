@@ -1,5 +1,8 @@
 package fr.ign.voxatile.core.inputs;
 
+/**
+ * A matrix of integer values.
+ */
 public interface IntegerGeographicDataMatrix2d extends GeographicDataMatrix2d<Integer> {
 
     @Override

@@ -36,7 +36,7 @@ public class Generation {
 
     // Vertical size of voxel in target CRS units
     private final double verticalScale;
-
+    // Horizontal size of voxel in target CRS units
     private final double horizontalScale;
 
     // Transformations from and to target CRS
@@ -193,6 +193,9 @@ public class Generation {
         return verticalScale;
     }
 
+    /**
+     * {@return the horizontal scale}
+     */
     public double getHorizontalScale() {
         return horizontalScale;
     }

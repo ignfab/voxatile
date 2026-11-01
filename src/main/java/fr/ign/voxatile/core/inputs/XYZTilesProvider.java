@@ -6,14 +6,13 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.IntToDoubleFunction;
 import javax.imageio.ImageIO;
 
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.datum.DefaultEllipsoid;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 
 import fr.ign.voxatile.core.exceptions.GenerationFailedException;
 import fr.ign.voxatile.core.exceptions.RetryableException;
@@ -24,7 +23,7 @@ import fr.ign.voxatile.core.utils.world3d.WorldBBox3d;
 /**
  * Data provider reading images from generic XYZ URL endpoints.
  */
-public class XYZTilesProvider implements Provider<FloatGeographicDataMatrix2d> {
+public class XYZTilesProvider implements Provider<IntegerGeographicDataMatrix2d> {
 
     /**
      * Coordinate reference system for the provider (EPSG:4326).
@@ -38,7 +37,6 @@ public class XYZTilesProvider implements Provider<FloatGeographicDataMatrix2d> {
     private final int zoomMin;
     private final int zoomMax;
     private final double horizontalScale;
-    private final IntToDoubleFunction decoder;
     private final EnvelopeProvider envelopeProvider;
 
     /**
@@ -48,7 +46,6 @@ public class XYZTilesProvider implements Provider<FloatGeographicDataMatrix2d> {
      * @param zoomMin minimum zoom level supported by the tile server
      * @param zoomMax maximum zoom level supported by the tile server
      * @param horizontalScale the horizontal scale for the tiles
-     * @param decoder the elevation decoder format for the tiles
      * @param envelopeProvider the provider used to compute the envelope for the given CRS and bounding box
      */
     public XYZTilesProvider(
@@ -56,24 +53,22 @@ public class XYZTilesProvider implements Provider<FloatGeographicDataMatrix2d> {
             int zoomMin,
             int zoomMax,
             double horizontalScale,
-            IntToDoubleFunction decoder,
             EnvelopeProvider envelopeProvider
         ) {
         this.url = url;
         this.zoomMin = zoomMin;
         this.zoomMax = zoomMax;
         this.horizontalScale = horizontalScale;
-        this.decoder = decoder;
         this.envelopeProvider = envelopeProvider;
     }
 
     @Override
-    public Class<FloatGeographicDataMatrix2d> providedType() {
-        return FloatGeographicDataMatrix2d.class;
+    public Class<IntegerGeographicDataMatrix2d> providedType() {
+        return IntegerGeographicDataMatrix2d.class;
     }
 
     @Override
-    public Result<FloatGeographicDataMatrix2d> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
+    public Result<IntegerGeographicDataMatrix2d> provide(WorldBBox3d bbox) throws GenerationFailedException, RetryableException {
         ReferencedEnvelope envelope;
         try {
             envelope = envelopeProvider.computeForCRS(CRS, bbox);
@@ -115,7 +110,7 @@ public class XYZTilesProvider implements Provider<FloatGeographicDataMatrix2d> {
          */
         int countX = (maxX >= minX) ? (maxX - minX + 1) : (numTiles - minX + maxX + 1);
 
-        List<FloatGeographicDataMatrix2d> tiles = new ArrayList<>();
+        List<IntegerGeographicDataMatrix2d> tiles = new ArrayList<>();
         for (int y = minY; y <= maxY; y++) {
             for (int stepX = 0; stepX < countX; stepX++) {
 
@@ -144,7 +139,7 @@ public class XYZTilesProvider implements Provider<FloatGeographicDataMatrix2d> {
                     double offsetX = tileMinX + (cellSizeX / 2.0);
                     double offsetY = tileMaxY - (cellSizeY / 2.0);
 
-                    tiles.add(new FloatBufferedImageMatrix(image, decoder, cellSizeX, cellSizeY, offsetX, offsetY));
+                    tiles.add(new IntegerImageGeographicDataMatrix2d(image, tileSize, tileSize, offsetX, offsetY, cellSizeX, cellSizeY));
                 }
             }
         }

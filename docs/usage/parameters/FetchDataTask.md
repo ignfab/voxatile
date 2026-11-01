@@ -13,7 +13,7 @@ Task of type `fetchData` fetches data from geographic data source, processes it,
   * [`shapefile` (Shapefile)](#shapefile-shapefile)
   * [`wmsFloat` (Web Map Service with floating point values)](#wmsfloat-web-map-service-with-floating-point-values)
   * [`geotiff` (GeoTiff)](#geotiff-geotiff)
-  * [`xyz` (XYZ Tiles)](#xyz-xyz-tiles)
+  * [`xyzFloat` (XYZ Float Tiles)](#xyz-xyz-float-tiles)
 * [Processors](#processors)
   * [`osm` (Open Street Map)](#osm-open-street-map)
   * [`geoToolsVector` (GeoTools vector processor)](#geotoolsvector-geotools-vector-processor)
@@ -131,12 +131,13 @@ Provider of type `geotiff` reads **float** (for now) raster data from a [GeoTiff
 
 **Default processor**: `floatMatrix`
 
-### `xyz` (XYZ Tiles)
-Provider of type `xyz` fetches **image** data from a generic XYZ tile URL endpoint and decodes it into a **float** data matrix (typically used for elevation data).
+### `xyzFloat` (XYZ FLoat Tiles)
+Fetches **image tiles encoding floating point values** from an XYZ tile URL endpoint. Its default processor decodes **Terrarium**-encoded pixels into a **float** data matrix (typically used for elevation data); it is not intended for ordinary imagery tiles.
 
 **Extra parameters**:
 - `url` (required): URL of the tile server containing the `{z}`, `{x}`, and `{y}` placeholders. Example: `https://tiles.mapterhorn.com/{z}/{x}/{y}.webp`
-- `zoom` (required): Zoom level used to fetch the tiles. It defines the scale or detail level of the data. Typically, `0` defines the whole world, and `18` or higher defines street level (maximum available level depends on the provider). Must be a non-negative integer.
+- `zoomMin` (optional, default `0`): Minimum zoom level handle by the service used.
+- `zoomMax` (optional, default `12`): Maximum zoom level handle by the service used.
 
 **Default processor**: `floatMatrix`
 

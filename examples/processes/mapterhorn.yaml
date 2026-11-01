@@ -10,7 +10,7 @@ forEachTile:
     - type: fetchData
       modelType: altitude
       provider:
-        type: xyz
+        type: xyzFloat
         url: https://tiles.mapterhorn.com/{z}/{x}/{y}.webp
         zoomMax: 19
     - type: populateHeightmap
