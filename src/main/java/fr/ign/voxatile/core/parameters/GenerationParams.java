@@ -93,6 +93,15 @@ public class GenerationParams {
     public Map<String, HeightmapDeclarationParams> heightmaps = new LinkedHashMap<>();
 
     /**
+     * Minimaps of the world.
+     */
+    @JsonSetter(
+        nulls = Nulls.SKIP,
+        contentNulls = Nulls.FAIL
+    )
+    public Map<String, MinimapParams> minimaps = new LinkedHashMap<>();
+
+    /**
      * Description of the schedule that will run for each tile.
      */
     @JsonSetter(nulls = Nulls.SKIP)
@@ -141,6 +150,9 @@ public class GenerationParams {
         for (HeightmapDeclarationParams params : heightmaps.values())
             params.validate();
 
+        for (MinimapParams params : minimaps.values())
+            params.validate();
+
         forEachTile.validate();
         afterAllTiles.validate();
     }
@@ -182,6 +194,10 @@ public class GenerationParams {
             verticalScale,
             Math.toRadians(area.angle),
             maxTileSize == null || maxTileSize <= 0 ? Math.max(area.extentX, area.extentY) : maxTileSize
+        );
+
+        minimaps.forEach((name, minimapParams) ->
+            generation.minimaps().add(name, minimapParams.create(world.limits().to2d()))
         );
 
         heightmaps.forEach((name, heightmapParams) ->

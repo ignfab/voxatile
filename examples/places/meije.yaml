@@ -1,0 +1,10 @@
+# A mountaineering center & a resort offering extreme skiing distinguish this snow-capped mountain.
+worldName: Meije
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 45.005
+    longitude: 6.307
+  extentX: 2459
+  extentY: 2145

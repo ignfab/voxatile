@@ -2,15 +2,15 @@ package fr.ign.voxatile.modules.luanti;
 
 import java.util.Objects;
 
-import fr.ign.voxatile.core.placeables.Placeable;
+import fr.ign.voxatile.core.world.Voxel;
 import fr.ign.voxatile.core.world.VoxelTile;
 
 /**
- * {@code LuantiVoxel} class implements a {@link Placeable} voxel for Luanti.
+ * {@code LuantiVoxel} class implements a {@link Voxel} for Luanti.
  * A voxel in Luanti, known as node, consists of three parameters: type, param1, param2.
  * @see <a href="https://github.com/luanti-org/luanti/blob/master/src/mapnode.h#L138">Luanti's MapNode class</a> for more information about the node's parameters
  */
-public class LuantiVoxel implements Placeable {
+public class LuantiVoxel implements Voxel {
 
     /**
      * Default voxel used on map initialization.
@@ -72,6 +72,11 @@ public class LuantiVoxel implements Placeable {
      * {@return the node type string}
      */
     public String getType() {
+        return type;
+    }
+
+    @Override
+    public String getTypeIdentifier() {
         return type;
     }
 

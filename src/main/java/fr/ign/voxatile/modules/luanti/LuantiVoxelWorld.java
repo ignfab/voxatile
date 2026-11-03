@@ -24,7 +24,6 @@ public class LuantiVoxelWorld extends VoxelWorld {
         new WorldCoords3d(31_007, 31_007, 31_007)
     );
 
-    private final File destination;
     private SQLiteMapWriter mapWriter;
 
     /**
@@ -34,8 +33,7 @@ public class LuantiVoxelWorld extends VoxelWorld {
      * @param destination Directory where to save data to. If null nothing is saved.
      */
     public LuantiVoxelWorld(File destination) {
-        super(new VoxelWorldMetadata());
-        this.destination = destination;
+        super(new VoxelWorldMetadata(), destination);
     }
 
     @Override

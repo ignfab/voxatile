@@ -14,6 +14,7 @@ import org.locationtech.jts.geom.util.AffineTransformation;
 
 import fr.ign.voxatile.core.exceptions.TransformException;
 import fr.ign.voxatile.core.generation.heightmaps.HeightmapDeclarationStore;
+import fr.ign.voxatile.core.generation.minimaps.MinimapStore;
 import fr.ign.voxatile.core.utils.coordinates.MapToWorldConverter;
 import fr.ign.voxatile.core.utils.coordinates.WorldToMapConverter;
 import fr.ign.voxatile.core.utils.execution.Scheduler;
@@ -42,6 +43,7 @@ public class Generation {
     private final AffineTransformation voxelToCrs;
 
     private final VoxelWorld world;
+    private final MinimapStore minimaps = new MinimapStore();
     private final HeightmapDeclarationStore heightmaps = new HeightmapDeclarationStore();
 
     private final Scheduler forEachTileScheduler = new Scheduler();
@@ -123,6 +125,13 @@ public class Generation {
      */
     public VoxelWorld world() {
         return world;
+    }
+
+    /**
+     * {@return the minimaps store}
+     */
+    public MinimapStore minimaps() {
+        return minimaps;
     }
 
     /**
