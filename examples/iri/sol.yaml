@@ -1,0 +1,118 @@
+worldName: Centre Pompidou
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 48.8601
+    longitude: 2.3509
+  extentX: 500
+  extentY: 500
+
+format: luanti
+
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+
+  altitude:
+    type: sequence
+    do:
+    - type: fetchData
+      modelType: altitude
+      provider:
+        type: wmsFloat
+        url: https://data.geopf.fr/wms-r/wms
+        layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    - type: populateHeightmap
+      models:
+        type: altitude
+      heightmap: ground
+    - type: setSpawn
+      heightmap:
+        sum: [ground, 1]
+      x: 0
+      y: 0
+
+  renderGround:
+    after:
+      - altitude
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - place: default:stone
+          at: [0, 0, -20..0]
+
+  water:
+    using: altitude
+    type: sequence
+    do:
+      - type: fetchData
+        modelType: water
+        provider:
+          type: wfs
+          url: https://data.geopf.fr/wfs/wfs
+          features: BDTOPO_V3:surface_hydrographique
+      - type: renderSurfaces
+        after: altitude
+        models:
+          type: water
+        place: default:water_source
+        heightmap: ground
+
+  vegetation:
+    type: sequence
+    using: renderGround
+    models:
+      type: vegetation
+    do:
+      - type: fetchData
+        modelType: vegetation
+        provider:
+          type: wfs
+          url: https://data.geopf.fr/wfs/wfs
+          features: BDTOPO_V3:zone_de_vegetation
+      - type: renderSurfaces
+        after: renderGround
+        heightmap: ground
+        place: default:dirt_with_grass
+
+  fetchRoads:
+    type: fetchData
+    modelType: road
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:troncon_de_route
+
+  renderRoads:
+    after:
+      - fetchRoads
+      - renderGround
+      - vegetation
+    type: renderLines2d
+    models:
+      type: road
+    width: 3
+    place: default:cobble
+    heightmap: ground
+
+  buildings:
+    type: sequence
+    using: renderGround
+    models:
+      type: buildings
+    do:
+      - type: fetchData
+        modelType: buildings
+        provider:
+          type: wfs
+          url: https://data.geopf.fr/wfs/wfs
+          features: BDTOPO_V3:batiment
+          maxFeaturesPerQuery: 500
+      - type: renderSurfaces
+        after: renderGround
+        heightmap: ground
+        place: default:desert_sandstone_brick

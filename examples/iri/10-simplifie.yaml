@@ -1,0 +1,214 @@
+worldName: Sacré Coeur
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 48.886
+    longitude: 2.342
+  extentX: 500
+  extentY: 500
+
+format: luanti
+
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+
+  altitude:
+    type: sequence
+    do:
+    - type: fetchData
+      modelType: altitude
+      provider:
+        type: wmsFloat
+        url: https://data.geopf.fr/wms-r/wms
+        layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+      retry: 1
+      retryDelay: 1
+    - type: populateHeightmap
+      models:
+        type: altitude
+      heightmap: ground
+    - type: setSpawn
+      heightmap:
+        sum: [ground, 1]
+      x: 0
+      y: 0
+
+  renderGround:
+    after:
+      - altitude
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - place: default:stone
+          at: [0, 0, -20..0]
+
+  water:
+    using: altitude
+    type: sequence
+    do:
+      - type: fetchData
+        modelType: water
+        provider:
+          type: wfs
+          url: https://data.geopf.fr/wfs/wfs
+          features: BDTOPO_V3:surface_hydrographique
+        retry: 1
+        retryDelay: 1
+      - type: renderSurfaces
+        after: altitude
+        models:
+          type: water
+        place:
+          structure:
+            - at: [0, 0, 0..1]
+              place: air
+            - at: [0, 0, -1]
+              place: default:water_source
+        heightmap: ground
+
+  vegetation:
+    type: sequence
+    using: renderGround
+    models:
+      type: vegetation
+    do:
+      # Récupération des données
+      - type: fetchData
+        modelType: vegetation
+        provider:
+          type: wfs
+          url: https://data.geopf.fr/wfs/wfs
+          features: BDTOPO_V3:zone_de_vegetation
+        retry: 1
+        retryDelay: 1
+
+      # Sol
+      - type: renderSurfaces
+        after: renderGround
+        heightmap: ground
+        place: default:dirt_with_grass
+
+      # Arbres
+      - type: renderSurfaces
+        after: renderGround
+        models:
+          filter:
+            metadata: nature
+            in:
+              - "Bois"
+              - "Forêt fermée de conifères"
+              - "Forêt fermée de feuillus"
+              - "Forêt fermée mixte"
+              - "Forêt ouverte"
+              - "Zone arborée"
+        heightmap: ground
+        place:
+          - pattern:
+              seed: herbe
+              chance: 0.1
+              place:
+                structure:
+                  - at: [0, 0, 1]
+                    place: default:junglegrass
+          - pattern:
+              seed: arbres
+              chance: 0.01
+              place:
+                structure:
+                  - at: [-2..2, -2..2, 5..9]
+                    place:
+                      pattern:
+                        chance: 0.7
+                        place: default:leaves
+                  - at: [0, 0, 0..7]
+                    place: default:tree
+
+  fetchRoads:
+    type: fetchData
+    modelType: road
+    provider:
+      type: wfs
+      url: https://data.geopf.fr/wfs/wfs
+      features: BDTOPO_V3:troncon_de_route
+    retry: 1
+    retryDelay: 1
+
+  renderRoads:
+    after:
+      - fetchRoads
+      - renderGround
+      - vegetation
+    type: renderLines2d
+    models:
+      type: road
+    width: 3
+    place: stairs:slab_cobble
+    heightmap: ground
+
+  buildings:
+    type: sequence
+    using: altitude
+    models:
+      type: buildings
+    do:
+      - type: fetchData
+        modelType: buildings
+        provider:
+          type: wfs
+          url: https://data.geopf.fr/wfs/wfs
+          features: BDTOPO_V3:batiment
+          maxFeaturesPerQuery: 500
+        retry: 1
+        retryDelay: 1
+        postProcessing:
+          - type: copy
+            metadata: hauteur
+            to: height
+          - type: parse
+            metadata: height
+            as: decimal
+            ifMissing: ignore
+            ifNotParsable: removeMetadata
+          - type: truncate
+            metadata: height
+            method: round
+            ifMissing: ignore
+          - type: default
+            metadata: height
+            value: 5
+            as: integer
+      - type: computeHeightmapStats
+        after: altitude
+        heightmap: ground
+        compute:
+          minimum: minimum-ground-altitude
+          maximum: ground-floor-altitude
+      - type: fillBetweenHeightmapAndValue
+        heightmap: ground
+        altitudeValue:
+          metadata: ground-floor-altitude
+        placeAbove: air
+        placeBelow: default:stonebrick
+      - type: renderRoof
+        roofType: hipped
+        altitude:
+          sum:
+            - metadata: ground-floor-altitude
+            - metadata: height
+        place: default:desert_stone_block
+      - type: renderFacades
+        height: height
+        altitude: ground-floor-altitude
+        build:
+          - structure:
+              at: [ 0, 0, 0 ]
+              place: default:desert_sandstone_brick
+            stretchableAlongX:
+              at: 0
+            stretchableAlongZ:
+              at: 0

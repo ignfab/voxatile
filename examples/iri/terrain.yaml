@@ -1,0 +1,47 @@
+worldName: Centre Pompidou
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 48.8601
+    longitude: 2.3509
+  extentX: 500
+  extentY: 500
+
+format: luanti
+
+heightmaps:
+  ground:
+    default: 0
+
+forEachTile:
+
+  altitude:
+    type: sequence
+    do:
+    - type: fetchData
+      modelType: altitude
+      provider:
+        type: wmsFloat
+        url: https://data.geopf.fr/wms-r/wms
+        layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+    - type: populateHeightmap
+      models:
+        type: altitude
+      heightmap: ground
+    - type: setSpawn
+      heightmap:
+        sum: [ground, 1]
+      x: 0
+      y: 0
+
+  renderGround:
+    after:
+      - altitude
+    type: renderHeightmap
+    at: ground
+    place:
+      structure:
+        - place: default:stone
+          at: [0, 0, -20..0]
+

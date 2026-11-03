@@ -9,6 +9,7 @@ area:
   extentY: 500
 
 format: luanti
+
 references:
   - &forest-tree1
     structure:
@@ -60,6 +61,8 @@ forEachTile:
         type: wmsFloat
         url: https://data.geopf.fr/wms-r/wms
         layer: RGEALTI-MNT_PYR-ZIP_FXX_LAMB93_WMS
+      retry: 1
+      retryDelay: 1
     - type: populateHeightmap
       models:
         type: altitude
@@ -78,6 +81,8 @@ forEachTile:
       url: https://data.geopf.fr/wfs/wfs
       features: BDTOPO_V3:batiment
       maxFeaturesPerQuery: 500
+    retry: 1
+    retryDelay: 1
     postProcessing:
       - type: copy
         metadata: hauteur
@@ -103,6 +108,8 @@ forEachTile:
       type: wfs
       url: https://data.geopf.fr/wfs/wfs
       features: BDTOPO_V3:surface_hydrographique
+    retry: 1
+    retryDelay: 1
 
   fetchRoads:
     type: fetchData
@@ -111,6 +118,8 @@ forEachTile:
       type: wfs
       url: https://data.geopf.fr/wfs/wfs
       features: BDTOPO_V3:troncon_de_route
+    retry: 1
+    retryDelay: 1
 
   flattenWater:
     after:
@@ -166,6 +175,8 @@ forEachTile:
       type: wfs
       url: https://data.geopf.fr/wfs/wfs
       features: BDTOPO_V3:zone_de_vegetation
+    retry: 1
+    retryDelay: 1
 
   renderVegetation:
     after:
