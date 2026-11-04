@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
 import fr.ign.voxatile.core.generation.Generation;
+import fr.ign.voxatile.core.parameters.models.values.ModelValueParams;
 import fr.ign.voxatile.core.parameters.placeables.layouts.LayoutBuilderParams;
 import fr.ign.voxatile.core.placeables.layouts.UnbuildableLayoutException;
 import fr.ign.voxatile.core.tasks.RenderFacadesTask;
@@ -30,28 +31,28 @@ public class RenderFacadesTaskParams extends ModelTaskParams {
     public List<LayoutBuilderParams> build;
 
     /**
-     * Name of metadata containing building height (from wall bottom to wall top).
+     * Building height (from wall bottom to wall top).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String height;
+    public ModelValueParams height;
 
     /**
-     * Name of metadata containing building altitude (altitude of wall bottom).
+     * Building base altitude (altitude of wall bottom).
      */
     @JsonSetter(nulls = Nulls.FAIL)
-    public String altitude;
+    public ModelValueParams altitude;
 
     /**
-     * Creates a new {@code RenderFacadeTaskParams} out of mandatory parameters.
+     * Creates a new {@code RenderFacadesTaskParams} out of mandatory parameters.
      * @param build builders to try, in order
-     * @param height name of metadata containing building height
-     * @param altitude name of metadata containing building altitude
+     * @param height building height
+     * @param altitude building base altitude (altitude of walls bottom)
      */
     @ConstructorProperties({ "build", "height", "altitude"})
     public RenderFacadesTaskParams(
         List<LayoutBuilderParams> build,
-        String height,
-        String altitude
+        ModelValueParams height,
+        ModelValueParams altitude
     ) {
         this.build = build;
         this.height = height;
@@ -61,10 +62,8 @@ public class RenderFacadesTaskParams extends ModelTaskParams {
     @Override
     public void validate() {
         super.validate();
-        if (height.isBlank())
-            throw new IllegalArgumentException("Height metadata cannot be blank");
-        if (altitude.isBlank())
-            throw new IllegalArgumentException("Altitude metadata cannot be blank");
+        height.validate();
+        altitude.validate();
         build.forEach(LayoutBuilderParams::validate);
     }
 
@@ -83,8 +82,8 @@ public class RenderFacadesTaskParams extends ModelTaskParams {
                     throw new IllegalArgumentException(e);
                 }
             }).toList(),
-            height,
-            altitude
+            height.create(generation),
+            altitude.create(generation)
         );
     }
 }

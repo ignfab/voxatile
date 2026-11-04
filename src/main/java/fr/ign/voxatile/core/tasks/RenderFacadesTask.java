@@ -3,9 +3,11 @@ package fr.ign.voxatile.core.tasks;
 import java.util.LinkedList;
 import java.util.List;
 
+import fr.ign.voxatile.core.exceptions.IgnorableException;
 import fr.ign.voxatile.core.generation.GenerationTile;
 import fr.ign.voxatile.core.models.ModelSelection;
 import fr.ign.voxatile.core.models.Shape2dConvertibleModel;
+import fr.ign.voxatile.core.models.values.ModelValue;
 import fr.ign.voxatile.core.placeables.LayoutStructure;
 import fr.ign.voxatile.core.placeables.Structure;
 import fr.ign.voxatile.core.placeables.layouts.LayoutBuilder;
@@ -22,8 +24,8 @@ import fr.ign.voxatile.core.voxelization.shape2d.voxelizer.ThickLinearIndexedVox
 public class RenderFacadesTask extends ModelTask<Shape2dConvertibleModel> {
 
     private final List<LayoutBuilder> builders;
-    private final String heightMetadata;
-    private final String baseAltitudeMetadata;
+    private final ModelValue heightValue;
+    private final ModelValue altitudeValue;
     private final ThickLinearIndexedVoxelizer2d voxelizer;
 
     /**
@@ -31,19 +33,19 @@ public class RenderFacadesTask extends ModelTask<Shape2dConvertibleModel> {
      *
      * @param selection Selection of models to render
      * @param builders Layout builder to use to render facades
-     * @param heightMetadata Name of metadata holding building height
-     * @param baseAltitudeMetadata Name of metadata holding building base altitude (altitude of walls bottom)
+     * @param heightValue Building height
+     * @param altitudeValue Building base altitude (altitude of walls bottom)
      */
     public RenderFacadesTask(
         ModelSelection selection,
         List<LayoutBuilder> builders,
-        String heightMetadata,
-        String baseAltitudeMetadata
+        ModelValue heightValue,
+        ModelValue altitudeValue
     ) {
         super(Shape2dConvertibleModel.class, selection);
         this.builders = builders;
-        this.heightMetadata = heightMetadata;
-        this.baseAltitudeMetadata = baseAltitudeMetadata;
+        this.heightValue = heightValue;
+        this.altitudeValue = altitudeValue;
 
         int thickness = 0;
         for (LayoutBuilder builder : builders)
@@ -53,12 +55,12 @@ public class RenderFacadesTask extends ModelTask<Shape2dConvertibleModel> {
     }
 
     @Override
-    protected void run(Shape2dConvertibleModel model, GenerationTile tile) {
+    protected void run(Shape2dConvertibleModel model, GenerationTile tile) throws IgnorableException {
 
-        // Process metadata
-        Integer height = model.getMetadata(heightMetadata);
-        Integer baseAltitude = model.getMetadata(baseAltitudeMetadata);
-        if (height == null || baseAltitude == null || height <= 0)
+        int altitude = altitudeValue.getAsInt(model).orElseThrow(() -> new IgnorableException("Missing altitude"));
+        int height = heightValue.getAsInt(model).orElseThrow(() -> new IgnorableException("Missing height"));
+
+        if (height <= 0)
             return;
 
         // Process each lineString (actually linearRing) separately
@@ -98,10 +100,9 @@ public class RenderFacadesTask extends ModelTask<Shape2dConvertibleModel> {
                     } catch (UnbuildableLayoutException ignored) {}
                 }
 
-                if (structure == null) {
-                    System.out.println("Could not build facade structure");
-                    return;
-                }
+                if (structure == null)
+                    throw new IgnorableException("Could not build facade structure");
+
                 structures.add(structure);
             }
 
@@ -116,7 +117,7 @@ public class RenderFacadesTask extends ModelTask<Shape2dConvertibleModel> {
                 y = (int) Math.round(index.distance());
                 for (int z = 0; z < height; z++)
                     if (structure.limits().contains(x, y, z))
-                        structure.get(x, y, z).place(tile.voxels(), index.coords().x(), index.coords().y(), z + baseAltitude);
+                        structure.get(x, y, z).place(tile.voxels(), index.coords().x(), index.coords().y(), z + altitude);
             }
         }
     }

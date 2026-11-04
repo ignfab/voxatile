@@ -294,8 +294,8 @@ Layouts are tried in order, the first one that can fit the requested space is us
 #### Extra parameters
 
 - `models`: [Selection of models](ModelSelection.md) to render (required, models must be convertible to 2d shapes)
-- `height` (string): Name of the metadata containing the desired height. (required)
-- `altitude` (string): Name of the metadata containing the altitude. (required)
+- `height`: [Value](ModelValues.md) of walls height. (required)
+- `altitude`: [Value](ModelValues.md) of walls base altitude. (required)
 - `build`: List of [layouts](Layouts.md) to try. Default axis policies are `ADJUST` on `X` and `Z`, `KEEP` on `Y`.
 
 See [Layouts](Layouts.md) for more information about layouts
@@ -305,8 +305,9 @@ See [Layouts](Layouts.md) for more information about layouts
 ```yaml
 type: renderFacades
 models: buildings
-height: height
-altitude: ground-floor-altitude
+height: 20
+altitude:
+  metadata: ground-floor-altitude
 build:
   - structure:
       at: [ 0, -1..0, 0 ]
