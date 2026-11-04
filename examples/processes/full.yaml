@@ -127,7 +127,6 @@ forEachTile:
       sum:
         - metadata: ground-floor-altitude
         - metadata: height
-        - -1
     place: *voxel-cobble
 
   forest:
@@ -310,8 +309,12 @@ forEachTile:
       filter:
         metadata: usage_1
         equals: Résidentiel
-    height: height
-    altitude: ground-floor-altitude
+    height:
+      metadata: height
+    altitude:
+      sum:
+        - metadata: ground-floor-altitude
+        - 1
     # TODO: Layout should probably be defined on a common.yaml file in format.
     build:
       - along: x
@@ -402,8 +405,12 @@ forEachTile:
         not:
           metadata: usage_1
           equals: Résidentiel
-    height: height
-    altitude: ground-floor-altitude
+    height:
+      metadata: height
+    altitude:
+      sum:
+        - metadata: ground-floor-altitude
+        - 1
     # TODO: Layout should probably be defined on a common.yaml file in format.
     build:
       - along: x
