@@ -10,7 +10,7 @@ import fr.ign.voxatile.core.voxelization.shape3d.voxelizer.Point3dVoxelizer;
 /**
  * A task rendering points by placing placeables at them.
  */
-public class RenderPointsTask extends ModelTask<Shape3dConvertibleModel> {
+public class RenderPoints3dTask extends ModelTask<Shape3dConvertibleModel> {
     private final Placeable placeable;
     private final Point3dVoxelizer voxelizer;
 
@@ -20,7 +20,7 @@ public class RenderPointsTask extends ModelTask<Shape3dConvertibleModel> {
      * @param selection selection of models to render
      * @param placeable placeable placed at the points
      */
-    public RenderPointsTask(
+    public RenderPoints3dTask(
         ModelSelection selection,
         Placeable placeable
     ) {
