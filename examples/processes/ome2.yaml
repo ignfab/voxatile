@@ -1,3 +1,16 @@
+#
+# OME2 (Open Maps for Europe 2) data configuration.
+#
+# This configuration uses European geographic data to generate voxel terrain,
+# including ground elevation, water features and road networks.
+#
+# Data is retrieved from GeoTIFF and WFS sources, then processed and rendered
+# into the voxel world.
+#
+# Data specification:
+#   https://ome-download-data.s3.eu-west-1.amazonaws.com/hvlsp/documents/OME2_HVLSP_v3.2_Data_specifications.pdf
+#
+
 heightmaps:
   ground:
     default: 0
@@ -37,7 +50,10 @@ forEachTile:
   water:
     after: altitude
     type: sequence
+    models:
+      type: water
     do:
+    # A natural or man-made flowing watercourse or stream
     - type: fetchData
       modelType: water
       provider:
@@ -46,8 +62,18 @@ forEachTile:
         features: ome:hvlsp_wfs_hy_watercourse
         token: ImV1cm9nZW9ncmFwaGljc19yZWdpc3RlcmVkXzgyMzc5OCI.HS1Sgg._s2SSfxvXP88IxKhKBL6zz5Y1Do
       retry: 3
+    # A segment of a watercourse within a hydrographic network.
     - type: fetchData
-      modelType: water_area
+      modelType: water
+      provider:
+        type: wfs
+        url: https://www.mapsforeurope.org/maps/wfs
+        features: ome:hvlsp_wfs_hy_watercourse_link
+        token: ImV1cm9nZW9ncmFwaGljc19yZWdpc3RlcmVkXzgyMzc5OCI.HS1Sgg._s2SSfxvXP88IxKhKBL6zz5Y1Do
+      retry: 3
+    # A natural or man-made flowing watercourse or stream
+    - type: fetchData
+      modelType: water
       provider:
         type: wfs
         url: https://www.mapsforeurope.org/maps/wfs
@@ -55,40 +81,15 @@ forEachTile:
         token: ImV1cm9nZW9ncmFwaGljc19yZWdpc3RlcmVkXzgyMzc5OCI.HS1Sgg._s2SSfxvXP88IxKhKBL6zz5Y1Do
       retry: 3
     - type: copyHeightmap
-      models:
-        type: water
       from:
         localMin: ground
         range: 9
       to: ground
     - type: copyHeightmap
-      models:
-        type: water
-      from: 1
-      to: water
-    - type: copyHeightmap
-      models:
-        type: water_area
       from: 1
       to: water
     # Depth grows with the distance from the bank.
     - type: copyHeightmap
-      models:
-        type: water
-      from:
-        remap:
-          manhattan: water
-        mapping:
-          0: 0
-          1: 1
-          2: 2
-          3..3: 3
-          4..6: 4
-          7..10: 5
-      to: water
-    - type: copyHeightmap
-      models:
-        type: water_area
       from:
         remap:
           manhattan: water
@@ -124,6 +125,19 @@ forEachTile:
     models:
       type: road
     do:
+    # Road links can represent paths, bicycle roads,
+    # single carriageways, multiple carriageway roads and even fictitious trajectories across
+    # traffic squares.
+    - type: fetchData
+      modelType: road
+      provider:
+        type: wfs
+        url: https://www.mapsforeurope.org/maps/wfs
+        features: ome:hvlsp_wfs_tn_road_link
+        token: ImV1cm9nZW9ncmFwaGljc19yZWdpc3RlcmVkXzgyMzc5OCI.HS1Sgg._s2SSfxvXP88IxKhKBL6zz5Y1Do
+      retry: 3
+    # A road is a group of road_link objects that share the same national road code, 
+    # European route number, or road name (if available).
     - type: fetchData
       modelType: road
       provider:

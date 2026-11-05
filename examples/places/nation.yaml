@@ -1,0 +1,9 @@
+worldName: Nation - Paris
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 48.848
+    longitude: 2.395
+  extentX: 1000
+  extentY: 1000

@@ -1,0 +1,9 @@
+worldName: Lauterbourg - France
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 48.974
+    longitude: 8.178
+  extentX: 1000
+  extentY: 1000

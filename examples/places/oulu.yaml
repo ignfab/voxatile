@@ -1,0 +1,10 @@
+crs: EPSG:3067
+worldName: Oulu - Finland
+verticalScale: 1.0
+horizontalScale: 1.0
+area:
+  center:
+    latitude: 65.011
+    longitude: 25.464
+  extentX: 1000
+  extentY: 1000
