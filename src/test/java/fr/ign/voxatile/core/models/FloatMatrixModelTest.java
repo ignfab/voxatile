@@ -66,21 +66,21 @@ public class FloatMatrixModelTest {
         // Beware, interpolation is between cells centers, not cells upper left corner, at voxel center, not voxel upper left corner
         // So we have an offset of -5/-5 for a cell size of 10
         // and 0.5/0.5 for voxel size in order to have valid interpolable values between [0-10],[0-10].
-        FloatGeographicDataMatrix2d data = new FloatArrayGeographicDataMatrix2d(values, 2, 2, -4.5, -4.5, 10.0, 10.0);
+        FloatGeographicDataMatrix2d data = new FloatArrayGeographicDataMatrix2d(values, 2, 2, -5.0, -5.0, 10.0, 10.0);
 
         FloatMatrixModel model = new FloatMatrixModel(data, converter);
         // Borders
-        assertNull(model.get(new WorldCoords2d(0, 11)));
-        assertNull(model.get(new WorldCoords2d(11, 0)));
-        assertEquals(-3.0f, model.get(new WorldCoords2d(0, 0)));
-        assertEquals(-1.0f, model.get(new WorldCoords2d(0, 10)));
-        assertEquals(5.0f, model.get(new WorldCoords2d(10, 0)));
-        assertEquals(1.0f, model.get(new WorldCoords2d(10, 10)));
+        assertNull(model.get(new WorldCoords2d(0, 6)));
+        assertNull(model.get(new WorldCoords2d(6, 0)));
+        assertEquals(-3.0f, model.get(new WorldCoords2d(-5, -5)));
+        assertEquals(-1.0f, model.get(new WorldCoords2d(-5, 5)));
+        assertEquals(5.0f, model.get(new WorldCoords2d(5, -5)));
+        assertEquals(1.0f, model.get(new WorldCoords2d(5, 5)));
         // Centers
-        assertEquals(1.0f, model.get(new WorldCoords2d(5, 0)));
-        assertEquals(0.0f, model.get(new WorldCoords2d(5, 10)));
-        assertEquals(-2.0f, model.get(new WorldCoords2d(0, 5)));
-        assertEquals(3.0f, model.get(new WorldCoords2d(10, 5)));
-        assertEquals(0.5f, model.get(new WorldCoords2d(5, 5)));
+        assertEquals(1.0f, model.get(new WorldCoords2d(0, -5)));
+        assertEquals(0.0f, model.get(new WorldCoords2d(0, 5)));
+        assertEquals(-2.0f, model.get(new WorldCoords2d(-5, 0)));
+        assertEquals(3.0f, model.get(new WorldCoords2d(5, 0)));
+        assertEquals(0.5f, model.get(new WorldCoords2d(0, 0)));
     }
 }
