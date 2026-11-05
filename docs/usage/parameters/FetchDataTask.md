@@ -13,6 +13,7 @@ Task of type `fetchData` fetches data from geographic data source, processes it,
   * [`shapefile` (Shapefile)](#shapefile-shapefile)
   * [`wmsFloat` (Web Map Service with floating point values)](#wmsfloat-web-map-service-with-floating-point-values)
   * [`geotiff` (GeoTiff)](#geotiff-geotiff)
+  * [`xyzFloat` (XYZ Float Tiles)](#xyz-xyz-float-tiles)
 * [Processors](#processors)
   * [`osm` (Open Street Map)](#osm-open-street-map)
   * [`geoToolsVector` (GeoTools vector processor)](#geotoolsvector-geotools-vector-processor)
@@ -127,6 +128,16 @@ Provider of type `geotiff` reads **float** (for now) raster data from a [GeoTiff
 **Extra parameters**:
 - `filePath` (required): Path of the GeoTiff file (absolute, or relative to execution context)
 - `crsOverride` (optional, default none): CRS to use when reading data. By default, the CRS is read from the GeoTiff itself. You should only use this parameter if the CRS is invalid or missing from the file. This **DOES NOT** reproject data!
+
+**Default processor**: `floatMatrix`
+
+### `xyzFloat` (XYZ FLoat Tiles)
+Fetches **image tiles encoding floating point values** from an XYZ tile URL endpoint. Its default processor decodes **Terrarium**-encoded pixels into a **float** data matrix (typically used for elevation data); it is not intended for ordinary imagery tiles.
+
+**Extra parameters**:
+- `url` (required): URL of the tile server containing the `{z}`, `{x}`, and `{y}` placeholders. Example: `https://tiles.mapterhorn.com/{z}/{x}/{y}.webp`
+- `zoomMin` (optional, default `0`): Minimum zoom level handle by the service used.
+- `zoomMax` (optional, default `12`): Maximum zoom level handle by the service used.
 
 **Default processor**: `floatMatrix`
 

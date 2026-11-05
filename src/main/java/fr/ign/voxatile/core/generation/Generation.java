@@ -36,6 +36,8 @@ public class Generation {
 
     // Vertical size of voxel in target CRS units
     private final double verticalScale;
+    // Horizontal size of voxel in target CRS units
+    private final double horizontalScale;
 
     // Transformations from and to target CRS
     private final AffineTransformation crsToVoxel;
@@ -103,6 +105,7 @@ public class Generation {
 
         this.crs = crs;
         this.verticalScale = verticalScale;
+        this.horizontalScale = horizontalScale;
 
         // CRS to Voxel transformation (basically, translates, rotates and scale)
         crsToVoxel = new AffineTransformation();
@@ -188,6 +191,13 @@ public class Generation {
     // To be removed when vertical is used by this class. (Renderers will probably contain that value)
     public double getVerticalScale() {
         return verticalScale;
+    }
+
+    /**
+     * {@return the horizontal scale}
+     */
+    public double getHorizontalScale() {
+        return horizontalScale;
     }
 
     /**
