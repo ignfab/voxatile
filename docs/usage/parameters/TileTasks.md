@@ -64,7 +64,7 @@ This will place grass voxels at the height of the specified heightmap. For bette
 ```yaml
 type: renderHeightmap
 at: ground
-place: default:grass
+place: default:dirt_with_grass
 ```
 
 This will place water voxels between the water and ground heightmaps.
@@ -72,7 +72,7 @@ This will place water voxels between the water and ground heightmaps.
 type: renderHeightmap
 minimum: water
 maximum: ground
-place: default:water
+place: default:water_source
 ```
 
 ### `renderLines`
@@ -228,7 +228,7 @@ If the heightmap value is lower than or equal to the altitude, the placeable use
 ```yaml
 type: fillBetweenHeightmapAndValue
 models:
-  type: buildings
+  type: building
 heightmap: ground
 altitudeValue:
   metadata: maximum-ground-altitude
@@ -260,7 +260,7 @@ Building height is given by `height` metadata (This task does nothing if the val
 ```yaml
 type: renderBuildings
 models:
-  type: buildings
+  type: building
 roof: default:cobble
 wall: default:brick
 window: default:glass
@@ -304,14 +304,15 @@ See [Layouts](Layouts.md) for more information about layouts
 
 ```yaml
 type: renderFacades
-models: buildings
+models:
+  type: building
 height: 20
 altitude:
   metadata: ground-floor-altitude
 build:
   - structure:
       at: [ 0, -1..0, 0 ]
-      put: stone
+      place: stone
     stretchableAlongX:
       at: 0
     stretchableAlongZ:
