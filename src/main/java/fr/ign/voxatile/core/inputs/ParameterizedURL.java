@@ -58,10 +58,13 @@ public final class ParameterizedURL {
      */
     public URL toURL() throws MalformedURLException {
         StringBuilder suffix = new StringBuilder();
-        params.forEach((key, value) -> suffix.append(suffix.isEmpty() ? '?' : '&')
+        boolean hasQuestionMark = url.contains("?");
+
+        params.forEach((key, value) -> suffix.append(suffix.isEmpty() && !hasQuestionMark ? '?' : '&')
             .append(URLEncoder.encode(key, StandardCharsets.UTF_8))
             .append('=')
             .append(URLEncoder.encode(value, StandardCharsets.UTF_8)));
+            
         return new URL(url + suffix);
     }
 

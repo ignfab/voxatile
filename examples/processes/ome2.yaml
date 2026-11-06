@@ -28,7 +28,7 @@ forEachTile:
       modelType: altitude
       provider:
         type: geotiff
-        filePath: data/eurodem.tif
+        filePath: data/ome2/eurodem.tif
     - type: populateHeightmap
       heightmap: ground
     - type: setSpawn
@@ -58,27 +58,24 @@ forEachTile:
       modelType: water
       provider:
         type: wfs
-        url: https://www.mapsforeurope.org/maps/wfs
+        url: https://www.mapsforeurope.org/maps/wfs?token=
         features: ome:hvlsp_wfs_hy_watercourse
-        token: ImV1cm9nZW9ncmFwaGljc19yZWdpc3RlcmVkXzgyMzc5OCI.HS1Sgg._s2SSfxvXP88IxKhKBL6zz5Y1Do
       retry: 3
     # A segment of a watercourse within a hydrographic network.
     - type: fetchData
       modelType: water
       provider:
         type: wfs
-        url: https://www.mapsforeurope.org/maps/wfs
+        url: https://www.mapsforeurope.org/maps/wfs?token=
         features: ome:hvlsp_wfs_hy_watercourse_link
-        token: ImV1cm9nZW9ncmFwaGljc19yZWdpc3RlcmVkXzgyMzc5OCI.HS1Sgg._s2SSfxvXP88IxKhKBL6zz5Y1Do
       retry: 3
     # A natural or man-made flowing watercourse or stream
     - type: fetchData
       modelType: water
       provider:
         type: wfs
-        url: https://www.mapsforeurope.org/maps/wfs
+        url: https://www.mapsforeurope.org/maps/wfs?token=
         features: ome:hvlsp_wfs_hy_watercourse_area
-        token: ImV1cm9nZW9ncmFwaGljc19yZWdpc3RlcmVkXzgyMzc5OCI.HS1Sgg._s2SSfxvXP88IxKhKBL6zz5Y1Do
       retry: 3
     - type: copyHeightmap
       from:
@@ -132,9 +129,8 @@ forEachTile:
       modelType: road
       provider:
         type: wfs
-        url: https://www.mapsforeurope.org/maps/wfs
+        url: https://www.mapsforeurope.org/maps/wfs?token=
         features: ome:hvlsp_wfs_tn_road_link
-        token: ImV1cm9nZW9ncmFwaGljc19yZWdpc3RlcmVkXzgyMzc5OCI.HS1Sgg._s2SSfxvXP88IxKhKBL6zz5Y1Do
       retry: 3
     # A road is a group of road_link objects that share the same national road code, 
     # European route number, or road name (if available).
@@ -142,9 +138,8 @@ forEachTile:
       modelType: road
       provider:
         type: wfs
-        url: https://www.mapsforeurope.org/maps/wfs
+        url: https://www.mapsforeurope.org/maps/wfs?token=
         features: ome:hvlsp_wfs_tn_road
-        token: ImV1cm9nZW9ncmFwaGljc19yZWdpc3RlcmVkXzgyMzc5OCI.HS1Sgg._s2SSfxvXP88IxKhKBL6zz5Y1Do
       retry: 3
     - type: renderLines2d
       structure:
