@@ -7,7 +7,6 @@ Voxatile makes a heavy use of parameters. Generation is described in Yaml (or Js
 * [Example](#example)
 * [Fields description](#fields-description)
 * [References](#references)
-* [Dependencies](#dependencies)
 
 ## See also
 
@@ -30,9 +29,9 @@ references:
   - &voxel-surface default:cobble
   - &ground
     structure:
-      - put: default:dirt_with_grass
+      - place: default:dirt_with_grass
         at: [ 0, 0, 0 ]
-      - put: default:dirt
+      - place: default:dirt
         at: [ 0, 0, -10..-1 ]
 area:
   center:
@@ -44,7 +43,7 @@ area:
 verticalScale: 1.0
 horizontalScale: 1.0
 crs: EPSG:2154
-format: minetest
+format: luanti
 heightmaps:
   ground:
     default: 0

@@ -163,6 +163,7 @@ schedule:
   after:
     - anotherLongTask # To be sure dependentTask does not run before anotherLongTask
     - ...
+  type: schedule
   do:
     veryLongTask:
       ...
@@ -185,6 +186,7 @@ schedule:
   using: anotherLongTask
   after:
     - ...
+  type: schedule
   do:
     veryLongTask:
       ...

@@ -103,7 +103,7 @@ place: 'jukebox[has_record=true]{RecordItem: {id: "minecraft:music_disc_cat"}, t
 is strictly equivalent to:
 ```yaml
 place:
-  block: default:jukebox
+  block: minecraft:jukebox
   properties:
     has_record: true
   blockEntity: true
