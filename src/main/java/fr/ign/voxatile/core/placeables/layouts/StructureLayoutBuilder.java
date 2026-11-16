@@ -27,27 +27,27 @@ public class StructureLayoutBuilder extends LayoutBuilder {
      */
     public StructureLayoutBuilder(Structure structure, StretchAxis axisX, StretchAxis axisY, StretchAxis axisZ) throws UnbuildableLayoutException {
         super(
-            createAndCheck(structure.limits().minX(), structure.limits().maxX(), axisX),
-            createAndCheck(structure.limits().minY(), structure.limits().maxY(), axisY),
-            createAndCheck(structure.limits().minZ(), structure.limits().maxZ(), axisZ)
+            createAndCheck(structure.limits().minX(), structure.limits().maxX(), axisX, Axis.X),
+            createAndCheck(structure.limits().minY(), structure.limits().maxY(), axisY, Axis.Y),
+            createAndCheck(structure.limits().minZ(), structure.limits().maxZ(), axisZ, Axis.Z)
         );
         this.structure = structure;
     }
 
-    private static AxisMapperBuilder createAndCheck(int min, int max, StretchAxis axis) throws UnbuildableLayoutException {
+    private static AxisMapperBuilder createAndCheck(int min, int max, StretchAxis stretchAxis, Axis axis) throws UnbuildableLayoutException {
         ConstantAxisMapperBuilder base = new ConstantAxisMapperBuilder(max - min + 1, min);
 
-        if (axis == null)
+        if (stretchAxis == null)
             return new DelegateAxisMapperBuilder(base);
 
-        if (axis.stretchPosition > max || axis.stretchPosition < min)
+        if (stretchAxis.stretchPosition > max || stretchAxis.stretchPosition < min)
             throw new UnbuildableLayoutException(
                 "\"at\" value (%d) is outside structure (%d to %d) for axis %s".formatted(
-                    axis.stretchPosition, min, max, axis.axis
+                    stretchAxis.stretchPosition, min, max, axis
                 )
             );
 
-        return new StretcherAxisMapperBuilder(base, axis.stretchPosition, axis.minStretch, axis.maxStretch);
+        return new StretcherAxisMapperBuilder(base, stretchAxis.stretchPosition, stretchAxis.minStretch, stretchAxis.maxStretch);
     }
 
     @Override
@@ -72,10 +72,13 @@ public class StructureLayoutBuilder extends LayoutBuilder {
     /**
      * Defines a stretchable band along a given axis.
      *
-     * @param axis the axis which the band is defined.
      * @param stretchPosition the coordinate of the band to stretch. Must be within structure limits.
      * @param minStretch minimum repetitions. May be 0 if the structure size along the given axis is greater than 0. On that particular case, the structure may be squeezed.
      * @param maxStretch maximum repetitions.
      */
-    public record StretchAxis(Axis axis, int stretchPosition, int minStretch, int maxStretch) {}
+    public record StretchAxis(int stretchPosition, int minStretch, int maxStretch) {
+        public StretchAxis(int stretchPosition) {
+            this(stretchPosition, 1, Integer.MAX_VALUE);
+        }
+    }
 }
