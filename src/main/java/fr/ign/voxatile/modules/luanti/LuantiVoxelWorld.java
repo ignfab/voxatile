@@ -89,6 +89,12 @@ public class LuantiVoxelWorld extends VoxelWorld {
             FileHelpers.write(new File(destination, "worldmods/ign_spawn/init.lua"), """
                 core.setting_set("static_spawnpoint", "%d, %d, %d")
                 core.register_on_joinplayer(function(player) player:set_sky{ clouds = false } end)
+                core.register_on_generated(function(minp, maxp, seed)
+                    local vm = core.get_mapgen_object("voxelmanip")
+                    local emin, emax = vm:get_emerged_area()
+                    vm:set_lighting({day = 15, night = 0}, emin, emax)
+                    vm:write_to_map()
+                end)
                 """.formatted(metadata.getSpawn().x(), metadata.getSpawn().z(), metadata.getSpawn().y())); // XYZ => XZY
         } catch (Exception e) {
             throw new MapWriteException(e);
